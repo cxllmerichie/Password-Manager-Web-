@@ -1,0 +1,23 @@
+header {
+    height: 10vh;
+    background: var(--dark);
+    background: #24262b;
+    text-align: center;
+}
+
+.header-text {
+    display: inline-block;
+    color: white;
+    margin-top:     25px;
+    margin-bottom:  25px;
+}
+
+.header-text#highlighted {
+    color: var(--main);
+    color: rgba(182, 0, 40, 1);
+    margin-right: 0;
+}
+
+.header-text#default {
+    margin-left: 0;
+}
