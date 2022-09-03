@@ -5,7 +5,6 @@
 .footer {
 	margin: 0;
 	background: var(--dark);
-	background: #24262b;
 	height: 15vh;
 	padding: 15px;
 	display: flex;
@@ -31,7 +30,6 @@
 	left: 0;
 	bottom: -10px;
 	background: var(--main);
-	background: rgba(182, 0, 40, 1);
 	height: 3px;
 	box-sizing: border-box;
 	width: 50px;
@@ -65,7 +63,6 @@ ul {
 	height: 40px;
 	width:  40px;
 	background: var(--social-backgound);
-	background: rgba(255,255,255,0.2);
 	margin: 5px 5px 5px 5px;
 	text-align: center;
 	line-height: 40px;
@@ -85,6 +82,5 @@ ul {
 
 .footer-col .social-links a:hover {
 	color: var(--social-hover-text);
-	color: #24262b;
 	background: white;
 }

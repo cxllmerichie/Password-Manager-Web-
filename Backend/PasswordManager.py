@@ -2,7 +2,7 @@ from argon2 import PasswordHasher
 # from rsa import newkeys, encrypt, decrypt
 from waitress import serve
 
-from Frontend.flask import app
+from Frontend.app import app
 from Database.Database import Database
 from Logger.Logger import log, flask
 
@@ -21,7 +21,7 @@ class PasswordManager:
 
     @log(flask)
     def __run(self):
-        serve(app, host="127.0.0.1", port=8080, threads=8)
+        serve(app, host="127.0.0.1", port=5000, threads=8)
 
     def __secure(self, data: str) -> str:
         # secured = self.__ph.hash(data)

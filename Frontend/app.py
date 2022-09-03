@@ -12,3 +12,13 @@ def template():
 @app.route('/home')
 def home():
     return render('home.html')
+
+
+@app.route('/profile')
+def profile():
+    return render('profile.html')
+
+
+@app.route('/security')
+def security():
+    return render('security.html')
