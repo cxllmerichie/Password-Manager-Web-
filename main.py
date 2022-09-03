@@ -1,8 +1,8 @@
-from App import DataBase
+from App import Database
 
 
 def main():
-    db = DataBase()
+    db = Database()
 
 
 if __name__ == '__main__':
