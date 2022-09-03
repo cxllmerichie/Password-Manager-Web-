@@ -1,8 +1,8 @@
-from App import Database
+from App import PasswordManager
 
 
 def main():
-    db = Database()
+    pm = PasswordManager()
 
 
 if __name__ == '__main__':
