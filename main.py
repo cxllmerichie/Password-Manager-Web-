@@ -1,4 +1,4 @@
-from App import PasswordManager
+from Backend.PasswordManager import PasswordManager
 
 
 def main():
