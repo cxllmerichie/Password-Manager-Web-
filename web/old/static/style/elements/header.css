@@ -1,0 +1,82 @@
+* {
+    /*border: 1px solid red;*/
+}
+
+header {
+    height: 10vh;
+    background: var(--dark) !important;
+    padding: 20px;
+    display: flex !important;
+    justify-content: space-around;
+}
+
+.header-item#security {
+    padding: 0;
+}
+
+.header-item#security img {
+    width:  50px;
+    height: 50px;
+}
+
+.header-item#header-text-block {
+    transition: 0.2s ease;
+}
+
+.header-item#header-text-block:hover {
+    transition: 0.2s ease;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.header-text {
+    display: inline-block;
+    color: white;
+    margin: 0;
+}
+
+.header-text#highlighted {
+    color: var(--main);
+}
+
+.header-text#default {
+
+}
+
+.header-item#security button,
+.header-item#profile button {
+    background-color: transparent;
+    border: none;
+    background-size: 50px 50px;
+    background-position: top center;
+    background-repeat: no-repeat;
+    width:  75px;
+    height: 50px;
+    transition: 0.2s ease;
+    color: white;
+    line-height: 115px;
+    font-weight: 400;
+}
+
+.header-item#security button {
+    background-image: url("../../assets/icon/shield-lock.svg");
+}
+
+.header-item#profile button {
+    background-image: url("../../assets/icon/user.svg");
+}
+
+.header-item#security button:hover,
+.header-item#profile button:hover {
+    opacity: 0.5;
+    transition: 0.2s ease;
+}
+
+.header-item#security button:focus,
+.header-item#profile button:focus {
+    outline: none;
+}
+
+.header-item {
+    display: inline-block;
+}
