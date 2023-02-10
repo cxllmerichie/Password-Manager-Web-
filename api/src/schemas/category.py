@@ -1,4 +1,4 @@
-from apidevtools import Schema
+from apidevtools import Schema, Relation
 
 from .item import Item
 
@@ -25,3 +25,6 @@ class CategoryCreateCrud(CategoryBase):
 class Category(CategoryCreateCrud):
     id: int
     items: list[Item] = []
+
+    def relations(self) -> list[Relation]:
+        return [Relation('item', dict(category_id=self.id), Category, 'items', ['*'], Item)]

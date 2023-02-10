@@ -13,8 +13,7 @@ async def create_item(category_id: int, item: schemas.ItemCreate) -> schemas.Ite
 
 async def get_item(item_id: int, schema: type = schemas.Item) -> schemas.Item | None:
     query, args = f'SELECT * FROM "item" WHERE "id" = $1;', (item_id, )
-    relation = Relation(columns=['*'], tablename='field', where=dict(item_id=item_id), ext_schema_t=schemas.Item, fieldname='fields', rel_schema_t=schemas.Field)
-    db_item = (await db.select(query, args, schema, [relation])).first()
+    db_item = (await db.select(query, args, schema, True)).first()
     return db_item
 
 

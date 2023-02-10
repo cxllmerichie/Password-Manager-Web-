@@ -1,4 +1,4 @@
-from apidevtools import Schema
+from apidevtools import Schema, Relation
 
 from .field import Field
 
@@ -25,3 +25,6 @@ class ItemCreateCrud(ItemBase):
 class Item(ItemCreateCrud):
     id: int
     fields: list[Field] = []
+
+    def relations(self) -> list[Relation]:
+        return [Relation('field', dict(item_id=self.id), Item, 'fields', ['*'], Field)]

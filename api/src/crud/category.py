@@ -18,8 +18,7 @@ async def create_category(user_id: int, category: schemas.CategoryCreate) -> sch
 
 async def get_category(category_id: int, schema: type = schemas.Category) -> schemas.Category | None:
     query, args = f'SELECT * FROM "category" WHERE "id" = $1;', (category_id, )
-    relation = Relation(columns=['*'], tablename='item', where=dict(category_id=category_id), ext_schema_t=schemas.Category, fieldname='items', rel_schema_t=schemas.Item)
-    db_category = (await db.select(query, args, schema, [relation])).first()
+    db_category = (await db.select(query, args, schema, True)).first()
     return db_category
 
 
