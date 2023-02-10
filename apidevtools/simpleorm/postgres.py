@@ -6,7 +6,7 @@ from loguru._logger import Logger
 import loguru
 
 from apidevtools.simpleorm.schema import Schema
-from apidevtools.simpleorm.record.records import Records
+from apidevtools.simpleorm.records import Records
 from .base import BaseStorage
 from apidevtools.simpleorm.relation import Relation
 

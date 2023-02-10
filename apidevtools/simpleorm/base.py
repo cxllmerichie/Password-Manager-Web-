@@ -3,7 +3,7 @@ from loguru._logger import Logger
 from typing import Any
 
 from apidevtools.simpleorm.schema import Schema
-from apidevtools.simpleorm.record.records import Records
+from apidevtools.simpleorm.records import Records
 
 
 class BaseStorage(ABC):
