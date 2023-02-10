@@ -18,9 +18,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=const.API_CORS_ORIGINS,
-    allow_methods=const.API_CORS_ALLOW_CREDENTIALS,
-    allow_headers=const.API_CORS_METHODS,
-    allow_credentials=const.API_CORS_HEADERS
+    allow_methods=const.API_CORS_METHODS,
+    allow_headers=const.API_CORS_HEADERS,
+    allow_credentials=const.API_CORS_ALLOW_CREDENTIALS
 )
 
 app.include_router(routers.auth_router)

@@ -2,7 +2,7 @@ from contextlib import suppress
 from typing import Any
 from asyncpg import Record
 
-from apidevtools.simpleorm.schema import Schema
+from .schema import Schema
 
 
 class Records:
@@ -33,4 +33,10 @@ class Records:
     def offset(self, value: int) -> 'Records':
         with suppress(IndexError):
             self.__records = self.__records[value:]
+        return self
+
+    def order_by(self, column: str, direction: str = 'ASC') -> 'Records':
+        with suppress(AttributeError):
+            self.__records = sorted(self.__records, key=lambda d: d[column])
+        self.__records = reversed(self.__records) if direction == 'DESC' else self.__records
         return self
