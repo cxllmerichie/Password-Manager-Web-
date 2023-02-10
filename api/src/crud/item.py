@@ -19,7 +19,7 @@ async def get_item(item_id: int, schema: type = schemas.Item) -> schemas.Item | 
 
 async def get_items(category_id: int, limit: int = inf, offset: int = 0, schema: type = schemas.Item) -> list[schemas.Item]:
     query, args = f'SELECT * FROM "item" WHERE "category_id" = $1 LIMIT $2 OFFSET $3;', (category_id, limit, offset)
-    db_items = (await db.select(query, args, schema)).all()
+    db_items = (await db.select(query, args, schema, True)).all()
     return db_items
 
 

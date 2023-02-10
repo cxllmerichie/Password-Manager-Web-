@@ -24,7 +24,7 @@ async def get_category(category_id: int, schema: type = schemas.Category) -> sch
 
 async def get_categories(user_id: int, limit: int = inf, offset: int = 0, schema: type = schemas.Category) -> list[schemas.Category]:
     query, args = f'SELECT * FROM "category" WHERE "user_id" = $1 LIMIT $2 OFFSET $3;', (user_id, limit, offset)
-    db_categories = (await db.select(query, args, schema)).all()
+    db_categories = (await db.select(query, args, schema, True)).all()
     return db_categories
 
 
