@@ -1,5 +1,7 @@
 from apidevtools import Schema
 
+from .item import Item
+
 
 class CategoryBase(Schema):
     __tablename__ = 'category'
@@ -22,3 +24,4 @@ class CategoryCreateCrud(CategoryBase):
 
 class Category(CategoryCreateCrud):
     id: int
+    items: list[Item] = []

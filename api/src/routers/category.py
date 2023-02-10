@@ -21,7 +21,7 @@ async def _(category_id: int,
     return db_category
 
 
-@router.get('/categories/', name='Get all categories of my user', response_model=schemas.Category)
+@router.get('/categories/', name='Get all categories of my user', response_model=list[schemas.Category])
 async def _(limit: int = inf, offset: int = 0, user: schemas.User = Depends(crud.get_current_user)):
     db_categories = await crud.get_categories(user_id=user.id, limit=limit, offset=offset)
     return db_categories

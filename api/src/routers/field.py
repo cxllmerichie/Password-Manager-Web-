@@ -9,7 +9,7 @@ router = APIRouter(tags=['Field'])
 @router.post('/fields/', name='Add new field to item by id', response_model=schemas.Field)
 async def _(item_id: int, field: schemas.FieldCreate,
             user: schemas.User = Depends(crud.get_current_user)):
-    db_field = await crud.create_field(user_id=user.id, field=field)
+    db_field = await crud.create_field(item_id=item_id, field=field)
     return db_field
 
 

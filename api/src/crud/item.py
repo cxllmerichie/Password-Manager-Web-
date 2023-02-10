@@ -1,4 +1,4 @@
-from apidevtools import inf
+from apidevtools import inf, Relation
 
 from .. import schemas
 from ..const import db
@@ -13,12 +13,13 @@ async def create_item(category_id: int, item: schemas.ItemCreate) -> schemas.Ite
 
 async def get_item(item_id: int, schema: type = schemas.Item) -> schemas.Item | None:
     query, args = f'SELECT * FROM "item" WHERE "id" = $1;', (item_id, )
-    db_item = (await db.select(query, args, schema)).first()
+    relation = Relation(columns=['*'], tablename='field', where=dict(item_id=item_id), ext_schema_t=schemas.Item, fieldname='fields', rel_schema_t=schemas.Field)
+    db_item = (await db.select(query, args, schema, [relation])).first()
     return db_item
 
 
 async def get_items(category_id: int, limit: int = inf, offset: int = 0, schema: type = schemas.Item) -> list[schemas.Item]:
-    query, args = f'SELECT * FROM "item" WHERE "category_id" = $1 LIMIT $2 OFFSET #3;', (category_id, limit, offset)
+    query, args = f'SELECT * FROM "item" WHERE "category_id" = $1 LIMIT $2 OFFSET $3;', (category_id, limit, offset)
     db_items = (await db.select(query, args, schema)).all()
     return db_items
 

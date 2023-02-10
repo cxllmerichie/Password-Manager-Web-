@@ -1,4 +1,6 @@
-from apidevtools import inf
+from asyncpg.exceptions import UniqueViolationError
+from fastapi import HTTPException
+from apidevtools import inf, Relation
 
 from .. import schemas
 from ..const import db
@@ -7,13 +9,17 @@ from .item import get_items, delete_item
 
 async def create_category(user_id: int, category: schemas.CategoryCreate) -> schemas.Category:
     category = schemas.CategoryCreateCrud(**dict(category), user_id=user_id)
-    db_category = await db.insert(category, schemas.Category)
-    return db_category
+    try:
+        db_category = await db.insert(category, schemas.Category)
+        return db_category
+    except UniqueViolationError:
+        raise HTTPException(status_code=400, detail=f'Category <{category.name}> already exists')
 
 
 async def get_category(category_id: int, schema: type = schemas.Category) -> schemas.Category | None:
     query, args = f'SELECT * FROM "category" WHERE "id" = $1;', (category_id, )
-    db_category = (await db.select(query, args, schema)).first()
+    relation = Relation(columns=['*'], tablename='item', where=dict(category_id=category_id), ext_schema_t=schemas.Category, fieldname='items', rel_schema_t=schemas.Item)
+    db_category = (await db.select(query, args, schema, [relation])).first()
     return db_category
 
 

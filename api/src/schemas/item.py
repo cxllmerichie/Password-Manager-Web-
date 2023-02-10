@@ -1,5 +1,7 @@
 from apidevtools import Schema
 
+from .field import Field
+
 
 class ItemBase(Schema):
     __tablename__ = 'item'
@@ -22,3 +24,4 @@ class ItemCreateCrud(ItemBase):
 
 class Item(ItemCreateCrud):
     id: int
+    fields: list[Field] = []
