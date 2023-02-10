@@ -18,9 +18,9 @@ struct DataField: Identifiable {
 class Item: Identifiable, ObservableObject, Equatable {
     var id: UUID = UUID()
     @Published var title: String
-    @Published var fields: [DataField] = []
     @Published var description: String
-    
+    @Published var fields: [DataField] = []
+
     init(title: String, fields: [DataField]=[], description: String = "") {
         self.title=title.titled()
         self.fields=fields

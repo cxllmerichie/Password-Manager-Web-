@@ -3,11 +3,10 @@ from datetime import datetime
 
 
 class UserBase(Schema):
+    __tablename__ = 'user'
+
     email: str
     avatar_url: str = None
-
-    def name(self) -> str:
-        return 'user'
 
     def pretty(self) -> Schema:
         self.email = self.email.lower()

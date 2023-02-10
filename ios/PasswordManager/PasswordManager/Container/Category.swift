@@ -5,9 +5,9 @@ import SwiftUI
 class Category: Identifiable, ObservableObject, Equatable {
     var id: UUID = UUID()
     @Published var name: String
-    @Published var items: [Item] = []
     @Published var description: String
-    
+    @Published var items: [Item] = []
+
     init(name: String, description: String = "") {
         self.name=name.titled()
         self.description=description

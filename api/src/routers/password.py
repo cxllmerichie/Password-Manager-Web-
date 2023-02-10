@@ -2,10 +2,8 @@ from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 from fastapi import APIRouter, Depends, HTTPException
 from random import randint
 
-from .. import crud, schemas
 
-
-router = APIRouter(tags=['User'])
+router = APIRouter(tags=['Password'])
 
 
 @router.get('/generate/', response_model=dict[str, str])
