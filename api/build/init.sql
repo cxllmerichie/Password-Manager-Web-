@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "user" (
     "id" SERIAL PRIMARY KEY,
-    "avatar_url" TEXT DEFAULT NULL,
+    "avatar_url" TEXT NOT NULL,
     "email" TEXT UNIQUE NOT NULL,
     "password" TEXT NOT NULL
 );

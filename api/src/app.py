@@ -1,44 +1,43 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import *
-from .database import db
+from . import const, routers
 
 
 app = FastAPI(
-    title='Title',
-    description='Description',
-    version='1.0.0',
+    title=const.API_TITLE,
+    description=const.API_DESCRIPTION,
+    version=const.API_VERSION,
     contact={
-        "name": "cxllmerichie",
-        "url": "https://github.com/cxllmerichie",
-        "email": "cxllmerichie@gmail.com",
+        'name': const.API_CONTACT_NAME,
+        'url': const.API_CONTACT_URL,
+        'email': const.API_CONTACT_EMAIL
     }
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
-    allow_methods=['*'],
-    allow_headers=['*'],
-    allow_credentials=True,
+    allow_origins=const.API_CORS_ORIGINS,
+    allow_methods=const.API_CORS_ALLOW_CREDENTIALS,
+    allow_headers=const.API_CORS_METHODS,
+    allow_credentials=const.API_CORS_HEADERS
 )
 
-app.include_router(auth_router)
-app.include_router(user_router)
-app.include_router(password_router)
-app.include_router(category_router)
-app.include_router(item_router)
-app.include_router(field_router)
+app.include_router(routers.auth_router)
+app.include_router(routers.user_router)
+app.include_router(routers.password_router)
+app.include_router(routers.category_router)
+app.include_router(routers.item_router)
+app.include_router(routers.field_router)
 
 
 @app.on_event('startup')
 async def startup():
-    if await db.create_pool():
+    if await const.db.create_pool():
         with open('api/build/init.sql', 'r') as file:
-            await db.execute(file.read())
+            await const.db.execute(file.read())
 
 
 @app.on_event('shutdown')
 async def shutdown():
-    await db.close_pool()
+    await const.db.close_pool()

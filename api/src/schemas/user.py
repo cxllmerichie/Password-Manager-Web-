@@ -1,5 +1,4 @@
 from apidevtools.simpleorm import Schema
-from datetime import datetime
 
 
 class UserBase(Schema):
@@ -23,4 +22,3 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     id: int
-    last_active: datetime

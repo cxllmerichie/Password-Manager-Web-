@@ -6,7 +6,6 @@ class ItemBase(Schema):
 
     title: str
     description: str = None
-    category_id: int
 
     def pretty(self) -> 'Schema':
         self.title = self.title.capitalize()
@@ -17,5 +16,9 @@ class ItemCreate(ItemBase):
     ...
 
 
-class Item(ItemBase):
-    ...
+class ItemCreateCrud(ItemBase):
+    category_id: int
+
+
+class Item(ItemCreateCrud):
+    id: int

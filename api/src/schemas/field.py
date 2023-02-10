@@ -6,12 +6,15 @@ class FieldBase(Schema):
 
     name: str
     value: str
-    item_id: int
 
 
 class FieldCreate(FieldBase):
     ...
 
 
-class Field(FieldBase):
-    ...
+class FieldCreateCrud(FieldBase):
+    item_id: int
+
+
+class Field(FieldCreateCrud):
+    id: int

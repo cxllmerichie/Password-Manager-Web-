@@ -6,10 +6,9 @@ class CategoryBase(Schema):
 
     name: str
     description: str = None
-    user_id: int
 
     def pretty(self) -> 'Schema':
-        self.name = self.title.capitalize()
+        self.name = self.name.capitalize()
         return self
 
 
@@ -17,5 +16,9 @@ class CategoryCreate(CategoryBase):
     ...
 
 
-class Category(CategoryBase):
-    ...
+class CategoryCreateCrud(CategoryBase):
+    user_id: int
+
+
+class Category(CategoryCreateCrud):
+    id: int
