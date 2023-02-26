@@ -1,4 +1,5 @@
-from apidevtools import Schema, Relation
+from apidevtools.simpleorm import Schema, Relation
+from datetime import datetime
 
 from .field import Field
 
@@ -6,10 +7,13 @@ from .field import Field
 class ItemBase(Schema):
     __tablename__ = 'item'
 
+    icon: str | bytes = None
     title: str
     description: str = None
+    expiration_date: datetime = None
+    is_favourite: bool = False
 
-    def pretty(self) -> 'Schema':
+    def into_db(self) -> Schema:
         self.title = self.title.capitalize()
         return self
 
@@ -24,7 +28,8 @@ class ItemCreateCrud(ItemBase):
 
 class Item(ItemCreateCrud):
     id: int
+
     fields: list[Field] = []
 
     def relations(self) -> list[Relation]:
-        return [Relation('field', dict(item_id=self.id), Item, 'fields', ['*'], Field)]
+        return [Relation('field', dict(item_id=self.id), Item, 'fields', Field, ['*'])]

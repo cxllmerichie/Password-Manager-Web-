@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from apidevtools import inf
+from apidevtools.utils import inf
 
 from .. import crud, schemas
 

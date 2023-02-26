@@ -1,21 +1,26 @@
-from apidevtools import Schema, Encryptor
+from apidevtools.security import encryptor
+from apidevtools.simpleorm import Schema
+
 from ..const import DB_CRYPTO_KEY
 
 
 class FieldBase(Schema):
     __tablename__ = 'field'
 
-    name: str
-    value: str
+    name: str | bytes
+    value: str | bytes
+    iv: bytes | None = None
 
-    def encrypted(self) -> Schema:
-        self.name = Encryptor.encrypt(self.name, Encryptor.key(DB_CRYPTO_KEY))
-        self.value = Encryptor.encrypt(self.value, Encryptor.key(DB_CRYPTO_KEY))
+    def into_db(self) -> Schema:
+        self.name, iv = encryptor.encrypt(self.name, DB_CRYPTO_KEY)
+        self.value, _ = encryptor.encrypt(self.value, DB_CRYPTO_KEY, iv)
+        self.iv = iv
         return self
 
-    def decrypted(self) -> Schema:
-        self.name = Encryptor.decrypt(self.name, Encryptor.key(DB_CRYPTO_KEY))
-        self.value = Encryptor.decrypt(self.value, Encryptor.key(DB_CRYPTO_KEY))
+    def from_db(self) -> Schema:
+        self.name = encryptor.decrypt(self.name, DB_CRYPTO_KEY, self.iv).decode()
+        self.value = encryptor.decrypt(self.value, DB_CRYPTO_KEY, self.iv).decode()
+        self.iv = None
         return self
 
 

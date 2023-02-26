@@ -1,13 +1,15 @@
-from apidevtools.simpleorm import Schema, Relation
+from apidevtools import Schema, Relation
 
-from .category import Category
+from .item import Item
+
 
 class UserBase(Schema):
     __tablename__ = 'user'
 
     email: str
+    avatar_url: str = None
 
-    def into_db(self) -> Schema:
+    def pretty(self) -> Schema:
         self.email = self.email.lower()
         return self
 
@@ -16,16 +18,12 @@ class UserCreate(UserBase):
     password: str
 
 
-class UserUpdate(UserBase):
-    ...
-
-
 class User(UserBase):
     id: int
 
-    categories: list[Category] = []
+    items: list[Item] = []
 
     def relations(self) -> list[Relation]:
         return [
-            Relation('category', dict(user_id=self.id), User, 'categories', Category, ['*'])
+            Relation('item', dict(user_id=self.id), User, 'items', Item, ['*']),
         ]

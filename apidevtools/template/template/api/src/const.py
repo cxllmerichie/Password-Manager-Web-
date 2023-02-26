@@ -1,9 +1,10 @@
 from dotenv import load_dotenv
 from os import getenv
-from apidevtools.simpleorm import PostgreSQL
+from apidevtools import PostgreSQL
 
 
-assert load_dotenv('api/.env')
+# assert load_dotenv('api/.env')
+assert load_dotenv('apidevtools/template/template/api/.env')
 
 DB_NAME: str = getenv('DB_NAME')
 DB_HOST: str = getenv('DB_HOST')
@@ -27,6 +28,5 @@ API_CORS_METHODS: list[str] = getenv('API_CORS_METHODS', '*').split(',')
 API_CORS_HEADERS: list[str] = getenv('API_CORS_HEADERS', '*').split(',')
 
 JWT_SECRET_KEY: str = getenv('JWT_SECRET_KEY')
-DB_CRYPTO_KEY: str = getenv('DB_CRYPTO_KEY')
 
 db = PostgreSQL(database=DB_NAME, host=DB_HOST, port=DB_PORT, user=DB_USER, password=DB_PASS)
