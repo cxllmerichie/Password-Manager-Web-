@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS "field" (
 
     "name" BYTEA NOT NULL,
     "value" BYTEA NOT NULL,
-    "iv" BYTEA NOT NULL,
 
     "item_id" INT NOT NULL,
     CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")

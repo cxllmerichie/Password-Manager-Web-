@@ -2,12 +2,13 @@ from apidevtools.simpleorm import Schema, Relation
 
 from .category import Category
 
+
 class UserBase(Schema):
     __tablename__ = 'user'
 
     email: str
 
-    def into_db(self) -> Schema:
+    async def into_db(self) -> Schema:
         self.email = self.email.lower()
         return self
 
@@ -27,5 +28,5 @@ class User(UserBase):
 
     def relations(self) -> list[Relation]:
         return [
-            Relation('category', dict(user_id=self.id), User, 'categories', Category, ['*'])
+            Relation(User, 'categories', Category, dict(user_id=self.id))
         ]

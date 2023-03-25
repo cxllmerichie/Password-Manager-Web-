@@ -11,7 +11,7 @@ class CategoryBase(Schema):
     description: str = None
     is_favourite: bool = False
 
-    def into_db(self) -> Schema:
+    async def into_db(self) -> Schema:
         self.name = self.name.capitalize()
         return self
 
@@ -30,4 +30,4 @@ class Category(CategoryCreateCrud):
     items: list[Item] = []
 
     def relations(self) -> list[Relation]:
-        return [Relation('item', dict(category_id=self.id), Category, 'items', Item, ['*'])]
+        return [Relation(Category, 'items', Item, dict(category_id=self.id))]

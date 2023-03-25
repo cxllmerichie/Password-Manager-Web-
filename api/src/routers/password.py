@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
-from string_utils import shuffle
+from fastapi import APIRouter
 import string
 import random
+
 
 router = APIRouter(tags=['Password'])
 

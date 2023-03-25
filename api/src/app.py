@@ -34,7 +34,7 @@ app.include_router(routers.field_router)
 @app.on_event('startup')
 async def startup():
     if await const.db.create_pool():
-        with open('api/build/init.sql', 'r') as file:
+        with open('api/build/postgres.sql', 'r') as file:
             await const.db.execute(file.read())
 
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from apidevtools.utils import inf
+from apidevtools import LIMIT
 
 from .. import crud, schemas
 
@@ -22,7 +22,7 @@ async def _(category_id: int,
 
 
 @router.get('/categories/', name='Get all categories of my user', response_model=list[schemas.Category])
-async def _(limit: int = inf, offset: int = 0, user: schemas.User = Depends(crud.get_current_user)):
+async def _(limit: int = LIMIT, offset: int = 0, user: schemas.User = Depends(crud.get_current_user)):
     db_categories = await crud.get_categories(user_id=user.id, limit=limit, offset=offset)
     return db_categories
 

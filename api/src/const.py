@@ -1,15 +1,22 @@
 from dotenv import load_dotenv
 from os import getenv
-from apidevtools.simpleorm import PostgreSQL
+from apidevtools.simpleorm import ORM
+from apidevtools.simpleorm.connectors.postgresql import PostgreSQL
+from apidevtools.logman import LoggerManager, Logger
+from apidevtools.simpleorm.redis import Redis
 
 
 assert load_dotenv('api/.env')
 
-DB_NAME: str = getenv('DB_NAME')
-DB_HOST: str = getenv('DB_HOST')
-DB_PORT: int = int(getenv('DB_PORT'))
-DB_USER: str = getenv('DB_USER')
-DB_PASS: str = getenv('DB_PASS')
+POSTGRESQL_DATABASE: str = getenv('POSTGRESQL_DATABASE')
+POSTGRESQL_HOST: str = getenv('POSTGRESQL_HOST')
+POSTGRESQL_PORT: int = int(getenv('POSTGRESQL_PORT'))
+POSTGRESQL_USER: str = getenv('POSTGRESQL_USER')
+POSTGRESQL_PASSWORD: str = getenv('POSTGRESQL_PASSWORD')
+
+REDIS_HOST: str = getenv('REDIS_HOST')
+REDIS_PORT: int = int(getenv('REDIS_PORT'))
+REDIS_PASSWORD: str = getenv('REDIS_PASSWORD')
 
 API_HOST: str = getenv('API_HOST', '127.0.0.1')
 API_PORT: int = int(getenv('API_PORT', 8000))
@@ -27,6 +34,24 @@ API_CORS_METHODS: list[str] = getenv('API_CORS_METHODS', '*').split(',')
 API_CORS_HEADERS: list[str] = getenv('API_CORS_HEADERS', '*').split(',')
 
 JWT_SECRET_KEY: str = getenv('JWT_SECRET_KEY')
-DB_CRYPTO_KEY: str = getenv('DB_CRYPTO_KEY')
 
-db = PostgreSQL(database=DB_NAME, host=DB_HOST, port=DB_PORT, user=DB_USER, password=DB_PASS)
+LOGMAN: LoggerManager = LoggerManager()
+LOGGER: Logger = LOGMAN.add('MAIN', 'logs/log.log')
+LOGGER_DATABASE: Logger = LOGMAN.add('DATABASE', 'database/log.log')
+
+db = ORM(
+    connector=PostgreSQL(
+        database=POSTGRESQL_DATABASE,
+        host=POSTGRESQL_HOST,
+        port=POSTGRESQL_PORT,
+        user=POSTGRESQL_USER,
+        password=POSTGRESQL_PASSWORD
+    ),
+    logger=LOGGER_DATABASE
+)
+
+redis = Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    password=REDIS_PASSWORD
+)

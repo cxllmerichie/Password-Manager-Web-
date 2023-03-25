@@ -13,7 +13,7 @@ class ItemBase(Schema):
     expiration_date: datetime = None
     is_favourite: bool = False
 
-    def into_db(self) -> Schema:
+    async def into_db(self) -> Schema:
         self.title = self.title.capitalize()
         return self
 
@@ -32,4 +32,4 @@ class Item(ItemCreateCrud):
     fields: list[Field] = []
 
     def relations(self) -> list[Relation]:
-        return [Relation('field', dict(item_id=self.id), Item, 'fields', Field, ['*'])]
+        return [Relation(Item, 'fields', Field, dict(item_id=self.id))]
