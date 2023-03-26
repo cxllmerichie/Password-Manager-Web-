@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS "item" (
 );
 
 CREATE TABLE IF NOT EXISTS "field" (
-    "id" SERIAL PRIMARY KEY,
+    "id" UUID PRIMARY KEY,
 
     "name" BYTEA NOT NULL,
     "value" BYTEA NOT NULL,

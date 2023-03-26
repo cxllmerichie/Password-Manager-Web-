@@ -1,28 +1,31 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 import string
 import random
+
+from .. import schemas
 
 
 router = APIRouter(tags=['Password'])
 
 
-@router.get('/generate/', name='Generate password', response_model=dict[str, str])
-def _(length: int = 20, uppercase: bool = True, lowercase: bool = True, digits: bool = True, special: bool = True):
-    symset = []
-    if uppercase:
-        symset.append(string.ascii_uppercase)
-    if lowercase:
-        symset.append(string.ascii_lowercase)
-    if digits:
-        symset.append(string.digits)
-    if special:
-        symset.append(string.punctuation)
-    random.shuffle(symset)
+@router.get('/generate/', name='Generate password', response_model=schemas.Password)
+def _(length: int = 20,
+      uppercase: str = string.ascii_uppercase, lowercase: str = string.ascii_lowercase,
+      digits: str = string.digits, specials: str = string.punctuation, discarded: str = '"\'/\\<>;:&%@$'):
+    symsets = [cs for s in [uppercase, lowercase, digits, specials] if len(cs := ''.join(set(s).difference(set(discarded))))]
+    if not len(symsets):
+        raise HTTPException(status_code=400, detail='No symbols to generate a password from given arguments')
+    random.shuffle(symsets)
     password = ''
-    for i in range(len(symset) - 1):
-        for _ in range(length // len(symset)):
-            password += random.choice(symset[i])
+    for i in range(len(symsets) - 1):
+        for _ in range(length // len(symsets)):
+            password += random.choice(symsets[i])
     while len(password) != length:
-        password += random.choice(symset[-1])
-    password = shuffle(password)
-    return dict(password=password)
+        password += random.choice(symsets[-1])
+    password = ''.join(random.sample(password, len(password)))
+    # pass None if not len(someset) else someset
+    return schemas.Password(
+        password=password, length=length,
+        uppercase=uppercase, lowercase=lowercase,
+        digits=digits, special=specials, discarded=discarded
+    )

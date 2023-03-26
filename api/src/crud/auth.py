@@ -17,13 +17,14 @@ async def authenticate_user(email: str, password: str):
 
 
 async def create_token(user: schemas.User):
-    token = jwt.encode(user.serializable(), const.JWT_SECRET_KEY, algorithm='HS256')
+    db_user = await get_user(user_id=user.id, schema=schemas.UserCreate)
+    token = jwt.encode(dict(db_user), const.JWT_SECRET_KEY, algorithm=const.JWT_ALGORITHM)
     return dict(access_token=token, token_type='bearer')
 
 
 async def get_current_user(token: str = Depends(OAuth2Bearer(tokenUrl='/auth/token/'))) -> schemas.User:
     try:
-        payload = jwt.decode(token, const.JWT_SECRET_KEY, algorithms=['HS256'])
+        payload = jwt.decode(token, const.JWT_SECRET_KEY, algorithms=[const.JWT_ALGORITHM])
     except Exception:
         raise HTTPException(status_code=401, detail='Authorization error')
     db_user = await get_user(email=payload['email'], schema=schemas.User)

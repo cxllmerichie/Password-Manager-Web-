@@ -1,4 +1,5 @@
 from apidevtools.simpleorm import Schema, Relation
+from pydantic import BaseModel
 
 from .category import Category
 
@@ -30,3 +31,13 @@ class User(UserBase):
         return [
             Relation(User, 'categories', Category, dict(user_id=self.id))
         ]
+
+
+class UserToken(BaseModel):
+    access_token: str
+    token_type: str
+    user: User
+
+
+class UserAuth(BaseModel):
+    email: str

@@ -14,8 +14,11 @@ POSTGRESQL_PORT: int = int(getenv('POSTGRESQL_PORT'))
 POSTGRESQL_USER: str = getenv('POSTGRESQL_USER')
 POSTGRESQL_PASSWORD: str = getenv('POSTGRESQL_PASSWORD')
 
+REDIS_KEYS_DATABASE: int = int(getenv('REDIS_KEYS_DATABASE'))
+REDIS_TOKENS_DATABASE: int = int(getenv('REDIS_TOKENS_DATABASE'))
 REDIS_HOST: str = getenv('REDIS_HOST')
 REDIS_PORT: int = int(getenv('REDIS_PORT'))
+REDIS_USER: str = getenv('REDIS_USER', None)
 REDIS_PASSWORD: str = getenv('REDIS_PASSWORD')
 
 API_HOST: str = getenv('API_HOST', '127.0.0.1')
@@ -29,15 +32,16 @@ API_CONTACT_URL: str = getenv('API_CONTACT_URL')
 API_CONTACT_EMAIL: str = getenv('API_CONTACT_EMAIL')
 
 API_CORS_ORIGINS: list[str] = getenv('API_CORS_ORIGINS', '*').split(',')
-API_CORS_ALLOW_CREDENTIALS: bool = getenv('API_CORS_ALLOW_CREDENTIALS', 'Y') == 'Y'
+API_CORS_ALLOW_CREDENTIALS: bool = getenv('API_CORS_ALLOW_CREDENTIALS', 'Y')[0].upper() == 'Y'
 API_CORS_METHODS: list[str] = getenv('API_CORS_METHODS', '*').split(',')
 API_CORS_HEADERS: list[str] = getenv('API_CORS_HEADERS', '*').split(',')
 
 JWT_SECRET_KEY: str = getenv('JWT_SECRET_KEY')
+JWT_ALGORITHM: str = getenv('JWT_ALGORITHM')
 
 LOGMAN: LoggerManager = LoggerManager()
 LOGGER: Logger = LOGMAN.add('MAIN', 'logs/log.log')
-LOGGER_DATABASE: Logger = LOGMAN.add('DATABASE', 'database/log.log')
+LOGGER_POSTGRES: Logger = LOGMAN.add('DATABASE', 'database/log.log')
 
 db = ORM(
     connector=PostgreSQL(
@@ -47,11 +51,21 @@ db = ORM(
         user=POSTGRESQL_USER,
         password=POSTGRESQL_PASSWORD
     ),
-    logger=LOGGER_DATABASE
+    logger=LOGGER_POSTGRES
 )
 
-redis = Redis(
+keys = Redis(
+    database=REDIS_KEYS_DATABASE,
     host=REDIS_HOST,
     port=REDIS_PORT,
+    user=REDIS_USER,
+    password=REDIS_PASSWORD
+)
+
+tokens = Redis(
+    database=REDIS_TOKENS_DATABASE,
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    user=REDIS_USER,
     password=REDIS_PASSWORD
 )

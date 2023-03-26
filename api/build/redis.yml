@@ -1,12 +1,10 @@
 version: '3.3'
 services:
   redis:
-    container_name: 'password_manager'
+    container_name: 'password_manager__redis'
     ports:
       - '6379:6379'
-    environment:
-      REDIS_DB: 'password_manager'
-      REDIS_USER: 'postgres'
-      REDIS_PASSWORD: '3doTd73Rdj5B2DlA4N'
     image: redis
     restart: always
+#    command: redis-server --databases 2 --bind localhost --port 6379 --appendonly yes --requirepass "LAIOAyNd9`H4v{FrWs2c8p2e=y552v#3L6[4U]b1<4u@?#]C&2"
+    command: redis-server --databases 2 --appendonly yes --requirepass "LAIOAyNd9`H4v{FrWs2c8p2e=y552v#3L6[4U]b1<4u@?#]C&2"
