@@ -10,9 +10,9 @@ router = APIRouter(tags=['Password'])
 
 @router.get('/generate/', name='Generate password', response_model=schemas.Password)
 def _(length: int = 20,
-      uppercase: str = string.ascii_uppercase, lowercase: str = string.ascii_lowercase,
-      digits: str = string.digits, specials: str = string.punctuation, discarded: str = '"\'/\\<>;:&%@$'):
-    symsets = [cs for s in [uppercase, lowercase, digits, specials] if len(cs := ''.join(set(s).difference(set(discarded))))]
+      uppercase: str | None = string.ascii_uppercase, lowercase: str | None = string.ascii_lowercase,
+      digits: str | None = string.digits, specials: str | None = string.punctuation, discarded: str | None = '"\'/\\<>;:&%@$'):
+    symsets = [clean_symset for symset in [uppercase, lowercase, digits, specials] if symset and len(clean_symset := ''.join(set(symset).difference(set(discarded))))]
     if not len(symsets):
         raise HTTPException(status_code=400, detail='No symbols to generate a password from given arguments')
     random.shuffle(symsets)
@@ -23,9 +23,5 @@ def _(length: int = 20,
     while len(password) != length:
         password += random.choice(symsets[-1])
     password = ''.join(random.sample(password, len(password)))
-    # pass None if not len(someset) else someset
-    return schemas.Password(
-        password=password, length=length,
-        uppercase=uppercase, lowercase=lowercase,
-        digits=digits, special=specials, discarded=discarded
-    )
+
+    return schemas.Password(password=password, length=length)

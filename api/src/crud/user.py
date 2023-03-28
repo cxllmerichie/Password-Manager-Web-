@@ -11,7 +11,7 @@ async def create_user(user: schemas.UserCreate) -> schemas.User:
 
 
 async def get_user(user_id: int = None, email: str = None, schema: type = schemas.User) -> schemas.User | None:
-    field, value = ('email', email) if email else ('id', user_id)
+    field, value = ('email', email.lower()) if email else ('id', user_id)
     query, args = f'SELECT * FROM "user" WHERE "{field}" = $1;', (value, )
     db_user = await (await db.select(query, args, schema, rel_depth=3)).first()
     return db_user

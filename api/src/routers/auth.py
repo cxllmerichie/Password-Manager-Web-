@@ -7,12 +7,12 @@ from .. import crud, schemas
 router = APIRouter(tags=['AUTH'])
 
 
-@router.post('/auth/token/', name='Generate token', response_model=schemas.UserToken)
+@router.post('/auth/token/', name='Generate token', response_model=schemas.Token)
 async def _(form: OAuth2Form = Depends(OAuth2Form)):
     db_user = await crud.authenticate_user(email=form.username, password=form.password)
     if not db_user:
         raise HTTPException(status_code=401, detail='Invalid credentials')
-    return schemas.UserToken(**dict(await crud.create_token(user=db_user)), user=db_user)
+    return await crud.create_token(user=db_user)
 
 
 @router.get('/users/current/', name='Get current user', response_model=schemas.User)

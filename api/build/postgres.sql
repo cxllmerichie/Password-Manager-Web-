@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS "user" (
     "id" SERIAL PRIMARY KEY,
 
-    "avatar" BYTEA DEFAULT NULL,
+    "avatar" BYTEA NOT NULL,
     "email" TEXT UNIQUE NOT NULL,
     "password" TEXT NOT NULL
 );
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 CREATE TABLE IF NOT EXISTS "category" (
     "id" SERIAL PRIMARY KEY,
 
-    "icon" BYTEA DEFAULT NULL,
+    "icon" BYTEA NOT NULL,
     "name" TEXT NOT NULL UNIQUE,
     "description" TEXT DEFAULT NULL,
     "is_favourite" BOOLEAN DEFAULT FALSE,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "category" (
 CREATE TABLE IF NOT EXISTS "item" (
     "id" SERIAL PRIMARY KEY,
 
-    "icon" BYTEA DEFAULT NULL,
+    "icon" BYTEA NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT DEFAULT NULL,
     "expiration_date" TIMESTAMP DEFAULT NULL,

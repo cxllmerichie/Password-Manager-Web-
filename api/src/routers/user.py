@@ -12,7 +12,7 @@ async def _(user: schemas.UserCreate):
     if db_user:
         raise HTTPException(status_code=400, detail=f'Email <{user.email}> already registered')
     db_user = await crud.create_user(user=user)
-    return schemas.UserToken(**(await crud.create_token(user=db_user)), user=db_user.dict())
+    return schemas.UserToken(**dict(await crud.create_token(user=db_user)), **dict(db_user))
 
 
 @router.put('/users/', name='Update my user', response_model=schemas.User)

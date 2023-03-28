@@ -16,6 +16,7 @@ POSTGRESQL_PASSWORD: str = getenv('POSTGRESQL_PASSWORD')
 
 REDIS_KEYS_DATABASE: int = int(getenv('REDIS_KEYS_DATABASE'))
 REDIS_TOKENS_DATABASE: int = int(getenv('REDIS_TOKENS_DATABASE'))
+REDIS_IMAGES_DATABASE: int = int(getenv('REDIS_IMAGES_DATABASE'))
 REDIS_HOST: str = getenv('REDIS_HOST')
 REDIS_PORT: int = int(getenv('REDIS_PORT'))
 REDIS_USER: str = getenv('REDIS_USER', None)
@@ -41,7 +42,10 @@ JWT_ALGORITHM: str = getenv('JWT_ALGORITHM')
 
 LOGMAN: LoggerManager = LoggerManager()
 LOGGER: Logger = LOGMAN.add('MAIN', 'logs/log.log')
-LOGGER_POSTGRES: Logger = LOGMAN.add('DATABASE', 'database/log.log')
+LOGGER_API: Logger = LOGMAN.add('API', 'logs/api.log')
+LOGGER_POSTGRES: Logger = LOGMAN.add('DATABASE', 'logs/database.log')
+LOGGER_KEYS: Logger = LOGMAN.add('KEYS', 'logs/keys.log')
+LOGGER_IMAGES: Logger = LOGMAN.add('IMAGES', 'logs/images.log')
 
 db = ORM(
     connector=PostgreSQL(
@@ -64,6 +68,14 @@ keys = Redis(
 
 tokens = Redis(
     database=REDIS_TOKENS_DATABASE,
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    user=REDIS_USER,
+    password=REDIS_PASSWORD
+)
+
+images = Redis(
+    database=REDIS_IMAGES_DATABASE,
     host=REDIS_HOST,
     port=REDIS_PORT,
     user=REDIS_USER,
