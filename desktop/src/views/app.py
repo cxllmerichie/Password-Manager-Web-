@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QStackedWidget
-from PyQt5.QtCore import pyqtSlot, QSettings, QObject, QSize
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import QSettings, QSize
 
 from ..css import app
 from ..components import StatusBar, MenuBar, AppPages
@@ -11,7 +11,7 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setObjectName(self.__class__.__name__)
-        # self.setStyleSheet(application.Application)
+        self.setStyleSheet(app.css)
         self.settings = QSettings('cxllmerichie', 'PasswordManagerDesktop', self)
 
     async def init(self) -> 'App':

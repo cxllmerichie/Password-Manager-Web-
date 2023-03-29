@@ -1,27 +1,16 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QFrame, QPushButton
-from PyQt5.QtCore import QSize, Qt, QObject
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QLabel, QFrame
+from PyQt5.QtCore import Qt
 
 from ..css import sign_in
+from ..widgets import Button, Label, LInput
 
 
 class SignIn(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
         self.setStyleSheet(sign_in.css)
         self.setAttribute(Qt.WA_StyledBackground, True)
-
-    async def input_label(self, text: str) -> QLabel:
-        lbl = QLabel(self)
-        lbl.setObjectName('SignInInputLabel')
-        lbl.setText(text)
-        return lbl
-
-    async def input_field(self, placeholder: str) -> QLineEdit:
-        inp = QLineEdit(self)
-        inp.setObjectName('SignInInputField')
-        inp.setPlaceholderText(placeholder)
-        return inp
 
     async def input_frame(self, label: QLabel, field: QLineEdit) -> QFrame:
         frame = QFrame(self)
@@ -35,26 +24,25 @@ class SignIn(QWidget):
         frame.setLayout(vbox)
         return frame
 
-    async def sign_in_btn(self, text: str) -> QPushButton:
-        btn = QPushButton(self)
-        btn.setObjectName('SignInBtn')
-        btn.setText(text)
-        return btn
-
     async def __layout(self):
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0, 0, 0, 0)
         vbox.setSpacing(10)
         vbox.setAlignment(Qt.AlignVCenter)
         vbox.addWidget(await self.input_frame(
-            await self.input_label('Email'),
-            await self.input_field('address@domen'),
+            await Label(self).init('Email', 'SignInInputLabel'),
+            await LInput(self).init('address@domain', 'SignInInputField'),
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await self.input_frame(
-            await self.input_label('Password'),
-            await self.input_field('password'),
+            await Label(self).init('Password', 'SignInInputLabel'),
+            await LInput(self).init('password', 'SignInInputField', password=True),
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(await self.sign_in_btn('Log in'), alignment=Qt.AlignHCenter)
+        vbox.addWidget(await Button(self).init(
+            'Don\'t have an account?', 'SignInDontHaveBtn', lambda: self.parent().setCurrentIndex(1)
+        ), alignment=Qt.AlignHCenter)
+        vbox.addWidget(await Button(self).init(
+            'Login', 'SignInBtn', lambda: self.parent().setCurrentIndex(2)
+        ), alignment=Qt.AlignHCenter)
         return vbox
 
     async def init(self):

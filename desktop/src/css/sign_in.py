@@ -34,4 +34,11 @@ css = f'''
     background-color: {Color.main};
     color: white;
 }}
+
+#SignInDontHaveBtn {{
+    height: 20px;
+    color: white;
+    font-size: 14px;
+    background-color: transparent;
+}}
 '''
