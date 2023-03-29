@@ -3,7 +3,7 @@ from apidevtools.security import encryptor
 from apidevtools.simpleorm import Schema
 from uuid import uuid4, UUID
 
-from ..const import keys, LOGGER_KEYS
+from ..const import keys
 
 
 class FieldBase(Schema):
@@ -16,12 +16,11 @@ class FieldBase(Schema):
     async def into_db(self) -> Schema:
         self.name, key = encryptor.encrypt(self.name)
         self.value, _ = encryptor.encrypt(self.value, key)
-        LOGGER_KEYS.info(f'New key set for {self.id}')
+        await keys.set(self.id, key)
         return self
 
     async def from_db(self) -> Schema:
         if key := await keys.get(self.id, convert=True):
-            print(key, type(key))
             self.name = encryptor.decrypt(self.name, key, convert=True)
             self.value = encryptor.decrypt(self.value, key, convert=True)
         return self

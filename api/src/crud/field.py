@@ -8,6 +8,12 @@ async def create_field(item_id: int, field: schemas.FieldCreate) -> schemas.Fiel
     return db_field
 
 
+async def get_fields(item_id: int, schema: type = schemas.Field) -> list[schemas.Field]:
+    query, args = f'SELECT * FROM "field" WHERE "item_id" = $1;', (item_id, )
+    db_fields = await (await db.select(query, args, schema)).all()
+    return db_fields
+
+
 async def get_field(field_id: int, schema: type = schemas.Field) -> schemas.Field | None:
     query, args = f'SELECT * FROM "field" WHERE "id" = $1;', (field_id, )
     db_field = await (await db.select(query, args, schema)).first()

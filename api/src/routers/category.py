@@ -18,10 +18,12 @@ async def _(category: schemas.CategoryCreate,
 async def _(category_id: int,
             user: schemas.User = Depends(crud.get_current_user)):
     db_category = await crud.get_category(category_id=category_id)
+    if not db_category:
+        raise HTTPException(status_code=404, detail=f'Category <{category_id}> does not exist')
     return db_category
 
 
-@router.get('/categories/', name='Get all categories of my user', response_model=list[schemas.Category])
+@router.get('/categories/', name='Get my categories', response_model=list[schemas.Category])
 async def _(limit: int = LIMIT, offset: int = 0, user: schemas.User = Depends(crud.get_current_user)):
     db_categories = await crud.get_categories(user_id=user.id, limit=limit, offset=offset)
     return db_categories
@@ -30,12 +32,16 @@ async def _(limit: int = LIMIT, offset: int = 0, user: schemas.User = Depends(cr
 @router.put('/categories/', name='Update category by id', response_model=schemas.Category)
 async def _(category_id: int, category: schemas.CategoryCreate,
             user: schemas.User = Depends(crud.get_current_user)):
-    db_user = await crud.update_category(category_id=category_id, category=category)
-    return db_user
+    db_category = await crud.update_category(category_id=category_id, category=category)
+    if not db_category:
+        raise HTTPException(status_code=404, detail=f'Category <{category_id}> does not exist')
+    return db_category
 
 
-@router.delete('/categories/', name='Delete category by id', status_code=200)
+@router.delete('/categories/', name='Delete category by id', response_model=schemas.Category)
 async def _(category_id: int,
             user: schemas.User = Depends(crud.get_current_user)):
-    await crud.delete_category(category_id=category_id)
-    return dict(detail=f'Successfully deleted category <{category_id}>')
+    db_category = await crud.delete_category(category_id=category_id)
+    if not db_category:
+        raise HTTPException(status_code=404, detail=f'Category <{category_id}> does not exist')
+    return db_category

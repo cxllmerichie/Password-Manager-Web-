@@ -45,6 +45,7 @@ LOGGER: Logger = LOGMAN.add('MAIN', 'logs/log.log')
 LOGGER_API: Logger = LOGMAN.add('API', 'logs/api.log')
 LOGGER_POSTGRES: Logger = LOGMAN.add('DATABASE', 'logs/database.log')
 LOGGER_KEYS: Logger = LOGMAN.add('KEYS', 'logs/keys.log')
+LOGGER_TOKENS: Logger = LOGMAN.add('TOKENS', 'logs/tokens.log')
 LOGGER_IMAGES: Logger = LOGMAN.add('IMAGES', 'logs/images.log')
 
 db = ORM(
@@ -63,7 +64,8 @@ keys = Redis(
     host=REDIS_HOST,
     port=REDIS_PORT,
     user=REDIS_USER,
-    password=REDIS_PASSWORD
+    password=REDIS_PASSWORD,
+    logger=LOGGER_KEYS
 )
 
 tokens = Redis(
@@ -71,7 +73,8 @@ tokens = Redis(
     host=REDIS_HOST,
     port=REDIS_PORT,
     user=REDIS_USER,
-    password=REDIS_PASSWORD
+    password=REDIS_PASSWORD,
+    logger=LOGGER_TOKENS
 )
 
 images = Redis(
@@ -79,5 +82,6 @@ images = Redis(
     host=REDIS_HOST,
     port=REDIS_PORT,
     user=REDIS_USER,
-    password=REDIS_PASSWORD
+    password=REDIS_PASSWORD,
+    logger=LOGGER_IMAGES
 )
