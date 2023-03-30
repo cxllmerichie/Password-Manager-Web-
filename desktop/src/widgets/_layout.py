@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget
 
 
-class Layout(ABC):
+class Layout:
     Left = Qt.AlignLeft
     LeftTop = Qt.AlignLeft | Qt.AlignTop
     LeftCenter = Qt.AlignLeft | Qt.AlignVCenter

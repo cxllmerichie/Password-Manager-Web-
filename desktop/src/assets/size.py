@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QSize
 from dataclasses import dataclass
+from PyQt5.QtCore import QSize
 
 
 @dataclass()

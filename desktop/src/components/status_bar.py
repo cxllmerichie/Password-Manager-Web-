@@ -7,6 +7,6 @@ class StatusBar(QStatusBar):
         self.setObjectName(self.__class__.__name__)
 
     async def init(self) -> 'StatusBar':
-        self.showMessage('Awesome Editor v1.0')
+        self.showMessage('Password Manager')
         self.setStyleSheet('color: black;')
         return self

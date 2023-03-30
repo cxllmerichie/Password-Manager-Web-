@@ -30,16 +30,16 @@ class SignUp(QWidget):
         vbox.setSpacing(10)
         vbox.setAlignment(Qt.AlignVCenter)
         vbox.addWidget(await self.input_frame(
-            await Label(self).init('Email', 'SignUpInputLabel'),
-            await LInput(self).init('address@domain', 'SignUpInputField'),
+            await Label(self, 'SignUpInputLabel').init(text='Email'),
+            await LInput(self, 'SignUpInputField').init(placeholder='address@domain'),
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await self.input_frame(
-            await Label(self).init('Password', 'SignUpInputLabel'),
-            await LInput(self).init('password', 'SignUpInputField', hidden=True),
+            await Label(self, 'SignUpInputLabel').init(text='Password'),
+            await LInput(self, 'SignUpInputField').init(placeholder='password', hidden=True),
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await self.input_frame(
-            await Label(self).init('Confirm password', 'SignUpInputLabel'),
-            await LInput(self).init('password', 'SignUpInputField', hidden=True),
+            await Label(self, 'SignUpInputLabel').init(text='Confirm password'),
+            await LInput(self, 'SignUpInputField').init(placeholder='password', hidden=True),
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await Button(self, 'SignUpAlreadyHaveBtn').init(
             text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)

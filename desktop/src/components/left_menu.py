@@ -5,7 +5,7 @@ from typing import Any
 
 from ..css import left_menu
 from ..widgets import Button, Label, HLayout
-from ..assets import Icon, Size
+from ..assets import Icons, Sizes, Icon
 
 
 class CountableButton(QPushButton):
@@ -13,19 +13,19 @@ class CountableButton(QPushButton):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
 
-    async def init(self, icon: str, isize: QSize, text, count: int | list[Any, ...],
+    async def init(self, icon: Icon, text, count: int | list[Any, ...],
                    *, name: str = None, alignment: Qt.Alignment = None) -> 'CountableButton':
         layout = HLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setAlignment(Qt.AlignLeft)
-        layout.addWidget(await Button(self).init(
-            '', 'CountableButtonIcon', size=isize, icon=QIcon(icon), isize=isize
+        layout.addWidget(await Button(self, 'CountableButtonIcon').init(
+            size=icon.size, icon=icon
         ), alignment=Qt.AlignLeft)
-        layout.addWidget(await Label(self).init(
-            text, 'CountableButtonLbl', alignment
+        layout.addWidget(await Label(self, 'CountableButtonLbl').init(
+            text=text, alignment=alignment
         ), alignment=Qt.AlignLeft)
-        layout.addWidget(await Label(self).init(
-            str(count) if isinstance(count, int) else str(len(count)), 'CountableButtonCountLbl'
+        layout.addWidget(await Label(self, 'CountableButtonCountLbl').init(
+            text=str(count) if isinstance(count, int) else str(len(count))
         ), alignment=Qt.AlignRight)
         self.setLayout(layout)
         if name:
@@ -46,10 +46,10 @@ class LeftMenu(QWidget):
         vbox.setAlignment(Qt.AlignTop)
         vbox.setSpacing(10)
         vbox.addWidget(await CountableButton(self).init(
-            Icon.HOME, Size.HomeIcon, 'All items', 0, alignment=Qt.AlignBottom | Qt.AlignLeft
+            Icons.HOME, 'All items', 0, alignment=Qt.AlignBottom | Qt.AlignLeft
         ), alignment=Qt.AlignLeft)
         vbox.addWidget(await CountableButton(self).init(
-            Icon.FAVOURITE, Size.StarIcon, 'Favourites', 0, alignment=Qt.AlignBottom | Qt.AlignLeft
+            Icons.FAVOURITE, 'Favourites', 0, alignment=Qt.AlignBottom | Qt.AlignLeft
         ), alignment=Qt.AlignLeft)
         # vbox.addWidget(await Label(self).init(
         #     'Categories', 'LeftMenuCategoriesLabel'

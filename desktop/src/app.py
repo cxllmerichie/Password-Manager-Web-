@@ -2,9 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import QSettings, QSize, Qt
 
 from .css import app
-from .components import StatusBar, MenuBar
-from .views.main_view import CentralWidget
-from .assets import Icons, Sizes
+# from .components import StatusBar, MenuBar
 
 
 class App(QMainWindow):
@@ -12,9 +10,15 @@ class App(QMainWindow):
         super().__init__()
         self.setObjectName(self.__class__.__name__)
         self.setStyleSheet(app.css)
-        self.settings = QSettings(organization='cxllmerichie', application='PasswordManagerDesktop', parent=self)
+        self.settings = QSettings('cxllmerichie', 'PasswordManagerDesktop', self)
 
     async def init(self) -> 'App':
+        # both imports must be placed exactly here, otherwise `Process finished with exit code -1073740791 (0xC0000409)`
+        # issue: while indexing it sees the import and usage from PyQt5 in `assets`, and PyQt5 itself conflicts
+        # with another created thread in `main.py` creating another thread in `assets`
+        from .assets import Sizes
+        from .views.main_view import CentralWidget
+
         self.resize(Sizes.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
         # self.setWindowTitle('Password Manager by <cxllmerichie>')

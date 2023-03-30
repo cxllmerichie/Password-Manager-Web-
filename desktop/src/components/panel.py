@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QMouseEvent, QResizeEvent
 from PyQt5.QtCore import Qt, QSize
 
 from ..css import panel
-from ..widgets import Button, Label
-from ..assets import Icon
+from ..widgets import Button, Label, HLayout, VLayout
+from ..assets import Icons
 
 
 class Panel(QWidget):
@@ -18,10 +18,10 @@ class Panel(QWidget):
         self.setLayout(await self.__layout())
         return self
 
-    async def __layout(self) -> QHBoxLayout:
-        hbox = QHBoxLayout()
+    async def __layout(self) -> HLayout:
+        hbox = await HLayout().init()
         hbox.addWidget(await Button(self, 'ToggleLeftMenuBtn').init(
-            slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icon.MENU
+            slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
         ), alignment=Qt.AlignLeft)
         return hbox
 

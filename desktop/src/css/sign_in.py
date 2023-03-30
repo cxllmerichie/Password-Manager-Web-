@@ -1,4 +1,4 @@
-from ..assets import Color, Size
+from ..assets import Color, Sizes
 
 
 css = f'''
@@ -9,14 +9,14 @@ css = f'''
 #SignInInputLabel {{
     font-size: 20px;
     font-weight: bold;
-    height: {Size.AuthInputLabel.h}px;
+    height: {Sizes.AuthInputLabel.h}px;
     color: white;
 }}
 
 #SignInInputField {{
     font-size: 16px;
-    height: {Size.AuthInputField.h}px;
-    min-width: {Size.AuthInputField.w}px;
+    height: {Sizes.AuthInputField.h}px;
+    min-width: {Sizes.AuthInputField.w}px;
     border: none;
     background-color: transparent;
     color: white;
@@ -28,16 +28,16 @@ css = f'''
 }}
 
 #SignInBtn {{
-    min-width: {Size.AuthMainBtn.w}px;
-    height: {Size.AuthMainBtn.h}px;
+    min-width: {Sizes.AuthMainBtn.w}px;
+    height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
     font-weight: bold;
-    background-color: {Color.Main};
+    background-color: {Color.MAINRED};
     color: white;
 }}
 
 #SignInDontHaveBtn {{
-    height: {Size.AuthTextBtn.h}px;
+    height: {Sizes.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
     background-color: transparent;

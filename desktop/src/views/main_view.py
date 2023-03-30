@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QHBoxLayout, QFrame
 from PyQt5.QtCore import Qt
 
-from desktop.src.views import SignUp, SignIn
+from .sign_in import SignIn
+from .sign_up import SignUp
 from ..widgets import VLayout, HLayout, Frame
 from ..components import LeftMenu, RightPages, CenterPages, Panel
 
