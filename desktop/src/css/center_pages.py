@@ -1,5 +1,8 @@
+from ..assets import Color
+
+
 css = f'''
 #CenterPages {{
-    background-color: green;    
+    background-color: {Color.BACKGROUND};
 }}
 '''

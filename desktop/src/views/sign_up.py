@@ -35,17 +35,17 @@ class SignUp(QWidget):
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await self.input_frame(
             await Label(self).init('Password', 'SignUpInputLabel'),
-            await LInput(self).init('password', 'SignUpInputField', password=True),
+            await LInput(self).init('password', 'SignUpInputField', hidden=True),
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await self.input_frame(
             await Label(self).init('Confirm password', 'SignUpInputLabel'),
-            await LInput(self).init('password', 'SignUpInputField', password=True),
+            await LInput(self).init('password', 'SignUpInputField', hidden=True),
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(await Button(self).init(
-            'Already have an account?', 'SignUpAlreadyHaveBtn', lambda: self.parent().setCurrentIndex(0)
+        vbox.addWidget(await Button(self, 'SignUpAlreadyHaveBtn').init(
+            text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(await Button(self).init(
-            'Create Account', 'SignUpBtn'
+        vbox.addWidget(await Button(self, 'SignUpBtn').init(
+            text='Create Account'
         ), alignment=Qt.AlignHCenter)
         return vbox
 

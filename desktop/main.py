@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QApplication
 import sys
 import asyncio
 
-from src import App
+from src.app import App
 
 
 async def amain():
@@ -14,5 +14,5 @@ async def amain():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(amain())
+    LOOP = asyncio.get_event_loop()
+    LOOP.run_until_complete(amain())

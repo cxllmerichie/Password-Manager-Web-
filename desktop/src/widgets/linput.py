@@ -2,13 +2,16 @@ from PyQt5.QtWidgets import QLineEdit, QWidget
 
 
 class LInput(QLineEdit):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QWidget, name: str):
         super().__init__(parent)
+        self.setObjectName(name)
 
-    async def init(self, placeholder: str, name: str, *, text: str = '', password: bool = False) -> 'LInput':
+    async def init(
+            self, *,
+            placeholder: str = '', text: str = '', hidden: bool = False
+    ) -> 'LInput':
         self.setText(text)
         self.setPlaceholderText(placeholder)
-        self.setObjectName(name)
-        if password:
+        if hidden:
             self.setEchoMode(QLineEdit.Password)
         return self

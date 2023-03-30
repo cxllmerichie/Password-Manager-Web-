@@ -1,21 +1,21 @@
-from PyQt5.QtWidgets import QStackedWidget, QWidget
+from PyQt5.QtWidgets import QStackedWidget, QWidget, QHBoxLayout, QFrame
 from PyQt5.QtCore import Qt
 
 from desktop.src.views import SignUp, SignIn
-from ..widgets import VBox, HBox
+from ..widgets import VLayout, HLayout, Frame
 from ..components import LeftMenu, RightPages, CenterPages, Panel
 
 
-class AppPages(QStackedWidget):
+class CentralWidget(QStackedWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
 
-    async def init(self) -> 'AppPages':
+    async def init(self) -> 'CentralWidget':
         self.layout().setAlignment(Qt.AlignHCenter)
         self.addWidget(await SignIn(self).init())
         self.addWidget(await SignUp(self).init())
-        self.addWidget(await AppView(self).init())
+        self.addWidget(await MainView(self).init())
         if not self.parent().settings.value('access_token'):
             self.setCurrentIndex(0)
         else:
@@ -23,23 +23,20 @@ class AppPages(QStackedWidget):
         return self
 
 
-class AppView(QWidget):
+class MainView(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
 
-    async def __layout(self) -> VBox:
-        vbox = await VBox().init()
+    async def init(self) -> 'MainView':
+        vbox = await VLayout().init()
+        vbox.addWidget(await Panel(self).init(), alignment=Qt.AlignTop)
 
-        hbox = await HBox(self).init()
+        hbox = await HLayout(self).init()
         hbox.addWidget(await LeftMenu(self, 200).init())
         hbox.addWidget(await CenterPages(self).init())
         hbox.addWidget(await RightPages(self, 200).init())
+        vbox.addWidget(Frame(self, 'AppViewFrame', hbox))
 
-        vbox.addWidget(await Panel(self).init())
-        vbox.addLayout(hbox)
-        return vbox
-
-    async def init(self) -> 'AppView':
-        self.setLayout(await self.__layout())
+        self.setLayout(vbox)
         return self

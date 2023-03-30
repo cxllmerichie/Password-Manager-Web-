@@ -4,16 +4,22 @@ from PyQt5.QtCore import QSize
 
 
 class Button(QPushButton):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QWidget, name: str):
         super().__init__(parent)
-
-    async def init(self,
-                   text: str, name: str, signal: callable = lambda: None,
-                   *, icon: str = None, isize: QSize = QSize(25, 25)) -> 'Button':
-        self.setText(text)
         self.setObjectName(name)
-        self.clicked.connect(signal)
+
+    async def init(
+            self, *,
+            text: str = '',
+            size: QSize = None, icon: tuple[QIcon, QSize] = None,
+            disabled: bool = False, slot: callable = lambda: None
+    ) -> 'Button':
+        self.setText(text)
+        self.clicked.connect(slot)
+        if size:
+            self.setFixedSize(size)
         if icon:
-            self.setIcon(QIcon(icon))
-            self.setIconSize(isize)
+            self.setIcon(QIcon(icon[0]))
+            self.setIconSize(icon[1])
+        self.setDisabled(disabled)
         return self

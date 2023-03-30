@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QLabel, QFrame
 from PyQt5.QtCore import Qt
 
 from ..css import sign_in
-from ..widgets import Button, Label, LInput
+from ..widgets import Button, Label, LInput, Frame
 
 
 class SignIn(QWidget):
@@ -13,8 +13,7 @@ class SignIn(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     async def input_frame(self, label: QLabel, field: QLineEdit) -> QFrame:
-        frame = QFrame(self)
-        frame.setObjectName('SignInInputFrame')
+        frame = Frame(self, 'SignInInputFrame')
         vbox = QVBoxLayout(frame)
         vbox.setContentsMargins(5, 5, 5, 5)
         vbox.setSpacing(5)
@@ -30,18 +29,18 @@ class SignIn(QWidget):
         vbox.setSpacing(10)
         vbox.setAlignment(Qt.AlignVCenter)
         vbox.addWidget(await self.input_frame(
-            await Label(self).init('Email', 'SignInInputLabel'),
-            await LInput(self).init('address@domain', 'SignInInputField'),
+            await Label(self, 'SignInInputLabel').init(text='Email'),
+            await LInput(self, 'SignInInputField').init(placeholder='address@domain'),
         ), alignment=Qt.AlignHCenter)
         vbox.addWidget(await self.input_frame(
-            await Label(self).init('Password', 'SignInInputLabel'),
-            await LInput(self).init('password', 'SignInInputField', password=True),
+            await Label(self, 'SignInInputLabel').init(text='Password'),
+            await LInput(self, 'SignInInputField').init(placeholder='password', hidden=True),
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(await Button(self).init(
-            'Don\'t have an account?', 'SignInDontHaveBtn', lambda: self.parent().setCurrentIndex(1)
+        vbox.addWidget(await Button(self, 'SignInDontHaveBtn').init(
+            text='Don\'t have an account?', slot=lambda: self.parent().setCurrentIndex(1)
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(await Button(self).init(
-            'Login', 'SignInBtn', lambda: self.parent().setCurrentIndex(2)
+        vbox.addWidget(await Button(self, 'SignInBtn').init(
+            text='Login', slot=lambda: self.parent().setCurrentIndex(2)
         ), alignment=Qt.AlignHCenter)
         return vbox
 
