@@ -10,3 +10,5 @@ class Icon:
     minimize = source('minus.svg')
     restore = source('square.svg')
     cross = source('x.svg')
+    home = source('home.svg')
+    star = source('star.svg')

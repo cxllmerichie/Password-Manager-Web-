@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import QSettings, QSize
 
 from ..css import app
-from ..components import StatusBar, MenuBar, AppPages
+from ..components import StatusBar, MenuBar
+from .app_view import AppPages
 from ..assets import Icon
 
 

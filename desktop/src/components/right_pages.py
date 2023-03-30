@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QStackedWidget, QWidget
 from PyQt5.QtCore import Qt
 
-from ..widgets import SideMenu
+from ..widgets import ExpandWidget
 from ..css import right_pages
 
 
-class RightPages(SideMenu):
+class RightPages(ExpandWidget):
     def __init__(self, parent: QWidget, width: int):
         super().__init__(parent, width)
         self.setObjectName(self.__class__.__name__)
