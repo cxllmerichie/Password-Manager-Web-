@@ -1,9 +1,9 @@
-from ..assets import Color, Sizes
+from ..assets import Colors, Sizes
 
 
 css = f'''
 #SignIn {{
-    background-color: {Color.BACKGROUND};
+    background-color: {Colors.BACKGROUND};
 }}
 
 #SignInInputLabel {{
@@ -24,7 +24,7 @@ css = f'''
 
 #SignInInputFrame {{
     border-radius: 10px;
-    background-color: {Color.FOREGROUND};
+    background-color: {Colors.FOREGROUND};
 }}
 
 #SignInBtn {{
@@ -32,8 +32,12 @@ css = f'''
     height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
     font-weight: bold;
-    background-color: {Color.MAINRED};
+    background-color: {Colors.MAINRED};
     color: white;
+}}
+
+#SignInBtn:hover {{
+    background-color: {Colors.MAINRED_HOVER};
 }}
 
 #SignInDontHaveBtn {{
@@ -41,5 +45,10 @@ css = f'''
     color: white;
     font-size: 14px;
     background-color: transparent;
+}}
+
+#AuthExitBtn {{
+    background-color: transparent;
+    border: none;    
 }}
 '''

@@ -15,9 +15,9 @@ class Icon:
 
 class Icons:
     APP = Icon('icon.png', (40, 40))
-    MINIMIZE = Icon('minus.svg', (40, 40))
-    RESTORE = Icon('square.svg', (40, 40))
-    CROSS = Icon('x.svg', (40, 40))
-    HOME = Icon('home.svg', (25, 25))
-    FAVOURITE = Icon('star.svg', (25, 25))
-    MENU = Icon('menu.svg', (40, 40))
+    MINIMIZE = Icon('minus.svg', (25, 25))
+    RESTORE = Icon('square.svg', (20, 20))
+    CROSS = Icon('x.svg', (27, 27))
+    HOME = Icon('home.svg', (20, 20))
+    FAVOURITE = Icon('star.svg', (20, 20))
+    MENU = Icon('menu.svg', (25, 25))

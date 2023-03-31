@@ -15,16 +15,15 @@ class Layout:
 
     VCenter = Qt.AlignVCenter
     VCenterTop = Qt.AlignVCenter | Qt.AlignTop
-    VCenterCenter = Qt.AlignVCenter | Qt.AlignHCenter
     VCenterBottom = Qt.AlignVCenter | Qt.AlignBottom
 
     HCenter = Qt.AlignHCenter
     HCenterTop = Qt.AlignHCenter | Qt.AlignTop
-    HCenterCenter = Qt.AlignHCenter | Qt.AlignVCenter
     HCenterBottom = Qt.AlignHCenter | Qt.AlignBottom
 
     Top = Qt.AlignTop
     Bottom = Qt.AlignBottom
+    CenterCenter = Qt.AlignHCenter | Qt.AlignVCenter
 
     @abstractmethod
     async def init(

@@ -1,8 +1,8 @@
-from ..assets import Color, Sizes
+from ..assets import Colors, Sizes
 
 css = f'''
 #SignUp {{
-    background-color: {Color.BACKGROUND};
+    background-color: {Colors.BACKGROUND};
 }}
 
 #SignUpInputLabel {{
@@ -23,7 +23,7 @@ css = f'''
 
 #SignUpInputFrame {{
     border-radius: 10px;
-    background-color: {Color.FOREGROUND};
+    background-color: {Colors.FOREGROUND};
 }}
 
 #SignUpBtn {{
@@ -31,8 +31,12 @@ css = f'''
     height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
     font-weight: bold;
-    background-color: {Color.MAINRED};
+    background-color: {Colors.MAINRED};
     color: white;
+}}
+
+#SignUpBtn:hover {{
+    background-color: {Colors.MAINRED_HOVER};
 }}
 
 #SignUpAlreadyHaveBtn {{
@@ -40,5 +44,10 @@ css = f'''
     color: white;
     font-size: 14px;
     background-color: transparent;
+}}
+
+#AuthExitBtn {{
+    background-color: transparent;
+    border: none;    
 }}
 '''

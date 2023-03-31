@@ -1,5 +1,8 @@
+from ..assets import Colors
+
+
 css = f'''
 #RightPages {{
-    background-color: blue;    
+    background-color: {Colors.FOREGROUND};    
 }}
 '''

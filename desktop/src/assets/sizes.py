@@ -14,3 +14,5 @@ class Sizes:
     AuthMainBtn = Size(200, 30)
     AuthInputLabel = Size(..., 25)
     AuthInputField = Size(300, 25)
+    PanelNavigationBtn = QSize(30, 30)
+    NoCategoriesLbl = QSize(150, 50)

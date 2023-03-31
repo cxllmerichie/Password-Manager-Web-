@@ -34,10 +34,10 @@ class MainView(QWidget):
         vbox.addWidget(await Panel(self).init(), alignment=Qt.AlignTop)
 
         hbox = await HLayout(self).init()
-        hbox.addWidget(await LeftMenu(self, 200).init())
+        hbox.addWidget(await LeftMenu(self, 220).init())
         hbox.addWidget(await CenterPages(self).init())
         hbox.addWidget(await RightPages(self, 200).init())
-        vbox.addWidget(Frame(self, 'AppViewFrame', hbox))
+        vbox.addWidget(await Frame(self, 'AppViewFrame').init(layout=hbox))
 
         self.setLayout(vbox)
         return self

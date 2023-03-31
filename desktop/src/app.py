@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import QSettings, QSize, Qt
+from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import Qt
 
 from .css import app
-# from .components import StatusBar, MenuBar
 
 
 class App(QMainWindow):
@@ -18,6 +18,7 @@ class App(QMainWindow):
         # with another created thread in `main.py` creating another thread in `assets`
         from .assets import Sizes
         from .views.main_view import CentralWidget
+        from .components import StatusBar, MenuBar
 
         self.resize(Sizes.App)
         self.setWindowFlag(Qt.FramelessWindowHint)

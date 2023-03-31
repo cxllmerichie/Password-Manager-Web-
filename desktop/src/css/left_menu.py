@@ -1,13 +1,15 @@
-from ..assets import Color
+from ..assets import Colors
 
 
 css = f'''
 #LeftMenu {{
-    background-color: {Color.FOREGROUND};    
+    background-color: {Colors.FOREGROUND};    
 }}
 
+#LeftMenuItemsLabel,
 #LeftMenuCategoriesLabel {{
-
+    font-size: 20px;
+    color: white;
 }}
 
 #CountableButtonIcon {{
@@ -16,23 +18,25 @@ css = f'''
 
 #CountableButtonLbl {{
     background-color: transparent;
-    font-size: 20px;
-    min-width: 120px;
+    font-size: 16px;
+    min-width: 110px;
     color: white;
 }}
 
 #CountableButtonCountLbl {{
     background-color: transparent;
-    font-size: 18px;
+    font-size: 14px;
     color: white;
     border: 1px solid white;
     border-radius: 5px;
     min-width: 30px;
+    max-height: 18px;
 }}
 
 #CountableButton {{
-    background-color: transparent;
-    min-width: 180px;
+    background-color: {Colors.BACKGROUND};
+    min-width: 200px;
+    min-height: 30px;
     color: white;
     font-size: 20px;
     height: 25px;
@@ -40,6 +44,12 @@ css = f'''
 }}
 
 #CountableButton:hover {{
-    background-color: {Color.FOREGROUND};
+    background-color: {Colors.MAINRED};
+}}
+
+#NoCategoriesLbl {{
+    color: white;
+    font-size: 14px;
+    font-style: italic;
 }}
 '''

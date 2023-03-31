@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QMouseEvent, QResizeEvent
 from PyQt5.QtCore import Qt, QSize
 
 from ..css import panel
-from ..widgets import Button, Label, HLayout, VLayout
-from ..assets import Icons
+from ..widgets import Button, Label, HLayout, VLayout, Frame
+from ..assets import Icons, Sizes
 
 
 class Panel(QWidget):
@@ -19,23 +19,40 @@ class Panel(QWidget):
         return self
 
     async def __layout(self) -> HLayout:
-        hbox = await HLayout().init()
-        hbox.addWidget(await Button(self, 'ToggleLeftMenuBtn').init(
+        layout = await HLayout().init(spacing=10)
+        layout.addWidget(await Button(self, 'ToggleLeftMenuBtn').init(
             slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
         ), alignment=Qt.AlignLeft)
-        return hbox
+        layout.addWidget(await Label(self, 'PanelTitleLbl').init(
+            text='Password Manager by <cxllmerichie>'
+        ), alignment=Qt.AlignLeft)
+        layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self.setFixedWidth(self.__get_app.width())
+        hlayout = await HLayout().init(alignment=HLayout.Right)
+        hlayout.addWidget(await Button(self, 'PanelMinimizeBtn').init(
+            icon=Icons.MINIMIZE, size=Sizes.PanelNavigationBtn, slot=self.app.showMinimized
+        ))
+        hlayout.addWidget(await Button(self, 'PanelRestoreBtn').init(
+            icon=Icons.RESTORE, size=Sizes.PanelNavigationBtn,
+            slot=lambda: self.app.showNormal() if self.app.isMaximized() else self.app.showMaximized()
+        ))
+        hlayout.addWidget(await Button(self, 'PanelCloseBtn').init(
+            icon=Icons.CROSS, size=Sizes.PanelNavigationBtn, slot=self.app.close
+        ))
+        layout.addWidget(await Frame(self).init(layout=hlayout))
+        return layout
 
     @property
-    def __get_app(self) -> 'App':
+    def app(self) -> 'App':
         return self.parent().parent().parent()  # App.AppPages.AppView.Panel
 
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.setFixedWidth(self.app.width())
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.__get_app.setProperty('position', event.globalPos())
+        self.app.setProperty('position', event.globalPos())
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        delta = event.globalPos() - self.__get_app.property('position')
-        self.__get_app.move(self.__get_app.x() + delta.x(), self.__get_app.y() + delta.y())
-        self.__get_app.setProperty('position', event.globalPos())
+        delta = event.globalPos() - self.app.property('position')
+        self.app.move(self.app.x() + delta.x(), self.app.y() + delta.y())
+        self.app.setProperty('position', event.globalPos())
