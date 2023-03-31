@@ -18,7 +18,7 @@ class CentralWidget(QStackedWidget):
         self.addWidget(await SignUp(self).init())
         self.addWidget(await MainView(self).init())
         if not self.parent().settings.value('access_token'):
-            self.setCurrentIndex(0)
+            self.setCurrentIndex(2)
         else:
             self.setCurrentIndex(2)
         return self

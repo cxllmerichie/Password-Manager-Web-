@@ -1,4 +1,4 @@
-from ..assets import Colors, Sizes
+from ..const import Colors, Sizes
 
 css = f'''
 #SignUp {{

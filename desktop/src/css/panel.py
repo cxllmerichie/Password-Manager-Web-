@@ -1,10 +1,10 @@
-from ..assets import Icon, Size, Colors
+from ..const import Sizes, Colors
 
 
 css: str = f'''
 #Panel {{
     background-color: {Colors.FOREGROUND};
-    min-height: 30px;
+    min-height: {Sizes.Panel.h}px;
 }}
 
 #ToggleLeftMenuBtn {{

@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QSpacerItem, QSizePolicy
-from PyQt5.QtGui import QMouseEvent, QResizeEvent
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtCore import Qt
 
 from ..css import panel
-from ..widgets import Button, Label, HLayout, VLayout, Frame
-from ..assets import Icons, Sizes
+from ..widgets import Button, Label, HLayout, Frame
+from ..const import Icons, Sizes
 
 
 class Panel(QWidget):
@@ -24,7 +24,10 @@ class Panel(QWidget):
             slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
         ), alignment=Qt.AlignLeft)
         layout.addWidget(await Label(self, 'PanelTitleLbl').init(
-            text='Password Manager by <cxllmerichie>'
+            text='Password Manager'
+        ), alignment=Qt.AlignLeft)
+        layout.addWidget(await Label(self, 'PanelTitleLbl').init(
+            icon=Icons.APP
         ), alignment=Qt.AlignLeft)
         layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
@@ -45,9 +48,6 @@ class Panel(QWidget):
     @property
     def app(self) -> 'App':
         return self.parent().parent().parent()  # App.AppPages.AppView.Panel
-
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self.setFixedWidth(self.app.width())
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.app.setProperty('position', event.globalPos())

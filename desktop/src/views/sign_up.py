@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 
 from ..css import sign_up
 from ..widgets import Button, Label, LInput, VLayout, Spacer
-from ..assets import Icons
+from ..const import Icons
 
 
 class SignUp(QWidget):

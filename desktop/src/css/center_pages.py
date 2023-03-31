@@ -1,4 +1,4 @@
-from ..assets import Colors
+from ..const import Colors
 
 
 css = f'''

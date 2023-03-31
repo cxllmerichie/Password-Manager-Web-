@@ -1,9 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QLabel, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel, QSizePolicy
 from PyQt5.QtCore import Qt
 
 from ..css import sign_in
 from ..widgets import Button, Label, LInput, Frame, VLayout, Spacer
-from ..assets import Icons
+from ..const import Icons
 
 
 class SignIn(QWidget):

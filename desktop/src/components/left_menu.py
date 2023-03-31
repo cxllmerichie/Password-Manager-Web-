@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QPushButton
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt
 from typing import Any
 
 from ..css import left_menu
 from ..widgets import Button, Label, HLayout, VLayout, SideMenu
-from ..assets import Icons, Sizes, Icon
+from ..const import Icons, Sizes, Icon
 
 
 class CountableButton(QPushButton):
@@ -57,15 +57,15 @@ class LeftMenu(QWidget, SideMenu):
         vlayout.addWidget(await Label(self, 'LeftMenuCategoriesLabel').init(
             text='Categories'
         ))
-        categories = ['Facebook', 'Instagram', 'Telegram', 'Github', 'JetBrains']
-        categories = []
+        categories = ['Facebook', 'Instagram', 'Telegram', 'Github', 'JetBrains', 'Binance', 'WhiteBit', 'CryptoCom',
+                      'Gmail', 'Google', 'Outlook', 'PyPi', 'Kuna.io']
         for category in categories:
             vlayout.addWidget(await CountableButton(self).init(
                 icon=Icons.FAVOURITE, text=category, total=0
             ), alignment=Qt.AlignLeft)
         if not len(categories):
             vlayout.addWidget(await Label(self, 'NoCategoriesLbl').init(
-                text='You don\'t have categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
+                text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
                 wrap=True, size=Sizes.NoCategoriesLbl
             ), alignment=VLayout.CenterCenter)
         return vlayout
