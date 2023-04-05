@@ -52,4 +52,44 @@ css = f'''
     font-size: 14px;
     font-style: italic;
 }}
+
+#CategoriesScrollArea {{
+    background-color: transparent;
+    border: none;
+}}
+
+#CategoriesScrollAreaWidget {{
+    background-color: transparent;
+    border: none;
+}}
+
+QScrollBar:vertical {{
+    background: white;
+    width: 7px;
+    border: none;
+    border-radius: 3px;
+    margin: 0px 0 1px 0;
+}}
+
+QScrollBar::handle:vertical {{
+    background: {Colors.MAINRED};
+    border-radius: 3px;
+}}
+
+QScrollBar::add-line:vertical {{
+    height: 0px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}}
+
+QScrollBar::sub-line:vertical {{
+    height: 0px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {{
+    background: none;
+}}
 '''

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from uuid import UUID
 
 from .. import crud, schemas
 
@@ -7,7 +8,7 @@ router = APIRouter(tags=['Field'])
 
 
 @router.post('/items/{item_id}/fields/', name='Add new field to item by id', response_model=schemas.Field)
-async def _(item_id: int, field: schemas.FieldCreate,
+async def _(item_id: UUID, field: schemas.FieldCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.get_item(item_id=item_id)
     if not db_item:
@@ -17,7 +18,7 @@ async def _(item_id: int, field: schemas.FieldCreate,
 
 
 @router.get('/items/{item_id}/fields/', name='Get field by id', response_model=list[schemas.Field])
-async def _(item_id: int,
+async def _(item_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.get_item(item_id=item_id)
     if not db_item:
@@ -27,14 +28,14 @@ async def _(item_id: int,
 
 
 @router.get('/fields/{field_id}/', name='Get field by id', response_model=schemas.Field)
-async def _(field_id: int,
+async def _(field_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
     db_field = await crud.get_field(field_id=field_id)
     return db_field
 
 
 @router.put('/fields/{field_id}/', name='Update field by id', response_model=schemas.Field)
-async def _(field_id: int, field: schemas.FieldCreate,
+async def _(field_id: UUID, field: schemas.FieldCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_field = await crud.update_field(field_id=field_id, field=field)
     if not db_field:
@@ -43,7 +44,7 @@ async def _(field_id: int, field: schemas.FieldCreate,
 
 
 @router.delete('/fields/{field_id}/', name='Delete field by id', status_code=200)
-async def _(field_id: int,
+async def _(field_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
     await crud.delete_field(field_id=field_id)
     return dict(detail=f'Successfully deleted field <{field_id}>')

@@ -1,37 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QPushButton
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
-from typing import Any
 
 from ..css import left_menu
-from ..widgets import Button, Label, HLayout, VLayout, SideMenu
-from ..const import Icons, Sizes, Icon
-
-
-class CountableButton(QPushButton):
-    def __init__(self, parent: QWidget, name: str = None):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
-        if name:
-            self.setObjectName(name)
-
-    async def init(
-            self, *,
-            icon: Icon, text, total: int | list[Any, ...],
-            alignment: Qt.Alignment = None, slot: callable = lambda: None
-    ) -> 'CountableButton':
-        layout = await HLayout().init(margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft)
-        layout.addWidget(await Button(self, 'CountableButtonIcon').init(
-            size=icon.size, icon=icon, disabled=True
-        ))
-        layout.addWidget(await Label(self, 'CountableButtonLbl').init(
-            text=text, alignment=alignment
-        ))
-        layout.addWidget(await Label(self, 'CountableButtonCountLbl').init(
-            text=str(total) if isinstance(total, int) else str(len(total))
-        ), alignment=Qt.AlignRight)
-        self.setLayout(layout)
-        self.clicked.connect(slot)
-        return self
+from ..widgets import Label, VLayout, SideMenu, ScrollArea
+from ..const import Icons, Sizes
+from ..components.countable_button import CountableButton
 
 
 class LeftMenu(QWidget, SideMenu):
@@ -58,16 +31,17 @@ class LeftMenu(QWidget, SideMenu):
             text='Categories'
         ))
         categories = ['Facebook', 'Instagram', 'Telegram', 'Github', 'JetBrains', 'Binance', 'WhiteBit', 'CryptoCom',
-                      'Gmail', 'Google', 'Outlook', 'PyPi', 'Kuna.io']
-        for category in categories:
-            vlayout.addWidget(await CountableButton(self).init(
-                icon=Icons.FAVOURITE, text=category, total=0
-            ), alignment=Qt.AlignLeft)
+                      'Gmail', 'Google', 'Outlook', 'PyPi', 'Kuna.io', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
         if not len(categories):
             vlayout.addWidget(await Label(self, 'NoCategoriesLbl').init(
                 text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
                 wrap=True, size=Sizes.NoCategoriesLbl
             ), alignment=VLayout.CenterCenter)
+        else:
+            items = [await CountableButton(self).init(icon=Icons.FAVOURITE, text=c, total=0) for c in categories]
+            sarea = await ScrollArea(self, 'CategoriesScrollArea').init(items)
+            sarea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            vlayout.addWidget(sarea)
         return vlayout
 
     async def init(self) -> 'LeftMenu':

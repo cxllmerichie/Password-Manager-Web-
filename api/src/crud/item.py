@@ -1,4 +1,5 @@
 from apidevtools.utils import INF
+from uuid import UUID
 
 from .. import schemas
 from ..const import db
@@ -10,7 +11,7 @@ async def create_item(category_id: int, item: schemas.ItemCreate) -> schemas.Ite
     return db_item
 
 
-async def get_item(item_id: int, schema: type = schemas.Item) -> schemas.Item | None:
+async def get_item(item_id: UUID, schema: type = schemas.Item) -> schemas.Item | None:
     query, args = f'SELECT * FROM "item" WHERE "id" = $1;', (item_id, )
     db_item = await (await db.select(query, args, schema, rel_depth=1)).first()
     return db_item
@@ -22,11 +23,11 @@ async def get_items(category_id: int, limit: int = INF, offset: int = 0, schema:
     return db_items
 
 
-async def update_item(item_id: int, item: schemas.ItemCreate) -> schemas.Item:
+async def update_item(item_id: UUID, item: schemas.ItemCreate) -> schemas.Item:
     db_item = await (await db.update(item, dict(id=item_id), schemas.Item)).first()
     return db_item
 
 
-async def delete_item(item_id: int) -> schemas.Item:
+async def delete_item(item_id: UUID) -> schemas.Item:
     db_item = await (await db.delete(dict(id=item_id), schemas.Item, 'item')).first()
     return db_item

@@ -1,7 +1,7 @@
-from pydantic import Field as _Field
 from apidevtools.security import encryptor
 from apidevtools.simpleorm import Schema
 from uuid import uuid4, UUID
+import pydantic
 
 from ..const import keys
 
@@ -9,9 +9,9 @@ from ..const import keys
 class FieldBase(Schema):
     __tablename__ = 'field'
 
-    id: UUID = _Field(default_factory=uuid4)
-    name: str | bytes = _Field(default=..., min_length=1)
-    value: str | bytes = _Field(default=..., min_length=1)
+    id: UUID = pydantic.Field(default_factory=uuid4)
+    name: str | bytes = pydantic.Field(default=..., min_length=1)
+    value: str | bytes = pydantic.Field(default=..., min_length=1)
 
     async def into_db(self) -> Schema:
         self.name, key = encryptor.encrypt(self.name)
@@ -31,7 +31,7 @@ class FieldCreate(FieldBase):
 
 
 class FieldCreateCrud(FieldBase):
-    item_id: int = _Field(default=...)
+    item_id: UUID = pydantic.Field(default=...)
 
 
 class Field(FieldCreateCrud):
