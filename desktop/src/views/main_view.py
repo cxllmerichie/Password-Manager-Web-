@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QStackedWidget, QWidget, QHBoxLayout, QFrame
+from PyQt5.QtWidgets import QStackedWidget, QWidget
 from PyQt5.QtCore import Qt
 
 from .sign_in import SignIn
@@ -37,7 +37,7 @@ class MainView(QWidget):
         hbox.addWidget(await LeftMenu(self, 220).init())
         hbox.addWidget(await CenterPages(self).init())
         hbox.addWidget(await RightPages(self, 200).init())
-        vbox.addWidget(await Frame(self, 'AppViewFrame').init(layout=hbox))
 
+        vbox.addWidget(await Frame(self, 'MainViewFrame').init(layout=hbox))
         self.setLayout(vbox)
         return self

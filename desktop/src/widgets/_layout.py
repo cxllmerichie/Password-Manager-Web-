@@ -14,8 +14,8 @@ class Layout:
     RightBottom = Qt.AlignRight | Qt.AlignBottom
 
     VCenter = Qt.AlignVCenter
-    VCenterTop = Qt.AlignVCenter | Qt.AlignTop
-    VCenterBottom = Qt.AlignVCenter | Qt.AlignBottom
+    VCenterLeft = Qt.AlignVCenter | Qt.AlignLeft
+    VCenterRight = Qt.AlignVCenter | Qt.AlignRight
 
     HCenter = Qt.AlignHCenter
     HCenterTop = Qt.AlignHCenter | Qt.AlignTop

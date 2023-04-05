@@ -12,4 +12,6 @@ class CenterPages(QStackedWidget):
         self.setStyleSheet(center_pages.css)
 
     async def init(self) -> 'CenterPages':
+        self.addWidget(await Items(self).init(items=[]))
+        self.setCurrentIndex(0)
         return self

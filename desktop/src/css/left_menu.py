@@ -76,6 +76,10 @@ QScrollBar::handle:vertical {{
     border-radius: 3px;
 }}
 
+QScrollBar::handle:vertical:hover {{
+    background: {Colors.MAINRED_HOVER};
+}}
+
 QScrollBar::add-line:vertical {{
     height: 0px;
     subcontrol-position: bottom;

@@ -31,7 +31,7 @@ class LeftMenu(QWidget, SideMenu):
             text='Categories'
         ))
         categories = ['Facebook', 'Instagram', 'Telegram', 'Github', 'JetBrains', 'Binance', 'WhiteBit', 'CryptoCom',
-                      'Gmail', 'Google', 'Outlook', 'PyPi', 'Kuna.io', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
+                      'Gmail', 'Google', 'Outlook', 'PyPi', 'Kuna.io', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
         if not len(categories):
             vlayout.addWidget(await Label(self, 'NoCategoriesLbl').init(
                 text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
@@ -39,7 +39,7 @@ class LeftMenu(QWidget, SideMenu):
             ), alignment=VLayout.CenterCenter)
         else:
             items = [await CountableButton(self).init(icon=Icons.FAVOURITE, text=c, total=0) for c in categories]
-            sarea = await ScrollArea(self, 'CategoriesScrollArea').init(items)
+            sarea = await ScrollArea(self, 'CategoriesScrollArea').init(items=items)
             sarea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             vlayout.addWidget(sarea)
         return vlayout
