@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from typing import Any
 
 from ..widgets import Button, Label, HLayout
-from ..const import Icon
+from ..misc import Icon
 
 
 class CountableButton(QPushButton):

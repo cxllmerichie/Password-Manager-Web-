@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QLabel, QWidget
 from PyQt5.QtCore import Qt, QSize
 
-from ..const import Icon, Size
+from ..misc import Icon, Size
 
 
 class Label(QLabel):

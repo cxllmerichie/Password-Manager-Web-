@@ -8,10 +8,13 @@ class LInput(QLineEdit):
 
     async def init(
             self, *,
-            placeholder: str = '', text: str = '', hidden: bool = False
+            placeholder: str = '', text: str = '', hidden: bool = False,
+            textchanged: callable = None
     ) -> 'LInput':
         self.setText(text)
         self.setPlaceholderText(placeholder)
         if hidden:
             self.setEchoMode(QLineEdit.Password)
+        if textchanged:
+            self.textChanged.connect(textchanged)
         return self

@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 
 from ..css import panel
 from ..widgets import Button, Label, HLayout, Frame
-from ..const import Icons, Sizes
+from ..misc import Icons, Sizes
 
 
 class Panel(QWidget):

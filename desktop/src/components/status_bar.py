@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QStatusBar
 
 from ..widgets import HLayout, Label
-from ..const import Sizes
+from ..misc import Sizes
 
 
 class StatusBar(QStatusBar):

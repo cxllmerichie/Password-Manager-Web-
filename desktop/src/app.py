@@ -17,7 +17,7 @@ class App(QMainWindow):
         self.settings = QSettings('cxllmerichie', 'PasswordManagerDesktop', self)
 
     async def init(self) -> 'App':
-        from .const import Sizes
+        from .misc import Sizes
         from .views.main_view import CentralWidget
         from .components import StatusBar
 

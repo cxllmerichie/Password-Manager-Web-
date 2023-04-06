@@ -20,3 +20,9 @@ async def _(user: schemas.User = Depends(crud.get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail='Unauthorized')
     return user
+
+
+@router.get('/auth/{email}/', name='Verify email registered', response_model=bool)
+async def _(email: str):
+    db_user = await crud.get_user(email=email)
+    return db_user is not None

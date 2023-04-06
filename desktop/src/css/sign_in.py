@@ -1,4 +1,4 @@
-from ..const import Colors, Sizes
+from ..misc import Colors, Sizes
 
 
 css = f'''
@@ -13,15 +13,19 @@ css = f'''
     color: white;
 }}
 
-#SignInInputField {{
+#SignInInputFieldEmail,
+#SignInInputFieldPassword {{
     font-size: 16px;
     height: {Sizes.AuthInputField.h}px;
     min-width: {Sizes.AuthInputField.w}px;
     border: none;
-    background-color: transparent;
+    background-color: {Colors.INPUT};
+    border-radius: 5px;
+    padding: 5px;
     color: white;
 }}
 
+#SignInInputFramePassword,
 #SignInInputFrame {{
     border-radius: 10px;
     background-color: {Colors.FOREGROUND};
@@ -45,10 +49,34 @@ css = f'''
     color: white;
     font-size: 14px;
     background-color: transparent;
+    min-width: {Sizes.AuthInputField.w}px;
+}}
+
+#SignInDontHaveBtn:hover {{
+    font-weight: bold;
 }}
 
 #AuthExitBtn {{
     background-color: transparent;
     border: none;    
+}}
+
+#AuthExitBtn:hover {{
+    background-color: {Colors.MAINRED_HOVER};
+}}
+
+#SignInErrorLbl {{
+    color: red;
+    font-size: 16px;
+}}
+
+#SignInInputLabelBtn {{
+    background-color: rgba(255, 255, 255, 0.1);
+    font-size: 16px;
+    color: white;
+}}
+
+#SignInInputLabelBtn:hover {{
+    background-color: rgba(255, 255, 255, 0.2);
 }}
 '''

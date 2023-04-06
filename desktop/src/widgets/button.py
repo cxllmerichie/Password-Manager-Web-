@@ -2,7 +2,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton, QWidget
 from PyQt5.QtCore import QSize
 
-from ..const import Icon
+from ..misc import Icon
 
 
 class Button(QPushButton):

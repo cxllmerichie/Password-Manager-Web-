@@ -1,4 +1,4 @@
-from ..const import Sizes, Colors
+from ..misc import Sizes, Colors
 
 
 css: str = f'''

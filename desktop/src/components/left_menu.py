@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 
 from ..css import left_menu
 from ..widgets import Label, VLayout, SideMenu, ScrollArea
-from ..const import Icons, Sizes
+from ..misc import Icons, Sizes, API
 from ..components.countable_button import CountableButton
 
 
@@ -30,8 +30,7 @@ class LeftMenu(QWidget, SideMenu):
         vlayout.addWidget(await Label(self, 'LeftMenuCategoriesLabel').init(
             text='Categories'
         ))
-        categories = ['Facebook', 'Instagram', 'Telegram', 'Github', 'JetBrains', 'Binance', 'WhiteBit', 'CryptoCom',
-                      'Gmail', 'Google', 'Outlook', 'PyPi', 'Kuna.io', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
+        categories = API.categories(self.app.settings.value('token'))
         if not len(categories):
             vlayout.addWidget(await Label(self, 'NoCategoriesLbl').init(
                 text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
@@ -43,6 +42,10 @@ class LeftMenu(QWidget, SideMenu):
             sarea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             vlayout.addWidget(sarea)
         return vlayout
+
+    @property
+    def app(self):
+        return self.parent().parent().parent()
 
     async def init(self) -> 'LeftMenu':
         self.setLayout(await self.__layout())
