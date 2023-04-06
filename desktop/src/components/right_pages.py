@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QStackedWidget, QWidget
-from PyQt5.QtCore import Qt
 
+from ..components.category import Category
 from ..css import right_pages
 from ..widgets import SideMenu
 
@@ -14,5 +14,6 @@ class RightPages(QStackedWidget, SideMenu):
         self.expand_to = width
 
     async def init(self) -> 'RightPages':
+        self.addWidget(await Category(self).init())
         self.shrink()
         return self

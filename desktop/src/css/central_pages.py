@@ -2,7 +2,7 @@ from ..misc import Colors
 
 
 css = f'''
-#CenterPages {{
+#CentralPages {{
     background-color: {Colors.BACKGROUND};
 }}
 '''

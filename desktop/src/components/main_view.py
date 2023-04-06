@@ -4,7 +4,10 @@ from PyQt5.QtCore import Qt
 from .sign_in import SignIn
 from .sign_up import SignUp
 from ..widgets import VLayout, HLayout, Frame
-from ..components import LeftMenu, RightPages, CenterPages, Panel
+from .left_menu import LeftMenu
+from .right_pages import RightPages
+from .central_pages import CentralPages
+from .panel import Panel
 
 
 class CentralWidget(QStackedWidget):
@@ -17,10 +20,7 @@ class CentralWidget(QStackedWidget):
         self.addWidget(await SignIn(self).init())
         self.addWidget(await SignUp(self).init())
         self.addWidget(await MainView(self).init())
-        if not self.parent().settings.value('access_token'):
-            self.setCurrentIndex(0)
-        else:
-            self.setCurrentIndex(2)
+        self.setCurrentIndex(0) if not self.parent().settings.value('token') else self.setCurrentIndex(2)
         return self
 
 
@@ -35,8 +35,8 @@ class MainView(QWidget):
 
         hbox = await HLayout(self).init()
         hbox.addWidget(await LeftMenu(self, 220).init())
-        hbox.addWidget(await CenterPages(self).init())
-        hbox.addWidget(await RightPages(self, 200).init())
+        hbox.addWidget(await CentralPages(self).init())
+        hbox.addWidget(await RightPages(self, 350).init())
 
         vbox.addWidget(await Frame(self, 'MainViewFrame').init(layout=hbox))
         self.setLayout(vbox)

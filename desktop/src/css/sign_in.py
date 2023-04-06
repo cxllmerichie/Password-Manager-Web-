@@ -6,15 +6,16 @@ css = f'''
     background-color: {Colors.BACKGROUND};
 }}
 
-#SignInInputLabel {{
+#InputLabelEmail,
+#InputLabelPassword {{
     font-size: 20px;
     font-weight: bold;
     height: {Sizes.AuthInputLabel.h}px;
     color: white;
 }}
 
-#SignInInputFieldEmail,
-#SignInInputFieldPassword {{
+#InputFieldEmail,
+#InputFieldPassword {{
     font-size: 16px;
     height: {Sizes.AuthInputField.h}px;
     min-width: {Sizes.AuthInputField.w}px;
@@ -25,13 +26,13 @@ css = f'''
     color: white;
 }}
 
-#SignInInputFramePassword,
-#SignInInputFrame {{
+#InputFrameEmail,
+#InputFramePassword {{
     border-radius: 10px;
     background-color: {Colors.FOREGROUND};
 }}
 
-#SignInBtn {{
+#MainBtn {{
     min-width: {Sizes.AuthMainBtn.w}px;
     height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
@@ -40,11 +41,11 @@ css = f'''
     color: white;
 }}
 
-#SignInBtn:hover {{
+#MainBtn:hover {{
     background-color: {Colors.MAINRED_HOVER};
 }}
 
-#SignInDontHaveBtn {{
+#AuthTextBtn {{
     height: {Sizes.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
@@ -52,7 +53,7 @@ css = f'''
     min-width: {Sizes.AuthInputField.w}px;
 }}
 
-#SignInDontHaveBtn:hover {{
+#AuthTextBtn:hover {{
     font-weight: bold;
 }}
 
@@ -65,18 +66,18 @@ css = f'''
     background-color: {Colors.MAINRED_HOVER};
 }}
 
-#SignInErrorLbl {{
+#ErrorLbl {{
     color: red;
     font-size: 16px;
 }}
 
-#SignInInputLabelBtn {{
+#InputLabelEmailEditBtn {{
     background-color: rgba(255, 255, 255, 0.1);
     font-size: 16px;
     color: white;
 }}
 
-#SignInInputLabelBtn:hover {{
+#InputLabelEmailEditBtn:hover {{
     background-color: rgba(255, 255, 255, 0.2);
 }}
 '''

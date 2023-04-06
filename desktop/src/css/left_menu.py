@@ -3,7 +3,7 @@ from ..misc import Colors
 
 css = f'''
 #LeftMenu {{
-    background-color: {Colors.FOREGROUND};    
+    background-color: {Colors.FOREGROUND};
 }}
 
 #LeftMenuItemsLabel,
@@ -95,5 +95,18 @@ QScrollBar::sub-line:vertical {{
 QScrollBar::add-page:vertical,
 QScrollBar::sub-page:vertical {{
     background: none;
+}}
+
+#AddCategoryBtn {{
+    color: white;
+    background-color: transparent;
+    font-size: 14px;
+    max-width: 200px;
+    border: none;
+    min-height: 30px;
+}}
+
+#AddCategoryBtn:hover {{
+    background-color: rgba(255, 255, 255, 0.1);
 }}
 '''

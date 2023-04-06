@@ -6,16 +6,18 @@ css = f'''
     background-color: {Colors.BACKGROUND};
 }}
 
-#SignUpInputLabel {{
+#InputLabelEmail,
+#InputLabelPassword,
+#InputLabelConfpass {{
     font-size: 20px;
     font-weight: bold;
     height: {Sizes.AuthInputLabel.h}px;
     color: white;
 }}
 
-#SignUpInputFieldEmail,
-#SignUpInputFieldPassword,
-#SignUpInputFieldConfpass {{
+#InputFieldEmail,
+#InputFieldPassword,
+#InputFieldConfpass {{
     font-size: 16px;
     height: {Sizes.AuthInputField.h}px;
     min-width: {Sizes.AuthInputField.w}px;
@@ -26,12 +28,14 @@ css = f'''
     padding: 5px;
 }}
 
-#SignUpInputFrame {{
+#InputFrameEmail,
+#InputFramePassword,
+#InputFrameConfpass {{
     border-radius: 10px;
     background-color: {Colors.FOREGROUND};
 }}
 
-#SignUpBtn {{
+#AuthMainBtn {{
     min-width: {Sizes.AuthMainBtn.w}px;
     height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
@@ -40,11 +44,11 @@ css = f'''
     color: white;
 }}
 
-#SignUpBtn:hover {{
+#AuthMainBtn:hover {{
     background-color: {Colors.MAINRED_HOVER};
 }}
 
-#SignUpAlreadyHaveBtn {{
+#AuthTextBtn {{
     height: {Sizes.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
@@ -52,7 +56,7 @@ css = f'''
     min-width: {Sizes.AuthInputField.w}px;
 }}
 
-#SignUpAlreadyHaveBtn:hover {{
+#AuthTextBtn:hover {{
     font-weight: bold;
 }}
 
@@ -65,7 +69,7 @@ css = f'''
     background-color: {Colors.MAINRED_HOVER};
 }}
 
-#SignUpErrorLbl {{
+#ErrorLbl {{
     color: red;
     font-size: 16px;
 }}

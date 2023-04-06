@@ -1,9 +1,9 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QStackedWidget
 from PyQt5.QtCore import Qt
 
 from ..css import left_menu
-from ..widgets import Label, VLayout, SideMenu, ScrollArea
-from ..misc import Icons, Sizes, API
+from ..widgets import Label, VLayout, SideMenu, ScrollArea, Button
+from ..misc import Icons, Sizes, api
 from ..components.countable_button import CountableButton
 
 
@@ -25,23 +25,30 @@ class LeftMenu(QWidget, SideMenu):
             icon=Icons.HOME, text='All items', total=0
         ), alignment=Qt.AlignLeft)
         vlayout.addWidget(await CountableButton(self).init(
-            icon=Icons.FAVOURITE, text='Favourites', total=0
+            icon=Icons.STAR, text='Favourite', total=0
         ), alignment=Qt.AlignLeft)
+        vlayout.addWidget(await Button(self, 'AddCategoryBtn').init(
+            text='Category', icon=Icons.PLUS, slot=self.add_category
+        ))
         vlayout.addWidget(await Label(self, 'LeftMenuCategoriesLabel').init(
             text='Categories'
         ))
-        categories = API.categories(self.app.settings.value('token'))
+        categories = api.categories(self.app.settings.value('token'))
         if not len(categories):
             vlayout.addWidget(await Label(self, 'NoCategoriesLbl').init(
                 text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
                 wrap=True, size=Sizes.NoCategoriesLbl
             ), alignment=VLayout.CenterCenter)
         else:
-            items = [await CountableButton(self).init(icon=Icons.FAVOURITE, text=c, total=0) for c in categories]
+            items = [await CountableButton(self).init(icon=Icons.STAR, text=c, total=0) for c in categories]
             sarea = await ScrollArea(self, 'CategoriesScrollArea').init(items=items)
             sarea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             vlayout.addWidget(sarea)
         return vlayout
+
+    def add_category(self):
+        self.parent().parent().findChild(QStackedWidget, 'RightPages').setCurrentIndex(0)
+        self.parent().parent().findChild(QStackedWidget, 'RightPages').expand()
 
     @property
     def app(self):
