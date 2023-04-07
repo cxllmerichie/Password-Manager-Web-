@@ -3,7 +3,7 @@ from ..misc import Colors, Sizes
 
 css = f'''
 #SignIn {{
-    background-color: {Colors.BACKGROUND};
+    background-color: {Colors.DARK_GRAY};
 }}
 
 #InputLabelEmail,
@@ -29,7 +29,7 @@ css = f'''
 #InputFrameEmail,
 #InputFramePassword {{
     border-radius: 10px;
-    background-color: {Colors.FOREGROUND};
+    background-color: {Colors.GRAY};
 }}
 
 #MainBtn {{
@@ -37,12 +37,12 @@ css = f'''
     height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
     font-weight: bold;
-    background-color: {Colors.MAINRED};
+    background-color: {Colors.RED};
     color: white;
 }}
 
 #MainBtn:hover {{
-    background-color: {Colors.MAINRED_HOVER};
+    background-color: {Colors.RED_HOVER};
 }}
 
 #AuthTextBtn {{
@@ -63,13 +63,14 @@ css = f'''
 }}
 
 #AuthExitBtn:hover {{
-    background-color: {Colors.MAINRED_HOVER};
+    background-color: {Colors.RED_HOVER};
 }}
 
 #ErrorLbl {{
     color: red;
     font-size: 16px;
-}}
+    min-width: {Sizes.ERROR.w}px;
+    min-height: {Sizes.ERROR.h}px;}}
 
 #InputLabelEmailEditBtn {{
     background-color: rgba(255, 255, 255, 0.1);

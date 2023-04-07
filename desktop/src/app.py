@@ -16,6 +16,9 @@ class App(QMainWindow):
         self.setStyleSheet(app.css + status_bar.css)
         self.settings = QSettings('cxllmerichie', 'PasswordManagerDesktop', self)
 
+    def token(self):
+        return self.settings.value('token')
+
     async def init(self) -> 'App':
         from .misc import Sizes
         from desktop.src.components.main_view import CentralWidget

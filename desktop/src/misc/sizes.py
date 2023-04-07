@@ -18,3 +18,5 @@ class Sizes:
     StatusBarLbl = Size(..., 20)
     PanelNavigationBtn = QSize(30, 30)
     Panel = Size(..., 30)
+    CATEGORY = Size(300, ...)
+    ERROR = Size(300, 50)

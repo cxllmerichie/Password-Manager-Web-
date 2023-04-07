@@ -40,7 +40,9 @@ class SignIn(QWidget):
             layout=layout_password
         ), alignment=Qt.AlignHCenter)
 
-        vbox.addWidget(await Label(self, 'ErrorLbl').init(wrap=True), alignment=VLayout.CenterCenter)
+        vbox.addWidget(await Label(self, 'ErrorLbl').init(
+            wrap=True, alignment=VLayout.CenterCenter
+        ), alignment=VLayout.CenterCenter)
         vbox.addWidget(await Button(self, 'AuthTextBtn').init(
             text='Don\'t have an account?', slot=lambda: self.parent().setCurrentIndex(1)
         ), alignment=Qt.AlignHCenter)
@@ -64,7 +66,8 @@ class SignIn(QWidget):
         sign_in_btn.setText('Continue')
 
     def continue_(self):
-        email = self.findChild(QLineEdit, 'InputFieldEmail').text()
+        email_input = self.findChild(QLineEdit, 'InputFieldEmail')
+        email = email_input.text()
         error_lbl = self.findChild(QLabel, 'ErrorLbl')
         if not len(email):
             return error_lbl.setText('Email can not be empty')
@@ -72,7 +75,7 @@ class SignIn(QWidget):
             return error_lbl.setText(f'Email is not registered')
         self.findChild(QFrame, 'InputFramePassword').setVisible(True)
         self.findChild(QPushButton, 'InputLabelBtn').setVisible(True)
-        self.findChild(QLineEdit, 'InputFieldEmail').setEnabled(False)
+        email_input.setEnabled(False)
         sign_in_btn = self.findChild(QPushButton, 'MainBtn')
         with suppress(Exception):
             sign_in_btn.clicked.disconnect()

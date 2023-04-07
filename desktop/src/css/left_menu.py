@@ -3,7 +3,7 @@ from ..misc import Colors
 
 css = f'''
 #LeftMenu {{
-    background-color: {Colors.FOREGROUND};
+    background-color: {Colors.GRAY};
 }}
 
 #LeftMenuItemsLabel,
@@ -34,7 +34,7 @@ css = f'''
 }}
 
 #CountableButton {{
-    background-color: {Colors.BACKGROUND};
+    background-color: {Colors.DARK_GRAY};
     min-width: 200px;
     min-height: 30px;
     color: white;
@@ -44,7 +44,7 @@ css = f'''
 }}
 
 #CountableButton:hover {{
-    background-color: {Colors.MAINRED};
+    background-color: {Colors.RED};
 }}
 
 #NoCategoriesLbl {{
@@ -72,12 +72,12 @@ QScrollBar:vertical {{
 }}
 
 QScrollBar::handle:vertical {{
-    background: {Colors.MAINRED};
+    background: {Colors.RED};
     border-radius: 3px;
 }}
 
 QScrollBar::handle:vertical:hover {{
-    background: {Colors.MAINRED_HOVER};
+    background: {Colors.RED_HOVER};
 }}
 
 QScrollBar::add-line:vertical {{

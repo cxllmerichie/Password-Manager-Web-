@@ -34,7 +34,7 @@ async def _(category_id: int, limit: int = LIMIT, offset: int = 0,
     return db_items
 
 
-@router.put('/items/', name='Update item by id', response_model=schemas.Item)
+@router.put('/items/{item_id}/', name='Update item by id', response_model=schemas.Item)
 async def _(item_id: UUID, item: schemas.ItemCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.update_item(item_id=item_id, item=item)
@@ -43,7 +43,7 @@ async def _(item_id: UUID, item: schemas.ItemCreate,
     return db_item
 
 
-@router.delete('/items/', name='Delete item by id', response_model=schemas.Item)
+@router.delete('/items/{item_id}/', name='Delete item by id', response_model=schemas.Item)
 async def _(item_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.delete_item(item_id=item_id)

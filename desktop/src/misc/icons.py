@@ -32,6 +32,7 @@ class Icons:
     MENU = Icon('menu.svg', (25, 25))
     PLUS = Icon('plus-circle.svg', (20, 20))
     CATEGORY = Icon('tag.svg', (80, 80))
+    EDIT = Icon('edit.svg', (30, 30))
 
     @staticmethod
     def from_bytes(icon_bytes: bytes = None) -> QIcon:

@@ -16,7 +16,7 @@ class LeftMenu(QWidget, SideMenu):
 
         self.expand_to = width
 
-    async def __layout(self) -> VLayout:
+    async def init(self) -> 'LeftMenu':
         vlayout = await VLayout().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
         vlayout.addWidget(await Label(self, 'LeftMenuItemsLabel').init(
             text='Items'
@@ -40,11 +40,22 @@ class LeftMenu(QWidget, SideMenu):
                 wrap=True, size=Sizes.NoCategoriesLbl
             ), alignment=VLayout.CenterCenter)
         else:
-            items = [await CountableButton(self).init(icon=Icons.STAR, text=c, total=0) for c in categories]
+            items = [await CountableButton(self).init(
+                icon=Icons.STAR, text=c['name'], total=len(c['items']),
+                slot=lambda checked, category=c: self.show_category(category)
+            ) for c in categories]
             sarea = await ScrollArea(self, 'CategoriesScrollArea').init(items=items)
             sarea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             vlayout.addWidget(sarea)
-        return vlayout
+        self.setLayout(vlayout)
+        self.shrink()
+        return self
+
+    def show_category(self, category):
+        right_pages = self.parent().parent().findChild(QStackedWidget, 'RightPages')
+        right_pages.currentWidget().set_category(category)
+        right_pages.setCurrentIndex(0)
+        right_pages.expand()
 
     def add_category(self):
         self.parent().parent().findChild(QStackedWidget, 'RightPages').setCurrentIndex(0)
@@ -53,8 +64,3 @@ class LeftMenu(QWidget, SideMenu):
     @property
     def app(self):
         return self.parent().parent().parent()
-
-    async def init(self) -> 'LeftMenu':
-        self.setLayout(await self.__layout())
-        self.shrink()
-        return self

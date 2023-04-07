@@ -3,6 +3,6 @@ from ..misc import Colors
 
 css = f'''
 #RightPages {{
-    background-color: {Colors.FOREGROUND};    
+    background-color: {Colors.GRAY};    
 }}
 '''

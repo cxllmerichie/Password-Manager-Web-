@@ -48,7 +48,9 @@ class SignUp(QWidget):
             layout=layout_confpass
         ), alignment=Qt.AlignHCenter)
 
-        vbox.addWidget(await Label(self, 'ErrorLbl').init(wrap=True), alignment=VLayout.CenterCenter)
+        vbox.addWidget(await Label(self, 'ErrorLbl').init(
+            wrap=True, alignment=VLayout.CenterCenter
+        ), alignment=VLayout.CenterCenter)
         vbox.addWidget(await Button(self, 'AuthTextBtn').init(
             text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)
         ), alignment=Qt.AlignHCenter)

@@ -20,6 +20,7 @@ class CentralWidget(QStackedWidget):
         self.addWidget(await SignIn(self).init())
         self.addWidget(await SignUp(self).init())
         self.addWidget(await MainView(self).init())
+        self.setCurrentIndex(0)
         self.setCurrentIndex(0) if not self.parent().settings.value('token') else self.setCurrentIndex(2)
         return self
 

@@ -29,7 +29,7 @@ async def _(limit: int = LIMIT, offset: int = 0, user: schemas.User = Depends(cr
     return db_categories
 
 
-@router.put('/categories/', name='Update category by id', response_model=schemas.Category)
+@router.put('/categories/{category_id}/', name='Update category by id', response_model=schemas.Category)
 async def _(category_id: int, category: schemas.CategoryCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_category = await crud.update_category(category_id=category_id, category=category)
@@ -38,7 +38,7 @@ async def _(category_id: int, category: schemas.CategoryCreate,
     return db_category
 
 
-@router.delete('/categories/', name='Delete category by id', response_model=schemas.Category)
+@router.delete('/categories/{category_id}/', name='Delete category by id', response_model=schemas.Category)
 async def _(category_id: int,
             user: schemas.User = Depends(crud.get_current_user)):
     db_category = await crud.delete_category(category_id=category_id)

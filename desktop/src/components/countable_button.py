@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QPushButton
+from PyQt5.QtWidgets import QWidget, QPushButton, QSizePolicy
 from PyQt5.QtCore import Qt
 from typing import Any
 
@@ -23,7 +23,7 @@ class CountableButton(QPushButton):
             size=icon.size, icon=icon, disabled=True
         ))
         layout.addWidget(await Label(self, 'CountableButtonLbl').init(
-            text=text, alignment=alignment
+            text=text, alignment=alignment, elided=True
         ))
         layout.addWidget(await Label(self, 'CountableButtonCountLbl').init(
             text=str(total) if isinstance(total, int) else str(len(total))

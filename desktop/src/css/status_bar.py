@@ -3,7 +3,7 @@ from ..misc import Colors
 
 css: str = f'''
 #StatusBar {{
-    background-color: {Colors.FOREGROUND};
+    background-color: {Colors.GRAY};
 }}
 
 #StatusBarLbl {{

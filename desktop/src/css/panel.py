@@ -3,7 +3,7 @@ from ..misc import Sizes, Colors
 
 css: str = f'''
 #Panel {{
-    background-color: {Colors.FOREGROUND};
+    background-color: {Colors.GRAY};
     min-height: {Sizes.Panel.h}px;
 }}
 
@@ -12,7 +12,7 @@ css: str = f'''
 }}
 
 #ToggleLeftMenuBtn:hover {{
-    background-color: {Colors.BACKGROUND};
+    background-color: {Colors.DARK_GRAY};
 }}
 
 #PanelMinimizeBtn,
@@ -24,11 +24,11 @@ css: str = f'''
 
 #PanelMinimizeBtn:hover,
 #PanelRestoreBtn:hover {{
-    background-color: {Colors.BACKGROUND};
+    background-color: {Colors.DARK_GRAY};
 }}
 
 #PanelCloseBtn:hover {{
-    background-color: {Colors.MAINRED};
+    background-color: {Colors.RED};
 }}
 
 #PanelTitleLbl {{
