@@ -10,7 +10,7 @@ class Label(QLabel):
         super().__init__(parent)
         self.setObjectName(name)
 
-    async def init(
+    def init(
             self, *,
             text: str = '', alignment: Qt.Alignment = None, wrap: bool = False, size: QSize | Size = None,
             icon: Icon = None, elided: bool = False

@@ -26,7 +26,7 @@ class Layout:
     CenterCenter = Qt.AlignHCenter | Qt.AlignVCenter
 
     @abstractmethod
-    async def init(
+    def init(
             self, *,
             margins: tuple[int, ...] = (0, 0, 0, 0),
             spacing: int = 0, alignment: Qt.Alignment = None

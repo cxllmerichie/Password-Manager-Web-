@@ -6,7 +6,7 @@ class TInput(QTextEdit):
         super().__init__(parent)
         self.setObjectName(name)
 
-    async def init(
+    def init(
             self, *,
             placeholder: str = '', text: str = '',
             textchanged: callable = None

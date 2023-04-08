@@ -14,45 +14,45 @@ class SignIn(QWidget):
         self.setStyleSheet(sign_in.css)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-    async def init(self) -> 'SignIn':
-        vbox = await VLayout().init(spacing=10, alignment=Qt.AlignVCenter)
-        vbox.addWidget(await Button(self, 'AuthExitBtn').init(
+    def init(self) -> 'SignIn':
+        vbox = VLayout().init(spacing=10, alignment=Qt.AlignVCenter)
+        vbox.addWidget(Button(self, 'AuthExitBtn').init(
             icon=Icons.CROSS, slot=self.app().close
         ), alignment=VLayout.RightTop)
         vbox.addItem(Spacer(False, True))
 
-        layout_email = await VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_email_labelbtn = await HLayout().init()
-        layout_email_labelbtn.addWidget(await Label(self, 'InputLabelEmail').init(text='Email'))
-        edit_btn = await Button(self, 'InputLabelEmailEditBtn').init(
+        layout_email = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
+        layout_email_labelbtn = HLayout().init()
+        layout_email_labelbtn.addWidget(Label(self, 'InputLabelEmail').init(text='Email'))
+        edit_btn = Button(self, 'InputLabelEmailEditBtn').init(
             text='Edit', slot=self.edit
         )
         layout_email_labelbtn.addWidget(edit_btn, alignment=HLayout.Right)
         layout_email.addLayout(layout_email_labelbtn)
-        layout_email.addWidget(await LInput(self, 'InputFieldEmail').init(placeholder='address@domain.tld'))
-        vbox.addWidget(await Frame(self, 'InputFrameEmail').init(
+        layout_email.addWidget(LInput(self, 'InputFieldEmail').init(placeholder='address@domain.tld'))
+        vbox.addWidget(Frame(self, 'InputFrameEmail').init(
             layout=layout_email
         ), alignment=Qt.AlignHCenter)
 
-        layout_password = await VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_password.addWidget(await Label(self, 'InputLabelPassword').init(text='Password'))
-        layout_password.addWidget(await LInput(self, 'InputFieldPassword').init(placeholder='password', hidden=True))
+        layout_password = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
+        layout_password.addWidget(Label(self, 'InputLabelPassword').init(text='Password'))
+        layout_password.addWidget(LInput(self, 'InputFieldPassword').init(placeholder='password', hidden=True))
 
-        frame = await Frame(self, 'InputFramePassword').init(
+        frame = Frame(self, 'InputFramePassword').init(
             layout=layout_password
         )
         vbox.addWidget(frame, alignment=Qt.AlignHCenter)
 
-        vbox.addWidget(await Label(self, 'ErrorLbl').init(
+        vbox.addWidget(Label(self, 'ErrorLbl').init(
             wrap=True, alignment=VLayout.CenterCenter
         ), alignment=VLayout.CenterCenter)
-        vbox.addWidget(await Button(self, 'AuthTextBtn').init(
+        vbox.addWidget(Button(self, 'AuthTextBtn').init(
             text='Don\'t have an account?', slot=lambda: self.parent().setCurrentIndex(1)
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(await Button(self, 'ContinueBtn').init(
+        vbox.addWidget(Button(self, 'ContinueBtn').init(
             text='Continue', slot=self.continue_log_in
         ), alignment=Qt.AlignHCenter)
-        log_in_btn = await Button(self, 'LogInBtn').init(
+        log_in_btn = Button(self, 'LogInBtn').init(
             text='Log In', slot=self.log_in
         )
         vbox.addWidget(log_in_btn, alignment=Qt.AlignHCenter)
@@ -86,7 +86,7 @@ class SignIn(QWidget):
         self.findChild(QPushButton, 'LogInBtn').setVisible(True)
 
     @pyqtSlot()
-    async def log_in(self):
+    def log_in(self):
         email = self.findChild(QLineEdit, 'InputFieldEmail').text()
         password = self.findChild(QLineEdit, 'InputFieldPassword').text()
         error_lbl = self.findChild(QLabel, 'ErrorLbl')
@@ -95,7 +95,7 @@ class SignIn(QWidget):
         if not (token := api.login(dict(email=email, password=password)).get('access_token', None)):
             return error_lbl.setText('Internal error, please try again')
         self.app().settings.setValue('token', token)
-        self.parent().addWidget(await MainView(self.parent()).init())
+        self.parent().addWidget(MainView(self.parent()).init())
         self.parent().setCurrentIndex(2)
 
     def app(self):

@@ -13,14 +13,14 @@ class ScrollArea(QScrollArea):
         if not vertical:
             self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-    async def init(
+    def init(
             self, *,
             vertical: bool = True, items: list[QWidget]
     ) -> 'ScrollArea':
         widget = Frame(self, f'{self.objectName()}Widget')
         layout_t = VLayout if vertical else HLayout
-        layout = await layout_t(widget).init()
+        layout = layout_t(widget).init()
         for item in items:
             layout.addWidget(item)
-        self.setWidget(await widget.init(layout=layout))
+        self.setWidget(widget.init(layout=layout))
         return self

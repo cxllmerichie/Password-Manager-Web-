@@ -14,31 +14,31 @@ class Panel(QWidget):
         self.setStyleSheet(panel.css)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-    async def init(self) -> 'Panel':
-        layout = await HLayout().init(spacing=10)
-        layout.addWidget(await Button(self, 'ToggleLeftMenuBtn').init(
+    def init(self) -> 'Panel':
+        layout = HLayout().init(spacing=10)
+        layout.addWidget(Button(self, 'ToggleLeftMenuBtn').init(
             slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
         ), alignment=Qt.AlignLeft)
-        layout.addWidget(await Label(self, 'PanelTitleLbl').init(
+        layout.addWidget(Label(self, 'PanelTitleLbl').init(
             text='Password Manager'
         ), alignment=Qt.AlignLeft)
-        layout.addWidget(await Label(self, 'PanelTitleLbl').init(
+        layout.addWidget(Label(self, 'PanelTitleLbl').init(
             icon=Icons.APP
         ), alignment=Qt.AlignLeft)
         layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        hlayout = await HLayout().init(alignment=HLayout.Right)
-        hlayout.addWidget(await Button(self, 'PanelMinimizeBtn').init(
+        hlayout = HLayout().init(alignment=HLayout.Right)
+        hlayout.addWidget(Button(self, 'PanelMinimizeBtn').init(
             icon=Icons.MINIMIZE, size=Sizes.PanelNavigationBtn, slot=self.app().showMinimized
         ))
-        hlayout.addWidget(await Button(self, 'PanelRestoreBtn').init(
+        hlayout.addWidget(Button(self, 'PanelRestoreBtn').init(
             icon=Icons.RESTORE, size=Sizes.PanelNavigationBtn,
             slot=lambda: self.app().showNormal() if self.app().isMaximized() else self.app().showMaximized()
         ))
-        hlayout.addWidget(await Button(self, 'PanelCloseBtn').init(
+        hlayout.addWidget(Button(self, 'PanelCloseBtn').init(
             icon=Icons.CROSS, size=Sizes.PanelNavigationBtn, slot=self.app().close
         ))
-        layout.addWidget(await Frame(self).init(layout=hlayout))
+        layout.addWidget(Frame(self).init(layout=hlayout))
         self.setLayout(layout)
         return self
 

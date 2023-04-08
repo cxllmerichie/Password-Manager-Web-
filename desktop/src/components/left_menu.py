@@ -16,34 +16,34 @@ class LeftMenu(QWidget, SideMenu):
 
         self.expand_to = width
 
-    async def init(self) -> 'LeftMenu':
-        vlayout = await VLayout().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
-        vlayout.addWidget(await Label(self, 'LeftMenuItemsLabel').init(
+    def init(self) -> 'LeftMenu':
+        vlayout = VLayout().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
+        vlayout.addWidget(Label(self, 'LeftMenuItemsLabel').init(
             text='Items'
         ), alignment=Qt.AlignVCenter)
-        vlayout.addWidget(await CountableButton(self).init(
+        vlayout.addWidget(CountableButton(self).init(
             icon=Icons.HOME, text='All items', total=0
         ), alignment=Qt.AlignLeft)
-        vlayout.addWidget(await CountableButton(self).init(
+        vlayout.addWidget(CountableButton(self).init(
             icon=Icons.STAR, text='Favourite', total=0
         ), alignment=Qt.AlignLeft)
-        vlayout.addWidget(await Button(self, 'AddCategoryBtn').init(
+        vlayout.addWidget(Button(self, 'AddCategoryBtn').init(
             text='Category', icon=Icons.PLUS, slot=self.add_category
         ))
-        vlayout.addWidget(await Label(self, 'LeftMenuCategoriesLabel').init(
+        vlayout.addWidget(Label(self, 'LeftMenuCategoriesLabel').init(
             text='Categories'
         ))
         if not isinstance(response := api.categories(self.app().token()), list):
-            vlayout.addWidget(await Label(self, 'NoCategoriesLbl').init(
+            vlayout.addWidget(Label(self, 'NoCategoriesLbl').init(
                 text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
                 wrap=True, size=Sizes.NoCategoriesLbl
             ), alignment=VLayout.CenterCenter)
         else:
-            items = [await CountableButton(self).init(
+            items = [CountableButton(self).init(
                 icon=Icons.STAR, text=category['title'], total=len(category['items']),
                 slot=lambda checked, category=category: self.show_category(category)
             ) for category in response]
-            sarea = await ScrollArea(self, 'CategoriesScrollArea', False, True).init(items=items)
+            sarea = ScrollArea(self, 'CategoriesScrollArea', False, True).init(items=items)
             vlayout.addWidget(sarea)
         self.setLayout(vlayout)
         self.shrink()

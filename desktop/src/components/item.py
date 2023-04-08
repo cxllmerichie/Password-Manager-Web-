@@ -12,52 +12,52 @@ class Item(QFrame):
         self.setObjectName(self.__class__.__name__)
         self.setStyleSheet(item.css)
 
-    async def init(self) -> 'Item':
-        vbox = await VLayout().init(spacing=20, margins=(0, 0, 0, 20))
+    def init(self) -> 'Item':
+        vbox = VLayout().init(spacing=20, margins=(0, 0, 0, 20))
 
-        hbox = await HLayout().init(margins=(20, 0, 20, 0))
-        favourite_btn = await Button(self, 'FavouriteBtn').init(
+        hbox = HLayout().init(margins=(20, 0, 20, 0))
+        favourite_btn = Button(self, 'FavouriteBtn').init(
             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.favourite
         )
         hbox.addWidget(favourite_btn, alignment=VLayout.Left)
-        edit_btn = await Button(self, 'EditBtn').init(
+        edit_btn = Button(self, 'EditBtn').init(
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category
         )
         hbox.addWidget(edit_btn)
-        hbox.addWidget(await Button(self, 'CloseBtn').init(
+        hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
         ), alignment=VLayout.Right)
         vbox.addLayout(hbox)
 
-        vbox.addWidget(await Button(self, 'IconBtn').init(
+        vbox.addWidget(Button(self, 'IconBtn').init(
             icon=Icons.CATEGORY, slot=self.change_icon
         ), alignment=VLayout.HCenterTop)
-        vbox.addWidget(await LInput(self, 'TitleInput').init(
+        vbox.addWidget(LInput(self, 'TitleInput').init(
             placeholder='category name'
         ), alignment=VLayout.HCenterTop)
-        vbox.addWidget(await TInput(self, 'DescriptionInput').init(
+        vbox.addWidget(TInput(self, 'DescriptionInput').init(
             placeholder='category description (optional)'
         ), alignment=VLayout.HCenterTop)
         vbox.addItem(Spacer(False, True))
 
-        vbox.addWidget(await Label(self, 'ErrorLbl').init(
+        vbox.addWidget(Label(self, 'ErrorLbl').init(
             wrap=True, alignment=VLayout.CenterCenter
         ), alignment=VLayout.CenterCenter)
-        vbox.addWidget(await Button(self, 'CreateBtn').init(
+        vbox.addWidget(Button(self, 'CreateBtn').init(
             text='Create category', slot=self.create_category
         ), alignment=VLayout.HCenter)
 
-        frame = await Frame(self, 'SaveCancelFrame').init()
-        ctrl_layout = await HLayout(frame).init(spacing=50)
-        ctrl_layout.addWidget(await Button(self, 'SaveBtn').init(
+        frame = Frame(self, 'SaveCancelFrame').init()
+        ctrl_layout = HLayout(frame).init(spacing=50)
+        ctrl_layout.addWidget(Button(self, 'SaveBtn').init(
             text='Save', slot=self.save
         ), alignment=VLayout.Left)
-        ctrl_layout.addWidget(await Button(self, 'CancelBtn').init(
+        ctrl_layout.addWidget(Button(self, 'CancelBtn').init(
             text='Cancel', slot=self.cancel
         ), alignment=VLayout.Right)
         vbox.addWidget(frame, alignment=VLayout.HCenter)
 
-        add_item_btn = await Button(self, 'AddItemBtn').init(
+        add_item_btn = Button(self, 'AddItemBtn').init(
             text='Add item', icon=Icons.PLUS, slot=self.add_item
         )
         vbox.addWidget(add_item_btn, alignment=VLayout.HCenter)

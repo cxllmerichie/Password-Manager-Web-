@@ -6,7 +6,7 @@ class MenuBar(QMenuBar):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
 
-    async def init(self) -> 'MenuBar':
+    def init(self) -> 'MenuBar':
         settings_menu = self.addMenu('&Settings')
         help_menu = self.addMenu('&Help')
         about_menu = self.addMenu('&About')

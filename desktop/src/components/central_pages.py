@@ -10,7 +10,7 @@ class CentralPages(QStackedWidget):
         self.setObjectName(self.__class__.__name__)
         self.setStyleSheet(central_pages.css)
 
-    async def init(self) -> 'CentralPages':
-        self.addWidget(await Items(self).init(items=[]))
+    def init(self) -> 'CentralPages':
+        self.addWidget(Items(self).init(items=[]))
         self.setCurrentIndex(0)
         return self

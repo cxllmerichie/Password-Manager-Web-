@@ -10,7 +10,7 @@ class HLayout(QHBoxLayout, Layout):
         if name:
             self.setObjectName(name)
 
-    async def init(
+    def init(
             self, *,
             margins: tuple[int, ...] = (0, 0, 0, 0),
             spacing: int = 0, alignment: Qt.Alignment = None

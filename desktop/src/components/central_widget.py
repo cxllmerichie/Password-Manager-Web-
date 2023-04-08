@@ -11,14 +11,14 @@ class CentralWidget(QStackedWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
 
-    async def init(self) -> 'CentralWidget':
+    def init(self) -> 'CentralWidget':
         self.layout().setAlignment(Qt.AlignHCenter)
-        self.addWidget(await SignIn(self).init())
-        self.addWidget(await SignUp(self).init())
+        self.addWidget(SignIn(self).init())
+        self.addWidget(SignUp(self).init())
         self.parent().settings.setValue('token', None)
         if not self.parent().token():
             self.setCurrentIndex(0)
         else:
-            self.addWidget(await MainView(self).init())
+            self.addWidget(MainView(self).init())
             self.setCurrentIndex(2)
         return self

@@ -19,7 +19,7 @@ class App(QMainWindow):
     def token(self):
         return self.settings.value('token')
 
-    async def init(self) -> 'App':
+    def init(self) -> 'App':
         from .misc import Sizes
         from .components.central_widget import CentralWidget
         from .components.status_bar import StatusBar
@@ -28,7 +28,7 @@ class App(QMainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
         # self.setWindowIcon(Icons.APP.icon)
 
-        # self.setMenuBar(await MenuBar(self).init())
-        self.setCentralWidget(await CentralWidget(self).init())
-        self.setStatusBar(await StatusBar(self).init())
+        # self.setMenuBar(MenuBar(self).init())
+        self.setCentralWidget(CentralWidget(self).init())
+        self.setStatusBar(StatusBar(self).init())
         return self

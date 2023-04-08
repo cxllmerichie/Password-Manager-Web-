@@ -5,14 +5,16 @@ import asyncio
 from src.app import App
 
 
-async def amain():
+def amain():
     qapp = QApplication(sys.argv)
     qapp.setStyle('Windows')
-    window = await App().init()
+    window = App().init()
     window.show()
     sys.exit(qapp.exec_())
 
 
 if __name__ == '__main__':
-    LOOP = asyncio.get_event_loop()
-    LOOP.run_until_complete(amain())
+    # LOOP = asyncio.get_event_loop()
+    # LOOP.run_until_complete(amain())
+
+    amain()

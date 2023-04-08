@@ -6,7 +6,7 @@ class LInput(QLineEdit):
         super().__init__(parent)
         self.setObjectName(name)
 
-    async def init(
+    def init(
             self, *,
             placeholder: str = '', text: str = '', hidden: bool = False,
             textchanged: callable = None

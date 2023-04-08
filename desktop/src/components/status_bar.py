@@ -10,12 +10,12 @@ class StatusBar(QStatusBar):
         self.setObjectName(self.__class__.__name__)
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
 
-    async def init(self) -> 'StatusBar':
+    def init(self) -> 'StatusBar':
         self.layout().setContentsMargins(5, 0, 0, 0)
         items = [self.layout().itemAt(i) for i in range(self.layout().count())]
         for item in items:
             self.layout().removeItem(item)
-        self.layout().addWidget(await Label(self, 'StatusBarLbl').init(
+        self.layout().addWidget(Label(self, 'StatusBarLbl').init(
             text='Password Manager © 2023 by <cxllmerichie>', size=Sizes.StatusBarLbl
         ), alignment=HLayout.LeftBottom)
         return self

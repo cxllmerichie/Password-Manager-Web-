@@ -13,15 +13,15 @@ class MainView(QWidget):
         super().__init__(parent=parent)
         self.setObjectName(self.__class__.__name__)
 
-    async def init(self) -> 'MainView':
-        vbox = await VLayout().init()
-        vbox.addWidget(await Panel(self).init(), alignment=Qt.AlignTop)
+    def init(self) -> 'MainView':
+        vbox = VLayout().init()
+        vbox.addWidget(Panel(self).init(), alignment=Qt.AlignTop)
 
-        hbox = await HLayout(self).init()
-        hbox.addWidget(await LeftMenu(self, 220).init())
-        hbox.addWidget(await CentralPages(self).init())
-        hbox.addWidget(await RightPages(self, 350).init())
+        hbox = HLayout(self).init()
+        hbox.addWidget(LeftMenu(self, 220).init())
+        hbox.addWidget(CentralPages(self).init())
+        hbox.addWidget(RightPages(self, 350).init())
 
-        vbox.addWidget(await Frame(self, 'MainViewFrame').init(layout=hbox))
+        vbox.addWidget(Frame(self, 'MainViewFrame').init(layout=hbox))
         self.setLayout(vbox)
         return self

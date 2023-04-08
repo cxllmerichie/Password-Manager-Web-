@@ -14,8 +14,8 @@ class RightPages(QStackedWidget, SideMenu):
 
         self.expand_to = width
 
-    async def init(self) -> 'RightPages':
-        self.addWidget(await Category(self).init())
-        self.addWidget(await Item(self).init())
+    def init(self) -> 'RightPages':
+        self.addWidget(Category(self).init())
+        self.addWidget(Item(self).init())
         self.shrink()
         return self

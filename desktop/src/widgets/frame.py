@@ -7,7 +7,7 @@ class Frame(QFrame):
         if name:
             self.setObjectName(name)
 
-    async def init(
+    def init(
             self, *,
             layout: QLayout = None
     ) -> 'Frame':

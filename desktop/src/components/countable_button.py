@@ -13,19 +13,19 @@ class CountableButton(QPushButton):
         if name:
             self.setObjectName(name)
 
-    async def init(
+    def init(
             self, *,
             icon: Icon, text, total: int | list[Any, ...],
             alignment: Qt.Alignment = None, slot: callable = lambda: None
     ) -> 'CountableButton':
-        layout = await HLayout().init(margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft)
-        layout.addWidget(await Button(self, 'CountableButtonIcon').init(
+        layout = HLayout().init(margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft)
+        layout.addWidget(Button(self, 'CountableButtonIcon').init(
             size=icon.size, icon=icon, disabled=True
         ))
-        layout.addWidget(await Label(self, 'CountableButtonLbl').init(
+        layout.addWidget(Label(self, 'CountableButtonLbl').init(
             text=text, alignment=alignment, elided=True
         ))
-        layout.addWidget(await Label(self, 'CountableButtonCountLbl').init(
+        layout.addWidget(Label(self, 'CountableButtonCountLbl').init(
             text=str(total) if isinstance(total, int) else str(len(total))
         ), alignment=Qt.AlignRight)
         self.setLayout(layout)
