@@ -19,9 +19,6 @@ class CentralWidget(QStackedWidget):
         if not self.parent().token():
             self.setCurrentIndex(0)
         else:
-            await self.show_main_view()
+            self.addWidget(await MainView(self).init())
+            self.setCurrentIndex(2)
         return self
-
-    async def show_main_view(self):
-        self.addWidget(await MainView(self).init())
-        self.setCurrentIndex(2)

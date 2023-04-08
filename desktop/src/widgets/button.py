@@ -17,9 +17,8 @@ class Button(QPushButton):
     @pyqtSlot()
     def emit(slot: Awaitable | Callable) -> callable:
         if isinstance(result := slot(), Coroutine):
-            loop = asyncio.new_event_loop()
-            thread = Thread(target=loop.run_until_complete, args=(result,))
-            return thread.start()
+            asyncio.ensure_future(result)
+            # return Thread(target=asyncio.new_event_loop().run_until_complete, args=(result,)).start()
         return result
 
     async def init(

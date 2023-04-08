@@ -95,7 +95,8 @@ class SignIn(QWidget):
         if not (token := api.login(dict(email=email, password=password)).get('access_token', None)):
             return error_lbl.setText('Internal error, please try again')
         self.app().settings.setValue('token', token)
-        await self.parent().show_main_view()
+        self.parent().addWidget(await MainView(self.parent()).init())
+        self.parent().setCurrentIndex(2)
 
     def app(self):
         return self.parent().parent()
