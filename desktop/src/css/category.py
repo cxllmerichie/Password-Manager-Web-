@@ -60,7 +60,7 @@ css: str = f'''
     border: none;
 }}
 
-#NameInput,
+#TitleInput,
 #DescriptionInput {{
     border: none;
     background-color: {Colors.DARK_GRAY};
@@ -73,7 +73,7 @@ css: str = f'''
 }} 
 
 
-#NameInput {{
+#TitleInput {{
 }}
 
 #DescriptionInput {{

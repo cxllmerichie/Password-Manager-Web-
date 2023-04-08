@@ -11,14 +11,14 @@ class CategoryBase(Schema):
     __tablename__ = 'category'
 
     icon: Optional[str | bytes] = Field(default=None)
-    name: str = Field(default=..., min_length=1, max_length=20)
+    title: str = Field(default=..., min_length=1, max_length=20)
     description: Optional[str] = Field(default=None, max_length=50)
     is_favourite: bool = Field(default=False)
 
     async def into_db(self) -> Schema:
-        self.name = self.name.capitalize()
+        self.title = self.title.capitalize()
         if not self.icon:
-            text = self.name[0]
+            text = self.title[0]
             if not (icon := await images.get(text)):
                 icon = imgproc.default(text).bytes
                 await images.set(text, icon)

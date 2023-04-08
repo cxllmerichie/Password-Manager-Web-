@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QPushButton
 from PyQt5.QtCore import Qt
 from typing import Any
 

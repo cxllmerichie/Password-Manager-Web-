@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QStackedWidget
-from PyQt5.QtCore import Qt
 
 from ..css import central_pages
 from .items import Items

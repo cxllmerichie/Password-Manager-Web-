@@ -21,7 +21,7 @@ class App(QMainWindow):
 
     async def init(self) -> 'App':
         from .misc import Sizes
-        from desktop.src.components.main_view import CentralWidget
+        from .components.central_widget import CentralWidget
         from .components.status_bar import StatusBar
 
         self.resize(Sizes.App)

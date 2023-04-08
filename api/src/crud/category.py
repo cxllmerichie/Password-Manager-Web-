@@ -10,14 +10,16 @@ async def create_category(user_id: int, category: schemas.CategoryCreate) -> sch
     return db_category
 
 
-async def get_category(category_id: int, schema: type = schemas.Category) -> schemas.Category | None:
-    query, args = f'SELECT * FROM "category" WHERE "id" = $1;', (category_id, )
+async def get_category(category_id: int = None, title: str = None, schema: type = schemas.Category)\
+        -> schemas.Category | None:
+    field, value = ('category_id', category_id) if category_id else ('title', title)
+    query, args = f'SELECT * FROM "category" WHERE "{field}" = $1;', (value, )
     db_category = await (await db.select(query, args, schema, rel_depth=2)).first()
     return db_category
 
 
 async def get_categories(user_id: int, limit: int = INF, offset: int = 0, schema: type = schemas.Category) -> list[schemas.Category]:
-    query, args = f'SELECT * FROM "category" WHERE "user_id" = $1 ORDER BY "name" LIMIT $2 OFFSET $3;', (user_id, limit, offset)
+    query, args = f'SELECT * FROM "category" WHERE "user_id" = $1 ORDER BY "is_favourite" DESC, "title" LIMIT $2 OFFSET $3;', (user_id, limit, offset)
     db_categories = await (await db.select(query, args, schema, rel_depth=2)).all()
     return db_categories
 

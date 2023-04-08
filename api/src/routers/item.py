@@ -8,7 +8,7 @@ from .. import crud, schemas
 router = APIRouter(tags=['Item'])
 
 
-@router.post('/categories/{category_id}/items/', name='Create item by category id', response_model=schemas.Item)
+@router.post('/categories/{category_id}/items/', name='Create item by category id', response_model=schemas.Item, status_code=201)
 async def _(category_id: int, item: schemas.ItemCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_category = await crud.get_category(category_id=category_id)

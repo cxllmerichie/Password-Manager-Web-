@@ -6,11 +6,11 @@ from .. import crud, schemas
 router = APIRouter(tags=['User'])
 
 
-@router.post('/users/', name='Create user', response_model=schemas.UserToken)
+@router.post('/users/', name='Create user', response_model=schemas.UserToken, status_code=201)
 async def _(user: schemas.UserCreate):
     db_user = await crud.get_user(email=user.email, schema=schemas.UserCreate)
     if db_user:
-        raise HTTPException(status_code=400, detail=f'Email <{user.email}> already registered')
+        raise HTTPException(status_code=303, detail=f'Email <{user.email}> already registered')
     db_user = await crud.create_user(user=user)
     return schemas.UserToken(**dict(await crud.create_token(user=db_user)), **dict(db_user))
 

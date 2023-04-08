@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
 from ..css import sign_up
 from ..widgets import Button, Label, LInput, VLayout, Spacer, Frame
 from ..misc import Icons, api
+from .main_view import MainView
 
 
 class SignUp(QWidget):
@@ -17,7 +18,7 @@ class SignUp(QWidget):
     async def init(self) -> 'SignUp':
         vbox = await VLayout().init(spacing=10, alignment=Qt.AlignVCenter)
         vbox.addWidget(await Button(self, 'AuthExitBtn').init(
-            icon=Icons.CROSS, slot=self.app.close
+            icon=Icons.CROSS, slot=self.app().close
         ), alignment=VLayout.RightTop)
         vbox.addItem(Spacer(False, True))
 
@@ -88,7 +89,8 @@ class SignUp(QWidget):
         self.findChild(QLabel, 'ErrorLbl').setText(error)
         return len(error) == 0
 
-    def sign_up(self):
+    @pyqtSlot()
+    async def sign_up(self):
         email = self.findChild(QLineEdit, 'InputFieldEmail').text()
         password = self.findChild(QLineEdit, 'InputFieldPassword').text()
         if not self.validate_email():
@@ -100,9 +102,9 @@ class SignUp(QWidget):
         body = {'email': email, 'password': password}
         if not (token := api.create_user(body).get('access_token', None)):
             return self.findChild(QLabel, 'ErrorLbl').setText('Internal error, please try again')
-        self.app.settings.setValue('token', token)
+        self.app().settings.setValue('token', token)
+        self.parent().addWidget(await MainView(self).init())
         self.parent().setCurrentIndex(2)
 
-    @property
     def app(self):
         return self.parent().parent()

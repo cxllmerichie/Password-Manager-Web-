@@ -3,16 +3,16 @@ from PyQt5.QtCore import pyqtSlot
 
 from ..widgets import Button, VLayout, LInput, HLayout, Label, TInput, Spacer, Frame
 from ..misc import Icons, api
-from ..css import category
+from ..css import item
 
 
-class Category(QFrame):
+class Item(QFrame):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(category.css)
+        self.setStyleSheet(item.css)
 
-    async def init(self) -> 'Category':
+    async def init(self) -> 'Item':
         vbox = await VLayout().init(spacing=20, margins=(0, 0, 0, 20))
 
         hbox = await HLayout().init(margins=(20, 0, 20, 0))
@@ -69,6 +69,7 @@ class Category(QFrame):
         favourite_btn.setProperty('is_favourite', False)
         return self
 
+    @pyqtSlot()
     def add_item(self):
         ...
 
@@ -81,24 +82,24 @@ class Category(QFrame):
         self.findChild(QPushButton, 'CreateBtn').setVisible(False)
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(True)
         self.findChild(QPushButton, 'AddItemBtn').setVisible(False)
-        self.findChild(QPushButton, 'IconBtn').setDisabled(False)
         self.findChild(QLineEdit, 'TitleInput').setEnabled(True)
+        self.findChild(QPushButton, 'IconBtn').setDisabled(False)
         self.findChild(QTextEdit, 'DescriptionInput').setDisabled(False)
 
     @pyqtSlot()
     def save(self):
         icon_btn = self.findChild(QPushButton, 'IconBtn')
-        title_input = self.findChild(QLineEdit, 'TitleInput')
+        name_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
         error_lbl = self.findChild(QLabel, 'ErrorLbl')
 
         icon = icon_btn.property('icon_bytes')
-        title = title_input.text()
+        name = name_input.text()
         description = description_input.toPlainText()
         is_favourite = self.findChild(QPushButton, 'FavouriteBtn').property('is_favourite')
-        if not len(title):
-            return error_lbl.setText('Title can not be empty')
-        body = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
+        if not len(name):
+            return error_lbl.setText('Name can not be empty')
+        body = {'icon': icon, 'name': name, 'description': description, 'is_favourite': is_favourite}
         response = api.update_category(self.property('category')['id'], body, self.app().token())
         if response.get('id', None):
             self.cancel()
@@ -128,18 +129,18 @@ class Category(QFrame):
 
     def set_category(self, c):
         self.setProperty('category', c)
-        title_input = self.findChild(QLineEdit, 'TitleInput')
+        name_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
         icon_btn = self.findChild(QPushButton, 'IconBtn')
 
-        title_input.setText(c['title'])
+        name_input.setText(c['name'])
         description_input.setText(c['description'])
         icon_btn.setIcon(Icons.from_bytes(c['icon'].encode()))
         favourite_btn = self.findChild(QPushButton, 'FavouriteBtn')
         if (not c['is_favourite'] and favourite_btn.property('is_favourite')) or \
                 c['is_favourite'] and not favourite_btn.property('is_favourite'):
             favourite_btn.click()
-        title_input.setEnabled(False)
+        name_input.setEnabled(False)
         icon_btn.setDisabled(True)
         description_input.setDisabled(True)
         self.findChild(QLabel, 'ErrorLbl').setText('')
@@ -158,7 +159,7 @@ class Category(QFrame):
         else:
             btn.setIcon(Icons.STAR.icon)
 
-    def app(self) -> 'App':
+    def app(self):
         return self.parent().parent().parent().parent().parent()
 
     @pyqtSlot()
@@ -174,8 +175,9 @@ class Category(QFrame):
         is_favourite = self.findChild(QPushButton, 'FavouriteBtn').property('is_favourite')
         if not len(name):
             return error_lbl.setText('Name can not be empty')
-        body = {'icon': icon, 'title': name, 'description': description, 'is_favourite': is_favourite}
+        body = {'icon': icon, 'name': name, 'description': description, 'is_favourite': is_favourite}
         response = api.create_category(body, self.app().token())
+
         if response.get('id', None):
             self.setProperty('category', response)
             icon_btn.setIcon(Icons.from_bytes(response['icon'].encode()))

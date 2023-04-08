@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
 
 from ..widgets import ScrollArea
 from ..css import items

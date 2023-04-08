@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "category" (
     "id" SERIAL PRIMARY KEY,
 
     "icon" BYTEA NOT NULL,
-    "name" TEXT NOT NULL UNIQUE,
+    "title" TEXT NOT NULL UNIQUE,
     "description" TEXT DEFAULT NULL,
     "is_favourite" BOOLEAN DEFAULT FALSE,
 

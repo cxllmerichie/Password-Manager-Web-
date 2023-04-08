@@ -7,9 +7,12 @@ from .. import crud, schemas
 router = APIRouter(tags=['Category'])
 
 
-@router.post('/categories/', name='Create category', response_model=schemas.Category)
+@router.post('/categories/', name='Create category', response_model=schemas.Category, status_code=201)
 async def _(category: schemas.CategoryCreate,
             user: schemas.User = Depends(crud.get_current_user)):
+    db_category = await crud.get_category(title=category.title)
+    if db_category:
+        raise HTTPException(status_code=303, detail=f'Category <{category.title}> already exists')
     db_category = await crud.create_category(user_id=user.id, category=category)
     return db_category
 

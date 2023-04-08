@@ -32,7 +32,8 @@ css = f'''
     background-color: {Colors.GRAY};
 }}
 
-#MainBtn {{
+#ContinueBtn,
+#LogInBtn {{
     min-width: {Sizes.AuthMainBtn.w}px;
     height: {Sizes.AuthMainBtn.h}px;
     font-size: 20px;
@@ -41,7 +42,8 @@ css = f'''
     color: white;
 }}
 
-#MainBtn:hover {{
+#ContinueBtn:hover,
+#LogInBtn:hover {{
     background-color: {Colors.RED_HOVER};
 }}
 
