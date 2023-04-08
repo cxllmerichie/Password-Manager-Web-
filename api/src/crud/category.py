@@ -12,7 +12,7 @@ async def create_category(user_id: int, category: schemas.CategoryCreate) -> sch
 
 async def get_category(category_id: int = None, title: str = None, schema: type = schemas.Category)\
         -> schemas.Category | None:
-    field, value = ('category_id', category_id) if category_id else ('title', title)
+    field, value = ('id', category_id) if category_id else ('title', title)
     query, args = f'SELECT * FROM "category" WHERE "{field}" = $1;', (value, )
     db_category = await (await db.select(query, args, schema, rel_depth=2)).first()
     return db_category

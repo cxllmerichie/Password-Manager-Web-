@@ -12,11 +12,8 @@ class HLayout(QHBoxLayout, Layout):
 
     def init(
             self, *,
-            margins: tuple[int, ...] = (0, 0, 0, 0),
-            spacing: int = 0, alignment: Qt.Alignment = None
+            margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
+            items: list[QWidget] = None
     ) -> 'HLayout':
-        self.setContentsMargins(*margins)
-        self.setSpacing(spacing)
-        if alignment:
-            self.setAlignment(alignment)
+        Layout.init(self, margins=margins, spacing=spacing, alignment=alignment)
         return self

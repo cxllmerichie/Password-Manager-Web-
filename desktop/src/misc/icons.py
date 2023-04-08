@@ -1,7 +1,8 @@
 from typing import Iterable
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 import os
+import base64
 
 
 class Icon:
@@ -33,9 +34,16 @@ class Icons:
     PLUS = Icon('plus-circle.svg', (20, 20))
     CATEGORY = Icon('tag.svg', (80, 80))
     EDIT = Icon('edit.svg', (30, 30))
+    CROSS_CIRCLE = Icon('x-circle.svg', (20, 20))
+    COPY = Icon('copy.svg', (20, 20))
+    EYE = Icon('eye.svg', (20, 20))
+    EYE_OFF = Icon('eye-off.svg', (20, 20))
 
     @staticmethod
-    def from_bytes(icon_bytes: bytes = None) -> QIcon:
-        qimg = QImage.fromData(icon_bytes, 'PNG')
-        qpix = QPixmap.fromImage(qimg)
-        return QIcon(qpix)
+    def from_bytes(icon_bytes: bytes | str) -> QIcon:
+        if isinstance(icon_bytes, str):
+            icon_bytes = eval(icon_bytes)
+        pixmap = QPixmap()
+        png = base64.b64encode(icon_bytes).decode('utf-8')
+        pixmap.loadFromData(base64.b64decode(png))
+        return QIcon(pixmap)

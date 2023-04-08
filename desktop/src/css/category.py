@@ -2,13 +2,6 @@ from ..misc import Colors, Sizes
 
 
 css: str = f'''
-#AddItemBtn {{
-    color: white;
-    font-size: 16px;
-    min-width: 200px;
-    min-height: 30px;
-}}
-
 #SaveBtn {{
     background-color: {Colors.GREEN};
 }}
@@ -72,10 +65,6 @@ css: str = f'''
     border-radius: 5px;
 }} 
 
-
-#TitleInput {{
-}}
-
 #DescriptionInput {{
     max-height: 100px;
 }}
@@ -84,13 +73,6 @@ css: str = f'''
 #FavouriteBtn,
 #CloseBtn {{
     background-color: transparent;
-}}
-
-#FavouriteBtn {{
-}}
-
-
-#CloseBtn {{
 }}
 
 #ControlBtns {{
@@ -104,12 +86,11 @@ css: str = f'''
     min-height: {Sizes.ERROR.h}px;
 }}
 
-
 #AddItemBtn {{
     color: white;
     background-color: transparent;
     font-size: 14px;
-    max-width: 200px;
+    min-width: 200px;
     border: none;
     min-height: 30px;
 }}

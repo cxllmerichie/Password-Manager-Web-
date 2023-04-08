@@ -5,14 +5,14 @@ from loguru import logger
 
 @logger.catch()
 def clear_json(dictionary: dict[str, Any]) -> dict[str, Any]:
-    def rule(value):
+    def validate(value):
         if isinstance(value, bool):
             return True
         elif value is None:
             return False
         elif isinstance(value, str):
             return len(value)
-    return {key: value for key, value in dictionary.items() if rule(value)}
+    return {key: value for key, value in dictionary.items() if validate(value)}
 
 
 URL_ROOT = 'http://127.0.0.1:8000'
@@ -54,6 +54,7 @@ def categories(token: str):
 @logger.catch()
 def create_category(category: dict[str, Any], token: str):
     url = f'{URL_ROOT}/categories/'
+    print(category)
     return requests.post(url=url, headers=auth_headers(token), json=clear_json(category)).json()
 
 
@@ -61,3 +62,20 @@ def create_category(category: dict[str, Any], token: str):
 def update_category(category_id: int, category: dict[str, Any], token: str):
     url = f'{URL_ROOT}/categories/{category_id}/'
     return requests.put(url=url, headers=auth_headers(token), json=clear_json(category)).json()
+
+
+@logger.catch()
+def add_field(item_id: int, field: dict[str, Any], token: str):
+    url = f'{URL_ROOT}/items/{item_id}/fields/'
+    return requests.post(url=url, headers=auth_headers(token), json=field).json()
+
+
+@logger.catch()
+def create_item(category_id: int, item: dict[str, Any], fields: list[dict[str, Any]], token: str):
+    url = f'{URL_ROOT}/categories/{category_id}/items/'
+    response = requests.post(url=url, headers=auth_headers(token), json=clear_json(item)).json()
+    response['fields'] = []
+    for field in fields:
+        if (f := add_field(response['id'], field, token)).get('id', None):
+            response['fields'].append(f)
+    return response

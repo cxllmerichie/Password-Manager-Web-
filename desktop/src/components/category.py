@@ -17,7 +17,7 @@ class Category(QFrame):
 
         hbox = HLayout().init(margins=(20, 0, 20, 0))
         favourite_btn = Button(self, 'FavouriteBtn').init(
-            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.favourite
+            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
         )
         hbox.addWidget(favourite_btn, alignment=VLayout.Left)
         edit_btn = Button(self, 'EditBtn').init(
@@ -30,13 +30,13 @@ class Category(QFrame):
         vbox.addLayout(hbox)
 
         vbox.addWidget(Button(self, 'IconBtn').init(
-            icon=Icons.CATEGORY, slot=self.change_icon
+            icon=Icons.CATEGORY, slot=self.set_icon
         ), alignment=VLayout.HCenterTop)
         vbox.addWidget(LInput(self, 'TitleInput').init(
-            placeholder='category name'
+            placeholder='title'
         ), alignment=VLayout.HCenterTop)
         vbox.addWidget(TInput(self, 'DescriptionInput').init(
-            placeholder='category description (optional)'
+            placeholder='description (optional)'
         ), alignment=VLayout.HCenterTop)
         vbox.addItem(Spacer(False, True))
 
@@ -48,11 +48,11 @@ class Category(QFrame):
         ), alignment=VLayout.HCenter)
 
         frame = Frame(self, 'SaveCancelFrame').init()
-        ctrl_layout = HLayout(frame).init(spacing=50)
-        ctrl_layout.addWidget(Button(self, 'SaveBtn').init(
+        save_cancel_layout = HLayout(frame).init(spacing=50)
+        save_cancel_layout.addWidget(Button(self, 'SaveBtn').init(
             text='Save', slot=self.save
         ), alignment=VLayout.Left)
-        ctrl_layout.addWidget(Button(self, 'CancelBtn').init(
+        save_cancel_layout.addWidget(Button(self, 'CancelBtn').init(
             text='Cancel', slot=self.cancel
         ), alignment=VLayout.Right)
         vbox.addWidget(frame, alignment=VLayout.HCenter)
@@ -70,11 +70,32 @@ class Category(QFrame):
         return self
 
     def add_item(self):
-        ...
+        item = self.parent().findChild(QFrame, 'Item')
+        item.setProperty('category_id', self.property('category')['id'])
+        item.show_create_item()
+        self.parent().setCurrentIndex(1)
 
     @pyqtSlot()
     def close_page(self):
         self.parent().shrink()
+
+    def show_create_category(self):
+        self.findChild(QPushButton, 'CreateBtn').setVisible(True)
+        self.findChild(QPushButton, 'EditBtn').setVisible(False)
+        self.findChild(QFrame, 'SaveCancelFrame').setVisible(False)
+        self.findChild(QPushButton, 'AddItemBtn').setVisible(False)
+        icon_btn = self.findChild(QPushButton, 'IconBtn')
+        icon_btn.setDisabled(False)
+        icon_btn.setIcon(Icons.CATEGORY.icon)
+        favourite_btn = self.findChild(QPushButton, 'FavouriteBtn')
+        if favourite_btn.property('is_favourite'):
+            favourite_btn.click()
+        title_input = self.findChild(QLineEdit, 'TitleInput')
+        title_input.setEnabled(True)
+        title_input.setText('')
+        description_input = self.findChild(QTextEdit, 'DescriptionInput')
+        description_input.setDisabled(False)
+        description_input.setText('')
 
     @pyqtSlot()
     def edit_category(self):
@@ -102,7 +123,7 @@ class Category(QFrame):
         response = api.update_category(self.property('category')['id'], body, self.app().token())
         if response.get('id', None):
             self.cancel()
-            self.setProperty('category', category)
+            self.setProperty('category', response)
         else:
             error_lbl.setText('Internal error, please try again')
 
@@ -116,7 +137,7 @@ class Category(QFrame):
         self.findChild(QPushButton, 'AddItemBtn').setVisible(True)
 
     @pyqtSlot()
-    def change_icon(self):
+    def set_icon(self):
         dialog = QFileDialog()
         filepath, _ = dialog.getOpenFileName(None, 'Choose image', '', 'Images (*.jpg)', options=dialog.Options())
         if filepath:
@@ -126,18 +147,18 @@ class Category(QFrame):
                 btn.setProperty('icon_bytes', icon_bytes)
                 btn.setIcon(Icons.from_bytes(icon_bytes))
 
-    def set_category(self, c):
-        self.setProperty('category', c)
+    def show_category(self, category_):
+        self.setProperty('category', category_)
         title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
         icon_btn = self.findChild(QPushButton, 'IconBtn')
 
-        title_input.setText(c['title'])
-        description_input.setText(c['description'])
-        icon_btn.setIcon(Icons.from_bytes(c['icon'].encode()))
+        title_input.setText(category_['title'])
+        description_input.setText(category_['description'])
+        icon_btn.setIcon(Icons.from_bytes(category_['icon']))
         favourite_btn = self.findChild(QPushButton, 'FavouriteBtn')
-        if (not c['is_favourite'] and favourite_btn.property('is_favourite')) or \
-                c['is_favourite'] and not favourite_btn.property('is_favourite'):
+        if (not category_['is_favourite'] and favourite_btn.property('is_favourite')) or \
+                category_['is_favourite'] and not favourite_btn.property('is_favourite'):
             favourite_btn.click()
         title_input.setEnabled(False)
         icon_btn.setDisabled(True)
@@ -149,7 +170,7 @@ class Category(QFrame):
         self.findChild(QPushButton, 'EditBtn').setVisible(True)
 
     @pyqtSlot()
-    def favourite(self):
+    def set_favourite(self):
         btn = self.findChild(QPushButton, 'FavouriteBtn')
         is_favourite = btn.property('is_favourite')
         btn.setProperty('is_favourite', is_favourite := not is_favourite)
@@ -178,7 +199,7 @@ class Category(QFrame):
         response = api.create_category(body, self.app().token())
         if response.get('id', None):
             self.setProperty('category', response)
-            icon_btn.setIcon(Icons.from_bytes(response['icon'].encode()))
+            icon_btn.setIcon(Icons.from_bytes(response['icon']))
             error_lbl.setText('')
 
             name_input.setEnabled(False)

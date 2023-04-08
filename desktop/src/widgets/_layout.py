@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
 
@@ -25,10 +25,12 @@ class Layout:
     Bottom = Qt.AlignBottom
     CenterCenter = Qt.AlignHCenter | Qt.AlignVCenter
 
-    @abstractmethod
     def init(
             self, *,
-            margins: tuple[int, ...] = (0, 0, 0, 0),
-            spacing: int = 0, alignment: Qt.Alignment = None
+            margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None
     ) -> 'Layout':
-        ...
+        self.setContentsMargins(*margins)
+        self.setSpacing(spacing)
+        if alignment:
+            self.setAlignment(alignment)
+        return self
