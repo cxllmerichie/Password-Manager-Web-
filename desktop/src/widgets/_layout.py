@@ -34,3 +34,7 @@ class Layout:
         if alignment:
             self.setAlignment(alignment)
         return self
+
+    def clear(self):
+        for i in reversed(range(self.count())):
+            self.itemAt(i).widget().setParent(None)

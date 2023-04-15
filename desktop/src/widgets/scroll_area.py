@@ -28,8 +28,4 @@ class ScrollArea(QScrollArea):
         return self
 
     def clear(self):
-        layout = self.widget().layout()
-        for i in range(layout.count()):
-            item = layout.itemAt(i)
-            layout.removeItem(item)
-            item.deleteLater()
+        self.widget().layout().clear()

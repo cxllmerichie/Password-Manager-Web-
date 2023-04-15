@@ -21,3 +21,12 @@ class LInput(QLineEdit):
         if alignment:
             self.setAlignment(alignment)
         return self
+
+    def hide_echo(self):
+        self.setEchoMode(QLineEdit.Password)
+
+    def show_echo(self):
+        self.setEchoMode(QLineEdit.Normal)
+
+    def toggle_echo(self):
+        self.hide_echo() if self.echoMode() == QLineEdit.Normal else self.show_echo()

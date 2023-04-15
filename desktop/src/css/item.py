@@ -125,38 +125,36 @@ css: str = f'''
 #FieldScrollAreaWidget {{
     background-color: transparent;
 }}
+'''
 
+field: str = f'''
 #InputFieldValueCopyBtn,
 #InputFieldValueHideBtn,
-#RemoveInputFieldBtn {{
+#RemoveInputFieldBtn,
+#SaveInputFieldBtn,
+#EditInputFieldBtn {{
     max-width: 20px;
     max-height: 20px;
     border: none;
     border-radius: 9px;
 }}
-'''
 
-common: str = f'''
+#InputFieldName,
+#InputFieldValue {{
     color: white;
     border: none;
     min-height: 30px;
     background-color: transparent;
     font-size: 16px;
-'''
+}}
 
-input_frame: str = f'''
-    background-color: {Colors.GRAY};
-    border-radius: 5px;
-'''
-
-name_input: str = f'''
-    {common}
+#InputFieldName {{
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-'''
+}}
 
-value_input: str = f'''
-    {common}
+#InputFieldValue {{
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+}}
 '''

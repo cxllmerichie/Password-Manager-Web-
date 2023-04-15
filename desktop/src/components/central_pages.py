@@ -11,6 +11,6 @@ class CentralPages(QStackedWidget):
         self.setStyleSheet(central_pages.css)
 
     def init(self) -> 'CentralPages':
-        # self.addWidget(Items(self).init(items=[]))
-        # self.setCurrentIndex(0)
+        self.addWidget(Items(self).init())
+        self.setCurrentIndex(0)
         return self

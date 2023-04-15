@@ -54,7 +54,6 @@ def categories(token: str):
 @logger.catch()
 def create_category(category: dict[str, Any], token: str):
     url = f'{URL_ROOT}/categories/'
-    print(category)
     return requests.post(url=url, headers=auth_headers(token), json=clear_json(category)).json()
 
 
@@ -67,7 +66,11 @@ def update_category(category_id: int, category: dict[str, Any], token: str):
 @logger.catch()
 def add_field(item_id: int, field: dict[str, Any], token: str):
     url = f'{URL_ROOT}/items/{item_id}/fields/'
-    return requests.post(url=url, headers=auth_headers(token), json=field).json()
+    response = requests.post(url=url, headers=auth_headers(token), json=field)
+    if response.status_code == 201:
+        url = f'{URL_ROOT}/fields/{response.json()["id"]}/'
+        response = requests.put(url=url, headers=auth_headers(token), json=field)
+    return response.json()
 
 
 @logger.catch()

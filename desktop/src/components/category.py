@@ -1,3 +1,5 @@
+import typing
+
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QFrame, QPushButton, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 
@@ -145,9 +147,9 @@ class Category(QFrame):
                 icon_bytes = file.read()
                 btn = self.findChild(QPushButton, 'IconBtn')
                 btn.setProperty('icon_bytes', icon_bytes)
-                btn.setIcon(Icons.from_bytes(icon_bytes))
+                btn.setIcon(Icons.from_bytes(icon_bytes).icon)
 
-    def show_category(self, category_):
+    def show_category(self, category_: dict[str, typing.Any]):
         self.setProperty('category', category_)
         title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
@@ -155,7 +157,7 @@ class Category(QFrame):
 
         title_input.setText(category_['title'])
         description_input.setText(category_['description'])
-        icon_btn.setIcon(Icons.from_bytes(category_['icon']))
+        icon_btn.setIcon(Icons.from_bytes(category_['icon']).icon)
         favourite_btn = self.findChild(QPushButton, 'FavouriteBtn')
         if (not category_['is_favourite'] and favourite_btn.property('is_favourite')) or \
                 category_['is_favourite'] and not favourite_btn.property('is_favourite'):
@@ -199,7 +201,7 @@ class Category(QFrame):
         response = api.create_category(body, self.app().token())
         if response.get('id', None):
             self.setProperty('category', response)
-            icon_btn.setIcon(Icons.from_bytes(response['icon']))
+            icon_btn.setIcon(Icons.from_bytes(response['icon']).icon)
             error_lbl.setText('')
 
             name_input.setEnabled(False)
