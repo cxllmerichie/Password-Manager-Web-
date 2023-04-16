@@ -9,11 +9,11 @@ class App(QMainWindow):
     # with main created thread in `main.py` creating more threads in `assets`
 
     def __init__(self):
-        from .css import app, status_bar
+        from . import css
 
         super().__init__()
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(app.css + status_bar.css)
+        self.setStyleSheet(css.app.css + css.status_bar.css)
         self.settings = QSettings('cxllmerichie', 'PasswordManagerDesktop', self)
 
     def token(self):

@@ -58,6 +58,12 @@ def create_category(category: dict[str, Any], token: str):
 
 
 @logger.catch()
+def get_category(category_id: str, token: str):
+    url = f'{URL_ROOT}/categories/{category_id}/'
+    return requests.get(url=url, headers=auth_headers(token)).json()
+
+
+@logger.catch()
 def update_category(category_id: int, category: dict[str, Any], token: str):
     url = f'{URL_ROOT}/categories/{category_id}/'
     return requests.put(url=url, headers=auth_headers(token), json=clear_json(category)).json()
@@ -66,11 +72,19 @@ def update_category(category_id: int, category: dict[str, Any], token: str):
 @logger.catch()
 def add_field(item_id: int, field: dict[str, Any], token: str):
     url = f'{URL_ROOT}/items/{item_id}/fields/'
-    response = requests.post(url=url, headers=auth_headers(token), json=field)
-    if response.status_code == 201:
-        url = f'{URL_ROOT}/fields/{response.json()["id"]}/'
-        response = requests.put(url=url, headers=auth_headers(token), json=field)
-    return response.json()
+    return requests.post(url=url, headers=auth_headers(token), json=field).json()
+
+
+@logger.catch()
+def update_field(field_id: int, field: dict[str, Any], token: str):
+    url = f'{URL_ROOT}/fields/{field_id}/'
+    return requests.put(url=url, headers=auth_headers(token), json=field).json()
+
+
+@logger.catch()
+def remove_field(field_id: str, token: str):
+    url = f'{URL_ROOT}/fields/{field_id}/'
+    return requests.delete(url=url, headers=auth_headers(token)).json()
 
 
 @logger.catch()
@@ -82,3 +96,15 @@ def create_item(category_id: int, item: dict[str, Any], fields: list[dict[str, A
         if (f := add_field(response['id'], field, token)).get('id', None):
             response['fields'].append(f)
     return response
+
+
+@logger.catch()
+def get_item(item_id: str, token: str):
+    url = f'{URL_ROOT}/items/{item_id}/'
+    return requests.get(url=url, headers=auth_headers(token)).json()
+
+
+@logger.catch()
+def update_item(item_id: int, item: dict[str, Any], token: str):
+    url = f'{URL_ROOT}/items/{item_id}/'
+    return requests.put(url=url, headers=auth_headers(token), json=clear_json(item)).json()

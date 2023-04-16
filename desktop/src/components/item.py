@@ -7,22 +7,25 @@ from typing import Any
 
 from ..widgets import Button, VLayout, LInput, HLayout, Label, TInput, Spacer, Frame, ScrollArea
 from ..misc import Icons, api, Colors
-from ..css import item, components
+from .. import css
 
 
 class Field(QFrame):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QWidget, item_id: int, field: dict[str, Any] = None):
         super().__init__(parent)
         self.identifier = str(uuid4())
+        self.item_id = item_id
+        self.field = field
+
         self.setObjectName(f'Field{self.identifier}')
-        self.setStyleSheet(item.field + f'''
+        self.setStyleSheet(css.item.field + f'''
             #Field{self.identifier} {{
                 background-color: {Colors.GRAY};
                 border-radius: 5px;
             }}
         ''')
 
-    def init(self, field: dict[str, Any]) -> 'Field':
+    def init(self) -> 'Field':
         layout = HLayout(self, f'FieldLayout').init(spacing=5)
         layout.addWidget(name_input := LInput(self, f'InputFieldName').init(
             placeholder='name', alignment=VLayout.Right
@@ -47,10 +50,10 @@ class Field(QFrame):
         ))
         self.setLayout(layout)
 
-        remove_field_btn.setVisible(False)
-        if field:
-            name_input.setText(field['name'])
-            value_input.setText(field['value'])
+        if self.field:
+            remove_field_btn.setVisible(False)
+            name_input.setText(self.field['name'])
+            value_input.setText(self.field['value'])
             save_field_btn.setVisible(False)
             edit_field_btn.setVisible(True)
             value_input.hide_echo()
@@ -63,27 +66,37 @@ class Field(QFrame):
             value_input_hide_btn.setVisible(False)
         return self
 
+    @pyqtSlot()
     def save_field(self):
         name_input = self.findChild(QLineEdit, f'InputFieldName')
         value_input = self.findChild(QLineEdit, f'InputFieldValue')
-        print(name_input, value_input)
-        response = api.add_field(
-            self.property('item')['id'], {'name': name_input.text(), 'value': value_input.text()}, self.app().token()
-        )
-        # if ok
-        self.findChild(QPushButton, 'InputFieldValueCopyBtn').setVisible(True)
-        self.findChild(QPushButton, 'InputFieldValueHideBtn').setVisible(True)
-        self.findChild(QPushButton, 'SaveInputFieldBtn').setVisible(False)
-        self.findChild(QPushButton, 'EditInputFieldBtn').setVisible(True)
-        self.findChild(QPushButton, 'RemoveInputFieldBtn').setVisible(False)
-        value_input.hide_echo()
-        value_input.setDisabled(True)
-        name_input.setDisabled(True)
+        field = {'name': name_input.text(), 'value': value_input.text()}
+        if self.field:
+            response = api.update_field(self.field['id'], field, self.app().token())
+        else:
+            response = api.add_field(self.item_id, field, self.app().token())
+        if response.get('id', None):
+            self.findChild(QPushButton, 'InputFieldValueCopyBtn').setVisible(True)
+            self.findChild(QPushButton, 'InputFieldValueHideBtn').setVisible(True)
+            self.findChild(QPushButton, 'SaveInputFieldBtn').setVisible(False)
+            self.findChild(QPushButton, 'EditInputFieldBtn').setVisible(True)
+            self.findChild(QPushButton, 'RemoveInputFieldBtn').setVisible(False)
+            value_input.hide_echo()
+            value_input.setDisabled(True)
+            name_input.setDisabled(True)
+            self.field = response
+        else:
+            self.setVisible(False)
+            self.deleteLater()
 
+    @pyqtSlot()
     def remove_field(self):
         self.setVisible(False)
-        self.parent().items.remove(self.identifier)
+        self.parent().parent().parent().parent().field_identifiers.remove(self.identifier)
+        if self.field:
+            api.remove_field(self.field['id'], self.app().token())
 
+    @pyqtSlot()
     def edit_field(self):
         self.findChild(QPushButton, 'InputFieldValueCopyBtn').setVisible(False)
         self.findChild(QPushButton, 'InputFieldValueHideBtn').setVisible(False)
@@ -96,15 +109,17 @@ class Field(QFrame):
         value_input.show_echo()
 
     def app(self):
-        return self.parent().app()
+        return self.parent().parent().parent().parent().app()
 
 
 class Item(QFrame):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(item.css + components.scroll)
+        self.setStyleSheet(css.item.css + css.components.scroll)
 
+        self.item = None
+        self.category_id = None
         self.field_identifiers = []
 
     def init(self) -> 'Item':
@@ -116,6 +131,9 @@ class Item(QFrame):
         ), alignment=VLayout.Left)
         hbox.addWidget(edit_btn := Button(self, 'EditBtn').init(
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_item
+        ))
+        hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_item
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
@@ -162,27 +180,23 @@ class Item(QFrame):
         frame = Frame(self, 'SaveCancelFrame').init()
         save_cancel_layout = HLayout(frame).init(spacing=50)
         save_cancel_layout.addWidget(Button(self, 'SaveBtn').init(
-            text='Save'
+            text='Save', slot=self.save
         ), alignment=VLayout.Left)
         save_cancel_layout.addWidget(Button(self, 'CancelBtn').init(
-            text='Cancel'
+            text='Cancel', slot=self.cancel
         ), alignment=VLayout.Right)
         vbox.addWidget(frame, alignment=VLayout.HCenter)
         self.setLayout(vbox)
 
-        edit_btn.setVisible(False)
+        remove_btn.setVisible(False)
         frame.setVisible(False)
         favourite_btn.setProperty('is_favourite', False)
         return self
 
     @pyqtSlot()
-    def show_create_item(self):
-        return
-
-    @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
         layout = self.findChild(QScrollArea, 'FieldScrollArea').widget().layout()
-        layout.addWidget(f := Field(self).init(field))
+        layout.addWidget(f := Field(self, self.item['id'], field).init())
         self.field_identifiers.append(f.identifier)
 
     @pyqtSlot()
@@ -196,41 +210,47 @@ class Item(QFrame):
     @pyqtSlot()
     def edit_item(self):
         self.findChild(QPushButton, 'CreateBtn').setVisible(False)
+        self.findChild(QPushButton, 'EditBtn').setVisible(False)
+        self.findChild(QPushButton, 'RemoveBtn').setVisible(True)
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(True)
-        self.findChild(QPushButton, 'AddItemBtn').setVisible(False)
-        self.findChild(QLineEdit, 'TitleInput').setEnabled(True)
-        self.findChild(QPushButton, 'IconBtn').setDisabled(False)
+        self.findChild(QLineEdit, 'TitleInput').setDisabled(False)
         self.findChild(QTextEdit, 'DescriptionInput').setDisabled(False)
+        self.findChild(QPushButton, 'IconBtn').setDisabled(False)
+        self.findChild(QPushButton, 'AddFieldBtn').setVisible(False)
+        self.findChild(QPushButton, 'AddDocumentBtn').setVisible(False)
 
     @pyqtSlot()
     def save(self):
         icon_btn = self.findChild(QPushButton, 'IconBtn')
-        name_input = self.findChild(QLineEdit, 'TitleInput')
+        title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
         error_lbl = self.findChild(QLabel, 'ErrorLbl')
 
         icon = icon_btn.property('icon_bytes')
-        name = name_input.text()
+        title = title_input.text()
         description = description_input.toPlainText()
         is_favourite = self.findChild(QPushButton, 'FavouriteBtn').property('is_favourite')
-        if not len(name):
+        if not len(title):
             return error_lbl.setText('Name can not be empty')
-        body = {'icon': icon, 'name': name, 'description': description, 'is_favourite': is_favourite}
-        response = api.update_category(self.property('category')['id'], body, self.app().token())
-        if response.get('id', None):
+        item = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
+        item = api.update_item(self.item['id'], item, self.app().token())
+        if item.get('id', None):
             self.cancel()
-            self.setProperty('category', response)
+            self.item = item
         else:
             error_lbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def cancel(self):
         self.findChild(QLabel, 'ErrorLbl').setText('')
-        self.findChild(QLineEdit, 'TitleInput').setEnabled(False)
-        self.findChild(QPushButton, 'IconBtn').setDisabled(True)
-        self.findChild(QTextEdit, 'DescriptionInput').setDisabled(True)
+        self.findChild(QPushButton, 'EditBtn').setVisible(True)
+        self.findChild(QPushButton, 'RemoveBtn').setVisible(False)
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(False)
-        self.findChild(QPushButton, 'AddItemBtn').setVisible(True)
+        self.findChild(QLineEdit, 'TitleInput').setDisabled(True)
+        self.findChild(QTextEdit, 'DescriptionInput').setDisabled(True)
+        self.findChild(QPushButton, 'IconBtn').setDisabled(True)
+        self.findChild(QPushButton, 'AddFieldBtn').setVisible(True)
+        self.findChild(QPushButton, 'AddDocumentBtn').setVisible(True)
 
     @pyqtSlot()
     def set_icon(self):
@@ -243,18 +263,20 @@ class Item(QFrame):
                 btn.setProperty('icon_bytes', icon_bytes)
                 btn.setIcon(Icons.from_bytes(icon_bytes).icon)
 
-    def show_item(self, item_: dict[str, Any]):
-        self.setProperty('item', item_)
+    def show_item(self, item: dict[str, Any]):
+        if item_id := item.get('id', None):
+            item = api.get_item(item_id, self.app().token())
+        self.item = item
         title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
         icon_btn = self.findChild(QPushButton, 'IconBtn')
 
-        title_input.setText(item_['title'])
-        description_input.setText(item_['description'])
-        icon_btn.setIcon(Icons.from_bytes(item_['icon']).icon)
+        title_input.setText(item['title'])
+        description_input.setText(item['description'])
+        icon_btn.setIcon(Icons.from_bytes(item['icon']).icon)
         favourite_btn = self.findChild(QPushButton, 'FavouriteBtn')
-        if (not item_['is_favourite'] and favourite_btn.property('is_favourite')) or \
-                item_['is_favourite'] and not favourite_btn.property('is_favourite'):
+        if (not item['is_favourite'] and favourite_btn.property('is_favourite')) or \
+                item['is_favourite'] and not favourite_btn.property('is_favourite'):
             favourite_btn.click()
         title_input.setEnabled(False)
         icon_btn.setDisabled(True)
@@ -263,7 +285,7 @@ class Item(QFrame):
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(False)
 
         self.findChild(QScrollArea, 'FieldScrollArea').clear()
-        for field in item_['fields']:
+        for field in item['fields']:
             self.add_field(field)
 
     @pyqtSlot()

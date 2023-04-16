@@ -5,27 +5,29 @@ from PyQt5.QtCore import pyqtSlot
 
 from ..widgets import Button, VLayout, LInput, HLayout, Label, TInput, Spacer, Frame
 from ..misc import Icons, api
-from ..css import category
+from .. import css
 
 
 class Category(QFrame):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(category.css)
+        self.setStyleSheet(css.category.css)
+        self.category = None
 
     def init(self) -> 'Category':
         vbox = VLayout().init(spacing=20, margins=(0, 0, 0, 20))
 
         hbox = HLayout().init(margins=(20, 0, 20, 0))
-        favourite_btn = Button(self, 'FavouriteBtn').init(
+        hbox.addWidget(favourite_btn := Button(self, 'FavouriteBtn').init(
             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
-        )
-        hbox.addWidget(favourite_btn, alignment=VLayout.Left)
-        edit_btn = Button(self, 'EditBtn').init(
+        ), alignment=VLayout.Left)
+        hbox.addWidget(edit_btn := Button(self, 'EditBtn').init(
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category
-        )
-        hbox.addWidget(edit_btn)
+        ))
+        hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_category
+        ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
         ), alignment=VLayout.Right)
@@ -59,23 +61,24 @@ class Category(QFrame):
         ), alignment=VLayout.Right)
         vbox.addWidget(frame, alignment=VLayout.HCenter)
 
-        add_item_btn = Button(self, 'AddItemBtn').init(
+        vbox.addWidget(add_item_btn := Button(self, 'AddItemBtn').init(
             text='Add item', icon=Icons.PLUS, slot=self.add_item
-        )
-        vbox.addWidget(add_item_btn, alignment=VLayout.HCenter)
+        ), alignment=VLayout.HCenter)
         self.setLayout(vbox)
 
         add_item_btn.setVisible(False)
         edit_btn.setVisible(False)
+        remove_btn.setVisible(False)
         frame.setVisible(False)
         favourite_btn.setProperty('is_favourite', False)
         return self
 
     def add_item(self):
-        item = self.parent().findChild(QFrame, 'Item')
-        item.setProperty('category_id', self.property('category')['id'])
+        right_pages = self.parent()
+        right_pages.setCurrentIndex(1)
+        item = right_pages.findChild(QFrame, 'Item')
+        item_category_id = self.category['id']
         item.show_create_item()
-        self.parent().setCurrentIndex(1)
 
     @pyqtSlot()
     def close_page(self):
@@ -105,8 +108,10 @@ class Category(QFrame):
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(True)
         self.findChild(QPushButton, 'AddItemBtn').setVisible(False)
         self.findChild(QPushButton, 'IconBtn').setDisabled(False)
+        self.findChild(QPushButton, 'EditBtn').setVisible(False)
         self.findChild(QLineEdit, 'TitleInput').setEnabled(True)
         self.findChild(QTextEdit, 'DescriptionInput').setDisabled(False)
+        self.findChild(QPushButton, 'RemoveBtn').setVisible(True)
 
     @pyqtSlot()
     def save(self):
@@ -121,13 +126,15 @@ class Category(QFrame):
         is_favourite = self.findChild(QPushButton, 'FavouriteBtn').property('is_favourite')
         if not len(title):
             return error_lbl.setText('Title can not be empty')
-        body = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        response = api.update_category(self.property('category')['id'], body, self.app().token())
-        if response.get('id', None):
+        category = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
+        category = api.update_category(self.category['id'], category, self.app().token())
+        if category.get('id', None):
             self.cancel()
-            self.setProperty('category', response)
+            self.category = category
         else:
             error_lbl.setText('Internal error, please try again')
+        self.findChild(QPushButton, 'EditBtn').setVisible(True)
+        self.findChild(QPushButton, 'RemoveBtn').setVisible(False)
 
     @pyqtSlot()
     def cancel(self):
@@ -137,6 +144,8 @@ class Category(QFrame):
         self.findChild(QTextEdit, 'DescriptionInput').setDisabled(True)
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(False)
         self.findChild(QPushButton, 'AddItemBtn').setVisible(True)
+        self.findChild(QPushButton, 'RemoveBtn').setVisible(False)
+        self.findChild(QPushButton, 'EditBtn').setVisible(True)
 
     @pyqtSlot()
     def set_icon(self):
@@ -149,18 +158,18 @@ class Category(QFrame):
                 btn.setProperty('icon_bytes', icon_bytes)
                 btn.setIcon(Icons.from_bytes(icon_bytes).icon)
 
-    def show_category(self, category_: dict[str, typing.Any]):
-        self.setProperty('category', category_)
+    def show_category(self, category: dict[str, typing.Any]):
+        self.category = category
         title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
         icon_btn = self.findChild(QPushButton, 'IconBtn')
 
-        title_input.setText(category_['title'])
-        description_input.setText(category_['description'])
-        icon_btn.setIcon(Icons.from_bytes(category_['icon']).icon)
+        title_input.setText(category['title'])
+        description_input.setText(category['description'])
+        icon_btn.setIcon(Icons.from_bytes(category['icon']).icon)
         favourite_btn = self.findChild(QPushButton, 'FavouriteBtn')
-        if (not category_['is_favourite'] and favourite_btn.property('is_favourite')) or \
-                category_['is_favourite'] and not favourite_btn.property('is_favourite'):
+        if (not category['is_favourite'] and favourite_btn.property('is_favourite')) or \
+                category['is_favourite'] and not favourite_btn.property('is_favourite'):
             favourite_btn.click()
         title_input.setEnabled(False)
         icon_btn.setDisabled(True)
@@ -200,7 +209,7 @@ class Category(QFrame):
         body = {'icon': icon, 'title': name, 'description': description, 'is_favourite': is_favourite}
         response = api.create_category(body, self.app().token())
         if response.get('id', None):
-            self.setProperty('category', response)
+            self.category = response
             icon_btn.setIcon(Icons.from_bytes(response['icon']).icon)
             error_lbl.setText('')
 

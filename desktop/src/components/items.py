@@ -1,15 +1,14 @@
-import typing
-
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QWidget, QFrame, QPushButton
+from typing import Any
 
 from ..widgets import ScrollArea, Frame, VLayout, HLayout, Label
-from ..css import items
 from ..misc import Icons
+from .. import css
 
 
 class CentralItem(QFrame):
-    def __init__(self, parent: QWidget, item: dict[str, typing.Any], slot: callable):
+    def __init__(self, parent: QWidget, item: dict[str, Any], slot: callable):
         super().__init__(parent)
         self.setObjectName('CentralItem')
         self.item = item
@@ -38,7 +37,7 @@ class CentralItem(QFrame):
 class Items(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.setStyleSheet(items.css)
+        self.setStyleSheet(css.items.css)
 
     def init(self) -> 'Items':
         layout = VLayout().init()

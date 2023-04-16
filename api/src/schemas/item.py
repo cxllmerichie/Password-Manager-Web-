@@ -5,23 +5,15 @@ from apidevtools.media import imgproc
 from pydantic import Field
 from uuid import UUID, uuid4
 from apidevtools.security import encryptor
+from apidevtools.utils import now_tz_naive
 
 from . import field
 from ..const import images, keys
 
 
-def utc() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-def now() -> datetime:
-    dt = datetime.now()
-    dt.replace(tzinfo=None)
-    return dt
-
-
 class ItemBase(Schema):
     __tablename__ = 'item'
+    __noupdate__ = ['id']
 
     id: UUID = Field(default_factory=uuid4)
     icon: Optional[str | bytes] = Field(default=None)
@@ -42,9 +34,9 @@ class ItemBase(Schema):
                 await images.set(text, icon)
             self.icon = icon
         if not self.created_at:
-            self.created_at = now()
+            self.created_at = now_tz_naive()
         else:
-            self.modified_at = now()
+            self.modified_at = now_tz_naive()
         if len(self.attachments):
             key = await keys.set(self.id, encryptor.randkey())
             self.attachments = [encryptor.encrypt(attachment, key)[0] for attachment in self.attachments]

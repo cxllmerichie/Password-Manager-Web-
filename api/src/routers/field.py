@@ -43,8 +43,10 @@ async def _(field_id: UUID, field: schemas.FieldCreate,
     return db_field
 
 
-@router.delete('/fields/{field_id}/', name='Delete field by id', status_code=200)
+@router.delete('/fields/{field_id}/', name='Delete field by id', response_model=schemas.Field)
 async def _(field_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
-    await crud.delete_field(field_id=field_id)
-    return dict(detail=f'Successfully deleted field <{field_id}>')
+    db_field = await crud.delete_field(field_id=field_id)
+    if not db_field:
+        raise HTTPException(status_code=404, detail=f'Field <{db_field}> does not exist')
+    return db_field

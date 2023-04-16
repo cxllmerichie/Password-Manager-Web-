@@ -11,7 +11,7 @@ class FieldBase(Schema):
 
     id: UUID = pydantic.Field(default_factory=uuid4)
     name: str | bytes = pydantic.Field(default=..., min_length=1)
-    value: str | bytes = pydantic.Field(default=..., min_length=1)
+    value: str | bytes = ''
 
     async def into_db(self) -> Schema:
         self.name, key = encryptor.encrypt(self.name)

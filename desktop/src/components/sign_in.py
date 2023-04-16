@@ -1,17 +1,17 @@
 from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QLabel, QFrame
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..css import sign_in
 from ..widgets import Button, Label, LInput, Frame, VLayout, Spacer, HLayout
 from ..misc import Icons, api
 from .main_view import MainView
+from .. import css
 
 
 class SignIn(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(sign_in.css)
+        self.setStyleSheet(css.sign_in.css)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'SignIn':

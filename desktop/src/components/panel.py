@@ -2,16 +2,16 @@ from PyQt5.QtWidgets import QWidget, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt
 
-from ..css import panel
 from ..widgets import Button, Label, HLayout, Frame
 from ..misc import Icons, Sizes
+from .. import css
 
 
 class Panel(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(panel.css)
+        self.setStyleSheet(css.panel.css)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'Panel':

@@ -1,20 +1,19 @@
-import typing
-
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QFrame, QScrollArea
 from PyQt5.QtCore import Qt, pyqtSlot
+from typing import Any
 
-from ..css import left_menu, components
 from ..widgets import Label, VLayout, SideMenu, ScrollArea, Button
 from ..misc import Icons, Sizes, api
 from .countable_button import CountableButton
 from .items import CentralItem
+from .. import css
 
 
 class LeftMenu(QWidget, SideMenu):
     def __init__(self, parent: QWidget, width: int):
         super(QWidget, self).__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(left_menu.css + components.scroll)
+        self.setStyleSheet(css.left_menu.css + css.components.scroll)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         self.expand_to = width
@@ -57,7 +56,7 @@ class LeftMenu(QWidget, SideMenu):
         self.shrink()
         return self
 
-    def show_category(self, category: dict[str, typing.Any]):
+    def show_category(self, category: dict[str, Any]):
         central_pages = self.parent().parent().findChild(QStackedWidget, 'CentralPages')
         central_pages.setCurrentIndex(0)
         items = central_pages.currentWidget()
@@ -71,7 +70,7 @@ class LeftMenu(QWidget, SideMenu):
         right_pages.currentWidget().show_category(category)
         right_pages.expand()
 
-    def show_item(self, item: dict[str, typing.Any]):
+    def show_item(self, item: dict[str, Any]):
         right_pages = self.parent().parent().findChild(QStackedWidget, 'RightPages')
         right_pages.setCurrentIndex(1)
         right_pages.currentWidget().show_item(item)

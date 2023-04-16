@@ -2,17 +2,17 @@ from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..css import sign_up
 from ..widgets import Button, Label, LInput, VLayout, Spacer, Frame
 from ..misc import Icons, api
 from .main_view import MainView
+from .. import css
 
 
 class SignUp(QWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(sign_up.css)
+        self.setStyleSheet(css.sign_up.css)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'SignUp':

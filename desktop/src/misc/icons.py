@@ -42,6 +42,7 @@ class Icons:
     EDIT = Icon('edit.svg', (30, 30))
     CROSS_CIRCLE = Icon('x-circle.svg', (20, 20))
     SAVE = Icon('save.svg', (20, 20))
+    TRASH = Icon('trash-2.svg', (20, 20))
     COPY = Icon('copy.svg', (20, 20))
     EYE = Icon('eye.svg', (20, 20))
     EYE_OFF = Icon('eye-off.svg', (20, 20))

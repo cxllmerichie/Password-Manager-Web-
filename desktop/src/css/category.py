@@ -69,6 +69,7 @@ css: str = f'''
     max-height: 100px;
 }}
 
+#RemoveBtn,
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
