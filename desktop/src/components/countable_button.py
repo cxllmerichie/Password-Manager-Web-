@@ -7,15 +7,13 @@ from ..misc import Icon
 
 
 class CountableButton(QPushButton):
-    def __init__(self, parent: QWidget, name: str = None):
+    def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
-        if name:
-            self.setObjectName(name)
 
     def init(
             self, *,
-            icon: Icon, text, total: int | list[Any, ...],
+            icon: Icon, text: str, total: int,
             alignment: Qt.Alignment = None, slot: callable = lambda: None
     ) -> 'CountableButton':
         layout = HLayout().init(margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft)
@@ -26,7 +24,7 @@ class CountableButton(QPushButton):
             text=text, alignment=alignment, elided=True
         ))
         layout.addWidget(Label(self, 'CountableButtonCountLbl').init(
-            text=str(total) if isinstance(total, int) else str(len(total))
+            text=str(total)
         ), alignment=Qt.AlignRight)
         self.setLayout(layout)
         self.clicked.connect(slot)

@@ -8,3 +8,4 @@ from .sidemenu import SideMenu
 from .spacer import Spacer
 from .scroll_area import ScrollArea
 from .tinput import TInput
+from .splitter_widget import SplitterWidget

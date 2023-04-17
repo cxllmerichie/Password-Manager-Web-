@@ -21,27 +21,37 @@ class SignIn(QWidget):
         ), alignment=VLayout.RightTop)
         vbox.addItem(Spacer(False, True))
 
-        layout_email = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_email_labelbtn = HLayout().init()
-        layout_email_labelbtn.addWidget(Label(self, 'InputLabelEmail').init(text='Email'))
-        edit_btn = Button(self, 'InputLabelEmailEditBtn').init(
-            text='Edit', slot=self.edit
+        layout_email = VLayout(self).init(
+            margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter
         )
-        layout_email_labelbtn.addWidget(edit_btn, alignment=HLayout.Right)
+        layout_email_labelbtn = HLayout().init()
+        layout_email_labelbtn.addWidget(Label(self, 'InputLabelEmail').init(
+            text='Email'
+        ))
+        layout_email_labelbtn.addWidget(edit_btn := Button(self, 'InputLabelEmailEditBtn').init(
+            text='Edit', slot=self.edit, visible=False
+        ), alignment=HLayout.Right)
         layout_email.addLayout(layout_email_labelbtn)
-        layout_email.addWidget(LInput(self, 'InputFieldEmail').init(placeholder='address@domain.tld'))
+        layout_email.addWidget(LInput(self, 'InputFieldEmail').init(
+            placeholder='address@domain.tld'
+        ))
         vbox.addWidget(Frame(self, 'InputFrameEmail').init(
             layout=layout_email
         ), alignment=Qt.AlignHCenter)
 
-        layout_password = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_password.addWidget(Label(self, 'InputLabelPassword').init(text='Password'))
-        layout_password.addWidget(LInput(self, 'InputFieldPassword').init(placeholder='password', hidden=True))
-
-        frame = Frame(self, 'InputFramePassword').init(
-            layout=layout_password
+        layout_password = VLayout(self).init(
+            margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter
         )
-        vbox.addWidget(frame, alignment=Qt.AlignHCenter)
+        layout_password.addWidget(Label(self, 'InputLabelPassword').init(
+            text='Password'
+        ))
+        layout_password.addWidget(LInput(self, 'InputFieldPassword').init(
+            placeholder='password', hidden=True
+        ))
+
+        vbox.addWidget(frame := Frame(self, 'InputFramePassword').init(
+            layout=layout_password, visible=False
+        ), alignment=Qt.AlignHCenter)
 
         vbox.addWidget(Label(self, 'ErrorLbl').init(
             wrap=True, alignment=VLayout.CenterCenter
@@ -52,15 +62,10 @@ class SignIn(QWidget):
         vbox.addWidget(Button(self, 'ContinueBtn').init(
             text='Continue', slot=self.continue_log_in
         ), alignment=Qt.AlignHCenter)
-        log_in_btn = Button(self, 'LogInBtn').init(
-            text='Log In', slot=self.log_in
-        )
-        vbox.addWidget(log_in_btn, alignment=Qt.AlignHCenter)
+        vbox.addWidget(log_in_btn := Button(self, 'LogInBtn').init(
+            text='Log In', slot=self.log_in, visible=False
+        ), alignment=Qt.AlignHCenter)
         vbox.addItem(Spacer(False, True))
-
-        log_in_btn.setVisible(False)
-        frame.setVisible(False)
-        self.findChild(QPushButton, 'InputLabelEmailEditBtn').setVisible(False)
         self.setLayout(vbox)
         return self
 

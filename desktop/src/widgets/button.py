@@ -14,10 +14,11 @@ class Button(QPushButton):
             self, *,
             text: str = '',
             size: QSize = None, icon: Icon = None,
-            disabled: bool = False, slot: callable = lambda: None
+            disabled: bool = False, slot: callable = lambda: None, visible: bool = True
     ) -> 'Button':
         self.setText(text)
         self.setDisabled(disabled)
+        self.setVisible(visible)
         self.clicked.connect(slot)
         if size:
             self.setFixedSize(size)

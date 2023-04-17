@@ -5,6 +5,7 @@ css: str = f'''
 #Panel {{
     background-color: {Colors.GRAY};
     min-height: {Sizes.Panel.h}px;
+    max-height: {Sizes.Panel.h}px;
 }}
 
 #ToggleLeftMenuBtn {{

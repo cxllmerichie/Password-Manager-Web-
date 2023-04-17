@@ -15,7 +15,7 @@ class LInput(QLineEdit):
         self.setText(text)
         self.setPlaceholderText(placeholder)
         if hidden:
-            self.setEchoMode(QLineEdit.Password)
+            self.hide_echo()
         if textchanged:
             self.textChanged.connect(textchanged)
         if alignment:

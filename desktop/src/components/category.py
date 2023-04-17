@@ -1,7 +1,6 @@
-import typing
-
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QFrame, QPushButton, QFileDialog
 from PyQt5.QtCore import pyqtSlot
+from typing import Any
 
 from ..widgets import Button, VLayout, LInput, HLayout, Label, TInput, Spacer, Frame
 from ..misc import Icons, api
@@ -23,10 +22,10 @@ class Category(QFrame):
             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
         ), alignment=VLayout.Left)
         hbox.addWidget(edit_btn := Button(self, 'EditBtn').init(
-            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category
+            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category, visible=False
         ))
         hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
-            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_category
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_category, visible=False
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
@@ -51,34 +50,28 @@ class Category(QFrame):
             text='Create category', slot=self.create_category
         ), alignment=VLayout.HCenter)
 
-        frame = Frame(self, 'SaveCancelFrame').init()
-        save_cancel_layout = HLayout(frame).init(spacing=50)
+        save_cancel_layout = HLayout().init(spacing=50)
         save_cancel_layout.addWidget(Button(self, 'SaveBtn').init(
             text='Save', slot=self.save
         ), alignment=VLayout.Left)
         save_cancel_layout.addWidget(Button(self, 'CancelBtn').init(
             text='Cancel', slot=self.cancel
         ), alignment=VLayout.Right)
-        vbox.addWidget(frame, alignment=VLayout.HCenter)
+        vbox.addWidget(Frame(self, 'SaveCancelFrame').init(
+            visible=False, layout=save_cancel_layout
+        ), alignment=VLayout.HCenter)
 
         vbox.addWidget(add_item_btn := Button(self, 'AddItemBtn').init(
-            text='Add item', icon=Icons.PLUS, slot=self.add_item
+            text='Add item', icon=Icons.PLUS, slot=self.add_item, visible=False
         ), alignment=VLayout.HCenter)
         self.setLayout(vbox)
 
-        add_item_btn.setVisible(False)
-        edit_btn.setVisible(False)
-        remove_btn.setVisible(False)
-        frame.setVisible(False)
         favourite_btn.setProperty('is_favourite', False)
         return self
 
     def add_item(self):
-        right_pages = self.parent()
-        right_pages.setCurrentIndex(1)
-        item = right_pages.findChild(QFrame, 'Item')
-        item_category_id = self.category['id']
-        item.show_create_item()
+        (right_pages := self.parent()).setCurrentIndex(1)
+        right_pages.findChild(QFrame, 'Item').show_create_item()
 
     @pyqtSlot()
     def close_page(self):
@@ -158,7 +151,7 @@ class Category(QFrame):
                 btn.setProperty('icon_bytes', icon_bytes)
                 btn.setIcon(Icons.from_bytes(icon_bytes).icon)
 
-    def show_category(self, category: dict[str, typing.Any]):
+    def show_category(self, category: dict[str, Any]):
         self.category = category
         title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')

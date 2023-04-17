@@ -9,8 +9,9 @@ class Frame(QFrame):
 
     def init(
             self, *,
-            layout: QLayout = None
+            layout: QLayout = None, visible: bool = True
     ) -> 'Frame':
+        self.setVisible(visible)
         if layout:
             self.setLayout(layout)
         return self

@@ -133,7 +133,7 @@ class Item(QFrame):
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_item
         ))
         hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
-            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_item
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_item, visible=False
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
@@ -188,7 +188,6 @@ class Item(QFrame):
         vbox.addWidget(frame, alignment=VLayout.HCenter)
         self.setLayout(vbox)
 
-        remove_btn.setVisible(False)
         frame.setVisible(False)
         favourite_btn.setProperty('is_favourite', False)
         return self

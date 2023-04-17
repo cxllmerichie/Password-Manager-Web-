@@ -22,8 +22,12 @@ class SignUp(QWidget):
         ), alignment=VLayout.RightTop)
         vbox.addItem(Spacer(False, True))
 
-        layout_email = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_email.addWidget(Label(self, 'InputLabelEmail').init(text='Email'))
+        layout_email = VLayout(self).init(
+            margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter
+        )
+        layout_email.addWidget(Label(self, 'InputLabelEmail').init(
+            text='Email'
+        ))
         layout_email.addWidget(LInput(self, 'InputFieldEmail').init(
             placeholder='address@domain.tld', textchanged=self.validate_email
         ))
@@ -31,8 +35,12 @@ class SignUp(QWidget):
             layout=layout_email
         ), alignment=Qt.AlignHCenter)
 
-        layout_password = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_password.addWidget(Label(self, 'InputLabelPassword').init(text='Password'))
+        layout_password = VLayout(self).init(
+            margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter
+        )
+        layout_password.addWidget(Label(self, 'InputLabelPassword').init(
+            text='Password'
+        ))
         layout_password.addWidget(LInput(self, 'InputFieldPassword').init(
             placeholder='password', hidden=True, textchanged=self.validate_password
         ))
@@ -41,7 +49,9 @@ class SignUp(QWidget):
         ), alignment=Qt.AlignHCenter)
 
         layout_confpass = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
-        layout_confpass.addWidget(Label(self, 'InputLabelConfpass').init(text='Confirm password'))
+        layout_confpass.addWidget(Label(self, 'InputLabelConfpass').init(
+            text='Confirm password'
+        ))
         layout_confpass.addWidget(LInput(self, 'InputFieldConfpass').init(
             placeholder='password', hidden=True, textchanged=self.validate_confpass
         ))

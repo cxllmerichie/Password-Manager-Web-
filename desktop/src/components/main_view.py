@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QSplitter
 from PyQt5.QtCore import Qt
 
 from ..widgets import VLayout, HLayout, Frame
@@ -14,14 +14,18 @@ class MainView(QWidget):
         self.setObjectName(self.__class__.__name__)
 
     def init(self) -> 'MainView':
-        vbox = VLayout().init()
-        vbox.addWidget(Panel(self).init(), alignment=Qt.AlignTop)
+        layout = VLayout().init()
+        layout.addWidget(Panel(self).init(), alignment=Qt.AlignTop)
 
-        hbox = HLayout(self).init()
-        hbox.addWidget(LeftMenu(self, 220).init())
-        hbox.addWidget(CentralPages(self).init())
-        hbox.addWidget(RightPages(self, 350).init())
+        splitter = QSplitter(self)
+        splitter.addWidget(LeftMenu(self, splitter, 300).init())
+        splitter.addWidget(CentralPages(self).init())
+        splitter.addWidget(RightPages(self, splitter, 400).init())
 
-        vbox.addWidget(Frame(self, 'MainViewFrame').init(layout=hbox))
-        self.setLayout(vbox)
+        # frame = Frame(self, 'MainViewFrame')
+        # vbox = VLayout()
+        # vbox.addWidget(splitter)
+        layout.addWidget(splitter)
+        self.setLayout(layout)
+
         return self

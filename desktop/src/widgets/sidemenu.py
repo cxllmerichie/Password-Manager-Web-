@@ -1,14 +1,11 @@
 class SideMenu:
     expand_to: int = 200
 
-    def setExpandWidth(self, width: int) -> None:
-        self.expand_to = width
-
     def expand(self, width: int = None):
-        self.setFixedWidth(self.expand_to if not width else width)
+        self.resize(self.expand_to if not width else width, self.height())
 
     def shrink(self) -> None:
-        self.setFixedWidth(0)
+        self.resize(0, self.height())
 
     def toggle(self) -> None:
         self.expand() if self.width() == 0 else self.shrink()
