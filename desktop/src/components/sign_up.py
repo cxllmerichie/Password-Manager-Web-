@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..widgets import Button, Label, LInput, VLayout, Spacer, Frame
+from ..widgets import Button, Label, LineInput, VLayout, Spacer, Frame
 from ..misc import Icons, api
 from .main_view import MainView
 from .. import css
@@ -28,7 +28,7 @@ class SignUp(QWidget):
         layout_email.addWidget(Label(self, 'InputLabelEmail').init(
             text='Email'
         ))
-        layout_email.addWidget(LInput(self, 'InputFieldEmail').init(
+        layout_email.addWidget(LineInput(self, 'InputFieldEmail').init(
             placeholder='address@domain.tld', textchanged=self.validate_email
         ))
         vbox.addWidget(Frame(self, 'InputFrameEmail').init(
@@ -41,7 +41,7 @@ class SignUp(QWidget):
         layout_password.addWidget(Label(self, 'InputLabelPassword').init(
             text='Password'
         ))
-        layout_password.addWidget(LInput(self, 'InputFieldPassword').init(
+        layout_password.addWidget(LineInput(self, 'InputFieldPassword').init(
             placeholder='password', hidden=True, textchanged=self.validate_password
         ))
         vbox.addWidget(Frame(self, 'InputFramePassword').init(
@@ -52,7 +52,7 @@ class SignUp(QWidget):
         layout_confpass.addWidget(Label(self, 'InputLabelConfpass').init(
             text='Confirm password'
         ))
-        layout_confpass.addWidget(LInput(self, 'InputFieldConfpass').init(
+        layout_confpass.addWidget(LineInput(self, 'InputFieldConfpass').init(
             placeholder='password', hidden=True, textchanged=self.validate_confpass
         ))
         vbox.addWidget(Frame(self, 'InputFrameConfpass').init(

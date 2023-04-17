@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
 from typing import Any
 
-from ..widgets import Button, VLayout, LInput, HLayout, Label, TInput, Spacer, Frame, ScrollArea
+from ..widgets import Button, VLayout, LineInput, HLayout, Label, TextInput, Spacer, Frame, ScrollArea
 from ..misc import Icons, api, Colors
 from .. import css
 
@@ -27,10 +27,10 @@ class Field(QFrame):
 
     def init(self) -> 'Field':
         layout = HLayout(self, f'FieldLayout').init(spacing=5)
-        layout.addWidget(name_input := LInput(self, f'InputFieldName').init(
+        layout.addWidget(name_input := LineInput(self, f'InputFieldName').init(
             placeholder='name', alignment=VLayout.Right
         ))
-        layout.addWidget(value_input := LInput(self, f'InputFieldValue').init(
+        layout.addWidget(value_input := LineInput(self, f'InputFieldValue').init(
             placeholder='value'
         ))
         layout.addWidget(value_input_hide_btn := Button(self, 'InputFieldValueHideBtn').init(
@@ -129,8 +129,8 @@ class Item(QFrame):
         hbox.addWidget(edit_btn := Button(self, 'EditBtn').init(
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_item
         ))
-        hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
-            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_item, visible=False
+        hbox.addWidget(remove_btn := Button(self, 'RemoveBtn', False).init(
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_item
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
@@ -142,10 +142,10 @@ class Item(QFrame):
             icon=Icons.CATEGORY, slot=self.set_icon
         ), alignment=VLayout.HCenterTop)
         title_description_layout = VLayout().init()
-        title_description_layout.addWidget(LInput(self, 'TitleInput').init(
+        title_description_layout.addWidget(LineInput(self, 'TitleInput').init(
             placeholder='title'
         ), alignment=VLayout.HCenterTop)
-        title_description_layout.addWidget(TInput(self, 'DescriptionInput').init(
+        title_description_layout.addWidget(TextInput(self, 'DescriptionInput').init(
             placeholder='description (optional)'
         ), alignment=VLayout.HCenterTop)
         hbox.addLayout(title_description_layout)

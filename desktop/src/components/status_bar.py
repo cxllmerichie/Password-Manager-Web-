@@ -16,6 +16,6 @@ class StatusBar(QStatusBar):
         for item in items:
             self.layout().removeItem(item)
         self.layout().addWidget(Label(self, 'StatusBarLbl').init(
-            text='Password Manager © 2023 by <cxllmerichie>', size=Sizes.StatusBarLbl
+            text='Password Manager © 2023 by <cxllmerichie>'
         ), alignment=HLayout.LeftBottom)
         return self

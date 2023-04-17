@@ -9,14 +9,12 @@ from .items import CentralItem
 from .. import css
 
 
-class LeftMenu(QWidget, SideMenu):
+class LeftMenu(SideMenu, QWidget):
     def __init__(self, parent: QWidget, width: int):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
+        QWidget.__init__(self, parent)
+        SideMenu.__init__(self, parent, self.__class__.__name__, True, width, Qt.Horizontal)
         self.setStyleSheet(css.left_menu.css + css.components.scroll)
         self.setAttribute(Qt.WA_StyledBackground, True)
-
-        self.expand_to = width
 
     def init(self) -> 'LeftMenu':
         vlayout = VLayout().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
@@ -43,8 +41,8 @@ class LeftMenu(QWidget, SideMenu):
                 wrap=True, size=Sizes.NoCategoriesLbl
             ), alignment=VLayout.CenterCenter)
         else:
-            sarea = ScrollArea(self, 'CategoriesScrollArea', False, True).init(
-                layout_t=VLayout, alignment=VLayout.Top, spacing=5
+            sarea = ScrollArea(self, 'CategoriesScrollArea').init(
+                horizontal=False, vertical=True, layout_t=VLayout, alignment=VLayout.Top, spacing=5
             )
             for category in categories:
                 sarea.widget().layout().addWidget(CountableButton(self).init(

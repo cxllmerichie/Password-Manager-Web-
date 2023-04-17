@@ -3,16 +3,17 @@ from PyQt5.QtWidgets import QLabel, QWidget
 from PyQt5.QtCore import Qt, QSize
 
 from ..misc import Icon, Size
+from ._wrapper import Wrapper
 
 
-class Label(QLabel):
-    def __init__(self, parent: QWidget, name: str):
-        super().__init__(parent)
-        self.setObjectName(name)
+class Label(QLabel, Wrapper):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True):
+        QLabel.__init__(self, parent)
+        Wrapper.__init__(self, parent, name, visible)
 
     def init(
             self, *,
-            text: str = '', alignment: Qt.Alignment = None, wrap: bool = False, size: QSize | Size = None,
+            text: str = '', alignment: Qt.Alignment = None, wrap: bool = False,
             icon: Icon = None, elided: bool = False
     ) -> 'Label':
         self.setText(text)
@@ -20,14 +21,6 @@ class Label(QLabel):
         self.setWordWrap(wrap)
         if alignment:
             self.setAlignment(alignment)
-        if size:
-            if isinstance(size, QSize):
-                self.setFixedSize(size)
-            else:
-                if size.w:
-                    self.setFixedWidth(size.w)
-                if size.h:
-                    self.setFixedHeight(size.h)
         if icon:
             self.setPixmap(icon.icon.pixmap(icon.size))
         return self

@@ -1,17 +1,19 @@
 from PyQt5.QtWidgets import QLineEdit, QWidget
 from PyQt5.QtCore import Qt
 
+from ._wrapper import Wrapper
 
-class LInput(QLineEdit):
-    def __init__(self, parent: QWidget, name: str):
-        super().__init__(parent)
-        self.setObjectName(name)
+
+class LineInput(QLineEdit, Wrapper):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True):
+        QLineEdit.__init__(self, parent)
+        Wrapper.__init__(self, parent, name, visible)
 
     def init(
             self, *,
             placeholder: str = '', text: str = '', hidden: bool = False,
             textchanged: callable = None, alignment: Qt.Alignment = None
-    ) -> 'LInput':
+    ) -> 'LineInput':
         self.setText(text)
         self.setPlaceholderText(placeholder)
         if hidden:

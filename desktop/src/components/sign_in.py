@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QLabel, QFrame
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..widgets import Button, Label, LInput, Frame, VLayout, Spacer, HLayout
+from ..widgets import Button, Label, LineInput, Frame, VLayout, Spacer, HLayout
 from ..misc import Icons, api
 from .main_view import MainView
 from .. import css
@@ -28,11 +28,11 @@ class SignIn(QWidget):
         layout_email_labelbtn.addWidget(Label(self, 'InputLabelEmail').init(
             text='Email'
         ))
-        layout_email_labelbtn.addWidget(edit_btn := Button(self, 'InputLabelEmailEditBtn').init(
-            text='Edit', slot=self.edit, visible=False
+        layout_email_labelbtn.addWidget(edit_btn := Button(self, 'InputLabelEmailEditBtn', False).init(
+            text='Edit', slot=self.edit
         ), alignment=HLayout.Right)
         layout_email.addLayout(layout_email_labelbtn)
-        layout_email.addWidget(LInput(self, 'InputFieldEmail').init(
+        layout_email.addWidget(LineInput(self, 'InputFieldEmail').init(
             placeholder='address@domain.tld'
         ))
         vbox.addWidget(Frame(self, 'InputFrameEmail').init(
@@ -45,12 +45,12 @@ class SignIn(QWidget):
         layout_password.addWidget(Label(self, 'InputLabelPassword').init(
             text='Password'
         ))
-        layout_password.addWidget(LInput(self, 'InputFieldPassword').init(
+        layout_password.addWidget(LineInput(self, 'InputFieldPassword').init(
             placeholder='password', hidden=True
         ))
 
-        vbox.addWidget(frame := Frame(self, 'InputFramePassword').init(
-            layout=layout_password, visible=False
+        vbox.addWidget(frame := Frame(self, 'InputFramePassword', False).init(
+            layout=layout_password
         ), alignment=Qt.AlignHCenter)
 
         vbox.addWidget(Label(self, 'ErrorLbl').init(
@@ -62,8 +62,8 @@ class SignIn(QWidget):
         vbox.addWidget(Button(self, 'ContinueBtn').init(
             text='Continue', slot=self.continue_log_in
         ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(log_in_btn := Button(self, 'LogInBtn').init(
-            text='Log In', slot=self.log_in, visible=False
+        vbox.addWidget(log_in_btn := Button(self, 'LogInBtn', False).init(
+            text='Log In', slot=self.log_in
         ), alignment=Qt.AlignHCenter)
         vbox.addItem(Spacer(False, True))
         self.setLayout(vbox)

@@ -1,25 +1,26 @@
 from PyQt5.QtWidgets import QScrollArea, QWidget
 from PyQt5.QtCore import Qt
 
-from ..widgets import Frame
-from ..widgets._layout import Layout
+from .frame import Frame
+from ._layout import Layout
+from ._wrapper import Wrapper
 
 
-class ScrollArea(QScrollArea):
-    def __init__(self, parent: QWidget, name: str, horizontal: bool = True, vertical: bool = True):
-        super().__init__(parent)
-        self.setObjectName(name)
+class ScrollArea(QScrollArea, Wrapper):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True):
+        QScrollArea.__init__(self, parent)
+        Wrapper.__init__(self, parent, name, visible)
+
+    def init(
+            self, *,
+            horizontal: bool = True, vertical: bool = True, layout_t: type[Layout],
+            margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None
+    ) -> 'ScrollArea':
         if not horizontal:
             self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         if not vertical:
             self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
-
-    def init(
-            self, *,
-            layout_t: type[Layout],
-            margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None
-    ) -> 'ScrollArea':
         widget = Frame(self, f'{self.objectName()}Widget')
         layout = layout_t(widget, f'{self.objectName()}WidgetLayout').init(
             margins=margins, spacing=spacing, alignment=alignment

@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QFrame, QPush
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..widgets import Button, VLayout, LInput, HLayout, Label, TInput, Spacer, Frame
+from ..widgets import Button, VLayout, LineInput, HLayout, Label, TextInput, Spacer, Frame
 from ..misc import Icons, api
 from .. import css
 
@@ -21,11 +21,11 @@ class Category(QFrame):
         hbox.addWidget(favourite_btn := Button(self, 'FavouriteBtn').init(
             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
         ), alignment=VLayout.Left)
-        hbox.addWidget(edit_btn := Button(self, 'EditBtn').init(
-            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category, visible=False
+        hbox.addWidget(edit_btn := Button(self, 'EditBtn', False).init(
+            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category
         ))
-        hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
-            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.delete_category, visible=False
+        hbox.addWidget(remove_btn := Button(self, 'RemoveBtn', False).init(
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.delete_category
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
@@ -35,10 +35,10 @@ class Category(QFrame):
         vbox.addWidget(Button(self, 'IconBtn').init(
             icon=Icons.CATEGORY, slot=self.set_icon
         ), alignment=VLayout.HCenterTop)
-        vbox.addWidget(LInput(self, 'TitleInput').init(
+        vbox.addWidget(LineInput(self, 'TitleInput').init(
             placeholder='title'
         ), alignment=VLayout.HCenterTop)
-        vbox.addWidget(TInput(self, 'DescriptionInput').init(
+        vbox.addWidget(TextInput(self, 'DescriptionInput').init(
             placeholder='description (optional)'
         ), alignment=VLayout.HCenterTop)
         vbox.addItem(Spacer(False, True))
@@ -57,12 +57,12 @@ class Category(QFrame):
         save_cancel_layout.addWidget(Button(self, 'CancelBtn').init(
             text='Cancel', slot=self.cancel
         ), alignment=VLayout.Right)
-        vbox.addWidget(Frame(self, 'SaveCancelFrame').init(
-            visible=False, layout=save_cancel_layout
+        vbox.addWidget(Frame(self, 'SaveCancelFrame', False).init(
+            layout=save_cancel_layout
         ), alignment=VLayout.HCenter)
 
-        vbox.addWidget(add_item_btn := Button(self, 'AddItemBtn').init(
-            text='Add item', icon=Icons.PLUS, slot=self.add_item, visible=False
+        vbox.addWidget(add_item_btn := Button(self, 'AddItemBtn', False).init(
+            text='Add item', icon=Icons.PLUS, slot=self.add_item
         ), alignment=VLayout.HCenter)
         self.setLayout(vbox)
 

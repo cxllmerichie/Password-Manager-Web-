@@ -3,22 +3,22 @@ from PyQt5.QtWidgets import QPushButton, QWidget
 from PyQt5.QtCore import QSize
 
 from ..misc import Icon
+from ._wrapper import Wrapper
 
 
-class Button(QPushButton):
-    def __init__(self, parent: QWidget, name: str):
-        super().__init__(parent)
-        self.setObjectName(name)
+class Button(QPushButton, Wrapper):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True):
+        QPushButton.__init__(self, parent)
+        Wrapper.__init__(self, parent, name, visible)
 
     def init(
             self, *,
             text: str = '',
             size: QSize = None, icon: Icon = None,
-            disabled: bool = False, slot: callable = lambda: None, visible: bool = True
+            disabled: bool = False, slot: callable = lambda: None
     ) -> 'Button':
         self.setText(text)
         self.setDisabled(disabled)
-        self.setVisible(visible)
         self.clicked.connect(slot)
         if size:
             self.setFixedSize(size)

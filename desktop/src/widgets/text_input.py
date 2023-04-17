@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QTextEdit, QWidget
 
 
-class TInput(QTextEdit):
+class TextInput(QTextEdit):
     def __init__(self, parent: QWidget, name: str):
         super().__init__(parent)
         self.setObjectName(name)
@@ -10,7 +10,7 @@ class TInput(QTextEdit):
             self, *,
             placeholder: str = '', text: str = '',
             textchanged: callable = None
-    ) -> 'TInput':
+    ) -> 'TextInput':
         self.setText(text)
         self.setPlaceholderText(placeholder)
         if textchanged:
