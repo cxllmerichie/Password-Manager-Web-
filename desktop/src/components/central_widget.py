@@ -16,7 +16,7 @@ class CentralWidget(QStackedWidget):
         self.layout().setAlignment(Qt.AlignHCenter)
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
-        # api.settings.setValue('token', None)
+        # api.set_token(None)
         if not api.get_token():
             self.setCurrentIndex(0)
         else:

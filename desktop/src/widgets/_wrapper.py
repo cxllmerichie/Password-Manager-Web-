@@ -1,12 +1,14 @@
 from PyQt5.QtWidgets import QWidget
 from contextlib import suppress
 import re
+import uuid
 
 
 class Wrapper:
-    def __init__(self, parent: QWidget = None, name: str = None, visible: bool = True):
+    def __init__(self, parent: QWidget = None, name: str = str(uuid.uuid4()), visible: bool = True):
         if parent and name:
-            setattr(parent, self.__snake_case(name), self)
+            # setattr(parent, self.__snake_case(name), self)
+            setattr(parent, name, self)
             self.setObjectName(name)
         with suppress(Exception):
             self.setVisible(visible)

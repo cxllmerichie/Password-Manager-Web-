@@ -15,31 +15,38 @@ class Panel(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'Panel':
-        layout = Layout.horizontal().init(spacing=10)
-        layout.addWidget(Button(self, 'ToggleLeftMenuBtn').init(
-            slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
-        ), alignment=Qt.AlignLeft)
-        layout.addWidget(Label(self, 'PanelTitleLbl').init(
-            text='Password Manager'
-        ), alignment=Qt.AlignLeft)
-        layout.addWidget(Label(self, 'PanelTitleLbl').init(
-            icon=Icons.APP
-        ), alignment=Qt.AlignLeft)
-        layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
-
-        hbox = Layout.horizontal().init(alignment=Layout.Right)
-        hbox.addWidget(Button(self, 'PanelMinimizeBtn').init(
-            icon=Icons.MINIMIZE, size=Sizes.PanelNavigationBtn, slot=self.app().showMinimized
+        self.setLayout(Layout.horizontal().init(
+            spacing=10,
+            items=[
+                Button(self, 'ToggleLeftMenuBtn').init(
+                    slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
+                ), Qt.AlignLeft,
+                Label(self, 'PanelTitleLbl').init(
+                    text='Password Manager'
+                ), Qt.AlignLeft,
+                Label(self, 'PanelTitleLbl').init(
+                    icon=Icons.APP
+                ), Qt.AlignLeft,
+                QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum),
+                Frame(self).init(
+                    layout=Layout.horizontal().init(
+                        alignment=Layout.Right,
+                        items=[
+                            Button(self, 'PanelMinimizeBtn').init(
+                                icon=Icons.MINIMIZE, size=Sizes.PanelNavigationBtn, slot=self.app().showMinimized
+                            ),
+                            Button(self, 'PanelRestoreBtn').init(
+                                icon=Icons.RESTORE, size=Sizes.PanelNavigationBtn,
+                                slot=lambda: self.app().showNormal() if self.app().isMaximized() else self.app().showMaximized()
+                            ),
+                            Button(self, 'PanelCloseBtn').init(
+                                icon=Icons.CROSS, size=Sizes.PanelNavigationBtn, slot=self.app().close
+                            )
+                        ]
+                    )
+                )
+            ]
         ))
-        hbox.addWidget(Button(self, 'PanelRestoreBtn').init(
-            icon=Icons.RESTORE, size=Sizes.PanelNavigationBtn,
-            slot=lambda: self.app().showNormal() if self.app().isMaximized() else self.app().showMaximized()
-        ))
-        hbox.addWidget(Button(self, 'PanelCloseBtn').init(
-            icon=Icons.CROSS, size=Sizes.PanelNavigationBtn, slot=self.app().close
-        ))
-        layout.addWidget(Frame(self).init(layout=hbox))
-        self.setLayout(layout)
         return self
 
     def app(self) -> 'App':

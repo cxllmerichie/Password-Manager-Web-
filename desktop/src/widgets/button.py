@@ -6,7 +6,7 @@ from ..misc import Icon
 from ._wrapper import Wrapper
 
 
-class Button(QPushButton, Wrapper):
+class Button(Wrapper, QPushButton):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QPushButton.__init__(self, parent)
         Wrapper.__init__(self, parent, name, visible)

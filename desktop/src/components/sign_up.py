@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
@@ -16,102 +16,102 @@ class SignUp(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'SignUp':
-        vbox = Layout.vertical().init(spacing=10, alignment=Qt.AlignVCenter)
-        vbox.addWidget(Button(self, 'AuthExitBtn').init(
-            icon=Icons.CROSS, slot=self.parent().parent().close
-        ), alignment=Layout.RightTop)
-        vbox.addItem(Spacer(False, True))
-
-        layout_email = Layout.vertical(self).init(
-            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.CenterCenter
+        self.setLayout(
+            Layout.vertical().init(
+                spacing=10, alignment=Qt.AlignVCenter,
+                items=[
+                    Button(self, 'AuthExitBtn').init(
+                        icon=Icons.CROSS, slot=self.parent().parent().close
+                    ), Layout.RightTop,
+                    Spacer(False, True),
+                    Frame(self, 'InputFrameEmail').init(
+                        layout=Layout.vertical(self).init(
+                            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
+                            items=[
+                                Label(self, 'InputLabelEmail').init(
+                                    text='Email'
+                                ),
+                                LineInput(self, 'InputFieldEmail').init(
+                                    placeholder='address@domain.tld', textchanged=self.validate_email
+                                )
+                            ]
+                        )
+                    ), Qt.AlignHCenter,
+                    Frame(self, 'InputFramePassword').init(
+                        layout=Layout.vertical(self).init(
+                            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
+                            items=[
+                                Label(self, 'InputLabelPassword').init(
+                                    text='Password'
+                                ),
+                                LineInput(self, 'InputFieldPassword').init(
+                                    placeholder='password', hidden=True, textchanged=self.validate_password
+                                )
+                            ]
+                        )
+                    ), Qt.AlignHCenter,
+                    Frame(self, 'InputFrameConfpass').init(
+                        layout=Layout.vertical(self).init(
+                            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
+                            items=[
+                                Label(self, 'InputLabelConfpass').init(
+                                    text='Confirm password'
+                                ),
+                                LineInput(self, 'InputFieldConfpass').init(
+                                    placeholder='password', hidden=True, textchanged=self.validate_confpass
+                                )
+                            ]
+                        )
+                    ), Qt.AlignHCenter,
+                    Label(self, 'ErrorLbl').init(
+                        wrap=True, alignment=Layout.Center
+                    ), Layout.Center,
+                    Button(self, 'AuthTextBtn').init(
+                        text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)
+                    ), Qt.AlignHCenter,
+                    Button(self, 'AuthMainBtn').init(
+                        text='Create Account', slot=self.sign_up
+                    ), Qt.AlignHCenter,
+                    Spacer(False, True)
+                ]
+            )
         )
-        layout_email.addWidget(Label(self, 'InputLabelEmail').init(
-            text='Email'
-        ))
-        layout_email.addWidget(LineInput(self, 'InputFieldEmail').init(
-            placeholder='address@domain.tld', textchanged=self.validate_email
-        ))
-        vbox.addWidget(Frame(self, 'InputFrameEmail').init(
-            layout=layout_email
-        ), alignment=Qt.AlignHCenter)
-
-        layout_password = Layout.vertical(self).init(
-            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.CenterCenter
-        )
-        layout_password.addWidget(Label(self, 'InputLabelPassword').init(
-            text='Password'
-        ))
-        layout_password.addWidget(LineInput(self, 'InputFieldPassword').init(
-            placeholder='password', hidden=True, textchanged=self.validate_password
-        ))
-        vbox.addWidget(Frame(self, 'InputFramePassword').init(
-            layout=layout_password
-        ), alignment=Qt.AlignHCenter)
-
-        layout_confpass = Layout.vertical(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=Layout.CenterCenter)
-        layout_confpass.addWidget(Label(self, 'InputLabelConfpass').init(
-            text='Confirm password'
-        ))
-        layout_confpass.addWidget(LineInput(self, 'InputFieldConfpass').init(
-            placeholder='password', hidden=True, textchanged=self.validate_confpass
-        ))
-        vbox.addWidget(Frame(self, 'InputFrameConfpass').init(
-            layout=layout_confpass
-        ), alignment=Qt.AlignHCenter)
-
-        vbox.addWidget(Label(self, 'ErrorLbl').init(
-            wrap=True, alignment=Layout.CenterCenter
-        ), alignment=Layout.CenterCenter)
-        vbox.addWidget(Button(self, 'AuthTextBtn').init(
-            text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)
-        ), alignment=Qt.AlignHCenter)
-        vbox.addWidget(Button(self, 'AuthMainBtn').init(
-            text='Create Account', slot=self.sign_up
-        ), alignment=Qt.AlignHCenter)
-        vbox.addItem(Spacer(False, True))
-        self.setLayout(vbox)
         return self
 
     def validate_email(self):
-        email = self.findChild(QLineEdit, 'InputFieldEmail').text()
         error = ''
         try:
-            email_validator.validate_email(email)
+            email_validator.validate_email(self.InputFieldEmail.text())
         except Exception as exception:
             error = str(exception)
-        self.findChild(QLabel, 'ErrorLbl').setText(error)
+        self.ErrorLbl.setText(error)
         return len(error) == 0
 
     def validate_password(self):
-        password = self.findChild(QLineEdit, 'InputFieldPassword').text()
         error = ''
-        if len(password) < 8:
+        if len(self.InputFieldPassword.text()) < 8:
             error = 'Password length must be greater than 8'
-        self.findChild(QLabel, 'ErrorLbl').setText(error)
+        self.ErrorLbl.setText(error)
         return len(error) == 0
 
     def validate_confpass(self):
-        password = self.findChild(QLineEdit, 'InputFieldPassword').text()
-        confpass = self.findChild(QLineEdit, 'InputFieldConfpass').text()
         error = ''
-        if password != confpass:
+        if self.InputFieldPassword.text() != self.InputFieldConfpass.text():
             error = 'Password and confirmation password do not match'
-        self.findChild(QLabel, 'ErrorLbl').setText(error)
+        self.ErrorLbl.setText(error)
         return len(error) == 0
 
     @pyqtSlot()
     def sign_up(self):
-        email = self.findChild(QLineEdit, 'InputFieldEmail').text()
-        password = self.findChild(QLineEdit, 'InputFieldPassword').text()
         if not self.validate_email():
             return
         if not self.validate_password():
             return
         if not self.validate_confpass():
             return
-        body = {'email': email, 'password': password}
-        if not (token := api.create_user(body).get('access_token', None)):
-            return self.findChild(QLabel, 'ErrorLbl').setText('Internal error, please try again')
+        user = {'email': self.InputFieldEmail.text(), 'password': self.InputFieldPassword.text()}
+        if not (token := api.create_user(user).get('access_token')):
+            return self.ErrorLbl.setText('Internal error, please try again')
         api.set_token(token)
         self.parent().addWidget(MainView(self).init())
         self.parent().setCurrentIndex(2)

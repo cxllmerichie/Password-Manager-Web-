@@ -6,7 +6,7 @@ from ..misc import Icon, Size
 from ._wrapper import Wrapper
 
 
-class Label(QLabel, Wrapper):
+class Label(Wrapper, QLabel):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QLabel.__init__(self, parent)
         Wrapper.__init__(self, parent, name, visible)

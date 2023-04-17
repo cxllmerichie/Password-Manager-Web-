@@ -1,11 +1,10 @@
 from PyQt5.QtWidgets import QFrame, QWidget, QLayout
-import uuid
 
 from ._wrapper import Wrapper
 
 
-class Frame(QFrame, Wrapper):
-    def __init__(self, parent: QWidget, name: str = str(uuid.uuid4()), visible: bool = True):
+class Frame(Wrapper, QFrame):
+    def __init__(self, parent: QWidget, name: str = None, visible: bool = True):
         QFrame.__init__(self, parent)
         Wrapper.__init__(self, parent, name, visible)
 

@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QPushButton
 from PyQt5.QtCore import Qt
-from typing import Any
 
 from ..widgets import Button, Label, Layout
 from ..misc import Icon
@@ -16,16 +15,19 @@ class CountableButton(QPushButton):
             icon: Icon, text: str, total: int,
             alignment: Qt.Alignment = None, slot: callable = lambda: None
     ) -> 'CountableButton':
-        layout = Layout.horizontal().init(margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft)
-        layout.addWidget(Button(self, 'CountableButtonIcon').init(
-            size=icon.size, icon=icon, disabled=True
+        self.setLayout(Layout.horizontal().init(
+            margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft,
+            items=[
+                Button(self, 'CountableButtonIcon').init(
+                    size=icon.size, icon=icon, disabled=True
+                ),
+                Label(self, 'CountableButtonLbl').init(
+                    text=text, alignment=alignment, elided=True
+                ),
+                Label(self, 'CountableButtonCountLbl').init(
+                    text=str(total)
+                ), Qt.AlignRight
+            ]
         ))
-        layout.addWidget(Label(self, 'CountableButtonLbl').init(
-            text=text, alignment=alignment, elided=True
-        ))
-        layout.addWidget(Label(self, 'CountableButtonCountLbl').init(
-            text=str(total)
-        ), alignment=Qt.AlignRight)
-        self.setLayout(layout)
         self.clicked.connect(slot)
         return self

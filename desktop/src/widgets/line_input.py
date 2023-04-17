@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from ._wrapper import Wrapper
 
 
-class LineInput(QLineEdit, Wrapper):
+class LineInput(Wrapper, QLineEdit):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QLineEdit.__init__(self, parent)
         Wrapper.__init__(self, parent, name, visible)

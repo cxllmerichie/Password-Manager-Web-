@@ -18,19 +18,23 @@ class CentralItem(QFrame):
         self.slot(self.item)
 
     def init(self) -> 'CentralItem':
-        layout = Layout.horizontal().init()
-        layout.addWidget(Label(self, 'IconLbl').init(
-            icon=Icons.from_bytes(self.item['icon']).adjusted(size=(40, 40))
+        self.setLayout(Layout.horizontal().init(
+            items=[
+                Label(self, 'IconLbl').init(
+                    icon=Icons.from_bytes(self.item['icon']).adjusted(size=(40, 40))
+                ),
+                Layout.vertical().init(
+                    items=[
+                        Label(self, 'TitleLbl').init(
+                            text=self.item['title']
+                        ),
+                        Label(self, 'DescriptionLbl').init(
+                            text=self.item['description']
+                        )
+                    ]
+                )
+            ]
         ))
-        vbox = Layout.vertical().init()
-        vbox.addWidget(Label(self, 'TitleLbl').init(
-            text=self.item['title']
-        ))
-        vbox.addWidget(Label(self, 'DescriptionLbl').init(
-            text=self.item['description']
-        ))
-        layout.addLayout(vbox)
-        self.setLayout(layout)
         return self
 
 
@@ -40,9 +44,11 @@ class Items(QWidget):
         self.setStyleSheet(css.items.css)
 
     def init(self) -> 'Items':
-        layout = Layout.vertical().init()
-        layout.addWidget(ScrollArea(self, 'ItemsScrollArea', False).init(
-            orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10
+        self.setLayout(Layout.vertical().init(
+            items=[
+                ScrollArea(self, 'ItemsScrollArea', False).init(
+                    orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10
+                )
+            ]
         ))
-        self.setLayout(layout)
         return self

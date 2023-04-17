@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QTextEdit, QWidget
 from ._wrapper import Wrapper
 
 
-class TextInput(QTextEdit, Wrapper):
+class TextInput(Wrapper, QTextEdit):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QTextEdit.__init__(self, parent)
         Wrapper.__init__(self, parent, name, visible)

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayoutItem, QSpacerItem, QHBoxLayout
 from PyQt5.QtCore import Qt, QObject
-from typing import Iterable, Union
+from typing import Sequence, Union
 from abc import ABC
 
 from ._wrapper import Wrapper
@@ -24,7 +24,7 @@ class Layout(ABC):
     TopCenter = Qt.AlignHCenter | Qt.AlignTop
     Bottom = Qt.AlignBottom
     BottomCenter = Qt.AlignHCenter | Qt.AlignBottom
-    CenterCenter = Qt.AlignHCenter | Qt.AlignVCenter
+    Center = Qt.AlignHCenter | Qt.AlignVCenter
 
     @classmethod
     def horizontal(cls, parent: QWidget = None, name: str = None) -> 'HLayout':
@@ -36,52 +36,58 @@ class Layout(ABC):
 
     @classmethod
     def oriented(cls, orientation: Qt.Orientation, parent: QWidget = None, name: str = None) -> Union['VLayout', 'HLayout']:
-        if orientation is Layout.Vertical:
-            return Layout.vertical(parent, name)
-        else:
-            return Layout.horizontal(parent, name)
+        return Layout.vertical(parent, name) if orientation is Layout.Vertical else Layout.horizontal(parent, name)
 
 
 class QLayoutExtension:
     def init(
             self, *,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
-            items: Iterable[QObject] = ()
+            items: Sequence[QObject] = ()
     ) -> 'QLayoutExtension':
         self.setContentsMargins(*margins)
         self.setSpacing(spacing)
         if alignment:
             self.setAlignment(alignment)
-        for item in items:
-            self.add(item)
+        self.add_items(items)
         return self
 
-    def add(self, obj: QObject, alignment: Qt.Alignment = None) -> QObject:
+    def add(self, obj: QObject, alignment: Qt.AlignmentFlag = None) -> QObject:
         if isinstance(obj, QWidget):
             if alignment:
-                self.addWidget(obj, alignment)
+                self.addWidget(obj, alignment=alignment)
             else:
                 self.addWidget(obj)
-        elif isinstance(obj, QLayoutItem):
-            self.addLayout(obj)
         elif isinstance(obj, QSpacerItem):
             self.addSpacerItem(obj)
+        elif isinstance(obj, QLayoutItem):
+            self.addLayout(obj)
         else:
             raise TypeError(f'Can not add object to {self} because {obj} has unsupported type {type(obj)}')
         return obj
+
+    def add_items(self, items: Sequence[QObject]):
+        i = 0
+        while i < len(items):
+            if i + 1 < len(items) and isinstance(items[i + 1], (Qt.AlignmentFlag, Qt.Alignment)):
+                self.add(items[i], items[i + 1])
+                i += 1
+            else:
+                self.add(items[i])
+            i += 1
 
     def clear(self):
         for i in reversed(range(self.count())):
             self.itemAt(i).widget().setParent(None)
 
 
-class VLayout(QLayoutExtension, QVBoxLayout, Wrapper):
+class VLayout(QLayoutExtension, Wrapper, QVBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QVBoxLayout.__init__(self, parent)
         Wrapper.__init__(self, parent, name, True)
 
 
-class HLayout(QLayoutExtension, QHBoxLayout, Wrapper):
+class HLayout(QLayoutExtension, Wrapper, QHBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QHBoxLayout.__init__(self, parent)
         Wrapper.__init__(self, parent, name, True)

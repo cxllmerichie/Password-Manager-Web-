@@ -14,20 +14,24 @@ class MainView(QWidget):
         self.setObjectName(self.__class__.__name__)
 
     def init(self) -> 'MainView':
-        layout = Layout.vertical().init()
-        layout.addWidget(Panel(self).init(), alignment=Qt.AlignTop)
-
         frame = Frame(self, 'MainViewFrame')
+
         splitter = QSplitter(frame)
         splitter.addWidget(CentralPages(self).init())
         splitter.addWidget(RightPages(self, splitter, 300).init())
 
-        hbox = Layout.horizontal(frame).init()
-        hbox.addWidget(left_menu := LeftMenu(self, 220).init())
-        hbox.addWidget(splitter)
-
-        layout.addWidget(frame.init(layout=hbox))
-        self.setLayout(layout)
-
+        self.setLayout(Layout.vertical().init(
+            items=[
+                Panel(self).init(), Qt.AlignTop,
+                frame.init(
+                    layout=Layout.horizontal().init(
+                        items=[
+                            left_menu := LeftMenu(self, 220).init(),
+                            splitter
+                        ]
+                    )
+                )
+            ]
+        ))
         left_menu.shrink()
         return self
