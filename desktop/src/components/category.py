@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QFrame, QPush
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..widgets import Button, VLayout, LineInput, HLayout, Label, TextInput, Spacer, Frame
+from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
 from ..misc import Icons, api
 from .. import css
 
@@ -15,12 +15,12 @@ class Category(QFrame):
         self.category = None
 
     def init(self) -> 'Category':
-        vbox = VLayout().init(spacing=20, margins=(0, 0, 0, 20))
+        vbox = Layout.vertical().init(spacing=20, margins=(0, 0, 0, 20))
 
-        hbox = HLayout().init(margins=(20, 0, 20, 0))
+        hbox = Layout.horizontal().init(margins=(20, 0, 20, 0))
         hbox.addWidget(favourite_btn := Button(self, 'FavouriteBtn').init(
             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
-        ), alignment=VLayout.Left)
+        ), alignment=Layout.Left)
         hbox.addWidget(edit_btn := Button(self, 'EditBtn', False).init(
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category
         ))
@@ -29,41 +29,41 @@ class Category(QFrame):
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
-        ), alignment=VLayout.Right)
+        ), alignment=Layout.Right)
         vbox.addLayout(hbox)
 
         vbox.addWidget(Button(self, 'IconBtn').init(
             icon=Icons.CATEGORY, slot=self.set_icon
-        ), alignment=VLayout.HCenterTop)
+        ), alignment=Layout.TopCenter)
         vbox.addWidget(LineInput(self, 'TitleInput').init(
             placeholder='title'
-        ), alignment=VLayout.HCenterTop)
+        ), alignment=Layout.TopCenter)
         vbox.addWidget(TextInput(self, 'DescriptionInput').init(
             placeholder='description (optional)'
-        ), alignment=VLayout.HCenterTop)
+        ), alignment=Layout.TopCenter)
         vbox.addItem(Spacer(False, True))
 
         vbox.addWidget(Label(self, 'ErrorLbl').init(
-            wrap=True, alignment=VLayout.CenterCenter
-        ), alignment=VLayout.CenterCenter)
+            wrap=True, alignment=Layout.CenterCenter
+        ), alignment=Layout.CenterCenter)
         vbox.addWidget(Button(self, 'CreateBtn').init(
             text='Create category', slot=self.create_category
-        ), alignment=VLayout.HCenter)
+        ), alignment=Layout.HCenter)
 
-        save_cancel_layout = HLayout().init(spacing=50)
+        save_cancel_layout = Layout.horizontal().init(spacing=50)
         save_cancel_layout.addWidget(Button(self, 'SaveBtn').init(
             text='Save', slot=self.save
-        ), alignment=VLayout.Left)
+        ), alignment=Layout.Left)
         save_cancel_layout.addWidget(Button(self, 'CancelBtn').init(
             text='Cancel', slot=self.cancel
-        ), alignment=VLayout.Right)
+        ), alignment=Layout.Right)
         vbox.addWidget(Frame(self, 'SaveCancelFrame', False).init(
             layout=save_cancel_layout
-        ), alignment=VLayout.HCenter)
+        ), alignment=Layout.HCenter)
 
         vbox.addWidget(add_item_btn := Button(self, 'AddItemBtn', False).init(
             text='Add item', icon=Icons.PLUS, slot=self.add_item
-        ), alignment=VLayout.HCenter)
+        ), alignment=Layout.HCenter)
         self.setLayout(vbox)
 
         favourite_btn.setProperty('is_favourite', False)

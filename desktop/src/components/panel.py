@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt
 
-from ..widgets import Button, Label, HLayout, Frame
+from ..widgets import Button, Label, Layout, Frame
 from ..misc import Icons, Sizes
 from .. import css
 
@@ -15,7 +15,7 @@ class Panel(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'Panel':
-        layout = HLayout().init(spacing=10)
+        layout = Layout.horizontal().init(spacing=10)
         layout.addWidget(Button(self, 'ToggleLeftMenuBtn').init(
             slot=lambda: self.parent().findChild(QWidget, 'LeftMenu').toggle(), icon=Icons.MENU
         ), alignment=Qt.AlignLeft)
@@ -27,18 +27,18 @@ class Panel(QWidget):
         ), alignment=Qt.AlignLeft)
         layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        hlayout = HLayout().init(alignment=HLayout.Right)
-        hlayout.addWidget(Button(self, 'PanelMinimizeBtn').init(
+        hbox = Layout.horizontal().init(alignment=Layout.Right)
+        hbox.addWidget(Button(self, 'PanelMinimizeBtn').init(
             icon=Icons.MINIMIZE, size=Sizes.PanelNavigationBtn, slot=self.app().showMinimized
         ))
-        hlayout.addWidget(Button(self, 'PanelRestoreBtn').init(
+        hbox.addWidget(Button(self, 'PanelRestoreBtn').init(
             icon=Icons.RESTORE, size=Sizes.PanelNavigationBtn,
             slot=lambda: self.app().showNormal() if self.app().isMaximized() else self.app().showMaximized()
         ))
-        hlayout.addWidget(Button(self, 'PanelCloseBtn').init(
+        hbox.addWidget(Button(self, 'PanelCloseBtn').init(
             icon=Icons.CROSS, size=Sizes.PanelNavigationBtn, slot=self.app().close
         ))
-        layout.addWidget(Frame(self).init(layout=hlayout))
+        layout.addWidget(Frame(self).init(layout=hbox))
         self.setLayout(layout)
         return self
 

@@ -1,15 +1,16 @@
 from PyQt5.QtWidgets import QTextEdit, QWidget
 
+from ._wrapper import Wrapper
 
-class TextInput(QTextEdit):
-    def __init__(self, parent: QWidget, name: str):
-        super().__init__(parent)
-        self.setObjectName(name)
+
+class TextInput(QTextEdit, Wrapper):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True):
+        QTextEdit.__init__(self, parent)
+        Wrapper.__init__(self, parent, name, visible)
 
     def init(
             self, *,
-            placeholder: str = '', text: str = '',
-            textchanged: callable = None
+            placeholder: str = '', text: str = '', textchanged: callable = None
     ) -> 'TextInput':
         self.setText(text)
         self.setPlaceholderText(placeholder)

@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QStatusBar
 
-from ..widgets import HLayout, Label
-from ..misc import Sizes
+from ..widgets import Layout, Label
 
 
 class StatusBar(QStatusBar):
@@ -17,5 +16,5 @@ class StatusBar(QStatusBar):
             self.layout().removeItem(item)
         self.layout().addWidget(Label(self, 'StatusBarLbl').init(
             text='Password Manager © 2023 by <cxllmerichie>'
-        ), alignment=HLayout.LeftBottom)
+        ), alignment=Layout.LeftBottom)
         return self

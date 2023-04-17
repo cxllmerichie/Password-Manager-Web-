@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QStackedWidget, QFrame, QScrollArea, QSplitter
+from PyQt5.QtWidgets import QWidget, QStackedWidget, QFrame, QScrollArea
 from PyQt5.QtCore import Qt, pyqtSlot
 from typing import Any
 
-from ..widgets import Label, VLayout, SplitterWidget, ScrollArea, Button, SideMenu
+from ..widgets import Label, Layout, ScrollArea, Button, SideMenu
 from ..misc import Icons, Sizes, api
 from .countable_button import CountableButton
 from .items import CentralItem
@@ -17,7 +17,7 @@ class LeftMenu(SideMenu, QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'LeftMenu':
-        vlayout = VLayout().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
+        vlayout = Layout.vertical().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
         vlayout.addWidget(Label(self, 'LeftMenuItemsLabel').init(
             text='Items'
         ), alignment=Qt.AlignVCenter)
@@ -38,11 +38,11 @@ class LeftMenu(SideMenu, QWidget):
         if not len(categories):
             vlayout.addWidget(Label(self, 'NoCategoriesLbl').init(
                 text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
-                wrap=True, size=Sizes.NoCategoriesLbl
-            ), alignment=VLayout.CenterCenter)
+                wrap=True
+            ), alignment=Layout.CenterCenter)
         else:
             sarea = ScrollArea(self, 'CategoriesScrollArea').init(
-                horizontal=False, vertical=True, layout_t=VLayout, alignment=VLayout.Top, spacing=5
+                horizontal=False, vertical=True, orientation=Layout.Vertical, alignment=Layout.Top, spacing=5
             )
             for category in categories:
                 sarea.widget().layout().addWidget(CountableButton(self).init(

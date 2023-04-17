@@ -1,8 +1,8 @@
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QWidget, QFrame, QPushButton
+from PyQt5.QtWidgets import QWidget, QFrame
 from typing import Any
 
-from ..widgets import ScrollArea, Frame, VLayout, HLayout, Label
+from ..widgets import ScrollArea, Layout, Label
 from ..misc import Icons
 from .. import css
 
@@ -18,11 +18,11 @@ class CentralItem(QFrame):
         self.slot(self.item)
 
     def init(self) -> 'CentralItem':
-        layout = HLayout().init()
+        layout = Layout.horizontal().init()
         layout.addWidget(Label(self, 'IconLbl').init(
             icon=Icons.from_bytes(self.item['icon']).adjusted(size=(40, 40))
         ))
-        vbox = VLayout().init()
+        vbox = Layout.vertical().init()
         vbox.addWidget(Label(self, 'TitleLbl').init(
             text=self.item['title']
         ))
@@ -40,9 +40,9 @@ class Items(QWidget):
         self.setStyleSheet(css.items.css)
 
     def init(self) -> 'Items':
-        layout = VLayout().init()
+        layout = Layout.vertical().init()
         layout.addWidget(ScrollArea(self, 'ItemsScrollArea', False).init(
-            layout_t=VLayout, alignment=VLayout.HCenterTop, spacing=10
+            orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10
         ))
         self.setLayout(layout)
         return self

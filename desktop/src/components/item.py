@@ -1,11 +1,9 @@
-from PyQt5.QtWidgets import (
-    QWidget, QLabel, QLineEdit, QTextEdit, QFrame, QPushButton, QFileDialog, QVBoxLayout, QScrollArea
-)
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QFrame, QPushButton, QFileDialog, QScrollArea
 from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
 from typing import Any
 
-from ..widgets import Button, VLayout, LineInput, HLayout, Label, TextInput, Spacer, Frame, ScrollArea
+from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, ScrollArea
 from ..misc import Icons, api, Colors
 from .. import css
 
@@ -26,9 +24,9 @@ class Field(QFrame):
         ''')
 
     def init(self) -> 'Field':
-        layout = HLayout(self, f'FieldLayout').init(spacing=5)
+        layout = Layout.horizontal(self, f'FieldLayout').init(spacing=5)
         layout.addWidget(name_input := LineInput(self, f'InputFieldName').init(
-            placeholder='name', alignment=VLayout.Right
+            placeholder='name', alignment=Layout.Right
         ))
         layout.addWidget(value_input := LineInput(self, f'InputFieldValue').init(
             placeholder='value'
@@ -120,12 +118,12 @@ class Item(QFrame):
         self.field_identifiers = []
 
     def init(self) -> 'Item':
-        vbox = VLayout(name='ItemLayout').init(spacing=20, margins=(0, 0, 0, 20))
+        vbox = Layout.vertical(name='ItemLayout').init(spacing=20, margins=(0, 0, 0, 20))
 
-        hbox = HLayout().init(margins=(20, 0, 20, 0))
+        hbox = Layout.horizontal().init(margins=(20, 0, 20, 0))
         hbox.addWidget(favourite_btn := Button(self, 'FavouriteBtn').init(
             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
-        ), alignment=VLayout.Left)
+        ), alignment=Layout.Left)
         hbox.addWidget(edit_btn := Button(self, 'EditBtn').init(
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_item
         ))
@@ -134,55 +132,55 @@ class Item(QFrame):
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
-        ), alignment=VLayout.Right)
+        ), alignment=Layout.Right)
         vbox.addLayout(hbox)
 
-        hbox = HLayout().init()
+        hbox = Layout.horizontal().init()
         hbox.addWidget(Button(self, 'IconBtn').init(
             icon=Icons.CATEGORY, slot=self.set_icon
-        ), alignment=VLayout.HCenterTop)
-        title_description_layout = VLayout().init()
+        ), alignment=Layout.TopCenter)
+        title_description_layout = Layout.vertical().init()
         title_description_layout.addWidget(LineInput(self, 'TitleInput').init(
             placeholder='title'
-        ), alignment=VLayout.HCenterTop)
+        ), alignment=Layout.TopCenter)
         title_description_layout.addWidget(TextInput(self, 'DescriptionInput').init(
             placeholder='description (optional)'
-        ), alignment=VLayout.HCenterTop)
+        ), alignment=Layout.TopCenter)
         hbox.addLayout(title_description_layout)
         vbox.addLayout(hbox)
 
-        add_btns_layout = HLayout().init()
+        add_btns_layout = Layout.horizontal().init()
         add_btns_layout.addWidget(Button(self, 'AddDocumentBtn').init(
             text='Add document', icon=Icons.PLUS
-        ), alignment=VLayout.HCenter)
+        ), alignment=Layout.HCenter)
         add_btns_layout.addWidget(Button(self, 'AddFieldBtn').init(
             text='Add field', icon=Icons.PLUS, slot=self.add_field
-        ), alignment=VLayout.HCenter)
+        ), alignment=Layout.HCenter)
         vbox.addWidget(Frame(self, 'AddBtnsFrame').init(
             layout=add_btns_layout
         ))
 
         vbox.addWidget(ScrollArea(self, 'FieldScrollArea').init(
-            layout_t=VLayout, alignment=VLayout.Top, margins=(5, 10, 5, 0), spacing=10
-        ), alignment=VLayout.HCenter)
+            orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
+        ), alignment=Layout.HCenter)
         vbox.addItem(Spacer(False, True))
 
         vbox.addWidget(Label(self, 'ErrorLbl').init(
-            wrap=True, alignment=VLayout.CenterCenter
-        ), alignment=VLayout.CenterCenter)
+            wrap=True, alignment=Layout.CenterCenter
+        ), alignment=Layout.CenterCenter)
         vbox.addWidget(Button(self, 'CreateBtn').init(
             text='Create item', slot=self.create_item
-        ), alignment=VLayout.HCenter)
+        ), alignment=Layout.HCenter)
 
         frame = Frame(self, 'SaveCancelFrame').init()
-        save_cancel_layout = HLayout(frame).init(spacing=50)
+        save_cancel_layout = Layout.horizontal(frame).init(spacing=50)
         save_cancel_layout.addWidget(Button(self, 'SaveBtn').init(
             text='Save', slot=self.save
-        ), alignment=VLayout.Left)
+        ), alignment=Layout.Left)
         save_cancel_layout.addWidget(Button(self, 'CancelBtn').init(
             text='Cancel', slot=self.cancel
-        ), alignment=VLayout.Right)
-        vbox.addWidget(frame, alignment=VLayout.HCenter)
+        ), alignment=Layout.Right)
+        vbox.addWidget(frame, alignment=Layout.HCenter)
         self.setLayout(vbox)
 
         frame.setVisible(False)

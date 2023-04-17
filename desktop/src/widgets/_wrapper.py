@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QWidget
+from contextlib import suppress
 import re
 
 
@@ -7,7 +8,8 @@ class Wrapper:
         if parent and name:
             setattr(parent, self.__snake_case(name), self)
             self.setObjectName(name)
-        self.setVisible(visible)
+        with suppress(Exception):
+            self.setVisible(visible)
 
     @staticmethod
     def __snake_case(name: str) -> str:

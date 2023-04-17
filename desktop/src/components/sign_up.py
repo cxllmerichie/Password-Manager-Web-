@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..widgets import Button, Label, LineInput, VLayout, Spacer, Frame
+from ..widgets import Button, Label, LineInput, Layout, Spacer, Frame
 from ..misc import Icons, api
 from .main_view import MainView
 from .. import css
@@ -16,14 +16,14 @@ class SignUp(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
     def init(self) -> 'SignUp':
-        vbox = VLayout().init(spacing=10, alignment=Qt.AlignVCenter)
+        vbox = Layout.vertical().init(spacing=10, alignment=Qt.AlignVCenter)
         vbox.addWidget(Button(self, 'AuthExitBtn').init(
             icon=Icons.CROSS, slot=self.parent().parent().close
-        ), alignment=VLayout.RightTop)
+        ), alignment=Layout.RightTop)
         vbox.addItem(Spacer(False, True))
 
-        layout_email = VLayout(self).init(
-            margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter
+        layout_email = Layout.vertical(self).init(
+            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.CenterCenter
         )
         layout_email.addWidget(Label(self, 'InputLabelEmail').init(
             text='Email'
@@ -35,8 +35,8 @@ class SignUp(QWidget):
             layout=layout_email
         ), alignment=Qt.AlignHCenter)
 
-        layout_password = VLayout(self).init(
-            margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter
+        layout_password = Layout.vertical(self).init(
+            margins=(5, 5, 5, 5), spacing=5, alignment=Layout.CenterCenter
         )
         layout_password.addWidget(Label(self, 'InputLabelPassword').init(
             text='Password'
@@ -48,7 +48,7 @@ class SignUp(QWidget):
             layout=layout_password
         ), alignment=Qt.AlignHCenter)
 
-        layout_confpass = VLayout(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=VLayout.CenterCenter)
+        layout_confpass = Layout.vertical(self).init(margins=(5, 5, 5, 5), spacing=5, alignment=Layout.CenterCenter)
         layout_confpass.addWidget(Label(self, 'InputLabelConfpass').init(
             text='Confirm password'
         ))
@@ -60,8 +60,8 @@ class SignUp(QWidget):
         ), alignment=Qt.AlignHCenter)
 
         vbox.addWidget(Label(self, 'ErrorLbl').init(
-            wrap=True, alignment=VLayout.CenterCenter
-        ), alignment=VLayout.CenterCenter)
+            wrap=True, alignment=Layout.CenterCenter
+        ), alignment=Layout.CenterCenter)
         vbox.addWidget(Button(self, 'AuthTextBtn').init(
             text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)
         ), alignment=Qt.AlignHCenter)
