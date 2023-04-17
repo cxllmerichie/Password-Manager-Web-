@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from .sign_in import SignIn
 from .sign_up import SignUp
 from .main_view import MainView
+from ..misc import api
 
 
 class CentralWidget(QStackedWidget):
@@ -15,8 +16,8 @@ class CentralWidget(QStackedWidget):
         self.layout().setAlignment(Qt.AlignHCenter)
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
-        # self.parent().settings.setValue('token', None)
-        if not self.parent().token():
+        # api.settings.setValue('token', None)
+        if not api.get_token():
             self.setCurrentIndex(0)
         else:
             self.addWidget(MainView(self).init())

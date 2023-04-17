@@ -17,7 +17,7 @@ class SignIn(QWidget):
     def init(self) -> 'SignIn':
         vbox = VLayout().init(spacing=10, alignment=Qt.AlignVCenter)
         vbox.addWidget(Button(self, 'AuthExitBtn').init(
-            icon=Icons.CROSS, slot=self.app().close
+            icon=Icons.CROSS, slot=self.parent().parent().close
         ), alignment=VLayout.RightTop)
         vbox.addItem(Spacer(False, True))
 
@@ -99,9 +99,6 @@ class SignIn(QWidget):
             return error_lbl.setText('Password can not be empty')
         if not (token := api.login(dict(email=email, password=password)).get('access_token', None)):
             return error_lbl.setText('Internal error, please try again')
-        self.app().settings.setValue('token', token)
+        api.CONFIG.setValue('token', token)
         self.parent().addWidget(MainView(self.parent()).init())
         self.parent().setCurrentIndex(2)
-
-    def app(self):
-        return self.parent().parent()

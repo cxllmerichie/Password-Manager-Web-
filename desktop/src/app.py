@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import Qt
 
 
@@ -14,10 +13,6 @@ class App(QMainWindow):
         super().__init__()
         self.setObjectName(self.__class__.__name__)
         self.setStyleSheet(css.app.css + css.status_bar.css)
-        self.settings = QSettings('cxllmerichie', 'PasswordManagerDesktop', self)
-
-    def token(self):
-        return self.settings.value('token')
 
     def init(self) -> 'App':
         from .misc import Sizes

@@ -36,6 +36,7 @@ css = f'''
 #CountableButton {{
     background-color: {Colors.DARK_GRAY};
     min-width: 200px;
+    max-width: 200px;
     min-height: 30px;
     color: white;
     font-size: 20px;

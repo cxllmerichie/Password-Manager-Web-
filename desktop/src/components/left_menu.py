@@ -2,34 +2,33 @@ from PyQt5.QtWidgets import QWidget, QStackedWidget, QFrame, QScrollArea, QSplit
 from PyQt5.QtCore import Qt, pyqtSlot
 from typing import Any
 
-from ..widgets import Label, VLayout, SplitterWidget, ScrollArea, Button
+from ..widgets import Label, VLayout, SplitterWidget, ScrollArea, Button, SideMenu
 from ..misc import Icons, Sizes, api
 from .countable_button import CountableButton
 from .items import CentralItem
 from .. import css
 
 
-class LeftMenu(QWidget, SplitterWidget):
-    def __init__(self, parent: QWidget, splitter: QSplitter, width: int):
+class LeftMenu(QWidget, SideMenu):
+    def __init__(self, parent: QWidget, width: int):
         super().__init__(parent)
         self.setObjectName(self.__class__.__name__)
         self.setStyleSheet(css.left_menu.css + css.components.scroll)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         self.expand_to = width
-        self.splitter = splitter
 
     def init(self) -> 'LeftMenu':
         vlayout = VLayout().init(spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop)
         vlayout.addWidget(Label(self, 'LeftMenuItemsLabel').init(
             text='Items'
         ), alignment=Qt.AlignVCenter)
-        categories = api.categories(self.app().token())
+        categories = api.categories()
         vlayout.addWidget(CountableButton(self).init(
             icon=Icons.HOME, text='All items', total=sum([len(category['items']) for category in categories])
         ), alignment=Qt.AlignLeft)
         vlayout.addWidget(CountableButton(self).init(
-            icon=Icons.STAR, text='Favourite',
+            icon=Icons.STAR.adjusted(size=Icons.HOME.size), text='Favourite',
             total=sum([len([1 for item in category['items'] if item['is_favourite']]) for category in categories])
         ), alignment=Qt.AlignLeft)
         vlayout.addWidget(Button(self, 'AddCategoryBtn').init(
@@ -49,8 +48,8 @@ class LeftMenu(QWidget, SplitterWidget):
             )
             for category in categories:
                 sarea.widget().layout().addWidget(CountableButton(self).init(
-                    icon=Icons.STAR, text=category['title'], total=len(category['items']),
-                    slot=lambda checked, c=category: self.show_category(c)
+                    icon=Icons.from_bytes(category['icon']).adjusted(size=Icons.HOME.size), text=category['title'],
+                    total=len(category['items']), slot=lambda checked, c=category: self.show_category(c)
                 ))
             vlayout.addWidget(sarea)
         self.setLayout(vlayout)
@@ -82,6 +81,3 @@ class LeftMenu(QWidget, SplitterWidget):
         right_pages.findChild(QFrame, 'Category').show_create_category()
         right_pages.setCurrentIndex(0)
         right_pages.expand()
-
-    def app(self):
-        return self.parent().parent().parent()

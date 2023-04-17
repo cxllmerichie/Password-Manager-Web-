@@ -72,9 +72,9 @@ class Field(QFrame):
         value_input = self.findChild(QLineEdit, f'InputFieldValue')
         field = {'name': name_input.text(), 'value': value_input.text()}
         if self.field:
-            response = api.update_field(self.field['id'], field, self.app().token())
+            response = api.update_field(self.field['id'], field)
         else:
-            response = api.add_field(self.item_id, field, self.app().token())
+            response = api.add_field(self.item_id, field)
         if response.get('id', None):
             self.findChild(QPushButton, 'InputFieldValueCopyBtn').setVisible(True)
             self.findChild(QPushButton, 'InputFieldValueHideBtn').setVisible(True)
@@ -94,7 +94,7 @@ class Field(QFrame):
         self.setVisible(False)
         self.parent().parent().parent().parent().field_identifiers.remove(self.identifier)
         if self.field:
-            api.remove_field(self.field['id'], self.app().token())
+            api.remove_field(self.field['id'])
 
     @pyqtSlot()
     def edit_field(self):
@@ -107,9 +107,6 @@ class Field(QFrame):
         value_input = self.findChild(QLineEdit, f'InputFieldValue')
         value_input.setDisabled(False)
         value_input.show_echo()
-
-    def app(self):
-        return self.parent().parent().parent().parent().app()
 
 
 class Item(QFrame):
@@ -232,7 +229,7 @@ class Item(QFrame):
         if not len(title):
             return error_lbl.setText('Name can not be empty')
         item = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        item = api.update_item(self.item['id'], item, self.app().token())
+        item = api.update_item(self.item['id'], item)
         if item.get('id', None):
             self.cancel()
             self.item = item
@@ -264,7 +261,7 @@ class Item(QFrame):
 
     def show_item(self, item: dict[str, Any]):
         if item_id := item.get('id', None):
-            item = api.get_item(item_id, self.app().token())
+            item = api.get_item(item_id)
         self.item = item
         title_input = self.findChild(QLineEdit, 'TitleInput')
         description_input = self.findChild(QTextEdit, 'DescriptionInput')
@@ -297,9 +294,6 @@ class Item(QFrame):
         else:
             btn.setIcon(Icons.STAR.icon)
 
-    def app(self):
-        return self.parent().parent().parent().parent().parent()
-
     @pyqtSlot()
     def create_item(self):
         icon_btn = self.findChild(QPushButton, 'IconBtn')
@@ -320,7 +314,7 @@ class Item(QFrame):
             'value': field.findChild(QLineEdit, 'InputFieldValue').text()
         } for field in fields]
         body = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        response = api.create_item(self.property('category_id'), body, fields, self.app().token())
+        response = api.create_item(self.property('category_id'), body, fields)
 
         if response.get('id', None):
             icon_btn.setIcon(Icons.from_bytes(response['icon']).icon)

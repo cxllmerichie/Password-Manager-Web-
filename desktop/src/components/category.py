@@ -25,7 +25,7 @@ class Category(QFrame):
             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_category, visible=False
         ))
         hbox.addWidget(remove_btn := Button(self, 'RemoveBtn').init(
-            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_category, visible=False
+            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.delete_category, visible=False
         ))
         hbox.addWidget(Button(self, 'CloseBtn').init(
             icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
@@ -96,6 +96,13 @@ class Category(QFrame):
         description_input.setText('')
 
     @pyqtSlot()
+    def delete_category(self):
+        category = api.delete_category(self.category['id'])
+        self.findChild(QLineEdit, 'TitleInput').setText('')
+        self.findChild(QTextEdit, 'DescriptionInput').setText('')
+        self.show_create_category()
+
+    @pyqtSlot()
     def edit_category(self):
         self.findChild(QPushButton, 'CreateBtn').setVisible(False)
         self.findChild(QFrame, 'SaveCancelFrame').setVisible(True)
@@ -120,7 +127,7 @@ class Category(QFrame):
         if not len(title):
             return error_lbl.setText('Title can not be empty')
         category = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        category = api.update_category(self.category['id'], category, self.app().token())
+        category = api.update_category(self.category['id'], category)
         if category.get('id', None):
             self.cancel()
             self.category = category
@@ -183,9 +190,6 @@ class Category(QFrame):
         else:
             btn.setIcon(Icons.STAR.icon)
 
-    def app(self) -> 'App':
-        return self.parent().parent().parent().parent().parent()
-
     @pyqtSlot()
     def create_category(self):
         icon_btn = self.findChild(QPushButton, 'IconBtn')
@@ -199,8 +203,8 @@ class Category(QFrame):
         is_favourite = self.findChild(QPushButton, 'FavouriteBtn').property('is_favourite')
         if not len(name):
             return error_lbl.setText('Name can not be empty')
-        body = {'icon': icon, 'title': name, 'description': description, 'is_favourite': is_favourite}
-        response = api.create_category(body, self.app().token())
+        category = {'icon': icon, 'title': name, 'description': description, 'is_favourite': is_favourite}
+        response = api.create_category(category)
         if response.get('id', None):
             self.category = response
             icon_btn.setIcon(Icons.from_bytes(response['icon']).icon)

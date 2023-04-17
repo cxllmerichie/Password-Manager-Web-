@@ -17,15 +17,17 @@ class MainView(QWidget):
         layout = VLayout().init()
         layout.addWidget(Panel(self).init(), alignment=Qt.AlignTop)
 
-        splitter = QSplitter(self)
-        splitter.addWidget(LeftMenu(self, splitter, 300).init())
+        frame = Frame(self, 'MainViewFrame')
+        splitter = QSplitter(frame)
         splitter.addWidget(CentralPages(self).init())
-        splitter.addWidget(RightPages(self, splitter, 400).init())
+        splitter.addWidget(RightPages(self, splitter, 300).init())
 
-        # frame = Frame(self, 'MainViewFrame')
-        # vbox = VLayout()
-        # vbox.addWidget(splitter)
-        layout.addWidget(splitter)
+        hbox = HLayout(frame).init()
+        hbox.addWidget(left_menu := LeftMenu(self, 220).init())
+        hbox.addWidget(splitter)
+
+        layout.addWidget(frame.init(layout=hbox))
         self.setLayout(layout)
 
+        left_menu.shrink()
         return self

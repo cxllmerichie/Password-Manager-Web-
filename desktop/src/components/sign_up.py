@@ -18,7 +18,7 @@ class SignUp(QWidget):
     def init(self) -> 'SignUp':
         vbox = VLayout().init(spacing=10, alignment=Qt.AlignVCenter)
         vbox.addWidget(Button(self, 'AuthExitBtn').init(
-            icon=Icons.CROSS, slot=self.app().close
+            icon=Icons.CROSS, slot=self.parent().parent().close
         ), alignment=VLayout.RightTop)
         vbox.addItem(Spacer(False, True))
 
@@ -112,9 +112,6 @@ class SignUp(QWidget):
         body = {'email': email, 'password': password}
         if not (token := api.create_user(body).get('access_token', None)):
             return self.findChild(QLabel, 'ErrorLbl').setText('Internal error, please try again')
-        self.app().settings.setValue('token', token)
+        api.set_token(token)
         self.parent().addWidget(MainView(self).init())
         self.parent().setCurrentIndex(2)
-
-    def app(self):
-        return self.parent().parent()

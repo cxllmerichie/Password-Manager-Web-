@@ -1,6 +1,7 @@
 from typing import Any
 import requests
 from loguru import logger
+from PyQt5.QtCore import QSettings
 
 
 @logger.catch()
@@ -16,11 +17,20 @@ def clear_json(dictionary: dict[str, Any]) -> dict[str, Any]:
 
 
 URL_ROOT = 'http://127.0.0.1:8000'
+CONFIG = QSettings('cxllmerichie', 'PasswordManagerDesktop')
+
+
+def set_token(token: str):
+    return CONFIG.setValue('token', token)
+
+
+def get_token():
+    return CONFIG.value('token')
 
 
 @logger.catch()
-def auth_headers(token: str) -> dict[str, Any]:
-    return {'accept': 'application/json', 'Authorization': f'Bearer {token}'}
+def auth_headers() -> dict[str, Any]:
+    return {'accept': 'application/json', 'Authorization': f'Bearer {get_token()}'}
 
 
 @logger.catch()
@@ -46,65 +56,71 @@ def check_email(email: str) -> bool:
 
 
 @logger.catch()
-def categories(token: str):
+def categories():
     url = f'{URL_ROOT}/categories/'
-    return requests.get(url=url, headers=auth_headers(token)).json()
+    return requests.get(url=url, headers=auth_headers()).json()
 
 
 @logger.catch()
-def create_category(category: dict[str, Any], token: str):
+def create_category(category: dict[str, Any]):
     url = f'{URL_ROOT}/categories/'
-    return requests.post(url=url, headers=auth_headers(token), json=clear_json(category)).json()
+    return requests.post(url=url, headers=auth_headers(), json=clear_json(category)).json()
 
 
 @logger.catch()
-def get_category(category_id: str, token: str):
+def get_category(category_id: str):
     url = f'{URL_ROOT}/categories/{category_id}/'
-    return requests.get(url=url, headers=auth_headers(token)).json()
+    return requests.get(url=url, headers=auth_headers()).json()
 
 
 @logger.catch()
-def update_category(category_id: int, category: dict[str, Any], token: str):
+def update_category(category_id: int, category: dict[str, Any]):
     url = f'{URL_ROOT}/categories/{category_id}/'
-    return requests.put(url=url, headers=auth_headers(token), json=clear_json(category)).json()
+    return requests.put(url=url, headers=auth_headers(), json=clear_json(category)).json()
 
 
 @logger.catch()
-def add_field(item_id: int, field: dict[str, Any], token: str):
+def delete_category(category_id: int):
+    url = f'{URL_ROOT}/categories/{category_id}/'
+    return requests.delete(url=url, headers=auth_headers()).json()
+
+
+@logger.catch()
+def add_field(item_id: int, field: dict[str, Any]):
     url = f'{URL_ROOT}/items/{item_id}/fields/'
-    return requests.post(url=url, headers=auth_headers(token), json=field).json()
+    return requests.post(url=url, headers=auth_headers(), json=field).json()
 
 
 @logger.catch()
-def update_field(field_id: int, field: dict[str, Any], token: str):
+def update_field(field_id: int, field: dict[str, Any]):
     url = f'{URL_ROOT}/fields/{field_id}/'
-    return requests.put(url=url, headers=auth_headers(token), json=field).json()
+    return requests.put(url=url, headers=auth_headers(), json=field).json()
 
 
 @logger.catch()
-def remove_field(field_id: str, token: str):
+def remove_field(field_id: str):
     url = f'{URL_ROOT}/fields/{field_id}/'
-    return requests.delete(url=url, headers=auth_headers(token)).json()
+    return requests.delete(url=url, headers=auth_headers()).json()
 
 
 @logger.catch()
-def create_item(category_id: int, item: dict[str, Any], fields: list[dict[str, Any]], token: str):
+def create_item(category_id: int, item: dict[str, Any], fields: list[dict[str, Any]]):
     url = f'{URL_ROOT}/categories/{category_id}/items/'
-    response = requests.post(url=url, headers=auth_headers(token), json=clear_json(item)).json()
+    response = requests.post(url=url, headers=auth_headers(), json=clear_json(item)).json()
     response['fields'] = []
     for field in fields:
-        if (f := add_field(response['id'], field, token)).get('id', None):
+        if (f := add_field(response['id'], field)).get('id', None):
             response['fields'].append(f)
     return response
 
 
 @logger.catch()
-def get_item(item_id: str, token: str):
+def get_item(item_id: str):
     url = f'{URL_ROOT}/items/{item_id}/'
-    return requests.get(url=url, headers=auth_headers(token)).json()
+    return requests.get(url=url, headers=auth_headers()).json()
 
 
 @logger.catch()
-def update_item(item_id: int, item: dict[str, Any], token: str):
+def update_item(item_id: int, item: dict[str, Any]):
     url = f'{URL_ROOT}/items/{item_id}/'
-    return requests.put(url=url, headers=auth_headers(token), json=clear_json(item)).json()
+    return requests.put(url=url, headers=auth_headers(), json=clear_json(item)).json()
