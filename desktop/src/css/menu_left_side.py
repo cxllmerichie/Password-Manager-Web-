@@ -12,18 +12,18 @@ css = f'''
     color: white;
 }}
 
-#CountableButtonIcon {{
+#MenuButtonIconBtn {{
     background-color: transparent;
 }}
 
-#CountableButtonLbl {{
+#MenuButtonTextLbl {{
     background-color: transparent;
     font-size: 16px;
     min-width: 110px;
     color: white;
 }}
 
-#CountableButtonCountLbl {{
+#MenuButtonTotalLbl {{
     background-color: transparent;
     font-size: 14px;
     color: white;
@@ -33,7 +33,7 @@ css = f'''
     max-height: 18px;
 }}
 
-#CountableButton {{
+#MenuButton {{
     background-color: {Colors.DARK_GRAY};
     min-width: 200px;
     max-width: 200px;
@@ -44,7 +44,7 @@ css = f'''
     border: none;
 }}
 
-#CountableButton:hover {{
+#MenuButton:hover {{
     background-color: {Colors.RED};
 }}
 

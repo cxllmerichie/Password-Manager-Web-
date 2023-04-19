@@ -7,7 +7,7 @@ from .side_menu import SideMenu
 from .spacer import Spacer
 from .scroll_area import ScrollArea
 from .text_input import TextInput
-from .splitter_widget import SplitterWidgetExtension
+from .splitter_widget import SplitterWidgetExt
 from .widget import Widget
 from .stacked_widget import StackedWidget
 from ._wrapper import ui

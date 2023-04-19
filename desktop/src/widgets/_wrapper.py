@@ -2,21 +2,19 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QSettings
 from contextlib import suppress
 import uuid
+import socket
 
 
 class UI:
-    __settings = QSettings()
-
-    def __init__(self):
-        super().__init__()
+    settings: QSettings = QSettings(socket.gethostname(), __file__)
 
     @property
     def token(self):
-        return self.__settings.value('token')
+        return self.settings.value('token')
 
     @token.setter
     def token(self, token: str):
-        self.__settings.setValue('token', token)
+        self.settings.setValue('token', token)
 
 
 ui = UI()
@@ -27,6 +25,12 @@ class Wrapper:
         if parent and name:
             self.setObjectName(name)
             setattr(parent, name, self)
+            setattr(self, parent.objectName(), parent)
             setattr(ui, name, self)
+
+            self.core = parent
+            while p := self.core.parent():
+                self.core = p
+
         with suppress(Exception):
             self.setVisible(visible)

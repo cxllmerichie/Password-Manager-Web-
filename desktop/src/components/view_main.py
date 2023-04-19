@@ -1,17 +1,16 @@
 from PyQt5.QtWidgets import QWidget, QSplitter
 from PyQt5.QtCore import Qt
 
-from ..widgets import Layout, Frame
-from .menu_left_side import LeftMenu
-from .menu_right_pages import RightPages
-from .menu_central_pages import CentralPages
+from ..widgets import Layout, Frame, Widget
+from .left_menu import LeftMenu
+from .right_pages import RightPages
+from .central_pages import CentralPages
 from .panel import Panel
 
 
-class MainView(QWidget):
+class MainView(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent=parent)
-        self.setObjectName(self.__class__.__name__)
+        super().__init__(parent, self.__class__.__name__)
 
     def init(self) -> 'MainView':
         frame = Frame(self, 'MainViewFrame')

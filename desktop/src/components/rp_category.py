@@ -1,25 +1,26 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
+from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, ui
+from ..custom import FavouriteBtn
 from ..misc import Icons, api
 from .. import css
 
 
-class Category(Frame):
+class RP_Category(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__, stylesheet=css.rp_category.css)
         self.category = None
 
-    def init(self) -> 'Category':
+    def init(self) -> 'RP_Category':
         self.setLayout(Layout.vertical().init(
             spacing=20, margins=(0, 0, 0, 20),
             items=[
                 Layout.horizontal().init(
                     margins=(20, 0, 20, 0),
                     items=[
-                        Button(self, 'FavouriteBtn').init(
+                        FavouriteBtn(self).init(
                             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
                         ), Layout.Left,
                         Button(self, 'EditBtn', False).init(
@@ -67,14 +68,19 @@ class Category(Frame):
                 ), Layout.HCenter
             ]
         ))
-        self.FavouriteBtn.setProperty('is_favourite', False)
+        self.FavouriteBtn.is_favourite = False
         return self
 
+    def set_favourite(self):
+        if self.category:
+            self.save()
+            self.RightPages.MainView
+            self.RightPages.MainView.LeftMenu.refresh_categories(api.categories())
+
     def add_item(self):
-        RightPages = self.parent()
-        Item = RightPages.Item
+        Item = self.RightPages.RP_Item
         Item.category_id = self.category['id']
-        RightPages.setCurrentWidget(Item)
+        self.RightPages.setCurrentWidget(Item)
         Item.show_create_item()
 
     @pyqtSlot()
@@ -82,13 +88,14 @@ class Category(Frame):
         self.parent().shrink()
 
     def show_create_category(self):
+        self.category = None
         self.CreateBtn.setVisible(True)
         self.EditBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(False)
         self.IconBtn.setDisabled(False)
         self.IconBtn.setIcon(Icons.CATEGORY.icon)
-        if self.FavouriteBtn.property('is_favourite'):
+        if self.FavouriteBtn.is_favourite:
             self.FavouriteBtn.click()
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')
@@ -98,12 +105,15 @@ class Category(Frame):
     @pyqtSlot()
     def delete_category(self):
         category = api.delete_category(self.category['id'])
-        self.category = None
-        self.TitleInput.setText('')
-        self.DescriptionInput.setText('')
-        self.RemoveBtn.setVisible(False)
-        self.show_create_category()
-        self.refresh_categories()
+        if category:
+            self.category = None
+            self.TitleInput.setText('')
+            self.DescriptionInput.setText('')
+            self.RemoveBtn.setVisible(False)
+            self.show_create_category()
+            self.RightPages.MainView.LeftMenu.refresh_categories(api.categories())
+        else:
+            self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def edit_category(self):
@@ -118,22 +128,18 @@ class Category(Frame):
 
     @pyqtSlot()
     def save(self):
-        icon = self.IconBtn.property('icon_bytes')
-        title = self.TitleInput.text()
-        description = self.DescriptionInput.toPlainText()
-        is_favourite = self.findChild(QPushButton, 'FavouriteBtn').property('is_favourite')
-        if not len(title):
+        if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
-        category = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        category = api.update_category(self.category['id'], category)
-        if category.get('id', None):
+        category = {'icon': self.IconBtn.property('icon_bytes'), 'title': title,
+                    'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteBtn.is_favourite}
+        if (category := api.update_category(self.category['id'], category)).get('id'):
             self.cancel()
             self.category = category
         else:
             self.ErrorLbl.setText('Internal error, please try again')
         self.EditBtn.setVisible(True)
         self.RemoveBtn.setVisible(False)
-        self.refresh_categories()
+        self.RightPages.MainView.LeftMenu.refresh_categories(api.categories())
 
     @pyqtSlot()
     def cancel(self):
@@ -158,8 +164,8 @@ class Category(Frame):
 
     def show_category(self, category: dict[str, Any]):
         self.category = category
-        if (not category['is_favourite'] and self.FavouriteBtn.property('is_favourite')) or \
-                category['is_favourite'] and not self.FavouriteBtn.property('is_favourite'):
+        if (not category['is_favourite'] and self.FavouriteBtn.is_favourite) or \
+                category['is_favourite'] and not self.FavouriteBtn.is_favourite:
             self.FavouriteBtn.click()
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(category['title'])
@@ -174,27 +180,14 @@ class Category(Frame):
         self.EditBtn.setVisible(True)
 
     @pyqtSlot()
-    def set_favourite(self):
-        is_favourite = self.FavouriteBtn.property('is_favourite')
-        self.FavouriteBtn.setProperty('is_favourite', is_favourite := not is_favourite)
-        if is_favourite:
-            self.FavouriteBtn.setIcon(Icons.STAR_FILL.icon)
-        else:
-            self.FavouriteBtn.setIcon(Icons.STAR.icon)
-        if not self.category:
-            return
-        self.save()
-        self.refresh_categories()
-
-    @pyqtSlot()
     def create_category(self):
-        icon = self.IconBtn.property('icon_bytes')
-        name = self.TitleInput.text()
-        description = self.DescriptionInput.toPlainText()
-        is_favourite = self.FavouriteBtn.property('is_favourite')
-        if not len(name):
-            return self.ErrorLbl.setText('Name can not be empty')
-        category = {'icon': icon, 'title': name, 'description': description, 'is_favourite': is_favourite}
+        title = self.TitleInput.text()
+        if not len(title):
+            return self.ErrorLbl.setText('Title can not be empty')
+        category = {
+            'icon': self.IconBtn.property('icon_bytes'), 'title': title,
+            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteBtn.is_favourite
+        }
         if (category := api.create_category(category)).get('id'):
             self.category = category
             self.TitleInput.setText(category['title'])
@@ -208,10 +201,4 @@ class Category(Frame):
             self.EditBtn.setVisible(True)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
-        self.refresh_categories()
-
-    def refresh_categories(self):
-        parent = self.parent().parent().parent().parent()
-        LeftMenu = parent.findChild(QWidget, 'LeftMenu')
-        categories = api.categories()
-        LeftMenu.show_categories(categories)
+        self.RightPages.MainView.LeftMenu.refresh_categories(api.categories())

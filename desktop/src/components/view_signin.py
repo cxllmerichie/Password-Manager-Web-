@@ -105,6 +105,6 @@ class SignIn(Widget):
         user = {'email': email, 'password': password}
         if not (token := api.login(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        api.set_token(token)
+        ui.token = token
         ui.CentralWidget.addWidget(widget := MainView(self).init())
         ui.CentralWidget.setCurrentWidget(widget)

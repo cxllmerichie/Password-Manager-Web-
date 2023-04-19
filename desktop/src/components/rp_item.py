@@ -8,20 +8,19 @@ from ..misc import Icons, api, Colors
 from .. import css
 
 
-class Field(QFrame):
+class Field(Frame):
     def __init__(self, parent: QWidget, item_id: int, field: dict[str, Any] = None):
-        super().__init__(parent)
         self.identifier = str(uuid4())
-        self.item_id = item_id
-        self.field = field
 
-        self.setObjectName(f'Field{self.identifier}')
-        self.setStyleSheet(css.item.field + f'''
+        super().__init__(parent, f'Field{self.identifier}', stylesheet=css.rp_item.field + f'''
             #Field{self.identifier} {{
                 background-color: {Colors.GRAY};
                 border-radius: 5px;
             }}
         ''')
+
+        self.item_id = item_id
+        self.field = field
 
     def init(self) -> 'Field':
         self.setLayout(Layout.horizontal(self, f'FieldLayout').init(
@@ -65,6 +64,7 @@ class Field(QFrame):
             self.SaveInputFieldBtn.setVisible(True)
             self.InputFieldValueCopyBtn.setVisible(False)
             self.InputFieldValueHideBtn.setVisible(False)
+            self.SaveInputFieldBtn.setVisible(False)
         return self
 
     @pyqtSlot()
@@ -107,7 +107,7 @@ class Field(QFrame):
         self.InputFieldValue.show_echo()
 
 
-class Item(Frame):
+class RP_Item(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__, stylesheet=css.rp_item.css + css.components.scroll)
 
@@ -115,7 +115,7 @@ class Item(Frame):
         self.category_id = None
         self.field_identifiers = []
 
-    def init(self) -> 'Item':
+    def init(self) -> 'RP_Item':
         self.setLayout(Layout.vertical(name='ItemLayout').init(
             spacing=20, margins=(0, 0, 0, 20),
             items=[
@@ -195,9 +195,14 @@ class Item(Frame):
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
-        layout = self.FieldScrollArea.widget().layout()
-        layout.addWidget(f := Field(self, self.item['id'], field).init())
-        self.field_identifiers.append(f.identifier)
+        if self.item:
+            layout = self.FieldScrollArea.widget().layout()
+            layout.addWidget(f := Field(self, self.item['id'], field).init())
+            self.field_identifiers.append(f.identifier)
+        else:
+            layout = self.FieldScrollArea.widget().layout()
+            layout.addWidget(f := Field(self, None, None).init())
+            self.field_identifiers.append(f.identifier)
 
     @pyqtSlot()
     def add_document(self):
@@ -257,9 +262,8 @@ class Item(Frame):
                 self.IconBtn.setProperty('icon_bytes', icon_bytes)
                 self.IconBtn.setIcon(Icons.from_bytes(icon_bytes).icon)
 
-    # def show_create_item(self):
-    #     self.EditBtn.setVisible(False)
-    #     print('callsed')
+    def show_create_item(self):
+        self.EditBtn.setVisible(False)
 
     def show_item(self, item: dict[str, Any]):
         if item_id := item.get('id', None):
@@ -306,7 +310,7 @@ class Item(Frame):
             'value': field.InputFieldValue.text()
         } for field in fields]
         item = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        item = api.create_item(self.property('category_id'), item, fields)
+        item = api.create_item(self.category_id, item, fields)
 
         if item.get('id'):
             self.IconBtn.setIcon(Icons.from_bytes(item['icon']).icon)

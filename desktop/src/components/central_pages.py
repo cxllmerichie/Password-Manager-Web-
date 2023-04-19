@@ -7,7 +7,7 @@ from ..misc import Icons
 from .. import css
 
 
-class CentralPagesItem(Frame):
+class CP_Item(Frame):
     def __init__(self, parent: QWidget, item: dict[str, Any], slot: callable):
         super().__init__(parent, self.__class__.__name__, stylesheet=css.cp_items.central_pages_items)
 
@@ -17,7 +17,7 @@ class CentralPagesItem(Frame):
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.slot(self.item)
 
-    def init(self) -> 'CentralPagesItem':
+    def init(self) -> 'CP_Item':
         self.setLayout(Layout.horizontal().init(
             items=[
                 Label(self, 'IconLbl').init(
@@ -38,11 +38,11 @@ class CentralPagesItem(Frame):
         return self
 
 
-class CentralPagesItems(Widget):
+class CP_Items(Widget):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__, stylesheet=css.cp_items.css)
 
-    def init(self) -> 'CentralPagesItems':
+    def init(self) -> 'CP_Items':
         self.setLayout(Layout.vertical().init(
             items=[
                 ScrollArea(self, 'ItemsScrollArea', False).init(
@@ -55,10 +55,10 @@ class CentralPagesItems(Widget):
 
 class CentralPages(StackedWidget):
     def __init__(self, parent):
-        super().__init__(parent, self.__class__.__name__)
-        self.setStyleSheet(css.menu_central_pages.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.menu_central_pages.css)
 
     def init(self) -> 'CentralPages':
-        self.addWidget(CentralPagesItems(self).init())
-        self.setCurrentIndex(0)
+        self.addWidget(cp_items := CP_Items(self).init())
+
+        self.setCurrentWidget(cp_items)
         return self

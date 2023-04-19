@@ -17,7 +17,7 @@ class CentralWidget(StackedWidget):
         self.addWidget(SignUp(self).init())
         # ui.token = None
         if not ui.token:
-            self.setCurrentWidget(self.SignIn)
+            self.setCurrentWidget(ui.SignIn)
         else:
             self.addWidget(widget := MainView(self).init())
             self.setCurrentWidget(widget)
