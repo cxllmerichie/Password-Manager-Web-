@@ -75,4 +75,10 @@ css = f'''
     min-width: {Sizes.ERROR.w}px;
     min-height: {Sizes.ERROR.h}px;
 }}
+
+#InfoLbl {{
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}}
 '''

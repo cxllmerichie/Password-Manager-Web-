@@ -1,18 +1,15 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..widgets import Button, Label, LineInput, Frame, Layout, Spacer
+from ..widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget, ui
 from ..misc import Icons, api
-from .main_view import MainView
+from .view_main import MainView
 from .. import css
 
 
-class SignIn(QWidget):
+class SignIn(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(css.sign_in.css)
-        self.setAttribute(Qt.WA_StyledBackground, True)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.view_signin.css)
 
     def init(self) -> 'SignIn':
         self.setLayout(
@@ -22,6 +19,10 @@ class SignIn(QWidget):
                     Button(self, 'AuthExitBtn').init(
                         icon=Icons.CROSS, slot=self.parent().parent().close
                     ), Layout.RightTop,
+                    Spacer(False, True),
+                    Label(self, 'InfoLbl').init(
+                        text='Login'
+                    ), Layout.HCenter,
                     Spacer(False, True),
                     Frame(self, 'InputFrameEmail').init(
                         layout=Layout.vertical(self).init(
@@ -60,7 +61,7 @@ class SignIn(QWidget):
                         wrap=True, alignment=Layout.Center
                     ), Layout.Center,
                     Button(self, 'AuthTextBtn').init(
-                        text='Don\'t have an account?', slot=lambda: self.parent().setCurrentIndex(1)
+                        text='Don\'t have an account?', slot=lambda: ui.CentralWidget.setCurrentIndex(1)
                     ), Qt.AlignHCenter,
                     Button(self, 'ContinueBtn').init(
                         text='Continue', slot=self.continue_log_in
@@ -79,6 +80,8 @@ class SignIn(QWidget):
         self.InputFramePassword.setVisible(False)
         self.InputLabelEmailEditBtn.setVisible(False)
         self.InputFieldEmail.setEnabled(True)
+        self.ContinueBtn.setVisible(True)
+        self.LogInBtn.setVisible(False)
 
     @pyqtSlot()
     def continue_log_in(self):
@@ -102,6 +105,6 @@ class SignIn(QWidget):
         user = {'email': email, 'password': password}
         if not (token := api.login(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        api.CONFIG.setValue('token', token)
-        self.parent().addWidget(MainView(self.parent()).init())
-        self.parent().setCurrentIndex(2)
+        api.set_token(token)
+        ui.CentralWidget.addWidget(widget := MainView(self).init())
+        ui.CentralWidget.setCurrentWidget(widget)

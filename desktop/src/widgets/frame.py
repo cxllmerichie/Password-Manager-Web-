@@ -4,9 +4,11 @@ from ._wrapper import Wrapper
 
 
 class Frame(Wrapper, QFrame):
-    def __init__(self, parent: QWidget, name: str = None, visible: bool = True):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None):
         QFrame.__init__(self, parent)
         Wrapper.__init__(self, parent, name, visible)
+        if stylesheet:
+            self.setStyleSheet(stylesheet)
 
     def init(
             self, *,

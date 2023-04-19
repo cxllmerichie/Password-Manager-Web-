@@ -107,11 +107,9 @@ class Field(QFrame):
         self.InputFieldValue.show_echo()
 
 
-class Item(QFrame):
+class Item(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(css.item.css + css.components.scroll)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.rp_item.css + css.components.scroll)
 
         self.item = None
         self.category_id = None
@@ -258,6 +256,10 @@ class Item(QFrame):
                 icon_bytes = file.read()
                 self.IconBtn.setProperty('icon_bytes', icon_bytes)
                 self.IconBtn.setIcon(Icons.from_bytes(icon_bytes).icon)
+
+    # def show_create_item(self):
+    #     self.EditBtn.setVisible(False)
+    #     print('callsed')
 
     def show_item(self, item: dict[str, Any]):
         if item_id := item.get('id', None):

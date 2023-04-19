@@ -2,18 +2,15 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..widgets import Button, Label, LineInput, Layout, Spacer, Frame
+from ..widgets import Button, Label, LineInput, Layout, Spacer, Frame, ui, Widget
 from ..misc import Icons, api
-from .main_view import MainView
+from .view_main import MainView
 from .. import css
 
 
-class SignUp(QWidget):
+class SignUp(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(css.sign_up.css)
-        self.setAttribute(Qt.WA_StyledBackground, True)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.view_signup.css)
 
     def init(self) -> 'SignUp':
         self.setLayout(
@@ -23,6 +20,10 @@ class SignUp(QWidget):
                     Button(self, 'AuthExitBtn').init(
                         icon=Icons.CROSS, slot=self.parent().parent().close
                     ), Layout.RightTop,
+                    Spacer(False, True),
+                    Label(self, 'InfoLbl').init(
+                        text='Registration'
+                    ), Layout.HCenter,
                     Spacer(False, True),
                     Frame(self, 'InputFrameEmail').init(
                         layout=Layout.vertical(self).init(
@@ -67,7 +68,7 @@ class SignUp(QWidget):
                         wrap=True, alignment=Layout.Center
                     ), Layout.Center,
                     Button(self, 'AuthTextBtn').init(
-                        text='Already have an account?', slot=lambda: self.parent().setCurrentIndex(0)
+                        text='Already have an account?', slot=lambda: ui.CentralWidget.setCurrentIndex(0)
                     ), Qt.AlignHCenter,
                     Button(self, 'AuthMainBtn').init(
                         text='Create Account', slot=self.sign_up
@@ -113,5 +114,5 @@ class SignUp(QWidget):
         if not (token := api.create_user(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
         api.set_token(token)
-        self.parent().addWidget(MainView(self).init())
-        self.parent().setCurrentIndex(2)
+        ui.CentralWidget.addWidget(widget := MainView(self).init())
+        ui.CentralWidget.setCurrentWidget(widget)

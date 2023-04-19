@@ -14,7 +14,7 @@ class ScrollArea(Wrapper, QScrollArea):
 
     def init(
             self, *,
-            horizontal: bool = True, vertical: bool = True, orientation: Qt.Orientation,
+            orientation: Qt.Orientation, horizontal: bool = True, vertical: bool = True,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
             items: Sequence[QObject] = ()
     ) -> 'ScrollArea':
@@ -23,8 +23,9 @@ class ScrollArea(Wrapper, QScrollArea):
         if not vertical:
             self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
-        self.setWidget(Frame(self, f'{self.objectName()}Widget').init(
-            layout=Layout.oriented(orientation, None, f'{self.objectName()}WidgetLayout').init(
+        frame = Frame(self, f'{self.objectName()}Widget')
+        self.setWidget(frame.init(
+            layout=Layout.oriented(orientation, frame, f'{frame.objectName()}Layout').init(
                 margins=margins, spacing=spacing, alignment=alignment, items=items
             )
         ))

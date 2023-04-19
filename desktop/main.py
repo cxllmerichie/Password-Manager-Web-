@@ -1,20 +1,12 @@
 from PyQt5.QtWidgets import QApplication
 import sys
-import asyncio
 
 from src.app import App
 
 
-def amain():
+if __name__ == '__main__':
     qapp = QApplication(sys.argv)
     qapp.setStyle('Windows')
-    window = App().init()
-    window.show()
+    app = App().init()
+    app.show()
     sys.exit(qapp.exec_())
-
-
-if __name__ == '__main__':
-    # LOOP = asyncio.get_event_loop()
-    # LOOP.run_until_complete(amain())
-
-    amain()

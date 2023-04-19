@@ -1,25 +1,24 @@
-from PyQt5.QtWidgets import QStackedWidget, QWidget
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
-from .sign_in import SignIn
-from .sign_up import SignUp
-from .main_view import MainView
-from ..misc import api
+from ..widgets import StackedWidget, ui
+from .view_signin import SignIn
+from .view_signup import SignUp
+from .view_main import MainView
 
 
-class CentralWidget(QStackedWidget):
+class CentralWidget(StackedWidget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
+        super().__init__(parent, self.__class__.__name__)
 
     def init(self) -> 'CentralWidget':
         self.layout().setAlignment(Qt.AlignHCenter)
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
-        # api.set_token(None)
-        if not api.get_token():
-            self.setCurrentIndex(0)
+        # ui.token = None
+        if not ui.token:
+            self.setCurrentWidget(self.SignIn)
         else:
-            self.addWidget(MainView(self).init())
-            self.setCurrentIndex(2)
+            self.addWidget(widget := MainView(self).init())
+            self.setCurrentWidget(widget)
         return self

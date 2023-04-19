@@ -1,45 +1,21 @@
 from typing import Any
 import requests
 from loguru import logger
-from PyQt5.QtCore import QSettings
 
-
-@logger.catch()
-def clear_json(dictionary: dict[str, Any]) -> dict[str, Any]:
-    def validate(value):
-        if isinstance(value, bool):
-            return True
-        elif value is None:
-            return False
-        elif isinstance(value, str):
-            return len(value)
-    return {key: value for key, value in dictionary.items() if validate(value)}
+from ..widgets import ui
+from .utils import clear_json
 
 
 URL_ROOT = 'http://127.0.0.1:8000'
-CONFIG = QSettings('cxllmerichie', 'PasswordManagerDesktop')
 
 
-def set_token(token: str):
-    return CONFIG.setValue('token', token)
-
-
-def get_token():
-    return CONFIG.value('token')
-
-
+# GENERAL
 @logger.catch()
 def auth_headers() -> dict[str, Any]:
-    return {'accept': 'application/json', 'Authorization': f'Bearer {get_token()}'}
+    return {'accept': 'application/json', 'Authorization': f'Bearer {ui.token}'}
 
 
-@logger.catch()
-def create_user(user: dict[str, Any]):
-    url = f'{URL_ROOT}/users/'
-    headers = {"accept": "application/json", "Content-Type": "application/json"}
-    return requests.post(url=url, headers=headers, json=user).json()
-
-
+# AUTH
 @logger.catch()
 def login(auth_data: dict[str, Any]):
     url = f'{URL_ROOT}/auth/token/'
@@ -55,6 +31,15 @@ def check_email(email: str) -> bool:
     return requests.get(url=url, headers=headers).json()
 
 
+# USER
+@logger.catch()
+def create_user(user: dict[str, Any]):
+    url = f'{URL_ROOT}/users/'
+    headers = {"accept": "application/json", "Content-Type": "application/json"}
+    return requests.post(url=url, headers=headers, json=user).json()
+
+
+# CATEGORY
 @logger.catch()
 def categories():
     url = f'{URL_ROOT}/categories/'
@@ -85,6 +70,7 @@ def delete_category(category_id: int):
     return requests.delete(url=url, headers=auth_headers()).json()
 
 
+# FIELD
 @logger.catch()
 def add_field(item_id: int, field: dict[str, Any]):
     url = f'{URL_ROOT}/items/{item_id}/fields/'
@@ -103,6 +89,7 @@ def remove_field(field_id: str):
     return requests.delete(url=url, headers=auth_headers()).json()
 
 
+# ITEM
 @logger.catch()
 def create_item(category_id: int, item: dict[str, Any], fields: list[dict[str, Any]]):
     url = f'{URL_ROOT}/categories/{category_id}/items/'

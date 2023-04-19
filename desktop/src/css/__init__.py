@@ -1,3 +1,4 @@
 from . import (
-    app, category, central_pages, components, item, items, left_menu, panel, right_pages, sign_in, sign_up, status_bar
+    app, rp_category, menu_central_pages, components, rp_item, cp_items, menu_left_side, panel, menu_right_pages,
+    view_signin, view_signup, status_bar
 )

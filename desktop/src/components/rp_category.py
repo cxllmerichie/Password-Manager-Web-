@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QFrame, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QWidget, QPushButton, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
@@ -7,11 +7,9 @@ from ..misc import Icons, api
 from .. import css
 
 
-class Category(QFrame):
+class Category(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(css.category.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.rp_category.css)
         self.category = None
 
     def init(self) -> 'Category':
@@ -73,8 +71,11 @@ class Category(QFrame):
         return self
 
     def add_item(self):
-        (right_pages := self.parent()).setCurrentIndex(1)
-        right_pages.findChild(QFrame, 'Item').show_create_item()
+        RightPages = self.parent()
+        Item = RightPages.Item
+        Item.category_id = self.category['id']
+        RightPages.setCurrentWidget(Item)
+        Item.show_create_item()
 
     @pyqtSlot()
     def close_page(self):
@@ -97,9 +98,12 @@ class Category(QFrame):
     @pyqtSlot()
     def delete_category(self):
         category = api.delete_category(self.category['id'])
+        self.category = None
         self.TitleInput.setText('')
         self.DescriptionInput.setText('')
+        self.RemoveBtn.setVisible(False)
         self.show_create_category()
+        self.refresh_categories()
 
     @pyqtSlot()
     def edit_category(self):
@@ -129,6 +133,7 @@ class Category(QFrame):
             self.ErrorLbl.setText('Internal error, please try again')
         self.EditBtn.setVisible(True)
         self.RemoveBtn.setVisible(False)
+        self.refresh_categories()
 
     @pyqtSlot()
     def cancel(self):
@@ -176,6 +181,10 @@ class Category(QFrame):
             self.FavouriteBtn.setIcon(Icons.STAR_FILL.icon)
         else:
             self.FavouriteBtn.setIcon(Icons.STAR.icon)
+        if not self.category:
+            return
+        self.save()
+        self.refresh_categories()
 
     @pyqtSlot()
     def create_category(self):
@@ -188,6 +197,7 @@ class Category(QFrame):
         category = {'icon': icon, 'title': name, 'description': description, 'is_favourite': is_favourite}
         if (category := api.create_category(category)).get('id'):
             self.category = category
+            self.TitleInput.setText(category['title'])
             self.IconBtn.setIcon(Icons.from_bytes(category['icon']).icon)
             self.IconBtn.setDisabled(True)
             self.ErrorLbl.setText('')
@@ -198,3 +208,10 @@ class Category(QFrame):
             self.EditBtn.setVisible(True)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
+        self.refresh_categories()
+
+    def refresh_categories(self):
+        parent = self.parent().parent().parent().parent()
+        LeftMenu = parent.findChild(QWidget, 'LeftMenu')
+        categories = api.categories()
+        LeftMenu.show_categories(categories)

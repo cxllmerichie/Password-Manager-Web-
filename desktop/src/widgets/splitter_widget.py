@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QSplitter
 
 
-class SplitterWidget:
+class SplitterWidgetExtension:
     splitter: QSplitter
     expand_to: int
 

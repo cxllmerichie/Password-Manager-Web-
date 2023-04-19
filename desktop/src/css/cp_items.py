@@ -1,9 +1,11 @@
 css: str = f'''
-#Items {{
+#CentralPagesItems {{
     background-color: red;
 }}
+'''
 
-#CentralItem {{
+central_pages_items = f'''
+#CentralPagesItem {{
     background-color: blue;
     min-height: 100px;
     min-width: 200px;

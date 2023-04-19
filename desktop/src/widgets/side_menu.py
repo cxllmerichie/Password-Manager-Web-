@@ -1,13 +1,8 @@
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
-from ._wrapper import Wrapper
 
-
-class SideMenu(Wrapper):
-    def __init__(self, parent: QWidget, name: str, visible: bool = True,
-                 expand_to: int = None, expand_orientation: Qt.Orientation = Qt.Horizontal):
-        Wrapper.__init__(self, parent, name, visible)
+class SideMenu:
+    def __init__(self, expand_to: int = None, expand_orientation: Qt.Orientation = Qt.Horizontal):
         if not expand_to:
             raise AttributeError(f'`size` is not specified in `SideMenu` constructor')
         self.expand_to = expand_to

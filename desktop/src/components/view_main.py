@@ -2,9 +2,9 @@ from PyQt5.QtWidgets import QWidget, QSplitter
 from PyQt5.QtCore import Qt
 
 from ..widgets import Layout, Frame
-from .left_menu import LeftMenu
-from .right_pages import RightPages
-from .central_pages import CentralPages
+from .menu_left_side import LeftMenu
+from .menu_right_pages import RightPages
+from .menu_central_pages import CentralPages
 from .panel import Panel
 
 
@@ -33,5 +33,5 @@ class MainView(QWidget):
                 )
             ]
         ))
-        left_menu.shrink()
+        left_menu.expand()
         return self

@@ -39,6 +39,7 @@ class Layout(ABC):
         return Layout.vertical(parent, name) if orientation is Layout.Vertical else Layout.horizontal(parent, name)
 
 
+# class QLayoutExtension(ABC):  # TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
 class QLayoutExtension:
     def init(
             self, *,
@@ -81,13 +82,13 @@ class QLayoutExtension:
             self.itemAt(i).widget().setParent(None)
 
 
-class VLayout(QLayoutExtension, Wrapper, QVBoxLayout):
+class VLayout(Wrapper, QLayoutExtension, QVBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QVBoxLayout.__init__(self, parent)
         Wrapper.__init__(self, parent, name, True)
 
 
-class HLayout(QLayoutExtension, Wrapper, QHBoxLayout):
+class HLayout(Wrapper, QLayoutExtension, QHBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QHBoxLayout.__init__(self, parent)
         Wrapper.__init__(self, parent, name, True)

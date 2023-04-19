@@ -28,7 +28,7 @@ class Panel(QWidget):
                     icon=Icons.APP
                 ), Qt.AlignLeft,
                 QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum),
-                Frame(self).init(
+                Frame(self, 'PanelFrame').init(
                     layout=Layout.horizontal().init(
                         alignment=Layout.Right,
                         items=[
