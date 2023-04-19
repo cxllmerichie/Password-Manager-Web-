@@ -3,7 +3,7 @@ from ..misc import Colors, Sizes
 
 css: str = f'''
 #ItemFrame {{
-    background-color: {Colors.LEFT_MENU};
+    background-color: {Colors.RIGHT_MENU};
 }}
 
 #SaveBtn {{
@@ -34,8 +34,8 @@ css: str = f'''
 }}
 
 #CreateBtn {{
-    background-color: green;
-    color: white;
+    background-color: {Colors.GREEN};
+    color: {Colors.TEXT_PRIMARY};
     min-width: 200px;
     min-height: 30px;
     font-size: 16px;
@@ -60,7 +60,7 @@ css: str = f'''
     border: none;
     background-color: {Colors.LIGHT_GRAY};
     min-width: 180px;
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 18px;
     padding: 5px;
     border-radius: 5px;
@@ -73,14 +73,14 @@ css: str = f'''
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 
 #ControlBtns {{
 }}
 
 #ErrorLbl {{
-    color: red;
+    color: {Colors.TEXT_ALERT};
     font-size: 16px;
     min-width: {Sizes.ERROR.w}px;
     min-height: {Sizes.ERROR.h}px;
@@ -89,8 +89,8 @@ css: str = f'''
 #AddDocumentBtn,
 #AddFieldBtn,
 #AddItemBtn {{
-    color: white;
-    background-color: transparent;
+    color: {Colors.TEXT_PRIMARY};
+    background-color: {Colors.TRANSPARENT};
     font-size: 14px;
     border: none;
     min-height: 30px;
@@ -120,7 +120,7 @@ css: str = f'''
 }}
 
 #FieldScrollAreaWidget {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 '''
 
@@ -139,7 +139,7 @@ field: str = f'''
     color: white;
     border: none;
     min-height: 30px;
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     font-size: 16px;
 }}
 

@@ -3,7 +3,7 @@ from ..misc import Colors
 
 css: str = f'''
 #CentralPages {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 '''
 
@@ -14,12 +14,12 @@ cp_items = f'''
 }}
 
 #CP_ItemsWidget {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 
 #FavouriteLbl,
 #LetterLbl {{
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 20px;
     font-weight: bold;
 }}
@@ -34,12 +34,12 @@ cp_item = f'''
 }}
 
 #ItemTitleLbl {{
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 22px;
 }}
 
 #ItemDescriptionLbl {{
-    color: gray;
+    color: {Colors.TEXT_SECONDARY};
     font-size: 18px;
 }}
 '''

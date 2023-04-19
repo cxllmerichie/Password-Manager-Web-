@@ -24,8 +24,7 @@ css: str = f'''
 
 #SaveBtn,
 #CancelBtn {{
-    color: white;
-    font-size: 16px;
+    color: {Colors.TEXT_PRIMARY};
     min-width: 100px;
     min-height: 30px;
     font-size: 16px;
@@ -34,8 +33,8 @@ css: str = f'''
 }}
 
 #CreateBtn {{
-    background-color: green;
-    color: white;
+    background-color: {Colors.GREEN};
+    color: {Colors.TEXT_PRIMARY};
     min-width: 200px;
     min-height: 30px;
     font-size: 16px;
@@ -44,7 +43,7 @@ css: str = f'''
 }}
 
 #CreateBtn:hover {{
-    background-color: rgba(0, 255, 0, 0.2);
+    background-color: {Colors.GREEN_HOVER};
 }}
 
 #TitleInput,
@@ -52,36 +51,36 @@ css: str = f'''
     border: none;
     background-color: {Colors.LIGHT_GRAY};
     min-width: {Sizes.CATEGORY.w}px;
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 18px;
     padding: 5px;
     border-radius: 5px;
 }} 
 
 #DescriptionInput {{
-    max-height: 100px;
+    max-height: 600px;
 }}
 
 #DeleteBtn,
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 
 #ControlBtns {{
 }}
 
 #ErrorLbl {{
-    color: red;
+    color: {Colors.TEXT_ALERT};
     font-size: 16px;
     min-width: {Sizes.ERROR.w}px;
     min-height: {Sizes.ERROR.h}px;
 }}
 
 #AddItemBtn {{
-    color: white;
-    background-color: transparent;
+    color: {Colors.TEXT_PRIMARY};
+    background-color: {Colors.TRANSPARENT};
     font-size: 14px;
     min-width: 200px;
     border: none;
@@ -89,6 +88,6 @@ css: str = f'''
 }}
 
 #AddItemBtn:hover {{
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: {Colors.HOVER};
 }}
 '''

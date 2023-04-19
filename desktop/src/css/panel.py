@@ -9,7 +9,7 @@ css: str = f'''
 }}
 
 #ToggleLeftMenuBtn {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 
 #ToggleLeftMenuBtn:hover {{
@@ -20,7 +20,7 @@ css: str = f'''
 #PanelRestoreBtn,
 #PanelCloseBtn {{
     border: none;
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 
 #PanelMinimizeBtn:hover,
@@ -33,7 +33,7 @@ css: str = f'''
 }}
 
 #PanelTitleLbl {{
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 16px;
     font-weight: bold;
 }}

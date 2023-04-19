@@ -8,7 +8,7 @@ css: str = f'''
 
 #StatusBarLbl {{
     color: white;
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     font-size: 12px;
 }}
 '''

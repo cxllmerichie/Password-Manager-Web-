@@ -3,30 +3,30 @@ from ..misc import Colors
 
 css = f'''
 #LeftMenu {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LEFT_MENU};
 }}
 
 #LeftMenuItemsLabel,
 #LeftMenuCategoriesLabel {{
     font-size: 20px;
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
 }}
 
 #MenuButtonIconBtn {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 
 #MenuButtonTextLbl {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     font-size: 16px;
     min-width: 110px;
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
 }}
 
 #MenuButtonTotalLbl {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     font-size: 14px;
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     border: 1px solid white;
     border-radius: 5px;
     min-width: 30px;
@@ -38,7 +38,7 @@ css = f'''
     min-width: 200px;
     max-width: 200px;
     min-height: 30px;
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 20px;
     height: 25px;
     border: none;
@@ -49,24 +49,24 @@ css = f'''
 }}
 
 #NoCategoriesLbl {{
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 14px;
     font-style: italic;
 }}
 
 #CategoriesScrollArea {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     border: none;
 }}
 
 #CategoriesScrollAreaWidget {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     border: none;
 }}
 
 #AddCategoryBtn {{
-    color: white;
-    background-color: transparent;
+    color: {Colors.TEXT_PRIMARY};
+    background-color: {Colors.TRANSPARENT};
     font-size: 14px;
     max-width: 200px;
     border: none;
@@ -74,6 +74,6 @@ css = f'''
 }}
 
 #AddCategoryBtn:hover {{
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: {Colors.HOVER};
 }}
 '''

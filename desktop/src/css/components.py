@@ -55,6 +55,6 @@ img_btn = f'''
 
 fav_btn = f'''
 #FavouriteButton {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
 }}
 '''

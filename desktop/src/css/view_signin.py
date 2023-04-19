@@ -51,7 +51,7 @@ css = f'''
     height: {Sizes.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     min-width: {Sizes.AuthInputField.w}px;
 }}
 
@@ -60,7 +60,7 @@ css = f'''
 }}
 
 #AuthExitBtn {{
-    background-color: transparent;
+    background-color: {Colors.TRANSPARENT};
     border: none;    
 }}
 
