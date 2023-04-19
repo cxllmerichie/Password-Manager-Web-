@@ -1,0 +1,29 @@
+from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtCore import pyqtSlot
+
+from ..widgets import Button
+from ..misc import Icons, Icon
+
+
+class ImageButton(Button):
+    def __init__(self, parent: QWidget):
+        super().__init__(parent, self.__class__.__name__)
+        self.icon_bytes = None
+
+    def init(
+            self, *,
+            icon: Icon, slot: callable = lambda: None
+    ) -> 'ImageButton':
+        super().init(icon=icon, slot=lambda: self.set_icon(slot))
+        return self
+
+    @pyqtSlot()
+    def set_icon(self, slot: callable = lambda: None):
+        dialog = QFileDialog()
+        filepath, _ = dialog.getOpenFileName(None, 'Choose image', '', 'Images (*.jpg)', options=dialog.Options())
+        if filepath:
+            with open(filepath, 'rb') as file:
+                icon_bytes = file.read()
+                self.icon_bytes = icon_bytes
+                self.setIcon(Icons.from_bytes(icon_bytes).icon)
+                slot()

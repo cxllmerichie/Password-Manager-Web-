@@ -43,16 +43,6 @@ css: str = f'''
     background-color: rgba(0, 255, 0, 0.2);
 }}
 
-#IconBtn {{
-    background-color: {Colors.DARK_GRAY};
-    min-width: 120px;
-    max-width: 120px;
-    min-height: 120px;
-    max-height: 120px;
-    border-radius: 59px;
-    border: none;
-}}
-
 #TitleInput,
 #DescriptionInput {{
     border: none;

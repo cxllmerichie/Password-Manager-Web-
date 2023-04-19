@@ -36,3 +36,21 @@ QScrollBar::sub-page:vertical {{
     background: none;
 }}
 '''
+
+img_btn = f'''
+#ImageButton {{
+    background-color: {Colors.DARK_GRAY};
+    min-width: 120px;
+    max-width: 120px;
+    min-height: 120px;
+    max-height: 120px;
+    border-radius: 59px;
+    border: none;
+}}
+'''
+
+fav_btn = f'''
+#FavouriteButton {{
+    background-color: transparent;
+}}
+'''

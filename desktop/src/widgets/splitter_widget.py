@@ -16,14 +16,13 @@ class SplitterWidgetExt:
         self.splitter.setSizes([*self.splitter.sizes()[:index], size, *self.splitter.sizes()[index + 1:]])
 
     def expand(self, size: int = None):
-        size = size if size else self.expand_to
-        self._set_size(size)
+        self._set_size(size if size else self.expand_to)
 
     def shrink(self) -> None:
         self._set_size(0)
 
     def toggle(self) -> None:
-        if self.splitter.sizes()[self._index()] > 0:
+        if self.splitter.sizes()[self._index()]:
             self._set_size(0)
         else:
             self._set_size(self.expand_to)

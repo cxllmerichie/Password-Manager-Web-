@@ -11,19 +11,18 @@ class MenuButton(Button):
 
     def init(
             self, *,
-            icon: Icon, text: str, total: int,
-            alignment: Qt.Alignment = None, slot: callable = lambda: None
+            icon: Icon, text: str, total: int, alignment: Qt.Alignment = None, slot: callable = lambda: None
     ) -> 'MenuButton':
         self.setLayout(Layout.horizontal().init(
             margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft,
             items=[
-                Button(self, 'MenuButtonIconBtn').init(
+                Button(self, f'{self.objectName()}IconBtn').init(
                     size=icon.size, icon=icon, disabled=True
                 ),
-                Label(self, 'MenuButtonTextLbl').init(
+                Label(self, f'{self.objectName()}TextLbl').init(
                     text=text, alignment=alignment, elided=True
                 ),
-                Label(self, 'MenuButtonTotalLbl').init(
+                Label(self, f'{self.objectName()}TotalLbl').init(
                     text=str(total)
                 ), Qt.AlignRight
             ]

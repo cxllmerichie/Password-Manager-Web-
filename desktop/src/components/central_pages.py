@@ -2,14 +2,15 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QMouseEvent
 from typing import Any
 
-from ..widgets import ScrollArea, Layout, Label, Frame, Widget, StackedWidget
+from ..widgets import ScrollArea, Layout, Label, Frame, Widget, StackedWidget, ui
 from ..misc import Icons
 from .. import css
 
 
 class CP_Item(Frame):
     def __init__(self, parent: QWidget, item: dict[str, Any], slot: callable):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.cp_items.central_pages_items)
+        super().__init__(parent, self.__class__.__name__,
+                         stylesheet=css.cp_items.central_pages_items)
 
         self.item = item
         self.slot = slot
@@ -52,10 +53,16 @@ class CP_Items(Widget):
         ))
         return self
 
+    def refresh_items(self, items: list[dict[str, Any]]):
+        layout = self.ItemsScrollArea.widget().layout()
+        layout.clear()
+        for item in items:
+            layout.addWidget(CP_Item(self, item, ui.RP_Item.show_item).init())
+
 
 class CentralPages(StackedWidget):
     def __init__(self, parent):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.menu_central_pages.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.central_pages.css)
 
     def init(self) -> 'CentralPages':
         self.addWidget(cp_items := CP_Items(self).init())

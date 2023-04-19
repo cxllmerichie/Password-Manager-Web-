@@ -9,7 +9,7 @@ from .. import css
 class RightPages(SplitterWidgetExt, StackedWidget):
     def __init__(self, parent: QWidget, splitter: QSplitter, width: int):
         super().__init__(parent, self.__class__.__name__)
-        self.setStyleSheet(css.menu_right_pages.css)
+        self.setStyleSheet(css.right_pages.css)
 
         self.expand_to = width
         self.splitter = splitter

@@ -2,13 +2,20 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
 
 from ..widgets import Button
-from ..misc import Icons
+from ..misc import Icons, Icon
 
 
-class FavouriteBtn(Button):
+class FavouriteButton(Button):
     def __init__(self, parent: QWidget, is_favourite: bool = False):
         super().__init__(parent, self.__class__.__name__)
         self.is_favourite: bool = is_favourite
+
+    def init(
+            self, *,
+            icon: Icon = None, slot: callable = lambda: None
+    ) -> 'Button':
+        super().init(icon=icon, slot=lambda: self.set_favourite(slot))
+        return self
 
     @pyqtSlot()
     def set_favourite(self, slot: callable = lambda: None):

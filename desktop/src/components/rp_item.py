@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
 from typing import Any
 
-from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, ScrollArea
+from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, ScrollArea, ui
+from ..custom import FavouriteButton, ImageButton
 from ..misc import Icons, api, Colors
 from .. import css
 
@@ -39,13 +40,13 @@ class Field(Frame):
                     icon=Icons.COPY
                 ),
                 Button(self, f'EditInputFieldBtn').init(
-                    icon=Icons.EDIT.adjusted(size=Icons.SAVE.size), slot=self.edit_field
+                    icon=Icons.EDIT.adjusted(size=Icons.SAVE.size), slot=self.execute_edit
                 ),
                 Button(self, f'SaveInputFieldBtn').init(
-                    icon=Icons.SAVE, slot=self.save_field
+                    icon=Icons.SAVE, slot=self.execute_save
                 ),
                 Button(self, f'RemoveInputFieldBtn').init(
-                    icon=Icons.CROSS_CIRCLE, slot=self.remove_field
+                    icon=Icons.CROSS_CIRCLE, slot=self.execute_delete
                 )
             ]
         ))
@@ -68,7 +69,7 @@ class Field(Frame):
         return self
 
     @pyqtSlot()
-    def save_field(self):
+    def execute_save(self):
         field = {'name': self.InputFieldName.text(), 'value': self.InputFieldValue.text()}
         if self.field:
             response = api.update_field(self.field['id'], field)
@@ -89,14 +90,14 @@ class Field(Frame):
             self.deleteLater()
 
     @pyqtSlot()
-    def remove_field(self):
+    def execute_delete(self):
         self.setVisible(False)
-        self.parent().parent().parent().parent().field_identifiers.remove(self.identifier)
+        self.RP_Item.remove(self.identifier)
         if self.field:
             api.remove_field(self.field['id'])
 
     @pyqtSlot()
-    def edit_field(self):
+    def execute_edit(self):
         self.InputFieldValueCopyBtn.setVisible(False)
         self.InputFieldValueHideBtn.setVisible(False)
         self.SaveInputFieldBtn.setVisible(True)
@@ -122,24 +123,24 @@ class RP_Item(Frame):
                 Layout.horizontal().init(
                     margins=(20, 0, 20, 0),
                     items=[
-                        Button(self, 'FavouriteBtn').init(
-                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
+                        FavouriteButton(self).init(
+                            icon=Icons.STAR.adjusted(size=(30, 30))
                         ), Layout.Left,
                         Button(self, 'EditBtn').init(
-                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.edit_item
+                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
                         Button(self, 'RemoveBtn', False).init(
-                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.edit_item
+                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
                         Button(self, 'CloseBtn').init(
-                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=self.close_page
+                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
                         ), Layout.Right
                     ]
                 ),
                 Layout.horizontal().init(
                     items=[
-                        Button(self, 'IconBtn').init(
-                            icon=Icons.CATEGORY, slot=self.set_icon
+                        ImageButton(self).init(
+                            icon=Icons.CATEGORY
                         ), Layout.TopCenter,
                         Layout.vertical().init(
                             items=[
@@ -173,109 +174,90 @@ class RP_Item(Frame):
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Button(self, 'CreateBtn').init(
-                    text='Create item', slot=self.create_item
+                    text='Create item', slot=self.execute_create
                 ), Layout.HCenter,
                 Frame(self, 'SaveCancelFrame', False).init(
                     layout=Layout.horizontal().init(
                         spacing=50,
                         items=[
                             Button(self, 'SaveBtn').init(
-                                text='Save', slot=self.save
+                                text='Save', slot=self.execute_save
                             ), Layout.Left,
                             Button(self, 'CancelBtn').init(
-                                text='Cancel', slot=self.cancel
+                                text='Cancel', slot=self.execute_cancel
                             ), Layout.Right
                         ]
                     )
                 ), Layout.HCenter
             ]
         ))
-        self.FavouriteBtn.setProperty('is_favourite', False)
         return self
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
-        if self.item:
-            layout = self.FieldScrollArea.widget().layout()
-            layout.addWidget(f := Field(self, self.item['id'], field).init())
-            self.field_identifiers.append(f.identifier)
-        else:
-            layout = self.FieldScrollArea.widget().layout()
-            layout.addWidget(f := Field(self, None, None).init())
-            self.field_identifiers.append(f.identifier)
+        layout = self.FieldScrollArea.widget().layout()
+        item_id, field = (self.item['id'], field) if field else (None, None)
+        layout.addWidget(field := Field(self, item_id, field).init())
+        self.field_identifiers.append(field.identifier)
 
     @pyqtSlot()
     def add_document(self):
         ...
 
     @pyqtSlot()
-    def close_page(self):
-        self.parent().shrink()
-
-    @pyqtSlot()
-    def edit_item(self):
+    def execute_edit(self):
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
         self.RemoveBtn.setVisible(True)
         self.SaveCancelFrame.setVisible(True)
         self.TitleInput.setDisabled(False)
         self.DescriptionInput.setDisabled(False)
-        self.IconBtn.setDisabled(False)
+        self.ImageButton.setDisabled(False)
         self.AddFieldBtn.setVisible(False)
         self.AddDocumentBtn.setVisible(False)
 
     @pyqtSlot()
-    def save(self):
-        icon = self.IconBtn.property('icon_bytes')
+    def execute_save(self):
+        icon = self.ImageButton.icon_bytes
         title = self.TitleInput.text()
         description = self.DescriptionInput.toPlainText()
-        is_favourite = self.FavouriteBtn.property('is_favourite')
+        is_favourite = self.FavouriteBtn.is_favourite
         if not len(title):
-            return self.ErrorLbl.setText('Name can not be empty')
+            return self.ErrorLbl.setText('Title can not be empty')
         item = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
         item = api.update_item(self.item['id'], item)
         if item.get('id', None):
-            self.cancel()
+            self.execute_cancel()
             self.item = item
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
-    def cancel(self):
+    def execute_cancel(self):
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)
         self.RemoveBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
         self.TitleInput.setDisabled(True)
         self.DescriptionInput.setDisabled(True)
-        self.IconBtn.setDisabled(True)
+        self.ImageButton.setDisabled(True)
         self.AddFieldBtn.setVisible(True)
         self.AddDocumentBtn.setVisible(True)
 
-    @pyqtSlot()
-    def set_icon(self):
-        dialog = QFileDialog()
-        filepath, _ = dialog.getOpenFileName(None, 'Choose image', '', 'Images (*.jpg)', options=dialog.Options())
-        if filepath:
-            with open(filepath, 'rb') as file:
-                icon_bytes = file.read()
-                self.IconBtn.setProperty('icon_bytes', icon_bytes)
-                self.IconBtn.setIcon(Icons.from_bytes(icon_bytes).icon)
-
-    def show_create_item(self):
+    def show_create(self):
         self.EditBtn.setVisible(False)
 
     def show_item(self, item: dict[str, Any]):
         if item_id := item.get('id', None):
             item = api.get_item(item_id)
         self.item = item
-        if (not item['is_favourite'] and self.FavouriteBtn.property('is_favourite')) or \
-                item['is_favourite'] and not self.FavouriteBtn.property('is_favourite'):
+        if (not item['is_favourite'] and self.FavouriteBtn.is_favourite) or \
+                item['is_favourite'] and not self.FavouriteBtn.is_favourite:
             self.FavouriteBtn.click()
         self.TitleInput.setText(item['title'])
         self.TitleInput.setEnabled(False)
-        self.IconBtn.setIcon(Icons.from_bytes(item['icon']).icon)
-        self.IconBtn.setDisabled(True)
+        self.ImageButton.setIcon(Icons.from_bytes(item['icon']).icon)
+        self.ImageButton.setDisabled(True)
         self.DescriptionInput.setText(item['description'])
         self.DescriptionInput.setDisabled(True)
         self.ErrorLbl.setText('')
@@ -285,35 +267,19 @@ class RP_Item(Frame):
         for field in item['fields']:
             self.add_field(field)
 
-    @pyqtSlot()
-    def set_favourite(self):
-        btn = self.FavouriteBtn
-        is_favourite = btn.property('is_favourite')
-        btn.setProperty('is_favourite', is_favourite := not is_favourite)
-        if is_favourite:
-            btn.setIcon(Icons.STAR_FILL.icon)
-        else:
-            btn.setIcon(Icons.STAR.icon)
+        ui.RightPages.setCurrentWidget(ui.RP_Item)
+        ui.RightPages.expand()
 
     @pyqtSlot()
-    def create_item(self):
-        icon = self.IconBtn.property('icon_bytes')
-        title = self.TitleInput.text()
-        description = self.DescriptionInput.toPlainText()
-        is_favourite = self.FavouriteBtn.property('is_favourite')
-        if not len(title):
-            return self.ErrorLbl.setText('Name can not be empty')
-
+    def execute_create(self):
+        if not len(title := self.TitleInput.text()):
+            return self.ErrorLbl.setText('Title can not be empty')
         fields = [self.findChild(QFrame, f'Field{identifier}') for identifier in self.field_identifiers]
-        fields = [{
-            'name': field.InputFieldName.text(),
-            'value': field.InputFieldValue.text()
-        } for field in fields]
-        item = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        item = api.create_item(self.category_id, item, fields)
-
-        if item.get('id'):
-            self.IconBtn.setIcon(Icons.from_bytes(item['icon']).icon)
+        fields = [{'name': field.InputFieldName.text(), 'value': field.InputFieldValue.text()} for field in fields]
+        item = {'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
+                'is_favourite': self.FavouriteBtn.is_favourite}
+        if (item := api.create_item(self.category_id, item, fields)).get('id'):
+            self.ImageButton.setIcon(Icons.from_bytes(item['icon']).icon)
             self.show_item(item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
