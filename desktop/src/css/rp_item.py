@@ -129,19 +129,19 @@ css: str = f'''
 '''
 
 field: str = f'''
-#InputFieldValueCopyBtn,
-#InputFieldValueHideBtn,
-#RemoveInputFieldBtn,
-#SaveInputFieldBtn,
-#EditInputFieldBtn {{
+#FieldCopyBtn,
+#FieldHideBtn,
+#FieldDeleteBtn,
+#FieldSaveBtn,
+#FieldEditBtn {{
     max-width: 20px;
     max-height: 20px;
     border: none;
     border-radius: 9px;
 }}
 
-#InputFieldName,
-#InputFieldValue {{
+#FieldNameInput,
+#FieldValueInput {{
     color: white;
     border: none;
     min-height: 30px;
@@ -149,12 +149,12 @@ field: str = f'''
     font-size: 16px;
 }}
 
-#InputFieldName {{
+#FieldNameInput {{
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 }}
 
-#InputFieldValue {{
+#FieldValueInput {{
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }}

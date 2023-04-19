@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QMouseEvent
 from typing import Any
 
 from ..widgets import ScrollArea, Layout, Label, Frame, Widget, StackedWidget, ui
@@ -8,64 +7,53 @@ from .. import css
 
 
 class CP_Item(Frame):
-    def __init__(self, parent: QWidget, item: dict[str, Any], slot: callable):
+    def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.cp_items.central_pages_items)
+                         stylesheet=css.central_pages.cp_item)
 
-        self.item = item
-        self.slot = slot
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.slot(self.item)
-
-    def init(self) -> 'CP_Item':
-        self.setLayout(Layout.horizontal().init(
+    def init(self, item: dict[str, Any], slot: callable) -> 'CP_Item':
+        self.setLayout(Layout.horizontal(self, 'ItemLayout').init(
             items=[
-                Label(self, 'IconLbl').init(
-                    icon=Icons.from_bytes(self.item['icon']).adjusted(size=(40, 40))
+                Label(self, 'ItemIconLbl').init(
+                    icon=Icons.from_bytes(item['icon']).adjusted(size=(50, 50))
                 ),
                 Layout.vertical().init(
                     items=[
-                        Label(self, 'TitleLbl').init(
-                            text=self.item['title']
+                        Label(self, 'ItemTitleLbl').init(
+                            text=item['title']
                         ),
-                        Label(self, 'DescriptionLbl').init(
-                            text=self.item['description']
+                        Label(self, 'ItemDescriptionLbl').init(
+                            text=item['description']
                         )
                     ]
                 )
             ]
         ))
+        self.mousePressEvent = lambda event: slot(item)
         return self
 
 
-class CP_Items(Widget):
+class CP_Items(ScrollArea):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.cp_items.css)
-
-    def init(self) -> 'CP_Items':
-        self.setLayout(Layout.vertical().init(
-            items=[
-                ScrollArea(self, 'ItemsScrollArea', False).init(
-                    orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10
-                )
-            ]
-        ))
-        return self
+        super().__init__(parent, self.__class__.__name__)
+        self.setStyleSheet(css.central_pages.cp_items + css.components.scroll)
 
     def refresh_items(self, items: list[dict[str, Any]]):
-        layout = self.ItemsScrollArea.widget().layout()
-        layout.clear()
+        layout = self.widget().layout()
+        self.clear()
         for item in items:
-            layout.addWidget(CP_Item(self, item, ui.RP_Item.show_item).init())
+            layout.addWidget(CP_Item(self).init(item, ui.RP_Item.show_item))
 
 
 class CentralPages(StackedWidget):
     def __init__(self, parent):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.central_pages.css)
+        super().__init__(parent, self.__class__.__name__,
+                         stylesheet=css.central_pages.css)
 
     def init(self) -> 'CentralPages':
-        self.addWidget(cp_items := CP_Items(self).init())
+        self.addWidget(cp_items := CP_Items(self).init(
+            orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10
+        ))
 
         self.setCurrentWidget(cp_items)
         return self

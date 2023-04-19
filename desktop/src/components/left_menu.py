@@ -14,6 +14,8 @@ class LeftMenu(SideMenu, Widget):
                         stylesheet=css.left_menu.css + css.components.scroll)
         SideMenu.__init__(self, width, Qt.Horizontal)
 
+        self.categories = []
+
     def init(self) -> 'LeftMenu':
         categories = api.categories()
         self.setLayout(Layout.vertical().init(

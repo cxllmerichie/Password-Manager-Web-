@@ -9,7 +9,8 @@ from .. import css
 
 class Panel(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.panel.css)
+        super().__init__(parent, self.__class__.__name__,
+                         stylesheet=css.panel.css)
 
     def init(self) -> 'Panel':
         self.setLayout(Layout.horizontal().init(

@@ -22,12 +22,12 @@ class RP_Category(Frame):
                     margins=(20, 0, 20, 0),
                     items=[
                         FavouriteButton(self).init(
-                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.set_favourite
+                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
                         ), Layout.Left,
                         Button(self, 'EditBtn', False).init(
                             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
-                        Button(self, 'RemoveBtn', False).init(
+                        Button(self, 'DeleteBtn', False).init(
                             icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
                         ),
                         Button(self, 'CloseBtn').init(
@@ -73,9 +73,10 @@ class RP_Category(Frame):
         return self
 
     @pyqtSlot()
-    def set_favourite(self):
+    def toggle_favourite(self):
         if self.category:
-            self.execute_save()
+            category = {'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite}
+            self.category = api.update_category(self.category['id'], category)
             ui.LeftMenu.refresh_categories(api.categories())
 
     @pyqtSlot()
@@ -93,8 +94,7 @@ class RP_Category(Frame):
         self.AddItemBtn.setVisible(False)
         self.ImageButton.setDisabled(False)
         self.ImageButton.setIcon(Icons.CATEGORY.icon)
-        if self.FavouriteButton.is_favourite:
-            self.FavouriteButton.click()
+        self.FavouriteButton.unset_favourite()
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')
         self.DescriptionInput.setDisabled(False)
@@ -105,12 +105,11 @@ class RP_Category(Frame):
 
     @pyqtSlot()
     def execute_delete(self):
-        category = api.delete_category(self.category['id'])
-        if category:
+        if (category := api.delete_category(self.category['id'])).get('id'):
             self.category = None
             self.TitleInput.setText('')
             self.DescriptionInput.setText('')
-            self.RemoveBtn.setVisible(False)
+            self.DeleteBtn.setVisible(False)
             self.show_create()
             ui.LeftMenu.refresh_categories(api.categories())
         else:
@@ -125,7 +124,7 @@ class RP_Category(Frame):
         self.EditBtn.setVisible(False)
         self.TitleInput.setEnabled(True)
         self.DescriptionInput.setDisabled(False)
-        self.RemoveBtn.setVisible(True)
+        self.DeleteBtn.setVisible(True)
 
     @pyqtSlot()
     def execute_save(self):
@@ -139,7 +138,7 @@ class RP_Category(Frame):
         else:
             self.ErrorLbl.setText('Internal error, please try again')
         self.EditBtn.setVisible(True)
-        self.RemoveBtn.setVisible(False)
+        self.DeleteBtn.setVisible(False)
         ui.LeftMenu.refresh_categories(api.categories())
 
     @pyqtSlot()
@@ -150,14 +149,15 @@ class RP_Category(Frame):
         self.DescriptionInput.setDisabled(True)
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(True)
-        self.RemoveBtn.setVisible(False)
+        self.DeleteBtn.setVisible(False)
         self.EditBtn.setVisible(True)
 
     def show_category(self, category: dict[str, Any]):
         self.category = category
-        if (not category['is_favourite'] and self.FavouriteButton.is_favourite) or \
-                category['is_favourite'] and not self.FavouriteButton.is_favourite:
-            self.FavouriteButton.click()
+        if not category['is_favourite'] and self.FavouriteButton.is_favourite:
+            self.FavouriteButton.unset_favourite()
+        elif category['is_favourite'] and not self.FavouriteButton.is_favourite:
+            self.FavouriteButton.set_favourite()
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(category['title'])
         self.ImageButton.setDisabled(True)
@@ -169,6 +169,7 @@ class RP_Category(Frame):
         self.AddItemBtn.setVisible(True)
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(True)
+        self.DeleteBtn.setVisible(False)
 
         ui.RightPages.setCurrentWidget(ui.RP_Category)
         ui.RightPages.expand()

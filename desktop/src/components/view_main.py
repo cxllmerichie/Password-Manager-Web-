@@ -17,7 +17,7 @@ class MainView(Widget):
 
         splitter = QSplitter(frame)
         splitter.addWidget(CentralPages(self).init())
-        splitter.addWidget(RightPages(self, splitter, 300).init())
+        splitter.addWidget(right_pages := RightPages(self, splitter, 300).init())
 
         self.setLayout(Layout.vertical().init(
             items=[
@@ -33,4 +33,5 @@ class MainView(Widget):
             ]
         ))
         left_menu.expand()
+        right_pages.shrink()
         return self

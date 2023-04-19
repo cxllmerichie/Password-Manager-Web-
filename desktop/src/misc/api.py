@@ -100,6 +100,11 @@ def create_item(category_id: int, item: dict[str, Any], fields: list[dict[str, A
             response['fields'].append(f)
     return response
 
+@logger.catch()
+def delete_item(item_id: str):
+    url = f'{URL_ROOT}/items/{item_id}/'
+    return requests.delete(url=url, headers=auth_headers()).json()
+
 
 @logger.catch()
 def get_item(item_id: str):
