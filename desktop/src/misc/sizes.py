@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from PyQt5.QtCore import QSize
 
 
@@ -20,3 +19,4 @@ class Sizes:
     Panel = Size(..., 30)
     CATEGORY = Size(300, ...)
     ERROR = Size(300, 50)
+    RightMenu = Size(600, ...)

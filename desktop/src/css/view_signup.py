@@ -3,7 +3,7 @@ from ..misc import Colors, Sizes
 
 css = f'''
 #SignUp {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LIGHT_GRAY};
 }}
 
 #InputLabelEmail,
@@ -32,7 +32,7 @@ css = f'''
 #InputFramePassword,
 #InputFrameConfpass {{
     border-radius: 10px;
-    background-color: {Colors.GRAY};
+    background-color: {Colors.DARK_GRAY};
 }}
 
 #AuthMainBtn {{

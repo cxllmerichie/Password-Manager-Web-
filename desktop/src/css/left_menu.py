@@ -3,7 +3,7 @@ from ..misc import Colors
 
 css = f'''
 #LeftMenu {{
-    background-color: {Colors.GRAY};
+    background-color: {Colors.DARK_GRAY};
 }}
 
 #LeftMenuItemsLabel,
@@ -34,7 +34,7 @@ css = f'''
 }}
 
 #MenuButton {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LIGHT_GRAY};
     min-width: 200px;
     max-width: 200px;
     min-height: 30px;

@@ -41,7 +41,7 @@ def create_user(user: dict[str, Any]):
 
 # CATEGORY
 @logger.catch()
-def categories():
+def get_categories():
     url = f'{URL_ROOT}/categories/'
     return requests.get(url=url, headers=auth_headers()).json()
 
@@ -109,6 +109,12 @@ def delete_item(item_id: str):
 @logger.catch()
 def get_item(item_id: str):
     url = f'{URL_ROOT}/items/{item_id}/'
+    return requests.get(url=url, headers=auth_headers()).json()
+
+
+@logger.catch()
+def get_items(category_id: str):
+    url = f'{URL_ROOT}/categories/{category_id}/items/'
     return requests.get(url=url, headers=auth_headers()).json()
 
 

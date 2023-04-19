@@ -1,5 +1,5 @@
 css = f'''
-#Application {{
-
+* {{
+    font-family: Verdana;
 }}
 '''

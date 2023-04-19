@@ -1,6 +1,6 @@
 from typing import Optional
 from apidevtools.simpleorm import Schema, Relation
-from datetime import datetime, timezone
+from datetime import datetime
 from apidevtools.media import imgproc
 from pydantic import Field
 from uuid import UUID, uuid4

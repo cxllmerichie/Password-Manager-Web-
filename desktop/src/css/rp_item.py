@@ -2,6 +2,10 @@ from ..misc import Colors, Sizes
 
 
 css: str = f'''
+#ItemFrame {{
+    background-color: {Colors.LEFT_MENU};
+}}
+
 #SaveBtn {{
     background-color: {Colors.GREEN};
 }}
@@ -44,11 +48,9 @@ css: str = f'''
 }}
 
 #IconBtn {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LIGHT_GRAY};
     min-width: 120px;
-    max-width: 120px;
     min-height: 120px;
-    max-height: 120px;
     border-radius: 59px;
     border: none;
 }}
@@ -56,8 +58,7 @@ css: str = f'''
 #TitleInput,
 #DescriptionInput {{
     border: none;
-    background-color: {Colors.DARK_GRAY};
-    max-width: 180px;
+    background-color: {Colors.LIGHT_GRAY};
     min-width: 180px;
     color: white;
     font-size: 18px;
@@ -66,7 +67,6 @@ css: str = f'''
 }} 
 
 #DescriptionInput {{
-    max-height: 70px;
 }}
 
 #RemoveBtn,
@@ -77,7 +77,6 @@ css: str = f'''
 }}
 
 #ControlBtns {{
-    max-width: {Sizes.CATEGORY.w}px;
 }}
 
 #ErrorLbl {{
@@ -110,15 +109,12 @@ css: str = f'''
 #AddDocumentBtn,
 #AddFieldBtn {{
     min-width: 140px;
-    max-width: 140px;
 }}
 
 #FieldScrollArea {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LIGHT_GRAY};
     min-width: 300px;
-    max-width: 300px;
     min-height: 200px;
-    max-height: 200px;
     border: none;
     border-radius: 5px;
 }}
@@ -134,8 +130,6 @@ field: str = f'''
 #FieldDeleteBtn,
 #FieldSaveBtn,
 #FieldEditBtn {{
-    max-width: 20px;
-    max-height: 20px;
     border: none;
     border-radius: 9px;
 }}

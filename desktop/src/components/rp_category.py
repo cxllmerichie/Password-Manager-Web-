@@ -16,57 +16,63 @@ class RP_Category(Frame):
 
     def init(self) -> 'RP_Category':
         self.setLayout(Layout.vertical().init(
-            spacing=20, margins=(0, 0, 0, 20),
             items=[
-                Layout.horizontal().init(
-                    margins=(20, 0, 20, 0),
-                    items=[
-                        FavouriteButton(self).init(
-                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
-                        ), Layout.Left,
-                        Button(self, 'EditBtn', False).init(
-                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
-                        ),
-                        Button(self, 'DeleteBtn', False).init(
-                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
-                        ),
-                        Button(self, 'CloseBtn').init(
-                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
-                        ), Layout.Right
-                    ]
-                ),
-                ImageButton(self).init(
-                    icon=Icons.CATEGORY
-                ), Layout.TopCenter,
-                LineInput(self, 'TitleInput').init(
-                    placeholder='title'
-                ), Layout.TopCenter,
-                TextInput(self, 'DescriptionInput').init(
-                    placeholder='description (optional)'
-                ), Layout.TopCenter,
-                Spacer(False, True),
-                Label(self, 'ErrorLbl').init(
-                    wrap=True, alignment=Layout.Center
-                ), Layout.Center,
-                Button(self, 'CreateBtn').init(
-                    text='Create', slot=self.execute_create
-                ), Layout.HCenter,
-                Frame(self, 'SaveCancelFrame', False).init(
-                    layout=Layout.horizontal().init(
-                        spacing=50,
+                Frame(self, 'CategoryFrame').init(
+                    layout=Layout.vertical().init(
+                        spacing=20, margins=(25, 10, 25, 20),
                         items=[
-                            Button(self, 'SaveBtn').init(
-                                text='Save', slot=self.execute_save
-                            ), Layout.Left,
-                            Button(self, 'CancelBtn').init(
-                                text='Cancel', slot=self.execute_cancel
-                            ), Layout.Right
+                            Layout.horizontal().init(
+                                margins=(20, 0, 20, 20),
+                                items=[
+                                    FavouriteButton(self).init(
+                                        icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
+                                    ), Layout.Left,
+                                    Button(self, 'EditBtn', False).init(
+                                        icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                                    ),
+                                    Button(self, 'DeleteBtn', False).init(
+                                        icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                                    ),
+                                    Button(self, 'CloseBtn').init(
+                                        icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
+                                    ), Layout.Right
+                                ]
+                            ),
+                            ImageButton(self).init(
+                                icon=Icons.CATEGORY
+                            ), Layout.TopCenter,
+                            LineInput(self, 'TitleInput').init(
+                                placeholder='title'
+                            ), Layout.Top,
+                            TextInput(self, 'DescriptionInput').init(
+                                placeholder='description (optional)'
+                            ), Layout.Top,
+                            Spacer(False, True),
+                            Label(self, 'ErrorLbl').init(
+                                wrap=True, alignment=Layout.Center
+                            ), Layout.Center,
+                            Button(self, 'CreateBtn').init(
+                                text='Create', slot=self.execute_create
+                            ), Layout.HCenter,
+                            Frame(self, 'SaveCancelFrame', False).init(
+                                layout=Layout.horizontal().init(
+                                    spacing=50,
+                                    items=[
+                                        Button(self, 'SaveBtn').init(
+                                            text='Save', slot=self.execute_save
+                                        ), Layout.Left,
+                                        Button(self, 'CancelBtn').init(
+                                            text='Cancel', slot=self.execute_cancel
+                                        ), Layout.Right
+                                    ]
+                                )
+                            ), Layout.HCenter,
+                            Button(self, 'AddItemBtn', False).init(
+                                text='Add item', icon=Icons.PLUS, slot=self.add_item
+                            ), Layout.HCenter
                         ]
                     )
-                ), Layout.HCenter,
-                Button(self, 'AddItemBtn', False).init(
-                    text='Add item', icon=Icons.PLUS, slot=self.add_item
-                ), Layout.HCenter
+                )
             ]
         ))
         self.FavouriteButton.is_favourite = False
@@ -77,7 +83,7 @@ class RP_Category(Frame):
         if self.category:
             category = {'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite}
             self.category = api.update_category(self.category['id'], category)
-            ui.LeftMenu.refresh_categories(api.categories())
+            ui.LeftMenu.refresh_categories(api.get_categories())
 
     @pyqtSlot()
     def add_item(self):
@@ -111,7 +117,7 @@ class RP_Category(Frame):
             self.DescriptionInput.setText('')
             self.DeleteBtn.setVisible(False)
             self.show_create()
-            ui.LeftMenu.refresh_categories(api.categories())
+            ui.LeftMenu.refresh_categories(api.get_categories())
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -139,7 +145,7 @@ class RP_Category(Frame):
             self.ErrorLbl.setText('Internal error, please try again')
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
-        ui.LeftMenu.refresh_categories(api.categories())
+        ui.LeftMenu.refresh_categories(api.get_categories())
 
     @pyqtSlot()
     def execute_cancel(self):
@@ -154,10 +160,7 @@ class RP_Category(Frame):
 
     def show_category(self, category: dict[str, Any]):
         self.category = category
-        if not category['is_favourite'] and self.FavouriteButton.is_favourite:
-            self.FavouriteButton.unset_favourite()
-        elif category['is_favourite'] and not self.FavouriteButton.is_favourite:
-            self.FavouriteButton.set_favourite()
+        self.FavouriteButton.set(category['is_favourite'])
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(category['title'])
         self.ImageButton.setDisabled(True)
@@ -199,4 +202,4 @@ class RP_Category(Frame):
             self.EditBtn.setVisible(True)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
-        ui.LeftMenu.refresh_categories(api.categories())
+        ui.LeftMenu.refresh_categories(api.get_categories())

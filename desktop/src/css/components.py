@@ -38,8 +38,12 @@ QScrollBar::sub-page:vertical {{
 '''
 
 img_btn = f'''
+#ImageButton::disabled {{
+    
+}}
+
 #ImageButton {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LIGHT_GRAY};
     min-width: 120px;
     max-width: 120px;
     min-height: 120px;

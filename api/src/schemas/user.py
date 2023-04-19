@@ -10,8 +10,8 @@ from ..const import images
 class UserBase(Schema):
     __tablename__ = 'user'
 
-    # email: EmailStr
-    email: str
+    email: EmailStr
+    # email: str
     avatar: Optional[str | bytes] = Field(default=None)
 
     async def into_db(self) -> Schema:
@@ -30,8 +30,8 @@ class UserBase(Schema):
 
 
 class UserCreate(UserBase):
-    # password: str = Field(default=..., min_length=8, max_length=128)
-    password: str
+    password: str = Field(default=..., min_length=8, max_length=128)
+    # password: str
 
 
 class UserUpdate(UserBase):

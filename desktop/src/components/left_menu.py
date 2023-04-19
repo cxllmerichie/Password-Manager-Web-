@@ -14,10 +14,8 @@ class LeftMenu(SideMenu, Widget):
                         stylesheet=css.left_menu.css + css.components.scroll)
         SideMenu.__init__(self, width, Qt.Horizontal)
 
-        self.categories = []
-
     def init(self) -> 'LeftMenu':
-        categories = api.categories()
+        categories = api.get_categories()
         self.setLayout(Layout.vertical().init(
             spacing=5, margins=(10, 10, 0, 0), alignment=Qt.AlignTop,
             items=[
@@ -25,17 +23,17 @@ class LeftMenu(SideMenu, Widget):
                     text='Items'
                 ), Qt.AlignVCenter,
                 AllItemsBtn := MenuButton(self).init(
-                    icon=Icons.HOME, text='All items', total=0
+                    icon=Icons.HOME, text='All items', total=0, slot=ui.CP_Items.show_all
                 ), Qt.AlignLeft,
                 FavItemsBtn := MenuButton(self).init(
-                    icon=Icons.STAR.adjusted(size=Icons.HOME.size), text='Favourite',
+                    icon=Icons.STAR.adjusted(size=Icons.HOME.size), text='Favourite', slot=ui.CP_Items.show_favourite,
                     total=sum([len([1 for item in category['items'] if item['is_favourite']]) for category in categories])
                 ), Qt.AlignLeft,
-                Label(self, 'LeftMenuCategoriesLabel').init(
-                    text='Categories'
-                ),
                 Button(self, 'AddCategoryBtn').init(
                     text='Category', icon=Icons.PLUS, slot=ui.RP_Category.show_create
+                ),
+                Label(self, 'LeftMenuCategoriesLabel').init(
+                    text='Categories'
                 ),
                 Label(self, 'NoCategoriesLbl', False).init(
                     text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
@@ -68,3 +66,5 @@ class LeftMenu(SideMenu, Widget):
         self.CategoriesScrollArea.setVisible(True)
         self.AllItemsBtn.MenuButtonTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
         self.FavItemsBtn.MenuButtonTotalLbl.setText(str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))
+        # cache categories for `CentralPages`
+        self.MainView.CentralPages.CP_Items.categories = categories

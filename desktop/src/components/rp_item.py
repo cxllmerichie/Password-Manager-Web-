@@ -15,7 +15,7 @@ class Field(Frame):
 
         super().__init__(parent, f'Field{self.identifier}', stylesheet=css.rp_item.field + f'''
             #Field{self.identifier} {{
-                background-color: {Colors.GRAY};
+                background-color: {Colors.DARK_GRAY};
                 border-radius: 5px;
             }}
         ''')
@@ -125,78 +125,75 @@ class RP_Item(Frame):
         self.field_identifiers = []
 
     def init(self) -> 'RP_Item':
-        self.setLayout(Layout.vertical(name='ItemLayout').init(
-            spacing=20, margins=(0, 0, 0, 20),
+        self.setLayout(Layout.vertical().init(
             items=[
-                Layout.horizontal().init(
-                    margins=(20, 0, 20, 0),
-                    items=[
-                        FavouriteButton(self).init(
-                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
-                        ), Layout.Left,
-                        Button(self, 'EditBtn').init(
-                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
-                        ),
-                        Button(self, 'RemoveBtn', False).init(
-                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
-                        ),
-                        Button(self, 'CloseBtn').init(
-                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
-                        ), Layout.Right
-                    ]
-                ),
-                Layout.horizontal().init(
-                    items=[
-                        ImageButton(self).init(
-                            icon=Icons.CATEGORY
-                        ), Layout.TopCenter,
-                        Layout.vertical().init(
-                            items=[
-                                LineInput(self, 'TitleInput').init(
-                                    placeholder='title'
-                                ), Layout.TopCenter,
-                                TextInput(self, 'DescriptionInput').init(
-                                    placeholder='description (optional)'
-                                ), Layout.TopCenter
-                            ]
-                        )
-                    ]
-                ),
-                Frame(self, 'AddBtnsFrame').init(
-                    layout=Layout.horizontal().init(
+                Frame(self, 'ItemFrame').init(
+                    layout=Layout.vertical(name='ItemLayout').init(
+                        spacing=20, margins=(25, 10, 25, 20),
                         items=[
-                            Button(self, 'AddDocumentBtn').init(
-                                text='Add document', icon=Icons.PLUS
+                            Layout.horizontal().init(
+                                margins=(20, 0, 20, 0),
+                                items=[
+                                    FavouriteButton(self).init(
+                                        icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
+                                    ), Layout.Left,
+                                    Button(self, 'EditBtn').init(
+                                        icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                                    ),
+                                    Button(self, 'RemoveBtn', False).init(
+                                        icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                                    ),
+                                    Button(self, 'CloseBtn').init(
+                                        icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
+                                    ), Layout.Right
+                                ]
+                            ),
+                            ImageButton(self).init(
+                                icon=Icons.CATEGORY
+                            ), Layout.TopCenter,
+                            LineInput(self, 'TitleInput').init(
+                                placeholder='title'
+                            ), Layout.Top,
+                            TextInput(self, 'DescriptionInput').init(
+                                placeholder='description (optional)'
+                            ), Layout.Top,
+                            Frame(self, 'AddBtnsFrame').init(
+                                layout=Layout.horizontal().init(
+                                    items=[
+                                        Button(self, 'AddDocumentBtn').init(
+                                            text='Add document', icon=Icons.PLUS
+                                        ),
+                                        Button(self, 'AddFieldBtn').init(
+                                            text='Add field', icon=Icons.PLUS, slot=self.add_field
+                                        )
+                                    ]
+                                )
+                            ),
+                            ScrollArea(self, 'FieldScrollArea').init(
+                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
+                            ),
+                            Label(self, 'ErrorLbl').init(
+                                wrap=True, alignment=Layout.Center
+                            ), Layout.Center,
+                            Button(self, 'CreateBtn').init(
+                                text='Create item', slot=self.execute_create
                             ), Layout.HCenter,
-                            Button(self, 'AddFieldBtn').init(
-                                text='Add field', icon=Icons.PLUS, slot=self.add_field
+                            Frame(self, 'SaveCancelFrame', False).init(
+                                layout=Layout.horizontal().init(
+                                    spacing=50,
+                                    items=[
+                                        Button(self, 'SaveBtn').init(
+                                            text='Save', slot=self.execute_save
+                                        ),
+                                        Button(self, 'CancelBtn').init(
+                                            text='Cancel', slot=self.execute_cancel
+                                        )
+                                    ]
+                                )
                             ), Layout.HCenter
                         ]
                     )
-                ),
-                ScrollArea(self, 'FieldScrollArea').init(
-                    orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
-                ), Layout.HCenter,
-                Spacer(False, True),
-                Label(self, 'ErrorLbl').init(
-                    wrap=True, alignment=Layout.Center
-                ), Layout.Center,
-                Button(self, 'CreateBtn').init(
-                    text='Create item', slot=self.execute_create
-                ), Layout.HCenter,
-                Frame(self, 'SaveCancelFrame', False).init(
-                    layout=Layout.horizontal().init(
-                        spacing=50,
-                        items=[
-                            Button(self, 'SaveBtn').init(
-                                text='Save', slot=self.execute_save
-                            ), Layout.Left,
-                            Button(self, 'CancelBtn').init(
-                                text='Cancel', slot=self.execute_cancel
-                            ), Layout.Right
-                        ]
-                    )
-                ), Layout.HCenter
+                )
             ]
         ))
         return self
@@ -231,22 +228,20 @@ class RP_Item(Frame):
         if self.item:
             item = {'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite}
             self.item = api.update_item(self.item['id'], item)
-            ui.LeftMenu.refresh_categories(api.categories())
+            ui.LeftMenu.refresh_categories(api.get_categories())
 
     @pyqtSlot()
     def execute_save(self):
-        icon = self.ImageButton.icon_bytes
         title = self.TitleInput.text()
-        description = self.DescriptionInput.toPlainText()
-        is_favourite = self.FavouriteButton.is_favourite
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
-        item = {'icon': icon, 'title': title, 'description': description, 'is_favourite': is_favourite}
-        item = api.update_item(self.item['id'], item)
-        if item.get('id', None):
+        item = {'icon': self.ImageButton.icon_bytes, 'title': title,
+                'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite}
+        if (item := api.update_item(self.item['id'], item)).get('id'):
             self.execute_cancel()
             self.item = item
-            ui.LeftMenu.refresh_categories(api.categories())
+            ui.LeftMenu.refresh_categories(api.get_categories())
+            ui.CP_Items.refresh_items(api.get_items(self.category_id))
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -273,13 +268,10 @@ class RP_Item(Frame):
         self.CreateBtn.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
-        # if item_id := item.get('id', None):
-        #     item = api.get_item(item_id)
         self.item = item
-        if not item['is_favourite'] and self.FavouriteButton.is_favourite:
-            self.FavouriteButton.unset_favourite()
-        elif item['is_favourite'] and not self.FavouriteButton.is_favourite:
-            self.FavouriteButton.set_favourite()
+        if not self.category_id:
+            self.category_id = item['category_id']  # item shown from click through `CentralPages` items
+        self.FavouriteButton.set(item['is_favourite'])
         self.TitleInput.setText(item['title'])
         self.TitleInput.setEnabled(False)
         self.ImageButton.setIcon(Icons.from_bytes(item['icon']).icon)
@@ -310,7 +302,8 @@ class RP_Item(Frame):
             self.show_item(item)
             self.item = item
             self.CreateBtn.setVisible(False)
-            ui.LeftMenu.refresh_categories(api.categories())
+            ui.LeftMenu.refresh_categories(api.get_categories())
+            ui.CP_Items.refresh_items(api.get_items(self.category_id))
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -322,6 +315,7 @@ class RP_Item(Frame):
             self.DescriptionInput.setText('')
             self.DeleteBtn.setVisible(False)
             self.show_create()
-            ui.LeftMenu.refresh_categories(api.categories())
+            ui.LeftMenu.refresh_categories(api.get_categories())
+            ui.CP_Items.refresh_items(api.get_items(self.category_id))
         else:
             self.ErrorLbl.setText('Internal error, please try again')

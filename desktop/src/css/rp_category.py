@@ -2,6 +2,10 @@ from ..misc import Colors, Sizes
 
 
 css: str = f'''
+#CategoryFrame {{
+    background-color: {Colors.RIGHT_MENU};
+}}
+
 #SaveBtn {{
     background-color: {Colors.GREEN};
 }}
@@ -46,8 +50,7 @@ css: str = f'''
 #TitleInput,
 #DescriptionInput {{
     border: none;
-    background-color: {Colors.DARK_GRAY};
-    max-width: {Sizes.CATEGORY.w}px;
+    background-color: {Colors.LIGHT_GRAY};
     min-width: {Sizes.CATEGORY.w}px;
     color: white;
     font-size: 18px;
@@ -67,7 +70,6 @@ css: str = f'''
 }}
 
 #ControlBtns {{
-    max-width: {Sizes.CATEGORY.w}px;
 }}
 
 #ErrorLbl {{

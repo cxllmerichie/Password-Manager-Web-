@@ -18,7 +18,7 @@ async def get_item(item_id: UUID, schema: type = schemas.Item) -> schemas.Item |
 
 
 async def get_items(category_id: int, limit: int = INF, offset: int = 0, schema: type = schemas.Item) -> list[schemas.Item]:
-    query, args = f'SELECT * FROM "item" WHERE "category_id" = $1 ORDER BY "is_favourite", "title" LIMIT $2 OFFSET $3;', (category_id, limit, offset)
+    query, args = f'SELECT * FROM "item" WHERE "category_id" = $1 ORDER BY "is_favourite" DESC, "title", "description" LIMIT $2 OFFSET $3;', (category_id, limit, offset)
     db_items = await (await db.select(query, args, schema, rel_depth=1)).all()
     return db_items
 

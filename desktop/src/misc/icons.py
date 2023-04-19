@@ -1,6 +1,6 @@
 from typing import Iterable
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QIcon, QImage, QPixmap
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon, QPixmap
 import os
 import base64
 

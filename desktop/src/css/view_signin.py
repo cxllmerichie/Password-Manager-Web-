@@ -3,7 +3,7 @@ from ..misc import Colors, Sizes
 
 css = f'''
 #SignIn {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.LIGHT_GRAY};
 }}
 
 #InputLabelEmail,
@@ -29,7 +29,7 @@ css = f'''
 #InputFrameEmail,
 #InputFramePassword {{
     border-radius: 10px;
-    background-color: {Colors.GRAY};
+    background-color: {Colors.DARK_GRAY};
 }}
 
 #ContinueBtn,

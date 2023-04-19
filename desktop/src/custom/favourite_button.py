@@ -19,7 +19,7 @@ class FavouriteButton(Button):
 
     @pyqtSlot()
     def slot(self, slot: callable = lambda: None):
-        self.toggle(not self.is_favourite)
+        self.set(not self.is_favourite)
         slot()
 
     def set_favourite(self):
@@ -30,7 +30,7 @@ class FavouriteButton(Button):
         self.setIcon(Icons.STAR.icon)
         self.is_favourite = False
 
-    def toggle(self, is_favourite: bool):
+    def set(self, is_favourite: bool):
         self.is_favourite = is_favourite
         if self.is_favourite:
             self.set_favourite()
