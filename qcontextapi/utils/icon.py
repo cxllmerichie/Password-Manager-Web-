@@ -1,12 +1,13 @@
-from PyQt5.QtGui import QPixmap
-from typing import Iterable
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
+from typing import Iterable
 import base64
 import os
 
 
 class Icon:
+    root = '../qcontextapi/assets'
+
     def __init__(self, filename: str, size: tuple[int, int], icon: QIcon = None):
         if isinstance(filename, str):
             if not os.path.exists(filepath := self.path(filename)):

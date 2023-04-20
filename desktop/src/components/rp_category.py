@@ -1,6 +1,6 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
+from qcontextapi.customs import FavouriteButton, ImageButton
 from qcontextapi.utils import Icon
-from qcontextapi.customs import FavouriteButton
 from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot

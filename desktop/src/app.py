@@ -21,9 +21,7 @@ class App(QMainWindow):
 
         self.resize(Sizes.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
-        # self.setWindowIcon(Icons.APP.icon)
 
-        # self.setMenuBar(MenuBar(self).init())
         self.setCentralWidget(CentralWidget(self).init())
         self.setStatusBar(StatusBar(self).init())
         return self

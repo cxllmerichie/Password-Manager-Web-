@@ -1,5 +1,6 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea
 from qcontextapi.customs import FavouriteButton, ImageButton
+from qcontextapi.utils import Icon
 from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import pyqtSlot
@@ -270,7 +271,7 @@ class RP_Item(Frame):
         self.FavouriteButton.set(item['is_favourite'])
         self.TitleInput.setText(item['title'])
         self.TitleInput.setEnabled(False)
-        self.ImageButton.setIcon(Icons.from_bytes(item['icon']).icon)
+        self.ImageButton.setIcon(Icon.from_bytes(item['icon']).icon)
         self.ImageButton.setDisabled(True)
         self.DescriptionInput.setText(item['description'])
         self.DescriptionInput.setDisabled(True)
@@ -295,7 +296,7 @@ class RP_Item(Frame):
         item = {'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
                 'is_favourite': self.FavouriteButton.is_favourite}
         if (item := api.create_item(self.category_id, item, fields)).get('id'):
-            self.ImageButton.setIcon(Icons.from_bytes(item['icon']).icon)
+            self.ImageButton.setIcon(Icon.from_bytes(item['icon']).icon)
             self.show_item(item)
             self.item = item
             self.CreateBtn.setVisible(False)
