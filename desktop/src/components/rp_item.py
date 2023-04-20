@@ -126,71 +126,65 @@ class RP_Item(Frame):
 
     def init(self) -> 'RP_Item':
         self.setLayout(Layout.vertical().init(
+            spacing=20, margins=(25, 10, 25, 20),
             items=[
-                Frame(self, 'ItemFrame').init(
-                    layout=Layout.vertical(name='ItemLayout').init(
-                        spacing=20, margins=(25, 10, 25, 20),
+                Layout.horizontal().init(
+                    margins=(20, 0, 20, 20),
+                    items=[
+                        FavouriteButton(self).init(
+                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
+                        ), Layout.Left,
+                        Button(self, 'EditBtn').init(
+                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                        ),
+                        Button(self, 'RemoveBtn', False).init(
+                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                        ),
+                        Button(self, 'CloseBtn').init(
+                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
+                        ), Layout.Right
+                    ]
+                ),
+                ImageButton(self).init(
+                    icon=Icons.CATEGORY
+                ), Layout.TopCenter,
+                LineInput(self, 'TitleInput').init(
+                    placeholder='title'
+                ), Layout.Top,
+                TextInput(self, 'DescriptionInput').init(
+                    placeholder='description (optional)'
+                ), Layout.Top,
+                Frame(self, 'AddBtnsFrame').init(
+                    layout=Layout.horizontal().init(
                         items=[
-                            Layout.horizontal().init(
-                                margins=(20, 0, 20, 0),
-                                items=[
-                                    FavouriteButton(self).init(
-                                        icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
-                                    ), Layout.Left,
-                                    Button(self, 'EditBtn').init(
-                                        icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
-                                    ),
-                                    Button(self, 'RemoveBtn', False).init(
-                                        icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
-                                    ),
-                                    Button(self, 'CloseBtn').init(
-                                        icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
-                                    ), Layout.Right
-                                ]
+                            Button(self, 'AddDocumentBtn').init(
+                                text='Add document', icon=Icons.PLUS
                             ),
-                            ImageButton(self).init(
-                                icon=Icons.CATEGORY
-                            ), Layout.TopCenter,
-                            LineInput(self, 'TitleInput').init(
-                                placeholder='title'
-                            ), Layout.Top,
-                            TextInput(self, 'DescriptionInput').init(
-                                placeholder='description (optional)'
-                            ), Layout.Top,
-                            Frame(self, 'AddBtnsFrame').init(
-                                layout=Layout.horizontal().init(
-                                    items=[
-                                        Button(self, 'AddDocumentBtn').init(
-                                            text='Add document', icon=Icons.PLUS
-                                        ),
-                                        Button(self, 'AddFieldBtn').init(
-                                            text='Add field', icon=Icons.PLUS, slot=self.add_field
-                                        )
-                                    ]
-                                )
+                            Button(self, 'AddFieldBtn').init(
+                                text='Add field', icon=Icons.PLUS, slot=self.add_field
+                            )
+                        ]
+                    )
+                ),
+                ScrollArea(self, 'FieldScrollArea').init(
+                    orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
+                ),
+                Label(self, 'ErrorLbl').init(
+                    wrap=True, alignment=Layout.Center
+                ), Layout.Center,
+                Button(self, 'CreateBtn').init(
+                    text='Create item', slot=self.execute_create
+                ), Layout.HCenter,
+                Frame(self, 'SaveCancelFrame', False).init(
+                    layout=Layout.horizontal().init(
+                        spacing=50,
+                        items=[
+                            Button(self, 'SaveBtn').init(
+                                text='Save', slot=self.execute_save
                             ),
-                            ScrollArea(self, 'FieldScrollArea').init(
-                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
-                            ),
-                            Label(self, 'ErrorLbl').init(
-                                wrap=True, alignment=Layout.Center
-                            ), Layout.Center,
-                            Button(self, 'CreateBtn').init(
-                                text='Create item', slot=self.execute_create
-                            ), Layout.HCenter,
-                            Frame(self, 'SaveCancelFrame', False).init(
-                                layout=Layout.horizontal().init(
-                                    spacing=50,
-                                    items=[
-                                        Button(self, 'SaveBtn').init(
-                                            text='Save', slot=self.execute_save
-                                        ),
-                                        Button(self, 'CancelBtn').init(
-                                            text='Cancel', slot=self.execute_cancel
-                                        )
-                                    ]
-                                )
-                            ), Layout.HCenter
+                            Button(self, 'CancelBtn').init(
+                                text='Cancel', slot=self.execute_cancel
+                            )
                         ]
                     )
                 )
@@ -281,6 +275,7 @@ class RP_Item(Frame):
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
         self.EditBtn.setVisible(True)
+        self.CreateBtn.setVisible(False)
 
         self.FieldScrollArea.clear()
         for field in item['fields']:

@@ -3,7 +3,7 @@ from ..misc import Colors, Sizes
 
 css = f'''
 #RightPages {{
-    background-color: {Colors.DARK_GRAY};
+    background-color: {Colors.RIGHT_MENU};
     max-width: {Sizes.RightMenu.w};
 }}
 '''

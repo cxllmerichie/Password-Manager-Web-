@@ -16,63 +16,57 @@ class RP_Category(Frame):
 
     def init(self) -> 'RP_Category':
         self.setLayout(Layout.vertical().init(
+            spacing=20, margins=(25, 10, 25, 20),
             items=[
-                Frame(self, 'CategoryFrame').init(
-                    layout=Layout.vertical().init(
-                        spacing=20, margins=(25, 10, 25, 20),
+                Layout.horizontal().init(
+                    margins=(20, 0, 20, 20),
+                    items=[
+                        FavouriteButton(self).init(
+                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
+                        ), Layout.Left,
+                        Button(self, 'EditBtn', False).init(
+                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                        ),
+                        Button(self, 'DeleteBtn', False).init(
+                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                        ),
+                        Button(self, 'CloseBtn').init(
+                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
+                        ), Layout.Right
+                    ]
+                ),
+                ImageButton(self).init(
+                    icon=Icons.CATEGORY
+                ), Layout.TopCenter,
+                LineInput(self, 'TitleInput').init(
+                    placeholder='title'
+                ), Layout.Top,
+                TextInput(self, 'DescriptionInput').init(
+                    placeholder='description (optional)'
+                ), Layout.Top,
+                Spacer(False, True),
+                Label(self, 'ErrorLbl').init(
+                    wrap=True, alignment=Layout.Center
+                ), Layout.Center,
+                Button(self, 'CreateBtn').init(
+                    text='Create', slot=self.execute_create
+                ), Layout.HCenter,
+                Frame(self, 'SaveCancelFrame', False).init(
+                    layout=Layout.horizontal().init(
+                        spacing=50,
                         items=[
-                            Layout.horizontal().init(
-                                margins=(20, 0, 20, 20),
-                                items=[
-                                    FavouriteButton(self).init(
-                                        icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
-                                    ), Layout.Left,
-                                    Button(self, 'EditBtn', False).init(
-                                        icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
-                                    ),
-                                    Button(self, 'DeleteBtn', False).init(
-                                        icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
-                                    ),
-                                    Button(self, 'CloseBtn').init(
-                                        icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
-                                    ), Layout.Right
-                                ]
-                            ),
-                            ImageButton(self).init(
-                                icon=Icons.CATEGORY
-                            ), Layout.TopCenter,
-                            LineInput(self, 'TitleInput').init(
-                                placeholder='title'
-                            ), Layout.Top,
-                            TextInput(self, 'DescriptionInput').init(
-                                placeholder='description (optional)'
-                            ), Layout.Top,
-                            Spacer(False, True),
-                            Label(self, 'ErrorLbl').init(
-                                wrap=True, alignment=Layout.Center
-                            ), Layout.Center,
-                            Button(self, 'CreateBtn').init(
-                                text='Create', slot=self.execute_create
-                            ), Layout.HCenter,
-                            Frame(self, 'SaveCancelFrame', False).init(
-                                layout=Layout.horizontal().init(
-                                    spacing=50,
-                                    items=[
-                                        Button(self, 'SaveBtn').init(
-                                            text='Save', slot=self.execute_save
-                                        ), Layout.Left,
-                                        Button(self, 'CancelBtn').init(
-                                            text='Cancel', slot=self.execute_cancel
-                                        ), Layout.Right
-                                    ]
-                                )
-                            ), Layout.HCenter,
-                            Button(self, 'AddItemBtn', False).init(
-                                text='Add item', icon=Icons.PLUS, slot=self.add_item
-                            ), Layout.HCenter
+                            Button(self, 'SaveBtn').init(
+                                text='Save', slot=self.execute_save
+                            ), Layout.Left,
+                            Button(self, 'CancelBtn').init(
+                                text='Cancel', slot=self.execute_cancel
+                            ), Layout.Right
                         ]
                     )
-                )
+                ), Layout.HCenter,
+                Button(self, 'AddItemBtn', False).init(
+                    text='Add item', icon=Icons.PLUS, slot=self.add_item
+                ), Layout.HCenter
             ]
         ))
         self.FavouriteButton.is_favourite = False

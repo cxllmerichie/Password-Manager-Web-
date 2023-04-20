@@ -2,10 +2,6 @@ from ..misc import Colors, Sizes
 
 
 css: str = f'''
-#ItemFrame {{
-    background-color: {Colors.RIGHT_MENU};
-}}
-
 #SaveBtn {{
     background-color: {Colors.GREEN};
 }}
@@ -24,7 +20,7 @@ css: str = f'''
 
 #SaveBtn,
 #CancelBtn {{
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     font-size: 16px;
     min-width: 100px;
     min-height: 30px;
@@ -136,7 +132,7 @@ field: str = f'''
 
 #FieldNameInput,
 #FieldValueInput {{
-    color: white;
+    color: {Colors.TEXT_PRIMARY};
     border: none;
     min-height: 30px;
     background-color: {Colors.TRANSPARENT};

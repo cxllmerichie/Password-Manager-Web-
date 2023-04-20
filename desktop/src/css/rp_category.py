@@ -2,10 +2,6 @@ from ..misc import Colors, Sizes
 
 
 css: str = f'''
-#CategoryFrame {{
-    background-color: {Colors.RIGHT_MENU};
-}}
-
 #SaveBtn {{
     background-color: {Colors.GREEN};
 }}
