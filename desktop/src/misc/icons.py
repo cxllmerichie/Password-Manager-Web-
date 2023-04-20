@@ -3,6 +3,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon, QPixmap
 import os
 import base64
+from .sizes import Sizes
 
 
 class Icon:
@@ -33,8 +34,8 @@ class Icons:
     MINIMIZE = Icon('minus.svg', (25, 25))
     RESTORE = Icon('square.svg', (20, 20))
     CROSS = Icon('x.svg', (27, 27))
-    HOME = Icon('home.svg', (20, 20))
-    STAR = Icon('star.svg', (20, 20))
+    HOME = Icon('home.svg', Sizes.MenuBtnIcon.size)
+    STAR = Icon('star.svg', Sizes.MenuBtnIcon.size)
     STAR_FILL = Icon('star-fill.svg', (20, 20))
     MENU = Icon('menu.svg', (25, 25))
     PLUS = Icon('plus-circle.svg', (20, 20))

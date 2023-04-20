@@ -3,7 +3,7 @@ from ..misc import Colors, Sizes
 
 scroll: str = f'''
 QScrollBar:vertical {{
-    background: white;
+    background: {Colors.TRANSPARENT};
     width: 7px;
     border: none;
     border-radius: 3px;
@@ -45,9 +45,7 @@ img_btn = f'''
 #ImageButton {{
     background-color: {Colors.LIGHT_GRAY};
     min-width: 120px;
-    max-width: 120px;
     min-height: 120px;
-    max-height: 120px;
     border-radius: 59px;
     border: none;
 }}
@@ -55,6 +53,20 @@ img_btn = f'''
 
 fav_btn = f'''
 #FavouriteButton {{
+    background-color: {Colors.TRANSPARENT};
+}}
+'''
+
+splitter = f'''
+#MainViewSplitter {{
+    background-color: {Colors.TRANSPARENT};
+}}
+
+#MainViewSplitterHandle {{
+    background-color: {Colors.TRANSPARENT};
+}}
+
+#MainViewSplitter::handle {{
     background-color: {Colors.TRANSPARENT};
 }}
 '''

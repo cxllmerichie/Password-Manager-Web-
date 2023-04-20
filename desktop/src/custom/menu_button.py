@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtCore import Qt
 
 from ..widgets import Label, Layout, Button
@@ -14,17 +14,17 @@ class MenuButton(Button):
             icon: Icon, text: str, total: int, alignment: Qt.Alignment = None, slot: callable = lambda: None
     ) -> 'MenuButton':
         self.setLayout(Layout.horizontal().init(
-            margins=(10, 0, 0, 0), spacing=10, alignment=Qt.AlignLeft,
+            margins=(10, 5, 10, 5), spacing=10,
             items=[
                 Button(self, f'{self.objectName()}IconBtn').init(
                     size=icon.size, icon=icon, disabled=True
-                ),
+                ), Layout.Left,
                 Label(self, f'{self.objectName()}TextLbl').init(
-                    text=text, alignment=alignment, elided=True
+                    text=text, alignment=alignment, elided=True, policy=(QSizePolicy.Expanding, QSizePolicy.Minimum)
                 ),
                 Label(self, f'{self.objectName()}TotalLbl').init(
                     text=str(total)
-                ), Qt.AlignRight
+                ), Layout.Right
             ]
         ))
         self.clicked.connect(slot)

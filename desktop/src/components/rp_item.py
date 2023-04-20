@@ -129,7 +129,7 @@ class RP_Item(Frame):
             spacing=20, margins=(25, 10, 25, 20),
             items=[
                 Layout.horizontal().init(
-                    margins=(20, 0, 20, 20),
+                    margins=(0, 0, 0, 20),
                     items=[
                         FavouriteButton(self).init(
                             icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite

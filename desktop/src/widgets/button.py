@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QPushButton, QWidget
+from PyQt5.QtWidgets import QPushButton, QWidget, QSizePolicy
 from PyQt5.QtCore import QSize
 
 from ..misc import Icon
@@ -13,9 +13,8 @@ class Button(Wrapper, QPushButton):
 
     def init(
             self, *,
-            text: str = '',
-            size: QSize = None, icon: Icon = None,
-            disabled: bool = False, slot: callable = lambda: None
+            text: str = '', size: QSize = None, icon: Icon = None,
+            disabled: bool = False, slot: callable = lambda: None, policy: tuple[QSizePolicy, QSizePolicy] = None
     ) -> 'Button':
         self.setText(text)
         self.setDisabled(disabled)
@@ -25,4 +24,6 @@ class Button(Wrapper, QPushButton):
         if icon:
             self.setIcon(QIcon(icon.icon))
             self.setIconSize(icon.size)
+        if policy:
+            self.setSizePolicy(policy[0], policy[1])
         return self

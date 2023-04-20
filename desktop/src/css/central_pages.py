@@ -30,7 +30,7 @@ cp_item = f'''
     background-color: {Colors.LIGHT_GRAY};
     border-radius: 10px;
     min-height: 75px;
-    min-width: 200px;
+    max-width: 400px;
 }}
 
 #ItemTitleLbl {{

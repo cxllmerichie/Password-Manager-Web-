@@ -1,10 +1,8 @@
 from PyQt5.QtCore import Qt
 
 
-class SideMenu:
-    def __init__(self, expand_to: int = None, expand_orientation: Qt.Orientation = Qt.Horizontal):
-        if not expand_to:
-            raise AttributeError(f'`size` is not specified in `SideMenu` constructor')
+class SideMenuExt:
+    def __init__(self, expand_to, expand_orientation: Qt.Orientation = Qt.Horizontal):
         self.expand_to = expand_to
         self.expand_orientation = expand_orientation
 

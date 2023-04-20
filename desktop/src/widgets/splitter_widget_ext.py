@@ -3,7 +3,9 @@ from PyQt5.QtWidgets import QSplitter
 
 class SplitterWidgetExt:
     splitter: QSplitter
-    expand_to: int
+
+    def __init__(self, expand_to: int):
+        self.expand_to: int = expand_to
 
     def _index(self) -> int:
         for index in range(self.splitter.count()):
@@ -16,7 +18,8 @@ class SplitterWidgetExt:
         self.splitter.setSizes([*self.splitter.sizes()[:index], size, *self.splitter.sizes()[index + 1:]])
 
     def expand(self, size: int = None):
-        self._set_size(size if size else self.expand_to)
+        if not self.splitter.sizes()[self._index()]:
+            self._set_size(size if size else self.expand_to)
 
     def shrink(self) -> None:
         self._set_size(0)

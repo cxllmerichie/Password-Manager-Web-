@@ -78,7 +78,6 @@ css: str = f'''
     color: {Colors.TEXT_PRIMARY};
     background-color: {Colors.TRANSPARENT};
     font-size: 14px;
-    min-width: 200px;
     border: none;
     min-height: 30px;
 }}

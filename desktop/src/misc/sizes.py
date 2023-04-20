@@ -6,6 +6,10 @@ class Size:
         self.w: int = width if width is not Ellipsis else None
         self.h: int = height if height is not Ellipsis else None
 
+    @property
+    def size(self):
+        return self.w, self.h
+
 
 class Sizes:
     App = QSize(800, 600)
@@ -20,3 +24,5 @@ class Sizes:
     CATEGORY = Size(300, ...)
     ERROR = Size(300, 50)
     RightMenu = Size(600, ...)
+    MenuBtnIcon = Size(30, 30)
+

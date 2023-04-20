@@ -1,13 +1,18 @@
+from ._wrapper import ui
+
+from .widget import Widget
+from .frame import Frame
+from .stacked_widget import StackedWidget
+from .scroll_area import ScrollArea
+from .splitter import Splitter, SplitterHandle
+
 from .button import Button
 from .label import Label
-from .frame import Frame
 from .layout import Layout
 from .line_input import LineInput
-from .side_menu import SideMenu
-from .spacer import Spacer
-from .scroll_area import ScrollArea
 from .text_input import TextInput
-from .splitter_widget import SplitterWidgetExt
-from .widget import Widget
-from .stacked_widget import StackedWidget
-from ._wrapper import ui
+from .spacer import Spacer
+
+from .layout import LayoutExt
+from .side_menu_ext import SideMenuExt
+from .splitter_widget_ext import SplitterWidgetExt

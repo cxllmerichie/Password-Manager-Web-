@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayoutItem, QSpacerItem, QHBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayoutItem, QSpacerItem, QHBoxLayout, QSizePolicy
 from PyQt5.QtCore import Qt, QObject
 from typing import Sequence, Union
 from abc import ABC
@@ -7,6 +7,11 @@ from ._wrapper import Wrapper
 
 
 class Layout(ABC):
+    Expanding = QSizePolicy.Expanding
+    Minimum = QSizePolicy.Minimum
+    Maximum = QSizePolicy.Maximum
+    MinimumExpanding = QSizePolicy.MinimumExpanding
+
     Horizontal = Qt.Horizontal
     Vertical = Qt.Vertical
 
@@ -39,13 +44,12 @@ class Layout(ABC):
         return Layout.vertical(parent, name) if orientation is Layout.Vertical else Layout.horizontal(parent, name)
 
 
-# class QLayoutExtension(ABC):  # TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
-class QLayoutExtension:
+class LayoutExt:
     def init(
             self, *,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
             items: Sequence[QObject] = ()
-    ) -> 'QLayoutExtension':
+    ) -> 'LayoutExt':
         self.setContentsMargins(*margins)
         self.setSpacing(spacing)
         if alignment:
@@ -82,13 +86,13 @@ class QLayoutExtension:
             self.itemAt(i).widget().setParent(None)
 
 
-class VLayout(Wrapper, QLayoutExtension, QVBoxLayout):
+class VLayout(Wrapper, LayoutExt, QVBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QVBoxLayout.__init__(self, parent)
         Wrapper.__init__(self, parent, name, True)
 
 
-class HLayout(Wrapper, QLayoutExtension, QHBoxLayout):
+class HLayout(Wrapper, LayoutExt, QHBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QHBoxLayout.__init__(self, parent)
         Wrapper.__init__(self, parent, name, True)

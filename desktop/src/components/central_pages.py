@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt
 from typing import Any
 
 from ..widgets import ScrollArea, Layout, Label, Frame, StackedWidget, ui
@@ -21,7 +22,7 @@ class CP_Item(Frame):
                 Layout.vertical().init(
                     items=[
                         Label(self, 'ItemTitleLbl').init(
-                            text=item['title']
+                            text=item['title'], policy=(Layout.Expanding, Layout.Minimum), elided=True
                         ),
                         Label(self, 'ItemDescriptionLbl').init(
                             text=item['description'], elided=True
@@ -37,6 +38,7 @@ class CP_Item(Frame):
 class CP_Items(ScrollArea):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setStyleSheet(css.central_pages.cp_items + css.components.scroll)
         self.categories = []
 
@@ -77,7 +79,8 @@ class CentralPages(StackedWidget):
 
     def init(self) -> 'CentralPages':
         self.addWidget(cp_items := CP_Items(self).init(
-            orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, margins=(0, 10, 0, 10)
+            orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, margins=(30, 10, 30, 10),
+            horizontal=False
         ))
 
         self.setCurrentWidget(cp_items)
