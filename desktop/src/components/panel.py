@@ -1,8 +1,8 @@
+from qcontextapi.widgets import Button, Label, Layout, Frame, Widget
 from PyQt5.QtWidgets import QWidget, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt
 
-from ..widgets import Button, Label, Layout, Frame, Widget
 from ..misc import Icons, Sizes
 from .. import css
 

@@ -1,10 +1,11 @@
+from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea
+from qcontextapi.customs import FavouriteButton, ImageButton
+from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
 from typing import Any
 
-from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, ScrollArea, ui
-from ..custom import FavouriteButton, ImageButton
 from ..misc import Icons, api, Colors
 from .. import css
 
@@ -132,7 +133,7 @@ class RP_Item(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         FavouriteButton(self).init(
-                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
+                            slot=self.toggle_favourite
                         ), Layout.Left,
                         Button(self, 'EditBtn').init(
                             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
@@ -146,7 +147,7 @@ class RP_Item(Frame):
                     ]
                 ),
                 ImageButton(self).init(
-                    icon=Icons.CATEGORY
+                    icon=Icons.ITEM
                 ), Layout.TopCenter,
                 LineInput(self, 'TitleInput').init(
                     placeholder='title'
@@ -253,6 +254,7 @@ class RP_Item(Frame):
 
     def show_create(self):
         self.item = None
+        self.ImageButton.setIcon(Icons.ITEM.icon)
         self.EditBtn.setVisible(False)
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')

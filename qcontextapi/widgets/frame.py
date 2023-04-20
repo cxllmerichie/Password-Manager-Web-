@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QFrame, QWidget, QLayout
 
-from ._wrapper import Wrapper
+from .._wrapper import Wrapper
 
 
 class Frame(Wrapper, QFrame):

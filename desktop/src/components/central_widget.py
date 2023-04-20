@@ -1,7 +1,8 @@
+from qcontextapi.widgets import StackedWidget
+from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
-from ..widgets import StackedWidget, ui
 from .view_signin import SignIn
 from .view_signup import SignUp
 from .view_main import MainView

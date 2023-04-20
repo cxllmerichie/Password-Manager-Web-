@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
-from ._wrapper import Wrapper
+from .._wrapper import Wrapper
 
 
 class Widget(Wrapper, QWidget):

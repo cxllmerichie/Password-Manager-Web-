@@ -1,8 +1,9 @@
+from qcontextapi.widgets import StackedWidget
+from qcontextapi.extensions import SplitterWidgetExt
 from PyQt5.QtWidgets import QWidget
 
 from .rp_category import RP_Category
 from .rp_item import RP_Item
-from ..widgets import SplitterWidgetExt, StackedWidget
 from .. import css
 
 

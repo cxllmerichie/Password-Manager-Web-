@@ -1,7 +1,7 @@
+from qcontextapi.widgets import Layout, Frame, Widget, Splitter
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
-from ..widgets import Layout, Frame, Widget, Splitter
 from .left_menu import LeftMenu
 from .right_pages import RightPages
 from .central_pages import CentralPages

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QTextEdit, QWidget
 
-from ._wrapper import Wrapper
+from .._wrapper import Wrapper
 
 
 class TextInput(Wrapper, QTextEdit):

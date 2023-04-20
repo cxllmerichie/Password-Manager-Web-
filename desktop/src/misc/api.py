@@ -2,7 +2,7 @@ from typing import Any
 import requests
 from loguru import logger
 
-from ..widgets import ui
+from qcontextapi import ui
 from .utils import clear_json
 
 

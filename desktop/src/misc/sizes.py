@@ -1,14 +1,5 @@
+from qcontextapi.utils import Size
 from PyQt5.QtCore import QSize
-
-
-class Size:
-    def __init__(self, width: int = ..., height: int = ...):
-        self.w: int = width if width is not Ellipsis else None
-        self.h: int = height if height is not Ellipsis else None
-
-    @property
-    def size(self):
-        return self.w, self.h
 
 
 class Sizes:
@@ -25,4 +16,4 @@ class Sizes:
     ERROR = Size(300, 50)
     RightMenu = Size(600, ...)
     MenuBtnIcon = Size(30, 30)
-
+    RightMenuImage = Size(80, 80)

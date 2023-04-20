@@ -2,8 +2,8 @@ from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QLabel, QWidget, QSizePolicy
 from PyQt5.QtCore import Qt, QSize
 
-from ..misc import Icon
-from ._wrapper import Wrapper
+from ..utils import Icon
+from .._wrapper import Wrapper
 
 
 class Label(Wrapper, QLabel):

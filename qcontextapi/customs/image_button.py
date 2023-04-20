@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 
 from ..widgets import Button
-from ..misc import Icons, Icon
+from ..utils import Icon
 
 
 class ImageButton(Button):
@@ -25,5 +25,5 @@ class ImageButton(Button):
             with open(filepath, 'rb') as file:
                 icon_bytes = file.read()
                 self.icon_bytes = icon_bytes
-                self.setIcon(Icons.from_bytes(icon_bytes).icon)
+                self.setIcon(Icon.from_bytes(icon_bytes).icon)
                 slot()

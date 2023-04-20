@@ -2,19 +2,25 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
 
 from ..widgets import Button
-from ..misc import Icons, Icon
+from ..utils import Icon
 
 
 class FavouriteButton(Button):
     def __init__(self, parent: QWidget, is_favourite: bool = False):
         super().__init__(parent, self.__class__.__name__)
         self.is_favourite: bool = is_favourite
+        self.if_set_icon: Icon = Icon('star-fill.svg', (30, 30))
+        self.if_unset_icon: Icon = Icon('star.svg', (30, 30))
 
     def init(
             self, *,
-            icon: Icon = None, slot: callable = lambda: None
+            if_set_icon: Icon = None, if_unset_icon: Icon = None, slot: callable = lambda: None
     ) -> 'Button':
-        super().init(icon=icon, slot=lambda: self.slot(slot))
+        super().init(icon=if_set_icon, slot=lambda: self.slot(slot))
+        if if_set_icon:
+            self.if_set_icon = if_set_icon
+        if if_unset_icon:
+            self.if_unset_icon = if_unset_icon
         return self
 
     @pyqtSlot()
@@ -23,11 +29,11 @@ class FavouriteButton(Button):
         slot()
 
     def set_favourite(self):
-        self.setIcon(Icons.STAR_FILL.icon)
+        self.setIcon(self.if_set_icon.icon)
         self.is_favourite = True
 
     def unset_favourite(self):
-        self.setIcon(Icons.STAR.icon)
+        self.setIcon(self.if_unset_icon.icon)
         self.is_favourite = False
 
     def set(self, is_favourite: bool):

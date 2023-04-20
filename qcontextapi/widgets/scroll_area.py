@@ -4,7 +4,7 @@ from typing import Sequence
 
 from .frame import Frame
 from .layout import Layout
-from ._wrapper import Wrapper
+from .._wrapper import Wrapper
 
 
 class ScrollArea(Wrapper, QScrollArea):

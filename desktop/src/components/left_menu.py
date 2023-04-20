@@ -1,11 +1,14 @@
+from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget
+from qcontextapi.extensions import SideMenuExt
+from qcontextapi.utils import Icon
+from qcontextapi import ui
+from qcontextapi.customs import MenuButton
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 from typing import Any
 
-from ..widgets import Label, Layout, ScrollArea, Button, SideMenuExt, Widget, ui
 from ..misc import Icons, api, Sizes
 from .. import css
-from ..custom import MenuButton
 
 
 class LeftMenu(SideMenuExt, Widget):
@@ -58,7 +61,7 @@ class LeftMenu(SideMenuExt, Widget):
         for category in categories:
             layout.addWidget(
                 MenuButton(self).init(
-                    icon=Icons.from_bytes(category['icon']).adjusted(size=Sizes.MenuBtnIcon.size), text=category['title'],
+                    icon=Icon.from_bytes(category['icon']).adjusted(size=Sizes.MenuBtnIcon.size), text=category['title'],
                     total=len(category['items']), slot=lambda checked, c=category: ui.RP_Category.show_category(c)
                 )
             )

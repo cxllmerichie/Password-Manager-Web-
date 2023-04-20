@@ -1,8 +1,9 @@
+from qcontextapi.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget
+from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..widgets import Button, Label, LineInput, Layout, Spacer, Frame, ui, Widget
 from ..misc import Icons, api
 from .view_main import MainView
 from .. import css

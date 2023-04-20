@@ -2,8 +2,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton, QWidget, QSizePolicy
 from PyQt5.QtCore import QSize
 
-from ..misc import Icon
-from ._wrapper import Wrapper
+from ..utils import Icon
+from .._wrapper import Wrapper
 
 
 class Button(Wrapper, QPushButton):

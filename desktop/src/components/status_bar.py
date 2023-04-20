@@ -1,6 +1,5 @@
+from qcontextapi.widgets import Layout, Label
 from PyQt5.QtWidgets import QStatusBar
-
-from ..widgets import Layout, Label
 
 
 class StatusBar(QStatusBar):

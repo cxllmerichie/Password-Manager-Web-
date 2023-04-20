@@ -1,9 +1,10 @@
+from qcontextapi.widgets import ScrollArea, Layout, Label, Frame, StackedWidget
+from qcontextapi.utils import Icon
+from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 from typing import Any
 
-from ..widgets import ScrollArea, Layout, Label, Frame, StackedWidget, ui
-from ..misc import Icons, api
 from .. import css
 
 
@@ -17,7 +18,7 @@ class CP_Item(Frame):
             margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
             items=[
                 Label(self, 'ItemIconLbl').init(
-                    icon=Icons.from_bytes(item['icon']).adjusted(size=(50, 50))
+                    icon=Icon.from_bytes(item['icon']).adjusted(size=(50, 50))
                 ), Layout.Left,
                 Layout.vertical().init(
                     items=[

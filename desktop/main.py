@@ -1,15 +1,16 @@
 from PyQt5.QtWidgets import QApplication
 import sys
 
-from src.app import App
+from src import App
 
 
 if __name__ == '__main__':
     qapp = QApplication(sys.argv)
-    qapp.setStyle('Windows')
+    # qapp.setStyle('Windows')
     app = App().init()
     app.show()
     sys.exit(qapp.exec_())
+
 
 # ToDo: fix QPushButton.disabled Icon
 # ToDo: display micro-instruction below description during creation of category
@@ -21,3 +22,6 @@ if __name__ == '__main__':
 # ToDo: Move toggle LeftMenu button to the horizontal layout together with search bar for categories
 # ToDo: Add search bar to items
 # ToDo: Display Category.title (or topic as All/Favourite) when displaying items
+# ToDo: when SplitterWidget resized to max resizing the app through Panel breaks
+# ToDo: Fix min/max App size (caused by min-size of inner qcontextapi)
+# ToDo: Change SplitterHandle color

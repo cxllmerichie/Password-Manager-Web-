@@ -1,7 +1,8 @@
+from qcontextapi.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget
+from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget, ui
 from ..misc import Icons, api
 from .view_main import MainView
 from .. import css

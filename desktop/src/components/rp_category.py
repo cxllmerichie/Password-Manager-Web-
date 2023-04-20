@@ -1,9 +1,11 @@
+from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
+from qcontextapi.utils import Icon
+from qcontextapi.customs import FavouriteButton
+from qcontextapi import ui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, ui
-from ..custom import FavouriteButton, ImageButton
 from ..misc import Icons, api
 from .. import css
 
@@ -22,7 +24,7 @@ class RP_Category(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         FavouriteButton(self).init(
-                            icon=Icons.STAR.adjusted(size=(30, 30)), slot=self.toggle_favourite
+                            slot=self.toggle_favourite
                         ), Layout.Left,
                         Button(self, 'EditBtn', False).init(
                             icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
@@ -158,7 +160,7 @@ class RP_Category(Frame):
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(category['title'])
         self.ImageButton.setDisabled(True)
-        self.ImageButton.setIcon(Icons.from_bytes(category['icon']).icon)
+        self.ImageButton.setIcon(Icon.from_bytes(category['icon']).icon)
         self.DescriptionInput.setText(category['description'])
         self.DescriptionInput.setDisabled(True)
         self.ErrorLbl.setText('')
@@ -186,7 +188,7 @@ class RP_Category(Frame):
         if (category := api.create_category(category)).get('id'):
             self.category = category
             self.TitleInput.setText(category['title'])
-            self.ImageButton.setIcon(Icons.from_bytes(category['icon']).icon)
+            self.ImageButton.setIcon(Icon.from_bytes(category['icon']).icon)
             self.ImageButton.setDisabled(True)
             self.ErrorLbl.setText('')
             self.TitleInput.setEnabled(False)

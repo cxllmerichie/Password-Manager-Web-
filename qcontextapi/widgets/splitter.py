@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from typing import Iterable
 
 from .widget import Widget
-from ._wrapper import Wrapper
+from .._wrapper import Wrapper
 
 
 class SplitterHandle(Widget):
