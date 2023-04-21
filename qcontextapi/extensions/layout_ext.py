@@ -27,7 +27,7 @@ class LayoutExt:
         elif isinstance(obj, QLayoutItem):
             self.addLayout(obj)
         else:
-            raise TypeError(f'Can not add object to {self} because {obj} has unsupported type {type(obj)}')
+            raise TypeError(f'{obj} has unsupported type {type(obj)} to `add` to {self}')
         return obj
 
     def add_items(self, items: Sequence[QObject]):

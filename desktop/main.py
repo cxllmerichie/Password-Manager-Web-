@@ -11,12 +11,12 @@ if __name__ == '__main__':
     app.show()
     sys.exit(qapp.exec_())
 
+# ToDo: Make LeftMenu to be SplitterWidget
 
 # ToDo: fix QPushButton.disabled Icon
 # ToDo: display micro-instruction below description during creation of category
 # ToDo: display "No items yet" in CentralPagesItems when category does not have items
 # ToDo: Fix 'elided' in CentralPagesItems when resizing SplitterWidgets
-# ToDo: Make LeftMenu to be SplitterWidget
 # ToDo: Add search bar to categories
 # ToDo: Move toggle LeftMenu button to the horizontal layout together with search bar for categories
 # ToDo: Add search bar for items
@@ -28,6 +28,7 @@ if __name__ == '__main__':
 # ToDo: user profile and settings
 # ToDo: local/remote storage (fetch from both if local chosen, any new added to local, colors of local/remote are different)
 
+# ToDo: create CACHE class for `qcontextapi` to store there categories, items, fields and ids instead of setting them as attributes
 # ToDo: add password generating procedure (fetch from api)
 # ToDo: create "Loader" using threads while waiting for displaying items in CentralPagesItems
 # ToDo: multilang (translations)

@@ -1,5 +1,5 @@
 from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget
-from qcontextapi.extensions import SideMenuExt
+from qcontextapi.extensions import SideMenuExt, SplitterWidgetExt
 from qcontextapi.utils import Icon
 from qcontextapi import ui
 from qcontextapi.customs import MenuButton
@@ -11,11 +11,11 @@ from ..misc import Icons, api, Sizes
 from .. import css
 
 
-class LeftMenu(SideMenuExt, Widget):
+class LeftMenu(SplitterWidgetExt, Widget):
     def __init__(self, parent: QWidget, width: int):
         Widget.__init__(self, parent, self.__class__.__name__,
                         stylesheet=css.left_menu.css + css.components.scroll)
-        SideMenuExt.__init__(self, width, Qt.Horizontal)
+        SplitterWidgetExt.__init__(self, width)
 
     def init(self) -> 'LeftMenu':
         categories = api.get_categories()

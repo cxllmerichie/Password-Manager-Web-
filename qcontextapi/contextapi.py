@@ -1,17 +1,17 @@
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings as _QSettings
 import socket as _socket
 
 
-class ContextApi:
-    settings: QSettings = QSettings(_socket.gethostname(), __file__)
+class ContextAPI:
+    __settings = _QSettings(_socket.gethostname(), __file__)
 
     @property
     def token(self):
-        return self.settings.value('token')
+        return self.__settings.value('token')
 
     @token.setter
     def token(self, token: str):
-        self.settings.setValue('token', token)
+        self.__settings.setValue('token', token)
 
 
-ui = ContextApi()
+ui = ContextAPI()

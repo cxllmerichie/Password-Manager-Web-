@@ -16,18 +16,19 @@ class MainView(Widget):
 
     def init(self) -> 'MainView':
         frame = Frame(self, 'MainViewFrame')
-        splitter = Splitter(frame, 'MainViewSplitter').init(items=[
-            CentralPages(self).init(),
-            RightPages(self, 300).init()
-        ])
+        central_pages = CentralPages(self).init()
+        right_pages = RightPages(self, 300).init()
         self.setLayout(Layout.vertical().init(
             items=[
                 Panel(self).init(), Qt.AlignTop,
                 frame.init(
                     layout=Layout.horizontal().init(
                         items=[
-                            LeftMenu(self, 220).init(),
-                            splitter
+                            Splitter(frame, 'MainViewSplitter').init(items=[
+                                LeftMenu(self, 220).init(),
+                                central_pages,
+                                right_pages
+                            ])
                         ]
                     )
                 )
