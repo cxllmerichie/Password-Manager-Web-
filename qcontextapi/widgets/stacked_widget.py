@@ -1,13 +1,13 @@
 from PyQt5.QtWidgets import QWidget, QStackedWidget
 from PyQt5.QtCore import Qt
 
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
-class StackedWidget(Wrapper, QStackedWidget):
+class StackedWidget(ContextObjectExt, QStackedWidget):
     def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None):
         QStackedWidget.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
         if stylesheet:
             self.setStyleSheet(stylesheet)
             self.setAttribute(Qt.WA_StyledBackground, True)

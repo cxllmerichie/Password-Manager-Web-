@@ -18,7 +18,7 @@ class CP_Item(Frame):
             margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
             items=[
                 Label(self, 'ItemIconLbl').init(
-                    icon=Icon.from_bytes(item['icon']).adjusted(size=(50, 50))
+                    icon=Icon(item['icon'], (50, 50))
                 ), Layout.Left,
                 Layout.vertical().init(
                     items=[

@@ -1,39 +1,75 @@
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QSize
-from typing import Iterable
 import base64
 import os
+from loguru import logger
+
+from .size import Size
 
 
 class Icon:
-    root = '../qcontextapi/assets'
+    IconType = type[QIcon, str, bytes]
+    SizeType = type[Size, QSize, tuple[int, int], Ellipsis, None]
 
-    def __init__(self, filename: str, size: tuple[int, int], icon: QIcon = None):
-        if isinstance(filename, str):
-            if not os.path.exists(filepath := self.path(filename)):
-                raise FileNotFoundError(f'file: {filename} not found for `Icon`')
-            self.icon = QIcon(filepath)
-        else:
-            self.icon = icon
-        if isinstance(size, tuple):
-            self.size: QSize = QSize(*size)
+    root = '../qcontextapi/.assets'
+    __icon: QIcon = None
+    __size: QSize = None
 
-    @staticmethod
-    def path(filename: str, root: str = '.assets', middleware: Iterable[str] = ('icons', )) -> str:
-        return os.path.join(os.path.abspath(root), *middleware, filename)
-
-    def adjusted(self, filename: str = None, size: tuple[int, int] | QSize = None) -> 'Icon':
-        if filename:
-            self.icon = QIcon(self.path(filename))
+    def __init__(self, instance: IconType, size: SizeType = None):
+        self.icon = instance
         if size:
-            self.size = QSize(*size) if isinstance(size, tuple) else size
-        return self
+            self.size = size
 
-    @staticmethod
-    def from_bytes(icon_bytes: bytes | str) -> 'Icon':
-        if isinstance(icon_bytes, str):
-            icon_bytes = eval(icon_bytes)
-        pixmap = QPixmap()
-        png = base64.b64encode(icon_bytes).decode('utf-8')
-        pixmap.loadFromData(base64.b64decode(png))
-        return Icon(..., ..., QIcon(pixmap))
+    @property
+    def icon(self) -> QIcon:
+        return self.__icon
+
+    @property
+    def size(self) -> QSize:
+        return self.__size
+
+    @icon.setter
+    def icon(self, instance: IconType) -> None:
+        """
+
+        :param instance: QIcon, string filename with already set Icon.root, icon bytes
+        :return:
+        """
+        if isinstance(instance, QIcon):
+            self.__icon = instance
+        elif isinstance(instance, str):
+            if os.path.exists(filepath := os.path.join(os.path.abspath(self.root), instance)):
+                self.__icon = QIcon(filepath)
+            elif isinstance((icon_bytes := eval(instance)), bytes):
+                pixmap = QPixmap()
+                pixmap.loadFromData(base64.b64decode(base64.b64encode(icon_bytes).decode('utf-8')), 'PNG')
+                self.__icon = QIcon(pixmap)
+            else:
+                raise FileNotFoundError(f'file: {filepath} not found for `Icon`')
+        else:
+            raise AttributeError(f'unknown type ({type(instance)}) of instance ({instance}), can not set Icon.icon')
+
+    @size.setter
+    def size(self, size: SizeType) -> None:
+        """
+
+        :param size: QSize, qcontextapi.Size, tuple[int, int]
+        :return:
+        """
+        if isinstance(size, tuple):
+            self.__size = QSize(*size)
+        elif isinstance(size, Size):
+            self.__size = QSize(*size.size)
+        elif isinstance(size, QSize):
+            self.__size = size
+        else:
+            raise AttributeError(f'unknown type ({type(size)}) of size ({size}), can not set Icon.size')
+
+    def adjusted(self, instance: IconType = None, size: SizeType = None) -> 'Icon':
+        if not instance and not size:
+            logger.warning('Icon.adjusted() called without parameters. Redundant call.')
+        if instance:
+            self.icon = instance
+        if size:
+            self.size = size
+        return self

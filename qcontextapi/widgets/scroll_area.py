@@ -4,13 +4,13 @@ from typing import Sequence
 
 from .frame import Frame
 from .layout import Layout
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
-class ScrollArea(Wrapper, QScrollArea):
+class ScrollArea(ContextObjectExt, QScrollArea):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QScrollArea.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
 
     def init(
             self, *,

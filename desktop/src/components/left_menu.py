@@ -61,7 +61,7 @@ class LeftMenu(SideMenuExt, Widget):
         for category in categories:
             layout.addWidget(
                 MenuButton(self).init(
-                    icon=Icon.from_bytes(category['icon']).adjusted(size=Sizes.MenuBtnIcon.size), text=category['title'],
+                    icon=Icon(category['icon'], Sizes.MenuBtnIcon), text=category['title'],
                     total=len(category['items']), slot=lambda checked, c=category: ui.RP_Category.show_category(c)
                 )
             )

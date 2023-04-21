@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from typing import Iterable
 
 from .widget import Widget
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
 class SplitterHandle(Widget):
@@ -11,10 +11,10 @@ class SplitterHandle(Widget):
         super().__init__(parent, name, True)
 
 
-class Splitter(Wrapper, QSplitter):
+class Splitter(ContextObjectExt, QSplitter):
     def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None):
         QSplitter.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
         if stylesheet:
             self.setStyleSheet(stylesheet)
             self.setAttribute(Qt.WA_StyledBackground, True)

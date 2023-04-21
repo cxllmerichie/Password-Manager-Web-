@@ -160,7 +160,7 @@ class RP_Category(Frame):
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(category['title'])
         self.ImageButton.setDisabled(True)
-        self.ImageButton.setIcon(Icon.from_bytes(category['icon']).icon)
+        self.ImageButton.setIcon(Icon(category['icon']).icon)
         self.DescriptionInput.setText(category['description'])
         self.DescriptionInput.setDisabled(True)
         self.ErrorLbl.setText('')
@@ -187,8 +187,8 @@ class RP_Category(Frame):
         }
         if (category := api.create_category(category)).get('id'):
             self.category = category
-            self.TitleInput.setText(category['title'])
-            self.ImageButton.setIcon(Icon.from_bytes(category['icon']).icon)
+            self.TitleInput.setText(category['title'], ...)
+            self.ImageButton.setIcon(Icon(category['icon']).icon)
             self.ImageButton.setDisabled(True)
             self.ErrorLbl.setText('')
             self.TitleInput.setEnabled(False)

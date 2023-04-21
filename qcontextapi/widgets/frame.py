@@ -1,12 +1,12 @@
 from PyQt5.QtWidgets import QFrame, QWidget, QLayout
 
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
-class Frame(Wrapper, QFrame):
+class Frame(ContextObjectExt, QFrame):
     def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None):
         QFrame.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
         if stylesheet:
             self.setStyleSheet(stylesheet)
 

@@ -3,13 +3,13 @@ from PyQt5.QtWidgets import QPushButton, QWidget, QSizePolicy
 from PyQt5.QtCore import QSize
 
 from ..utils import Icon
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
-class Button(Wrapper, QPushButton):
+class Button(ContextObjectExt, QPushButton):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QPushButton.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
 
     def init(
             self, *,

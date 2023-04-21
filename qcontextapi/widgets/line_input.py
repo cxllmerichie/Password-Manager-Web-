@@ -1,13 +1,13 @@
 from PyQt5.QtWidgets import QLineEdit, QWidget
 from PyQt5.QtCore import Qt
 
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
-class LineInput(Wrapper, QLineEdit):
+class LineInput(ContextObjectExt, QLineEdit):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QLineEdit.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
 
     def init(
             self, *,

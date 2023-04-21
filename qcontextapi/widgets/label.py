@@ -3,13 +3,13 @@ from PyQt5.QtWidgets import QLabel, QWidget, QSizePolicy
 from PyQt5.QtCore import Qt, QSize
 
 from ..utils import Icon
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 
 
-class Label(Wrapper, QLabel):
+class Label(ContextObjectExt, QLabel):
     def __init__(self, parent: QWidget, name: str, visible: bool = True):
         QLabel.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, visible)
+        ContextObjectExt.__init__(self, parent, name, visible)
 
     def paintEvent(self, event):
         if self.property('elided'):

@@ -1,26 +1,11 @@
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QSettings
-from contextlib import suppress
+from contextlib import suppress as _suppress
 import uuid
-import socket
+
+from ..contextapi import ui
 
 
-class UI:
-    settings: QSettings = QSettings(socket.gethostname(), __file__)
-
-    @property
-    def token(self):
-        return self.settings.value('token')
-
-    @token.setter
-    def token(self, token: str):
-        self.settings.setValue('token', token)
-
-
-ui = UI()
-
-
-class Wrapper:
+class ContextObjectExt:
     def __init__(self, parent: QWidget = None, name: str = str(uuid.uuid4()), visible: bool = True):
         if parent and name:
             self.setObjectName(name)
@@ -32,5 +17,5 @@ class Wrapper:
             while p := self.core.parent():
                 self.core = p
 
-        with suppress(Exception):
+        with _suppress(Exception):
             self.setVisible(visible)

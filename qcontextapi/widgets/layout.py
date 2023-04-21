@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from typing import Union
 from abc import ABC
 
-from .._wrapper import Wrapper
+from ..extensions import ContextObjectExt
 from ..extensions import LayoutExt
 
 
@@ -45,13 +45,13 @@ class Layout(ABC):
         return Layout.vertical(parent, name) if orientation is Layout.Vertical else Layout.horizontal(parent, name)
 
 
-class VLayout(Wrapper, LayoutExt, QVBoxLayout):
+class VLayout(ContextObjectExt, LayoutExt, QVBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QVBoxLayout.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, True)
+        ContextObjectExt.__init__(self, parent, name, True)
 
 
-class HLayout(Wrapper, LayoutExt, QHBoxLayout):
+class HLayout(ContextObjectExt, LayoutExt, QHBoxLayout):
     def __init__(self, parent: QWidget = None, name: str = None):
         QHBoxLayout.__init__(self, parent)
-        Wrapper.__init__(self, parent, name, True)
+        ContextObjectExt.__init__(self, parent, name, True)

@@ -25,5 +25,5 @@ class ImageButton(Button):
             with open(filepath, 'rb') as file:
                 icon_bytes = file.read()
                 self.icon_bytes = icon_bytes
-                self.setIcon(Icon.from_bytes(icon_bytes).icon)
+                self.setIcon(Icon(icon_bytes).icon)
                 slot()
