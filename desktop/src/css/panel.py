@@ -1,39 +1,39 @@
-from ..misc import Sizes, Colors
+from ..misc import SIZES, COLORS
 
 
 css: str = f'''
 #Panel {{
-    background-color: {Colors.PANEL};
-    min-height: {Sizes.Panel.h}px;
-    max-height: {Sizes.Panel.h}px;
+    background-color: {COLORS.PANEL};
+    min-height: {SIZES.Panel.h}px;
+    max-height: {SIZES.Panel.h}px;
 }}
 
 #ToggleLeftMenuBtn {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
 }}
 
 #ToggleLeftMenuBtn:hover {{
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
 }}
 
 #PanelMinimizeBtn,
 #PanelRestoreBtn,
 #PanelCloseBtn {{
     border: none;
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
 }}
 
 #PanelMinimizeBtn:hover,
 #PanelRestoreBtn:hover {{
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
 }}
 
 #PanelCloseBtn:hover {{
-    background-color: {Colors.RED};
+    background-color: {COLORS.RED};
 }}
 
 #PanelTitleLbl {{
-    color: {Colors.TEXT_PRIMARY};
+    color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
     font-weight: bold;
 }}

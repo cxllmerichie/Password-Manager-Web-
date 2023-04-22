@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QLayout
 from PyQt5.QtCore import Qt
 
 from ..extensions import ContextObjectExt
@@ -11,3 +11,11 @@ class Widget(ContextObjectExt, QWidget):
         if stylesheet:
             self.setAttribute(Qt.WA_StyledBackground, True)
             self.setStyleSheet(stylesheet)
+
+    def init(
+            self, *,
+            layout: QLayout = None
+    ) -> 'Widget':
+        if layout:
+            self.setLayout(layout)
+        return self

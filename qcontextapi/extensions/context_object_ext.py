@@ -14,7 +14,7 @@ class ContextObjectExt:
             self.setObjectName(name)
             self.register(parent, name, self)
             self.register(self, parent.objectName(), parent)
-            self.register(_contextapi.ui, name, self)
+            self.register(_contextapi.CONTEXT, name, self)
 
             self.core = parent
             while p := self.core.parent():
@@ -25,7 +25,8 @@ class ContextObjectExt:
                 attributes.append('`parent`')
             if not name:
                 attributes.append('`name`')
-            _logger.warning(f"{self.__class__.__name__} not registered in `ContextAPI` since {' and '.join(attributes)} not specified")
+            if _contextapi.CONTEXT.debug:
+                _logger.warning(f"{self.__class__.__name__} not registered in `ContextAPI` since {' and '.join(attributes)} not specified")
 
         with _suppress(Exception):
             self.setVisible(visible)
@@ -41,12 +42,12 @@ class ContextObjectExt:
         """
         key = parent.__class__.__name__
         self.__blacklist[key] = self.__blacklist.get(key, [])
-        if name in self.__blacklist[key]:
-            return _logger.warning(f'{name} blacklisted in {key}')
-        try:
-            getattr(parent, name)
-            delattr(parent, name)
-            self.__blacklist[key].append(name)
-            _logger.warning(f'{name} already registered in {key}')
-        except AttributeError:
-            setattr(parent, name, child)
+        if name not in self.__blacklist[key]:
+            try:
+                getattr(parent, name)
+                delattr(parent, name)
+                self.__blacklist[key].append(name)
+                if _contextapi.CONTEXT.debug:
+                    _logger.warning(f'{name} already registered in {key}')
+            except AttributeError:
+                setattr(parent, name, child)

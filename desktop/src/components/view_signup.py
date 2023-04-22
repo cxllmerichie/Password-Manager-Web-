@@ -1,10 +1,10 @@
 from qcontextapi.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget
-from qcontextapi import ui
+from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..misc import Icons, api
+from ..misc import ICONS, api
 from .view_main import MainView
 from .. import css
 
@@ -19,7 +19,7 @@ class SignUp(Widget):
                 spacing=10, alignment=Qt.AlignVCenter,
                 items=[
                     Button(self, 'AuthExitBtn').init(
-                        icon=Icons.CROSS, slot=self.parent().parent().close
+                        icon=ICONS.CROSS, slot=self.parent().parent().close
                     ), Layout.RightTop,
                     Spacer(False, True),
                     Label(self, 'InfoLbl').init(
@@ -69,7 +69,7 @@ class SignUp(Widget):
                         wrap=True, alignment=Layout.Center
                     ), Layout.Center,
                     Button(self, 'AuthTextBtn').init(
-                        text='Already have an account?', slot=lambda: ui.CentralWidget.setCurrentIndex(0)
+                        text='Already have an account?', slot=lambda: CONTEXT.CentralWidget.setCurrentIndex(0)
                     ), Qt.AlignHCenter,
                     Button(self, 'AuthMainBtn').init(
                         text='Create Account', slot=self.sign_up
@@ -115,5 +115,5 @@ class SignUp(Widget):
         if not (token := api.create_user(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
         api.set_token(token)
-        ui.CentralWidget.addWidget(widget := MainView(self).init())
-        ui.CentralWidget.setCurrentWidget(widget)
+        CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())
+        CONTEXT.CentralWidget.setCurrentWidget(widget)

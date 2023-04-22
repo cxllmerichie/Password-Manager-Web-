@@ -25,7 +25,7 @@ async def get_categories(user_id: int, limit: int = INF, offset: int = 0, schema
 
 
 async def update_category(category_id: int, category: schemas.CategoryCreate) -> schemas.Category:
-    db_category = await (await db.update(category, dict(id=category_id), schemas.Category)).first()
+    db_category = await (await db.update(category, dict(id=category_id), schemas.Category, rel_depth=2)).first()
     return db_category
 
 

@@ -1,26 +1,26 @@
-from ..misc import Colors, Sizes
+from ..misc import COLORS, SIZES
 
 
 css: str = f'''
 #SaveBtn {{
-    background-color: {Colors.GREEN};
+    background-color: {COLORS.GREEN};
 }}
 
 #SaveBtn:hover {{
-    background-color: {Colors.GREEN_HOVER};
+    background-color: {COLORS.GREEN_HOVER};
 }}
 
 #CancelBtn {{
-    background-color: {Colors.RED};
+    background-color: {COLORS.RED};
 }}
 
 #CancelBtn:hover {{
-    background-color: {Colors.RED_HOVER};
+    background-color: {COLORS.RED_HOVER};
 }}
 
 #SaveBtn,
 #CancelBtn {{
-    color: {Colors.TEXT_PRIMARY};
+    color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
     min-width: 100px;
     min-height: 30px;
@@ -30,8 +30,8 @@ css: str = f'''
 }}
 
 #CreateBtn {{
-    background-color: {Colors.GREEN};
-    color: {Colors.TEXT_PRIMARY};
+    background-color: {COLORS.GREEN};
+    color: {COLORS.TEXT_PRIMARY};
     min-width: 200px;
     min-height: 30px;
     font-size: 16px;
@@ -44,7 +44,7 @@ css: str = f'''
 }}
 
 #IconBtn {{
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
     min-width: 120px;
     min-height: 120px;
     border-radius: 59px;
@@ -54,9 +54,9 @@ css: str = f'''
 #TitleInput,
 #DescriptionInput {{
     border: none;
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
     min-width: 180px;
-    color: {Colors.TEXT_PRIMARY};
+    color: {COLORS.TEXT_PRIMARY};
     font-size: 18px;
     padding: 5px;
     border-radius: 5px;
@@ -69,24 +69,24 @@ css: str = f'''
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
 }}
 
 #ControlBtns {{
 }}
 
 #ErrorLbl {{
-    color: {Colors.TEXT_ALERT};
+    color: {COLORS.TEXT_ALERT};
     font-size: 16px;
-    min-width: {Sizes.ERROR.w}px;
-    min-height: {Sizes.ERROR.h}px;
+    min-width: {SIZES.ERROR.w}px;
+    min-height: {SIZES.ERROR.h}px;
 }}
 
 #AddDocumentBtn,
 #AddFieldBtn,
 #AddItemBtn {{
-    color: {Colors.TEXT_PRIMARY};
-    background-color: {Colors.TRANSPARENT};
+    color: {COLORS.TEXT_PRIMARY};
+    background-color: {COLORS.TRANSPARENT};
     font-size: 14px;
     border: none;
     min-height: 30px;
@@ -108,7 +108,7 @@ css: str = f'''
 }}
 
 #FieldScrollArea {{
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
     min-width: 300px;
     min-height: 200px;
     border: none;
@@ -116,36 +116,43 @@ css: str = f'''
 }}
 
 #FieldScrollAreaWidget {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
 }}
 '''
 
-field: str = f'''
-#FieldCopyBtn,
-#FieldHideBtn,
-#FieldDeleteBtn,
-#FieldSaveBtn,
-#FieldEditBtn {{
-    border: none;
-    border-radius: 9px;
-}}
 
-#FieldNameInput,
-#FieldValueInput {{
-    color: {Colors.TEXT_PRIMARY};
-    border: none;
-    min-height: 30px;
-    background-color: {Colors.TRANSPARENT};
-    font-size: 16px;
-}}
-
-#FieldNameInput {{
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}}
-
-#FieldValueInput {{
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}}
-'''
+def field(name: str) -> str:
+    return f'''
+    #Field{name} {{
+        background-color: {COLORS.DARK_GRAY};
+        border-radius: 5px;
+    }}
+            
+    #FieldCopyBtn,
+    #FieldHideBtn,
+    #FieldDeleteBtn,
+    #FieldSaveBtn,
+    #FieldEditBtn {{
+        border: none;
+        border-radius: 9px;
+    }}
+    
+    #FieldNameInput,
+    #FieldValueInput {{
+        color: {COLORS.TEXT_PRIMARY};
+        border: none;
+        min-height: 30px;
+        background-color: {COLORS.TRANSPARENT};
+        font-size: 16px;
+    }}
+    
+    #FieldNameInput {{
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }}
+    
+    #FieldValueInput {{
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }}
+    '''

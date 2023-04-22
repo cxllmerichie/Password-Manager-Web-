@@ -4,6 +4,7 @@ import socket as _socket
 
 class ContextAPI:
     __settings = _QSettings(_socket.gethostname(), __file__)
+    debug: bool = False
 
     @property
     def token(self):
@@ -14,4 +15,4 @@ class ContextAPI:
         self.__settings.setValue('token', token)
 
 
-ui = ContextAPI()
+CONTEXT = ContextAPI()

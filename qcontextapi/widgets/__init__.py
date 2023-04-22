@@ -1,7 +1,7 @@
 from .widget import Widget
 from .frame import Frame
 from .stacked_widget import StackedWidget
-from .splitter import Splitter, SplitterHandle
+from .splitter import Splitter, SplitterHandle, SplitterWidget
 from .scroll_area import ScrollArea
 
 from .button import Button

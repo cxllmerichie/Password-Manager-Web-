@@ -1,9 +1,9 @@
-from ..misc import Colors, Sizes
+from ..misc import COLORS
 
 
 scroll: str = f'''
 QScrollBar:vertical {{
-    background: {Colors.TRANSPARENT};
+    background: {COLORS.TRANSPARENT};
     width: 7px;
     border: none;
     border-radius: 3px;
@@ -11,12 +11,12 @@ QScrollBar:vertical {{
 }}
 
 QScrollBar::handle:vertical {{
-    background: {Colors.RED};
+    background: {COLORS.RED};
     border-radius: 3px;
 }}
 
 QScrollBar::handle:vertical:hover {{
-    background: {Colors.RED_HOVER};
+    background: {COLORS.RED_HOVER};
 }}
 
 QScrollBar::add-line:vertical {{
@@ -43,7 +43,7 @@ img_btn = f'''
 }}
 
 #ImageButton {{
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
     min-width: 120px;
     min-height: 120px;
     border-radius: 59px;
@@ -53,20 +53,22 @@ img_btn = f'''
 
 fav_btn = f'''
 #FavouriteButton {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
 }}
 '''
 
 splitter = f'''
 #MainViewSplitter {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.RED};
 }}
+'''
 
-#MainViewSplitterHandle {{
-    background-color: {Colors.TRANSPARENT};
-}}
-
-#MainViewSplitter::handle {{
-    background-color: {Colors.TRANSPARENT};
+search = f'''
+#SearchBar {{
+    background-color: {COLORS.SEARCH};
+    font-size: 18px;
+    padding: 5px;
+    color: {COLORS.TEXT_PRIMARY};
+    border: none;
 }}
 '''

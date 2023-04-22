@@ -1,9 +1,9 @@
-from ..misc import Colors
+from ..misc import COLORS
 
 
 css = f'''
 * {{
     font-family: Verdana;
-    color: {Colors.TEXT_PRIMARY};
+    color: {COLORS.TEXT_PRIMARY};
 }}
 '''

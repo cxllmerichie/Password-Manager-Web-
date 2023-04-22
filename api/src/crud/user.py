@@ -18,7 +18,7 @@ async def get_user(user_id: int = None, email: str = None, schema: type = schema
 
 
 async def update_user(user_id: int, user: schemas.UserUpdate) -> schemas.User:
-    db_user = await (await db.update(user, dict(id=user_id), schemas.User)).first()
+    db_user = await (await db.update(user, dict(id=user_id), schemas.User, rel_depth=3)).first()
     return db_user
 
 

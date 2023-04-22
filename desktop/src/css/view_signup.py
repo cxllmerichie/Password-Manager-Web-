@@ -1,9 +1,9 @@
-from ..misc import Colors, Sizes
+from ..misc import COLORS, SIZES
 
 
 css = f'''
 #SignUp {{
-    background-color: {Colors.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT_GRAY};
 }}
 
 #InputLabelEmail,
@@ -11,7 +11,7 @@ css = f'''
 #InputLabelConfpass {{
     font-size: 20px;
     font-weight: bold;
-    height: {Sizes.AuthInputLabel.h}px;
+    height: {SIZES.AuthInputLabel.h}px;
     color: white;
 }}
 
@@ -19,11 +19,11 @@ css = f'''
 #InputFieldPassword,
 #InputFieldConfpass {{
     font-size: 16px;
-    height: {Sizes.AuthInputField.h}px;
-    min-width: {Sizes.AuthInputField.w}px;
+    height: {SIZES.AuthInputField.h}px;
+    min-width: {SIZES.AuthInputField.w}px;
     border: none;
     color: white;
-    background-color: {Colors.INPUT};
+    background-color: {COLORS.INPUT};
     border-radius: 5px;
     padding: 5px;
 }}
@@ -32,28 +32,28 @@ css = f'''
 #InputFramePassword,
 #InputFrameConfpass {{
     border-radius: 10px;
-    background-color: {Colors.DARK_GRAY};
+    background-color: {COLORS.DARK_GRAY};
 }}
 
 #AuthMainBtn {{
-    min-width: {Sizes.AuthMainBtn.w}px;
-    height: {Sizes.AuthMainBtn.h}px;
+    min-width: {SIZES.AuthMainBtn.w}px;
+    height: {SIZES.AuthMainBtn.h}px;
     font-size: 20px;
     font-weight: bold;
-    background-color: {Colors.RED};
+    background-color: {COLORS.RED};
     color: white;
 }}
 
 #AuthMainBtn:hover {{
-    background-color: {Colors.RED_HOVER};
+    background-color: {COLORS.RED_HOVER};
 }}
 
 #AuthTextBtn {{
-    height: {Sizes.AuthTextBtn.h}px;
+    height: {SIZES.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
-    background-color: {Colors.TRANSPARENT};
-    min-width: {Sizes.AuthInputField.w}px;
+    background-color: {COLORS.TRANSPARENT};
+    min-width: {SIZES.AuthInputField.w}px;
 }}
 
 #AuthTextBtn:hover {{
@@ -61,19 +61,19 @@ css = f'''
 }}
 
 #AuthExitBtn {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
     border: none;    
 }}
 
 #AuthExitBtn:hover {{
-    background-color: {Colors.RED_HOVER};
+    background-color: {COLORS.RED_HOVER};
 }}
 
 #ErrorLbl {{
     color: red;
     font-size: 16px;
-    min-width: {Sizes.ERROR.w}px;
-    min-height: {Sizes.ERROR.h}px;
+    min-width: {SIZES.ERROR.w}px;
+    min-height: {SIZES.ERROR.h}px;
 }}
 
 #InfoLbl {{

@@ -1,3 +1,2 @@
-from .colors import Colors
-from .sizes import Sizes, Size
-from .icons import Icons, Icon
+from .assets import COLORS, SIZES, Size, ICONS, Icon
+from .api import API

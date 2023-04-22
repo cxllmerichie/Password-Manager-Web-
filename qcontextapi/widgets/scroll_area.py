@@ -8,9 +8,11 @@ from ..extensions import ContextObjectExt
 
 
 class ScrollArea(ContextObjectExt, QScrollArea):
-    def __init__(self, parent: QWidget, name: str, visible: bool = True):
+    def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None):
         QScrollArea.__init__(self, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
+        if stylesheet:
+            self.setStyleSheet(stylesheet)
 
     def init(
             self, *,

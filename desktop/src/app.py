@@ -15,11 +15,11 @@ class App(QMainWindow):
         self.setStyleSheet(css.app.css + css.status_bar.css)
 
     def init(self) -> 'App':
-        from .misc import Sizes
+        from .misc import SIZES
         from .components.central_widget import CentralWidget
         from .components.status_bar import StatusBar
 
-        self.resize(Sizes.App)
+        self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
 
         self.setCentralWidget(CentralWidget(self).init())

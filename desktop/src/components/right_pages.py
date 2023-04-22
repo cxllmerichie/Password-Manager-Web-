@@ -8,10 +8,10 @@ from .. import css
 
 
 class RightPages(SplitterWidgetExt, StackedWidget):
-    def __init__(self, parent: QWidget, width: int):
+    def __init__(self, parent: QWidget):
         StackedWidget.__init__(self, parent, self.__class__.__name__,
                                stylesheet=css.right_pages.css)
-        SplitterWidgetExt.__init__(self, width)
+        SplitterWidgetExt.__init__(self, 300)
 
     def init(self) -> 'RightPages':
         self.addWidget(RP_Category(self).init())

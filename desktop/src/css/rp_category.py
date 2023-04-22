@@ -1,26 +1,26 @@
-from ..misc import Colors, Sizes
+from ..misc import COLORS, SIZES
 
 
 css: str = f'''
 #SaveBtn {{
-    background-color: {Colors.GREEN};
+    background-color: {COLORS.GREEN};
 }}
 
 #SaveBtn:hover {{
-    background-color: {Colors.GREEN_HOVER};
+    background-color: {COLORS.GREEN_HOVER};
 }}
 
 #CancelBtn {{
-    background-color: {Colors.RED};
+    background-color: {COLORS.RED};
 }}
 
 #CancelBtn:hover {{
-    background-color: {Colors.RED_HOVER};
+    background-color: {COLORS.RED_HOVER};
 }}
 
 #SaveBtn,
 #CancelBtn {{
-    color: {Colors.TEXT_PRIMARY};
+    color: {COLORS.TEXT_PRIMARY};
     min-width: 100px;
     min-height: 30px;
     font-size: 16px;
@@ -29,8 +29,8 @@ css: str = f'''
 }}
 
 #CreateBtn {{
-    background-color: {Colors.GREEN};
-    color: {Colors.TEXT_PRIMARY};
+    background-color: {COLORS.GREEN};
+    color: {COLORS.TEXT_PRIMARY};
     min-width: 200px;
     min-height: 30px;
     font-size: 16px;
@@ -39,15 +39,15 @@ css: str = f'''
 }}
 
 #CreateBtn:hover {{
-    background-color: {Colors.GREEN_HOVER};
+    background-color: {COLORS.GREEN_HOVER};
 }}
 
 #TitleInput,
 #DescriptionInput {{
     border: none;
-    background-color: {Colors.LIGHT_GRAY};
-    min-width: {Sizes.CATEGORY.w}px;
-    color: {Colors.TEXT_PRIMARY};
+    background-color: {COLORS.LIGHT_GRAY};
+    min-width: {SIZES.CATEGORY.w}px;
+    color: {COLORS.TEXT_PRIMARY};
     font-size: 18px;
     padding: 5px;
     border-radius: 5px;
@@ -61,28 +61,28 @@ css: str = f'''
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
-    background-color: {Colors.TRANSPARENT};
+    background-color: {COLORS.TRANSPARENT};
 }}
 
 #ControlBtns {{
 }}
 
 #ErrorLbl {{
-    color: {Colors.TEXT_ALERT};
+    color: {COLORS.TEXT_ALERT};
     font-size: 16px;
-    min-width: {Sizes.ERROR.w}px;
-    min-height: {Sizes.ERROR.h}px;
+    min-width: {SIZES.ERROR.w}px;
+    min-height: {SIZES.ERROR.h}px;
 }}
 
 #AddItemBtn {{
-    color: {Colors.TEXT_PRIMARY};
-    background-color: {Colors.TRANSPARENT};
+    color: {COLORS.TEXT_PRIMARY};
+    background-color: {COLORS.TRANSPARENT};
     font-size: 14px;
     border: none;
     min-height: 30px;
 }}
 
 #AddItemBtn:hover {{
-    background-color: {Colors.HOVER};
+    background-color: {COLORS.HOVER};
 }}
 '''

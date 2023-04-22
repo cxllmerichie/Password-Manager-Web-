@@ -1,5 +1,5 @@
 from qcontextapi.widgets import StackedWidget
-from qcontextapi import ui
+from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
@@ -17,8 +17,8 @@ class CentralWidget(StackedWidget):
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
         # ui.token = None
-        if not ui.token:
-            self.setCurrentWidget(ui.SignIn)
+        if not CONTEXT.token:
+            self.setCurrentWidget(CONTEXT.SignIn)
         else:
             self.addWidget(widget := MainView(self).init())
             self.setCurrentWidget(widget)

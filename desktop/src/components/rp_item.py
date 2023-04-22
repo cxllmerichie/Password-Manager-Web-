@@ -1,28 +1,22 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea
 from qcontextapi.customs import FavouriteButton, ImageButton
 from qcontextapi.utils import Icon
-from qcontextapi import ui
+from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
 from typing import Any
 
-from ..misc import Icons, api, Colors
+from ..misc import ICONS, API
 from .. import css
 
 
 class Field(Frame):
-    def __init__(self, parent: QWidget, item_id: int, field: dict[str, Any] = None):
+    def __init__(self, parent: QWidget, field: dict[str, Any]):
         self.identifier = str(uuid4())
+        name = f'Field{self.identifier}'
+        super().__init__(parent, name, stylesheet=css.rp_item.field(name))
 
-        super().__init__(parent, f'Field{self.identifier}', stylesheet=css.rp_item.field + f'''
-            #Field{self.identifier} {{
-                background-color: {Colors.DARK_GRAY};
-                border-radius: 5px;
-            }}
-        ''')
-
-        self.item_id = item_id
         self.field = field
 
     def init(self) -> 'Field':
@@ -36,24 +30,24 @@ class Field(Frame):
                     placeholder='value'
                 ),
                 Button(self, 'FieldHideBtn').init(
-                    icon=Icons.EYE, slot=self.FieldValueInput.toggle_echo
+                    icon=ICONS.EYE, slot=self.FieldValueInput.toggle_echo
                 ),
                 Button(self, 'FieldCopyBtn').init(
-                    icon=Icons.COPY
+                    icon=ICONS.COPY
                 ),
                 Button(self, f'FieldEditBtn').init(
-                    icon=Icons.EDIT.adjusted(size=Icons.SAVE.size), slot=self.execute_edit
+                    icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), slot=self.execute_edit
                 ),
                 Button(self, f'FieldSaveBtn').init(
-                    icon=Icons.SAVE, slot=self.execute_save
+                    icon=ICONS.SAVE, slot=self.execute_save
                 ),
                 Button(self, f'FieldDeleteBtn').init(
-                    icon=Icons.CROSS_CIRCLE, slot=self.execute_delete
+                    icon=ICONS.CROSS_CIRCLE, slot=self.execute_delete
                 )
             ]
         ))
 
-        if self.field and self.item_id:
+        if self.field and API.item:  # add field to existing item
             self.FieldDeleteBtn.setVisible(False)
             self.FieldNameInput.setText(self.field['name'])
             self.FieldNameInput.setDisabled(True)
@@ -62,13 +56,13 @@ class Field(Frame):
             self.FieldValueInput.setDisabled(True)
             self.FieldSaveBtn.setVisible(False)
             self.FieldEditBtn.setVisible(True)
-        elif self.item_id:
+        elif API.item:  # creating field for existing item
             self.FieldDeleteBtn.setVisible(True)
             self.FieldSaveBtn.setVisible(True)
             self.FieldEditBtn.setVisible(False)
             self.FieldCopyBtn.setVisible(False)
             self.FieldHideBtn.setVisible(False)
-        else:
+        else:  # creating field while creating item
             self.FieldEditBtn.setVisible(False)
             self.FieldSaveBtn.setVisible(True)
             self.FieldCopyBtn.setVisible(False)
@@ -80,9 +74,9 @@ class Field(Frame):
     def execute_save(self):
         field = {'name': self.FieldNameInput.text(), 'value': self.FieldValueInput.text()}
         if self.field:
-            response = api.update_field(self.field['id'], field)
+            response = API.update_field(self.field['id'], field)
         else:
-            response = api.add_field(self.item_id, field)
+            response = API.add_field(API.item['id'], field)
         if response.get('id'):
             self.field = response
             self.FieldCopyBtn.setVisible(True)
@@ -99,11 +93,16 @@ class Field(Frame):
 
     @pyqtSlot()
     def execute_delete(self):
-        self.setVisible(False)
-        self.RP_Item.field_identifiers.remove(self.identifier)
+        def delete_ui_field():
+            API.field_identifiers.remove(self.identifier)
+            self.setVisible(False)
+            self.deleteLater()
         if self.field:
-            api.remove_field(self.field['id'])
-        self.deleteLater()
+            if deleted := API.remove_field(self.field['id']).get('id'):
+                delete_ui_field()
+            else:
+                self.RP_Item.ErrorLbl.setText('Internal error, please try again')
+        delete_ui_field()
 
     @pyqtSlot()
     def execute_edit(self):
@@ -119,12 +118,10 @@ class Field(Frame):
 
 class RP_Item(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.rp_item.css + css.components.scroll + css.components.img_btn + css.components.fav_btn)
-
-        self.item = None
-        self.category_id = None
-        self.field_identifiers = []
+        super().__init__(
+            parent, self.__class__.__name__,
+            stylesheet=css.rp_item.css + css.components.scroll + css.components.img_btn + css.components.fav_btn
+        )
 
     def init(self) -> 'RP_Item':
         self.setLayout(Layout.vertical().init(
@@ -134,21 +131,21 @@ class RP_Item(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         FavouriteButton(self).init(
-                            slot=self.toggle_favourite
+                            pre_slot=self.toggle_favourite
                         ), Layout.Left,
                         Button(self, 'EditBtn').init(
-                            icon=Icons.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
                         Button(self, 'RemoveBtn', False).init(
-                            icon=Icons.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
                         ),
                         Button(self, 'CloseBtn').init(
-                            icon=Icons.CROSS.adjusted(size=(30, 30)), slot=ui.RightPages.shrink
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink
                         ), Layout.Right
                     ]
                 ),
                 ImageButton(self).init(
-                    icon=Icons.ITEM
+                    icon=ICONS.ITEM
                 ), Layout.TopCenter,
                 LineInput(self, 'TitleInput').init(
                     placeholder='title'
@@ -160,10 +157,10 @@ class RP_Item(Frame):
                     layout=Layout.horizontal().init(
                         items=[
                             Button(self, 'AddDocumentBtn').init(
-                                text='Add document', icon=Icons.PLUS
+                                text='Add document', icon=ICONS.PLUS
                             ),
                             Button(self, 'AddFieldBtn').init(
-                                text='Add field', icon=Icons.PLUS, slot=self.add_field
+                                text='Add field', icon=ICONS.PLUS, slot=self.add_field
                             )
                         ]
                     )
@@ -197,11 +194,8 @@ class RP_Item(Frame):
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
         layout = self.FieldScrollArea.widget().layout()
-        item_id = None
-        if self.item:
-            item_id = self.item['id']
-        layout.addWidget(field := Field(self, item_id, field).init())
-        self.field_identifiers.append(field.identifier)
+        layout.addWidget(field := Field(self, field).init())
+        API.field_identifiers.append(field.identifier)
 
     @pyqtSlot()
     def add_document(self):
@@ -220,24 +214,32 @@ class RP_Item(Frame):
         self.AddDocumentBtn.setVisible(False)
 
     @pyqtSlot()
-    def toggle_favourite(self):
-        if self.item:
-            item = {'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite}
-            self.item = api.update_item(self.item['id'], item)
-            ui.LeftMenu.refresh_categories(api.get_categories())
+    def toggle_favourite(self) -> bool:
+        if not API.item:
+            return True
+        updated = API.update_item(API.item['id'], {
+            'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite
+        }).get('id')
+        if updated:
+            CONTEXT.LeftMenu.refresh_categories()
+            CONTEXT.CP_Items.refresh_items()
+            return True
+        self.ErrorLbl.setText('Internal error, please try again')
+        return False
 
     @pyqtSlot()
     def execute_save(self):
         title = self.TitleInput.text()
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
-        item = {'icon': self.ImageButton.icon_bytes, 'title': title,
-                'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite}
-        if (item := api.update_item(self.item['id'], item)).get('id'):
+        updated = API.update_item(API.item['id'], {
+            'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
+            'is_favourite': self.FavouriteButton.is_favourite
+        }).get('id')
+        if updated:
             self.execute_cancel()
-            self.item = item
-            ui.LeftMenu.refresh_categories(api.get_categories())
-            ui.CP_Items.refresh_items(api.get_items(self.category_id))
+            CONTEXT.LeftMenu.refresh_categories()
+            CONTEXT.CP_Items.refresh_items()
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -254,8 +256,9 @@ class RP_Item(Frame):
         self.AddDocumentBtn.setVisible(True)
 
     def show_create(self):
-        self.item = None
-        self.ImageButton.setIcon(Icons.ITEM.icon)
+        API.item = None
+        self.DeleteBtn.setVisible(False)
+        self.ImageButton.setIcon(ICONS.ITEM.icon)
         self.EditBtn.setVisible(False)
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')
@@ -265,15 +268,13 @@ class RP_Item(Frame):
         self.CreateBtn.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
-        self.item = item
-        if not self.category_id:
-            self.category_id = item['category_id']  # item shown from click through `CentralPages` items
-        self.FavouriteButton.set(item['is_favourite'])
-        self.TitleInput.setText(item['title'])
+        API.item = item
+        self.FavouriteButton.set(API.item['is_favourite'])
+        self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)
-        self.ImageButton.setIcon(Icon(item['icon']).icon)
+        self.ImageButton.setIcon(Icon(API.item['icon']).icon)
         self.ImageButton.setDisabled(True)
-        self.DescriptionInput.setText(item['description'])
+        self.DescriptionInput.setText(API.item['description'])
         self.DescriptionInput.setDisabled(True)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
@@ -281,39 +282,38 @@ class RP_Item(Frame):
         self.CreateBtn.setVisible(False)
 
         self.FieldScrollArea.clear()
-        for field in item['fields']:
+        for field in API.item['fields']:
             self.add_field(field)
 
-        ui.RightPages.setCurrentWidget(ui.RP_Item)
-        ui.RightPages.expand()
+        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Item)
+        CONTEXT.RightPages.expand()
 
     @pyqtSlot()
     def execute_create(self):
         if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
-        fields = [self.findChild(QFrame, f'Field{identifier}') for identifier in self.field_identifiers]
-        fields = [{'name': field.FieldNameInput.text(), 'value': field.FieldValueInput.text()} for field in fields]
-        item = {'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
-                'is_favourite': self.FavouriteButton.is_favourite}
-        if (item := api.create_item(self.category_id, item, fields)).get('id'):
-            self.ImageButton.setIcon(Icon(item['icon']).icon)
-            self.show_item(item)
-            self.item = item
+        created = API.create_item(
+            API.category_id,
+            item={'icon': self.ImageButton.icon_bytes, 'description': self.DescriptionInput.toPlainText(),
+                  'title': title, 'is_favourite': self.FavouriteButton.is_favourite},
+            fields=[{'name': f.FieldNameInput.text(), 'value': f.FieldValueInput.text()
+                     } for f in [self.findChild(QFrame, f'Field{identifier}') for identifier in API.field_identifiers]]
+        ).get('id')
+        if created:
+            self.ImageButton.setIcon(Icon(API.item['icon']).icon)
             self.CreateBtn.setVisible(False)
-            ui.LeftMenu.refresh_categories(api.get_categories())
-            ui.CP_Items.refresh_items(api.get_items(self.category_id))
+            self.show_item(API.item)
+            CONTEXT.LeftMenu.refresh_categories()
+            CONTEXT.CP_Items.refresh_items()
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def execute_delete(self):
-        if (item := api.delete_item(self.item['id'])).get('id'):
-            self.item = None
-            self.TitleInput.setText('')
-            self.DescriptionInput.setText('')
-            self.DeleteBtn.setVisible(False)
+        deleted = API.delete_item(API.item['id']).get('id')
+        if deleted:
             self.show_create()
-            ui.LeftMenu.refresh_categories(api.get_categories())
-            ui.CP_Items.refresh_items(api.get_items(self.category_id))
+            CONTEXT.LeftMenu.refresh_categories()
+            CONTEXT.CP_Items.refresh_items()
         else:
             self.ErrorLbl.setText('Internal error, please try again')

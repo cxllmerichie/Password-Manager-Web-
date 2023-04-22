@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Layout, Frame, Widget, Splitter
+from qcontextapi.widgets import Layout, Widget, Splitter
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
@@ -15,25 +15,16 @@ class MainView(Widget):
                          stylesheet=css.components.splitter)
 
     def init(self) -> 'MainView':
-        frame = Frame(self, 'MainViewFrame')
         central_pages = CentralPages(self).init()
-        right_pages = RightPages(self, 300).init()
+        right_pages = RightPages(self).init()
         self.setLayout(Layout.vertical().init(
             items=[
                 Panel(self).init(), Qt.AlignTop,
-                frame.init(
-                    layout=Layout.horizontal().init(
-                        items=[
-                            Splitter(frame, 'MainViewSplitter').init(items=[
-                                LeftMenu(self, 220).init(),
-                                central_pages,
-                                right_pages
-                            ])
-                        ]
-                    )
-                )
+                Splitter(self, 'MainViewSplitter').init(items=[
+                    LeftMenu(self).init(),
+                    central_pages,
+                    right_pages
+                ])
             ]
         ))
-        self.LeftMenu.expand()
-        self.RightPages.shrink()
         return self

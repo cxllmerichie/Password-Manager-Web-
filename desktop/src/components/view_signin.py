@@ -1,9 +1,9 @@
 from qcontextapi.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget
-from qcontextapi import ui
+from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..misc import Icons, api
+from ..misc import ICONS, api
 from .view_main import MainView
 from .. import css
 
@@ -18,7 +18,7 @@ class SignIn(Widget):
                 spacing=10, alignment=Qt.AlignVCenter,
                 items=[
                     Button(self, 'AuthExitBtn').init(
-                        icon=Icons.CROSS, slot=self.parent().parent().close
+                        icon=ICONS.CROSS, slot=self.parent().parent().close
                     ), Layout.RightTop,
                     Spacer(False, True),
                     Label(self, 'InfoLbl').init(
@@ -62,7 +62,7 @@ class SignIn(Widget):
                         wrap=True, alignment=Layout.Center
                     ), Layout.Center,
                     Button(self, 'AuthTextBtn').init(
-                        text='Don\'t have an account?', slot=lambda: ui.CentralWidget.setCurrentIndex(1)
+                        text='Don\'t have an account?', slot=lambda: CONTEXT.CentralWidget.setCurrentIndex(1)
                     ), Qt.AlignHCenter,
                     Button(self, 'ContinueBtn').init(
                         text='Continue', slot=self.continue_log_in
@@ -106,6 +106,6 @@ class SignIn(Widget):
         user = {'email': email, 'password': password}
         if not (token := api.login(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        ui.token = token
-        ui.CentralWidget.addWidget(widget := MainView(self).init())
-        ui.CentralWidget.setCurrentWidget(widget)
+        CONTEXT.token = token
+        CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())
+        CONTEXT.CentralWidget.setCurrentWidget(widget)

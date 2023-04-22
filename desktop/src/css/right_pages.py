@@ -1,9 +1,9 @@
-from ..misc import Colors, Sizes
+from ..misc import COLORS, SIZES
 
 
 css = f'''
 #RightPages {{
-    background-color: {Colors.RIGHT_MENU};
-    max-width: {Sizes.RightMenu.w};
+    background-color: {COLORS.RIGHT_MENU};
+    max-width: {SIZES.RightMenu.w};
 }}
 '''
