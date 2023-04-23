@@ -8,12 +8,18 @@ css: str = f'''
 '''
 
 cp_items = f'''
-#CP_Items {{
+#NoCategoriesLbl {{
+    color: {COLORS.TEXT_PRIMARY};
+    font-size: 20px;
+    font-style: italic;
+}}
+
+#ItemsScrollArea {{
     background-color: {COLORS.TRANSPARENT};
     border: none;
 }}
 
-#CP_ItemsWidget {{
+#ItemsScrollAreaWidget {{
     background-color: {COLORS.TRANSPARENT};
 }}
 

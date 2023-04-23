@@ -6,7 +6,6 @@ css = f'''
 #LetterLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
-    font-weight: bold;
 }}
 
 #LeftMenu {{
@@ -17,6 +16,7 @@ css = f'''
 #LeftMenuCategoriesLabel {{
     font-size: 20px;
     color: {COLORS.TEXT_PRIMARY};
+    font-weight: bold;
 }}
 
 #MenuButtonIconBtn {{
@@ -55,6 +55,7 @@ css = f'''
     color: {COLORS.TEXT_PRIMARY};
     font-size: 14px;
     font-style: italic;
+    max-width: 100px;
 }}
 
 #CategoriesScrollArea {{

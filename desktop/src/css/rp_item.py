@@ -65,7 +65,7 @@ css: str = f'''
 #DescriptionInput {{
 }}
 
-#RemoveBtn,
+#DeleteBtn,
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
@@ -123,7 +123,7 @@ css: str = f'''
 
 def field(name: str) -> str:
     return f'''
-    #Field{name} {{
+    #{name} {{
         background-color: {COLORS.DARK_GRAY};
         border-radius: 5px;
     }}

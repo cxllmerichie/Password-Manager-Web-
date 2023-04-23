@@ -52,6 +52,10 @@ class SIZES:
     RightMenuImage = Size(80, 80)
     LeftMenuMin = 250
     LeftMenuMax = 400
+    LeftMenuLettersMargin = 18, 0, 0, 0
+    LeftMenuTitlesMargin = 0, 20, 0, 10
+    CentralPagesLettersMargin = 18, 0, 0, 0
+
 
 
 class ICONS:

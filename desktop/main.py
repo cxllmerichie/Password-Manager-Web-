@@ -11,14 +11,11 @@ if __name__ == '__main__':
     app.show()
     sys.exit(qapp.exec_())
 
-# ToDo: Make LeftMenu to be SplitterWidget
 
 # ToDo: fix QPushButton.disabled Icon
 # ToDo: display micro-instruction below description during creation of category
 # ToDo: display "No items yet" in CentralPagesItems when category does not have items
 # ToDo: Fix 'elided' in CentralPagesItems when resizing SplitterWidgets
-# ToDo: Add search bar to categories
-# ToDo: Move toggle LeftMenu button to the horizontal layout together with search bar for categories
 # ToDo: Add search bar for items
 # ToDo: Display Category.title (or topic as All/Favourite) when displaying items
 # ToDo: when SplitterWidget resized to max resizing the app through Panel breaks

@@ -140,7 +140,7 @@ class Api:
         if item_id := response.get('id'):
             self.get_categories()
             self.item = None
-        return
+        return response
 
     @_logger.catch()
     def get_item(self, item_id: str):

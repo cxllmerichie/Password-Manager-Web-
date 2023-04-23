@@ -11,7 +11,7 @@ class MenuButton(Button):
 
     def init(
             self, *,
-            icon: Icon, text: str, total: int, alignment: Qt.Alignment = None, slot: callable = lambda: None
+            icon: Icon, text: str, total: int = 0, alignment: Qt.Alignment = None, slot: callable = lambda: None
     ) -> 'MenuButton':
         self.setLayout(Layout.horizontal().init(
             margins=(10, 5, 10, 5), spacing=10,

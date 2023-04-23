@@ -1,7 +1,7 @@
-from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget
+from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget, Spacer
 from qcontextapi.extensions import SplitterWidgetExt
 from qcontextapi.utils import Icon
-from qcontextapi.customs import MenuButton, SearchBar
+from qcontextapi.customs import MenuButton, SearchBar, LabelExtended
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
@@ -21,33 +21,28 @@ class LeftMenu(SplitterWidgetExt, Widget):
         self.setLayout(Layout.vertical().init(
             spacing=5, margins=(0, 10, 0, 10), alignment=Qt.AlignTop,
             items=[
-                SearchBar(self).init(
-                    update=self.update, placeholder='Search',
-                    items=[]
-                ),
-                Label(self, 'LeftMenuItemsLabel').init(
-                    text='Items'
-                ), Qt.AlignVCenter,
+                LabelExtended(self, 'LeftMenuItemsLabel').init(
+                    text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
+                ), Layout.Center,
                 AllItemsBtn := MenuButton(self).init(
-                    icon=ICONS.HOME, text='All items', total=0, slot=CONTEXT.CP_Items.show_all
+                    icon=ICONS.HOME, text='All items', slot=CONTEXT.CP_Items.show_all
                 ),
                 FavItemsBtn := MenuButton(self).init(
-                    icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite', slot=CONTEXT.CP_Items.show_favourite,
-                    total=0
+                    icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite', slot=CONTEXT.CP_Items.show_favourite
                 ),
-                Button(self, 'AddCategoryBtn').init(
-                    text='Category', icon=ICONS.PLUS, slot=CONTEXT.RP_Category.show_create
-                ),
-                Label(self, 'LeftMenuCategoriesLabel').init(
-                    text='Categories'
-                ),
-                Label(self, 'NoCategoriesLbl', False).init(
-                    text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter,
-                    wrap=True
+                LabelExtended(self, 'LeftMenuCategoriesLabel').init(
+                    text='Categories', margins=SIZES.LeftMenuTitlesMargin
                 ), Layout.Center,
+                Label(self, 'NoCategoriesLbl', False).init(
+                    text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter, wrap=True
+                ),
                 ScrollArea(self, 'CategoriesScrollArea', False).init(
                     horizontal=False, vertical=True, orientation=Layout.Vertical, alignment=Layout.Top, spacing=5
-                )
+                ),
+                Spacer(False, True),
+                Button(self, 'AddCategoryBtn').init(
+                    text='Category', icon=ICONS.PLUS, slot=CONTEXT.RP_Category.show_create
+                ), Layout.Bottom
             ]
         ))
         self.AllItemsBtn = AllItemsBtn
@@ -64,15 +59,19 @@ class LeftMenu(SplitterWidgetExt, Widget):
             return self.NoCategoriesLbl.setVisible(True)
         letters = set()
         categories = sorted(categories, key=lambda c: (not c['is_favourite'], c['title'], c['description']))
+        layout.addWidget(SearchBar(self).init(
+            update=self.update, placeholder='Search',
+            items=[]
+        ))
         if any([category['is_favourite'] for category in categories]):
-            layout.addWidget(Label(self, 'FavouriteLbl').init(
-                text='Favourite'
+            layout.addWidget(LabelExtended(self, 'FavouriteLbl').init(
+                text='Favourite', margins=(SIZES.LeftMenuLettersMargin[0], 10, 0, 0,)
             ))
         for category in categories:
             if not category['is_favourite'] and (letter := category['title'][0]) not in letters:
                 letters.add(letter)
-                layout.addWidget(Label(self, 'LetterLbl').init(
-                    text=letter
+                layout.addWidget(LabelExtended(self, 'LetterLbl').init(
+                    text=letter, margins=SIZES.LeftMenuLettersMargin
                 ))
             layout.addWidget(MenuButton(self).init(
                 icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),

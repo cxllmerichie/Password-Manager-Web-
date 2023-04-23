@@ -2,7 +2,7 @@ from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Fra
 from qcontextapi.customs import FavouriteButton, ImageButton
 from qcontextapi.utils import Icon
 from qcontextapi import CONTEXT
-from PyQt5.QtWidgets import QWidget, QFrame
+from PyQt5.QtWidgets import QWidget, QFrame, QApplication
 from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
 from typing import Any
@@ -33,7 +33,7 @@ class Field(Frame):
                     icon=ICONS.EYE, slot=self.FieldValueInput.toggle_echo
                 ),
                 Button(self, 'FieldCopyBtn').init(
-                    icon=ICONS.COPY
+                    icon=ICONS.COPY, slot=lambda: QApplication.clipboard().setText(self.FieldValueInput.text())
                 ),
                 Button(self, f'FieldEditBtn').init(
                     icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), slot=self.execute_edit
@@ -136,7 +136,7 @@ class RP_Item(Frame):
                         Button(self, 'EditBtn').init(
                             icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
-                        Button(self, 'RemoveBtn', False).init(
+                        Button(self, 'DeleteBtn', False).init(
                             icon=ICONS.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
                         ),
                         Button(self, 'CloseBtn').init(
@@ -205,7 +205,7 @@ class RP_Item(Frame):
     def execute_edit(self):
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
-        self.RemoveBtn.setVisible(True)
+        self.DeleteBtn.setVisible(True)
         self.SaveCancelFrame.setVisible(True)
         self.TitleInput.setDisabled(False)
         self.DescriptionInput.setDisabled(False)
@@ -247,7 +247,7 @@ class RP_Item(Frame):
     def execute_cancel(self):
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)
-        self.RemoveBtn.setVisible(False)
+        self.DeleteBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
         self.TitleInput.setDisabled(True)
         self.DescriptionInput.setDisabled(True)
@@ -293,7 +293,7 @@ class RP_Item(Frame):
         if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         created = API.create_item(
-            API.category_id,
+            API.category['id'],
             item={'icon': self.ImageButton.icon_bytes, 'description': self.DescriptionInput.toPlainText(),
                   'title': title, 'is_favourite': self.FavouriteButton.is_favourite},
             fields=[{'name': f.FieldNameInput.text(), 'value': f.FieldValueInput.text()

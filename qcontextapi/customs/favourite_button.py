@@ -9,7 +9,7 @@ from ..utils import Icon
 class FavouriteButton(Button):
     def __init__(self, parent: QWidget, is_favourite: bool = False):
         super().__init__(parent, self.__class__.__name__)
-        self.__is_favourite: bool = is_favourite
+        self.is_favourite: bool = is_favourite
         self.if_set_icon: Icon = Icon('star-fill.svg', (30, 30))
         self.if_unset_icon: Icon = Icon('star.svg', (30, 30))
 

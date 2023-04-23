@@ -15,7 +15,7 @@ class CP_Item(Frame):
                          stylesheet=css.central_pages.cp_item)
 
     def init(self, item: dict[str, Any]) -> 'CP_Item':
-        self.setLayout(Layout.horizontal(self, 'ItemLayout').init(
+        super().init(layout=Layout.horizontal(self, 'ItemLayout').init(
             margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
             items=[
                 Label(self, 'ItemIconLbl').init(
@@ -37,17 +37,34 @@ class CP_Item(Frame):
         return self
 
 
-class CP_Items(ScrollArea):
+class CP_Items(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.central_pages.cp_items + css.components.scroll)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        Frame.__init__(self, parent, self.__class__.__name__, stylesheet=css.central_pages.cp_items + css.components.scroll)
+
+    def init(self):
+        super().init(layout=Layout.vertical().init(
+            items=[
+                ScrollArea(self, 'ItemsScrollArea').init(
+                    orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, margins=(30, 10, 30, 10),
+                    horizontal=False
+                ),
+                Label(self, 'NoCategoriesLbl', False).init(
+                    text='This category does not have items yet', wrap=True, alignment=Layout.Center
+                ), Layout.Center,
+            ]
+        ))
+        self.ItemsScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        return self
 
     def refresh_items(self, items: list[dict[str, Any]] = None):
         if items is None:
             items = API.items
+        if not len(items):
+            self.ItemsScrollArea.setVisible(False)
+            return self.NoCategoriesLbl.setVisible(True)
         letters = set()
-        layout = self.widget().layout()
-        self.clear()
+        layout = self.ItemsScrollArea.widget().layout()
+        self.ItemsScrollArea.clear()
         items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
         if any([item for item in items]):
             layout.addWidget(Label(self, 'FavouriteLbl').init(
@@ -60,6 +77,8 @@ class CP_Items(ScrollArea):
                     text=letter
                 ))
             layout.addWidget(CP_Item(self).init(item))
+        self.NoCategoriesLbl.setVisible(False)
+        self.ItemsScrollArea.setVisible(True)
 
     def show_all(self):
         items = []
@@ -79,9 +98,6 @@ class CentralPages(StackedWidget):
         StackedWidget.__init__(self, parent, self.__class__.__name__, stylesheet=css.central_pages.css)
 
     def init(self) -> 'CentralPages':
-        self.addWidget(cp_items := CP_Items(self).init(
-            orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, margins=(30, 10, 30, 10),
-            horizontal=False
-        ))
+        self.addWidget(cp_items := CP_Items(self).init())
         self.setCurrentWidget(cp_items)
         return self

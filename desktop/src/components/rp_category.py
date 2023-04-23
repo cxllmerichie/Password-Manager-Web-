@@ -190,7 +190,7 @@ class RP_Category(Frame):
             'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
         })
         if API.category:
-            self.TitleInput.setText(API.category['title'], ...)
+            self.TitleInput.setText(API.category['title'])
             self.ImageButton.setIcon(Icon(API.category['icon']).icon)
             self.ImageButton.setDisabled(True)
             self.ErrorLbl.setText('')

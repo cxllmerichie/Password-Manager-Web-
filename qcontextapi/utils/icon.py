@@ -35,17 +35,23 @@ class Icon:
         :param instance: QIcon, string filename with already set Icon.root, icon bytes
         :return:
         """
+        def from_bytes(icon_bytes: bytes):
+            pixmap = QPixmap()
+            png = base64.b64encode(icon_bytes).decode('utf-8')
+            pixmap.loadFromData(base64.b64decode(png))
+            self.__icon = QIcon(pixmap)
+
         if isinstance(instance, QIcon):
             self.__icon = instance
         elif isinstance(instance, str):
             if os.path.exists(filepath := os.path.join(os.path.abspath(self.root), instance)):
                 self.__icon = QIcon(filepath)
             elif isinstance((icon_bytes := eval(instance)), bytes):
-                pixmap = QPixmap()
-                pixmap.loadFromData(base64.b64decode(base64.b64encode(icon_bytes).decode('utf-8')), 'PNG')
-                self.__icon = QIcon(pixmap)
+                from_bytes(icon_bytes)
             else:
                 raise FileNotFoundError(f'file: {filepath} not found for `Icon`')
+        elif isinstance(instance, bytes):
+            from_bytes(instance)
         else:
             raise AttributeError(f'unknown type ({type(instance)}) of instance ({instance}), can not set Icon.icon')
 
