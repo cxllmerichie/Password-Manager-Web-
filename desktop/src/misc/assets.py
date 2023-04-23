@@ -57,7 +57,6 @@ class SIZES:
     CentralPagesLettersMargin = 18, 0, 0, 0
 
 
-
 class ICONS:
     APP = Icon('icon.png', (25, 25))
     MINIMIZE = Icon('minus.svg', (25, 25))

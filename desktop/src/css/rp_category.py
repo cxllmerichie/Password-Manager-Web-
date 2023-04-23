@@ -67,6 +67,12 @@ css: str = f'''
 #ControlBtns {{
 }}
 
+#HintLbl1 {{
+    color: {COLORS.TEXT_PRIMARY};
+    font-size: 20px;
+    font-style: italic;
+}}
+
 #ErrorLbl {{
     color: {COLORS.TEXT_ALERT};
     font-size: 16px;

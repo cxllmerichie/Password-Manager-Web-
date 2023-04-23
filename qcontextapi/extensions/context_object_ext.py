@@ -6,6 +6,7 @@ import uuid
 from .. import contextapi as _contextapi
 
 
+# ToDo: for all objects add to init(min_size, min_width, max_width, min_height, max_height, policy, margins?, alignment?)
 class ContextObjectExt:
     __blacklist: dict[str, list[str]] = {}
 

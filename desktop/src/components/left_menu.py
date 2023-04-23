@@ -6,6 +6,7 @@ from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 from typing import Any
+from contextlib import suppress
 
 from ..misc import ICONS, SIZES, API
 from .. import css
@@ -42,13 +43,27 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 Spacer(False, True),
                 Button(self, 'AddCategoryBtn').init(
                     text='Category', icon=ICONS.PLUS, slot=CONTEXT.RP_Category.show_create
-                ), Layout.Bottom
+                )
             ]
         ))
         self.AllItemsBtn = AllItemsBtn
         self.FavItemsBtn = FavItemsBtn
         self.refresh_categories()
         return self
+
+    def searchbar_textchanged(self):
+        layout = self.CategoriesScrollArea.widget().layout()
+        text = self.SearchBar.text()
+        for i in range(layout.count()):
+            widget = layout.itemAt(i).widget()
+            visible = True
+            if widget.__class__.__name__ == 'LabelExtended':
+                visible = widget.label.text()[0].lower() == text[0].lower() if len(text) else True
+            elif widget.__class__.__name__ in 'MenuButton':
+                visible = text.lower() in widget.text_lbl.text().lower()
+            widget.setVisible(visible)
+        with suppress(AttributeError):  # self.FavouriteLbl may not exist if none of items['is_favourite']
+            self.FavouriteLbl.setVisible(not text)
 
     def refresh_categories(self):
         layout = self.CategoriesScrollArea.widget().layout()
@@ -57,19 +72,16 @@ class LeftMenu(SplitterWidgetExt, Widget):
         if not len(categories):
             self.CategoriesScrollArea.setVisible(False)
             return self.NoCategoriesLbl.setVisible(True)
-        letters = set()
+        letters = []
         categories = sorted(categories, key=lambda c: (not c['is_favourite'], c['title'], c['description']))
-        layout.addWidget(SearchBar(self).init(
-            update=self.update, placeholder='Search',
-            items=[]
-        ))
+        layout.addWidget(searchbar := SearchBar(self))
         if any([category['is_favourite'] for category in categories]):
             layout.addWidget(LabelExtended(self, 'FavouriteLbl').init(
-                text='Favourite', margins=(SIZES.LeftMenuLettersMargin[0], 10, 0, 0,)
+                text='Favourite', margins=SIZES.LeftMenuLettersMargin
             ))
         for category in categories:
             if not category['is_favourite'] and (letter := category['title'][0]) not in letters:
-                letters.add(letter)
+                letters.append(letter)
                 layout.addWidget(LabelExtended(self, 'LetterLbl').init(
                     text=letter, margins=SIZES.LeftMenuLettersMargin
                 ))
@@ -77,6 +89,10 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),
                 slot=lambda checked, _category=category: CONTEXT.RP_Category.show_category(_category)
             ))
+        searchbar.init(
+            textchanged=self.searchbar_textchanged, placeholder='Search',
+            items=[category['title'] for category in categories] + letters
+        )
         self.NoCategoriesLbl.setVisible(False)
         self.CategoriesScrollArea.setVisible(True)
         self.AllItemsBtn.MenuButtonTotalLbl.setText(str(sum([len(c['items']) for c in categories])))

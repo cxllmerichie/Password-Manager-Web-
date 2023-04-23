@@ -8,6 +8,7 @@ css: str = f'''
 '''
 
 cp_items = f'''
+#HintLbl1,
 #NoCategoriesLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 20px;

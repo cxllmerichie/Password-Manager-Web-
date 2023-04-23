@@ -2,6 +2,7 @@ from qcontextapi.widgets import Button, Label, Layout, Frame, Widget
 from PyQt5.QtWidgets import QWidget, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt
+from contextlib import suppress
 
 from ..misc import ICONS, SIZES
 from .. import css
@@ -50,6 +51,7 @@ class Panel(Widget):
         self.core.setProperty('position', event.globalPos())
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        delta = event.globalPos() - self.core.property('position')
-        self.core.move(self.core.x() + delta.x(), self.core.y() + delta.y())
-        self.core.setProperty('position', event.globalPos())
+        with suppress(Exception):
+            delta = event.globalPos() - self.core.property('position')
+            self.core.move(self.core.x() + delta.x(), self.core.y() + delta.y())
+            self.core.setProperty('position', event.globalPos())

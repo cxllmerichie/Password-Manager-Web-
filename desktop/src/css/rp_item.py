@@ -6,6 +6,13 @@ css: str = f'''
     background-color: {COLORS.GREEN};
 }}
 
+#HintLbl2,
+#HintLbl1 {{
+    color: {COLORS.TEXT_PRIMARY};
+    font-size: 20px;
+    font-style: italic;
+}}
+
 #SaveBtn:hover {{
     background-color: {COLORS.GREEN_HOVER};
 }}

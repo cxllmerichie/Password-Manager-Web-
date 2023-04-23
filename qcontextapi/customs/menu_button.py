@@ -16,16 +16,19 @@ class MenuButton(Button):
         self.setLayout(Layout.horizontal().init(
             margins=(10, 5, 10, 5), spacing=10,
             items=[
-                Button(self, f'{self.objectName()}IconBtn').init(
+                icon_btn := Button(self, f'{self.objectName()}IconBtn').init(
                     size=icon.size, icon=icon, disabled=True
                 ), Layout.Left,
-                Label(self, f'{self.objectName()}TextLbl').init(
+                text_lbl := Label(self, f'{self.objectName()}TextLbl').init(
                     text=text, alignment=alignment, elided=True, policy=(QSizePolicy.Expanding, QSizePolicy.Minimum)
                 ),
-                Label(self, f'{self.objectName()}TotalLbl').init(
+                total_lbl := Label(self, f'{self.objectName()}TotalLbl').init(
                     text=str(total)
                 ), Layout.Right
             ]
         ))
+        self.icon_btn = icon_btn
+        self.text_lbl = text_lbl
+        self.total_lbl = total_lbl
         self.clicked.connect(slot)
         return self

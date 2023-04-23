@@ -45,6 +45,11 @@ class RP_Category(Frame):
                 TextInput(self, 'DescriptionInput').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
+                Label(self, 'HintLbl1', False).init(
+                    wrap=True, alignment=Layout.Center, text='Hint: Create general category "Social Media" to store '
+                                                             'there your Facebook or Instagram authorization data',
+                    policy=(Layout.Expanding, Layout.Expanding)
+                ),
                 Spacer(False, True),
                 Label(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
@@ -93,6 +98,7 @@ class RP_Category(Frame):
 
     def show_create(self):
         API.category = None
+        self.HintLbl1.setVisible(True)
         self.CreateBtn.setVisible(True)
         self.EditBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
@@ -173,6 +179,7 @@ class RP_Category(Frame):
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
+        self.HintLbl1.setVisible(False)
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Category)
         CONTEXT.RightPages.expand()

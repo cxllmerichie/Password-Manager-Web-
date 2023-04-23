@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea
+from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Spacer
 from qcontextapi.customs import FavouriteButton, ImageButton
 from qcontextapi.utils import Icon
 from qcontextapi import CONTEXT
@@ -102,6 +102,8 @@ class Field(Frame):
                 delete_ui_field()
             else:
                 self.RP_Item.ErrorLbl.setText('Internal error, please try again')
+        if self.RP_Item.FieldScrollArea.widget().layout().count() == 2:  # one of them is `HintLbl2`, another `self`
+            self.RP_Item.HintLbl2.setVisible(True)
         delete_ui_field()
 
     @pyqtSlot()
@@ -168,6 +170,12 @@ class RP_Item(Frame):
                 ScrollArea(self, 'FieldScrollArea').init(
                     orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
                 ),
+                Label(self, 'HintLbl1', False).init(
+                    wrap=True, alignment=Layout.Center, text='Hint: Create item "Facebook" to store there your '
+                                                             'authorization data',
+                    policy=(Layout.Expanding, Layout.Expanding)
+                ),
+                Spacer(False, True),
                 Label(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
@@ -193,6 +201,8 @@ class RP_Item(Frame):
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
+        if self.HintLbl2.isVisible():
+            self.HintLbl2.setVisible(False)
         layout = self.FieldScrollArea.widget().layout()
         layout.addWidget(field := Field(self, field).init())
         API.field_identifiers.append(field.identifier)
@@ -212,6 +222,7 @@ class RP_Item(Frame):
         self.ImageButton.setDisabled(False)
         self.AddFieldBtn.setVisible(False)
         self.AddDocumentBtn.setVisible(False)
+        self.FieldScrollArea.setVisible(False)
 
     @pyqtSlot()
     def toggle_favourite(self) -> bool:
@@ -254,9 +265,11 @@ class RP_Item(Frame):
         self.ImageButton.setDisabled(True)
         self.AddFieldBtn.setVisible(True)
         self.AddDocumentBtn.setVisible(True)
+        self.FieldScrollArea.setVisible(True)
 
     def show_create(self):
         API.item = None
+        self.HintLbl1.setVisible(True)
         self.DeleteBtn.setVisible(False)
         self.ImageButton.setIcon(ICONS.ITEM.icon)
         self.EditBtn.setVisible(False)
@@ -266,9 +279,11 @@ class RP_Item(Frame):
         self.DescriptionInput.setText('')
         self.FieldScrollArea.clear()
         self.CreateBtn.setVisible(True)
+        self.FavouriteButton.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
         API.item = item
+        self.HintLbl1.setVisible(False)
         self.FavouriteButton.set(API.item['is_favourite'])
         self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)
@@ -284,6 +299,10 @@ class RP_Item(Frame):
         self.FieldScrollArea.clear()
         for field in API.item['fields']:
             self.add_field(field)
+        if not len(API.item['fields']):
+            self.FieldScrollArea.widget().layout().addWidget(Label(self, 'HintLbl2').init(
+                wrap=True, alignment=Layout.Center, text='Hint: Add new field with name "password" and value of it'
+            ), alignment=Layout.Center)
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Item)
         CONTEXT.RightPages.expand()
