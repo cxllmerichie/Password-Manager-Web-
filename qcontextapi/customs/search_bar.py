@@ -6,7 +6,7 @@ from ..widgets import LineInput
 
 
 class SearchBar(LineInput):
-    def __init__(self, parent: QWidget, name: str = None, visible: bool = False):
+    def __init__(self, parent: QWidget, name: str = None, visible: bool = True):
         LineInput.__init__(self, parent, name if name else self.__class__.__name__, visible)
 
     def init(self, items: Iterable[str], textchanged: callable, placeholder: str = '') -> 'SearchBar':

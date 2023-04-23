@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLayoutItem, QSpacerItem
 from PyQt5.QtCore import Qt, QObject
-from typing import Sequence
+from typing import Sequence, Iterable
 
 
 class LayoutExt:
@@ -40,6 +40,12 @@ class LayoutExt:
                 self.add(items[i])
             i += 1
 
-    def clear(self):
+    def clear(self, exceptions: Iterable[QObject] = ()):
         for i in reversed(range(self.count())):
-            self.itemAt(i).widget().setParent(None)
+            layout_item = self.itemAt(i).widget()
+            if not layout_item:
+                layout_item = self.itemAt(i).layout()
+            if not layout_item:
+                layout_item = self.itemAt(i).spacerItem()
+            if layout_item not in exceptions:
+                layout_item.setParent(None)

@@ -6,10 +6,15 @@ css: str = f'''
     background-color: {COLORS.GREEN};
 }}
 
-#HintLbl2,
+#HintLbl2 {{
+    color: {COLORS.TEXT_PRIMARY};
+    font-size: 16px;
+    font-style: italic;
+}}
+
 #HintLbl1 {{
     color: {COLORS.TEXT_PRIMARY};
-    font-size: 20px;
+    font-size: 18px;
     font-style: italic;
 }}
 
@@ -29,7 +34,6 @@ css: str = f'''
 #CancelBtn {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
-    min-width: 100px;
     min-height: 30px;
     font-size: 16px;
     border: none;

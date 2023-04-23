@@ -168,7 +168,13 @@ class RP_Item(Frame):
                     )
                 ),
                 ScrollArea(self, 'FieldScrollArea').init(
-                    orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10
+                    orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
+                    items=[
+                        Label(self, 'HintLbl2').init(
+                            wrap=True, alignment=Layout.Center,
+                            text='Add new field with name "password" or "username" and it\'s value'
+                        ), Layout.Center
+                    ]
                 ),
                 Label(self, 'HintLbl1', False).init(
                     wrap=True, alignment=Layout.Center, text='Hint: Create item "Facebook" to store there your '
@@ -181,10 +187,10 @@ class RP_Item(Frame):
                 ), Layout.Center,
                 Button(self, 'CreateBtn').init(
                     text='Create item', slot=self.execute_create
-                ), Layout.HCenter,
+                ),
                 Frame(self, 'SaveCancelFrame', False).init(
                     layout=Layout.horizontal().init(
-                        spacing=50,
+                        spacing=20,
                         items=[
                             Button(self, 'SaveBtn').init(
                                 text='Save', slot=self.execute_save
@@ -277,9 +283,10 @@ class RP_Item(Frame):
         self.TitleInput.setText('')
         self.DescriptionInput.setEnabled(True)
         self.DescriptionInput.setText('')
-        self.FieldScrollArea.clear()
+        self.FieldScrollArea.clear([self.HintLbl2])
         self.CreateBtn.setVisible(True)
         self.FavouriteButton.setVisible(True)
+        self.HintLbl2.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
         API.item = item
@@ -296,13 +303,11 @@ class RP_Item(Frame):
         self.EditBtn.setVisible(True)
         self.CreateBtn.setVisible(False)
 
-        self.FieldScrollArea.clear()
+        self.FieldScrollArea.clear([self.HintLbl2])
         for field in API.item['fields']:
             self.add_field(field)
         if not len(API.item['fields']):
-            self.FieldScrollArea.widget().layout().addWidget(Label(self, 'HintLbl2').init(
-                wrap=True, alignment=Layout.Center, text='Hint: Add new field with name "password" and value of it'
-            ), alignment=Layout.Center)
+            self.HintLbl2.setVisible(True)
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Item)
         CONTEXT.RightPages.expand()

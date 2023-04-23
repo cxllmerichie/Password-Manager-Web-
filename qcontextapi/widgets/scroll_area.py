@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QScrollArea, QWidget
 from PyQt5.QtCore import Qt, QObject
-from typing import Sequence
+from typing import Sequence, Iterable
 
 from .frame import Frame
 from .layout import Layout
@@ -33,5 +33,5 @@ class ScrollArea(ContextObjectExt, QScrollArea):
         ))
         return self
 
-    def clear(self):
-        self.widget().layout().clear()
+    def clear(self, exceptions: Iterable[QObject] = ()):
+        self.widget().layout().clear(exceptions)

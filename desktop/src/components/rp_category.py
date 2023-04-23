@@ -46,8 +46,8 @@ class RP_Category(Frame):
                     placeholder='description (optional)'
                 ), Layout.Top,
                 Label(self, 'HintLbl1', False).init(
-                    wrap=True, alignment=Layout.Center, text='Hint: Create general category "Social Media" to store '
-                                                             'there your Facebook or Instagram authorization data',
+                    wrap=True, alignment=Layout.Center, text='Hint: Create category like "Social Media" to store '
+                                                             'your Twitter, Facebook or Instagram personal data',
                     policy=(Layout.Expanding, Layout.Expanding)
                 ),
                 Spacer(False, True),
@@ -56,20 +56,20 @@ class RP_Category(Frame):
                 ), Layout.Center,
                 Button(self, 'CreateBtn').init(
                     text='Create', slot=self.execute_create
-                ), Layout.HCenter,
+                ),
                 Frame(self, 'SaveCancelFrame', False).init(
                     layout=Layout.horizontal().init(
-                        spacing=50,
+                        spacing=20,
                         items=[
                             Button(self, 'SaveBtn').init(
                                 text='Save', slot=self.execute_save
-                            ), Layout.Left,
+                            ),
                             Button(self, 'CancelBtn').init(
                                 text='Cancel', slot=self.execute_cancel
-                            ), Layout.Right
+                            )
                         ]
                     )
-                ), Layout.HCenter,
+                ),
                 Button(self, 'AddItemBtn', False).init(
                     text='Add item', icon=ICONS.PLUS, slot=self.add_item
                 )

@@ -31,5 +31,5 @@ class Label(ContextObjectExt, QLabel):
         if icon:
             self.setPixmap(icon.icon.pixmap(icon.size))
         if policy:
-            self.setSizePolicy(policy[0], policy[1])
+            self.setSizePolicy(*policy)
         return self
