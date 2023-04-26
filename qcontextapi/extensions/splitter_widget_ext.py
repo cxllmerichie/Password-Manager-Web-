@@ -6,9 +6,11 @@ from loguru import logger as _logger
 class SplitterWidgetExt:
     splitter: QSplitter
 
-    def __init__(self, expand_to: int, expand_min: int = None, expand_max: int = None, orientation: Qt.Orientation = None):
+    def __init__(self, expand_to: int,
+                 expand_min: int = None, expand_max: int = None, orientation: Qt.Orientation = None,
+                 policy: tuple[QSizePolicy, QSizePolicy] = (QSizePolicy.Expanding, QSizePolicy.Expanding)):
         self.expand_to: int = expand_to
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSizePolicy(*policy)
 
         if expand_min or expand_max:
             if orientation:

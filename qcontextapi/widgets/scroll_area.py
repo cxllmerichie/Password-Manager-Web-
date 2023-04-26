@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QScrollArea, QWidget
+from PyQt5.QtWidgets import QScrollArea, QWidget, QSizePolicy
 from PyQt5.QtCore import Qt, QObject
 from typing import Sequence, Iterable
 
@@ -18,13 +18,15 @@ class ScrollArea(ContextObjectExt, QScrollArea):
             self, *,
             orientation: Qt.Orientation, horizontal: bool = True, vertical: bool = True,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
-            items: Sequence[QObject] = ()
+            items: Sequence[QObject] = (), policy: tuple[QSizePolicy, QSizePolicy] = None
     ) -> 'ScrollArea':
         if not horizontal:
             self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         if not vertical:
             self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
+        if policy:
+            self.setSizePolicy(*policy)
         frame = Frame(self, f'{self.objectName()}Widget')
         self.setWidget(frame.init(
             layout=Layout.oriented(orientation, frame, f'{frame.objectName()}Layout').init(

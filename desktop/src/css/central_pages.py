@@ -40,6 +40,10 @@ cp_item = f'''
     max-width: 400px;
 }}
 
+#CP_Item:hover {{
+    background-color: {COLORS.HOVER};
+}}
+
 #ItemTitleLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 22px;

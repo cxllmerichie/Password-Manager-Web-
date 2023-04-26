@@ -68,13 +68,13 @@ class CP_Items(Frame):
         for i in range(layout.count()):
             widget = layout.itemAt(i).widget()
             visible = True
-            if widget.__class__.__name__ == 'LabelExtended':
-                visible = widget.label.text()[0].lower() == text[0].lower() if len(text) else True
+            if widget.__class__.__name__ == 'Label':
+                visible = widget.text()[0].lower() == text[0].lower() if len(text) else True
             elif widget.__class__.__name__ in 'CP_Item':
                 visible = text.lower() in widget.ItemTitleLbl.text().lower()
             widget.setVisible(visible)
-        with suppress(AttributeError):  # self.FavouriteLbl may not exist if none of items['is_favourite']
-            self.FavouriteLbl.setVisible(not text)
+        # with suppress(AttributeError):
+        #     self.FavouriteLbl.setVisible(not text)
 
     def refresh_items(self, items: list[dict[str, Any]] = None):
         if items is None:
@@ -88,7 +88,7 @@ class CP_Items(Frame):
         layout = self.ItemsScrollArea.widget().layout()
         self.ItemsScrollArea.clear()
         items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
-        if any([item for item in items]):
+        if any([item['is_favourite'] for item in items]):
             layout.addWidget(Label(self, 'FavouriteLbl').init(
                 text='Favourite'
             ))
@@ -100,7 +100,7 @@ class CP_Items(Frame):
                 ))
             layout.addWidget(CP_Item(self).init(item))
         self.SearchBar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search',
+            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=css.components.search,
             items=[item['title'] for item in items] + letters
         )
         self.SearchBar.setVisible(True)

@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QIcon
 from typing import Callable
 
 from ..widgets import Button
@@ -15,9 +16,12 @@ class FavouriteButton(Button):
 
     def init(
             self, *,
-            if_set_icon: Icon = None, if_unset_icon: Icon = None, pre_slot: Callable[[...], bool] = lambda: None
+            if_set_icon: Icon = None, if_unset_icon: Icon = None, pre_slot: Callable[..., bool]
     ) -> 'Button':
-        super().init(icon=if_unset_icon, slot=lambda: self.slot(pre_slot))
+        self.clicked.connect(lambda: self.slot(pre_slot))
+        if if_unset_icon:
+            self.setIcon(QIcon(if_unset_icon.icon))
+            self.setIconSize(if_unset_icon.size)
         if if_set_icon:
             self.if_set_icon = if_set_icon
         if if_unset_icon:
@@ -25,7 +29,7 @@ class FavouriteButton(Button):
         return self
 
     @pyqtSlot()
-    def slot(self, pre_slot: callable = lambda: None):
+    def slot(self, pre_slot: Callable[..., bool]):
         # toggle to change state
         self.set(not self.is_favourite)
         if not pre_slot():

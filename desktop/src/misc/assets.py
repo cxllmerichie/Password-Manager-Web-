@@ -13,6 +13,7 @@ class PALETTE:
 
 
 class COLORS:
+    Palette = PALETTE
     TRANSPARENT = 'transparent'
     LIGHT_GRAY = PALETTE.LAYER_6
     DARK_GRAY = PALETTE.LAYER_5

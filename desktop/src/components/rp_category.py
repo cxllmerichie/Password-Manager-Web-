@@ -206,6 +206,7 @@ class RP_Category(Frame):
             self.AddItemBtn.setVisible(True)
             self.CreateBtn.setVisible(False)
             self.EditBtn.setVisible(True)
+            self.HintLbl1.setVisible(False)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
         CONTEXT.LeftMenu.refresh_categories()

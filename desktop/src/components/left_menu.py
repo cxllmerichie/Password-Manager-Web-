@@ -37,10 +37,12 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 Label(self, 'NoCategoriesLbl', False).init(
                     text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter, wrap=True
                 ),
+                SearchBar(self),
                 ScrollArea(self, 'CategoriesScrollArea', False).init(
-                    horizontal=False, vertical=True, orientation=Layout.Vertical, alignment=Layout.Top, spacing=5
+                    horizontal=False, vertical=True, orientation=Layout.Vertical, alignment=Layout.Top, spacing=5,
+                    policy=(Layout.Minimum, Layout.Expanding)
                 ),
-                Spacer(False, True),
+                # Spacer(False, True),
                 Button(self, 'AddCategoryBtn').init(
                     text='Category', icon=ICONS.PLUS, slot=CONTEXT.RP_Category.show_create
                 )
@@ -74,7 +76,6 @@ class LeftMenu(SplitterWidgetExt, Widget):
             return self.NoCategoriesLbl.setVisible(True)
         letters = []
         categories = sorted(categories, key=lambda c: (not c['is_favourite'], c['title'], c['description']))
-        layout.addWidget(searchbar := SearchBar(self))
         if any([category['is_favourite'] for category in categories]):
             layout.addWidget(LabelExtended(self, 'FavouriteLbl').init(
                 text='Favourite', margins=SIZES.LeftMenuLettersMargin
@@ -89,8 +90,8 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),
                 slot=lambda checked, _category=category: CONTEXT.RP_Category.show_category(_category)
             ))
-        searchbar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search',
+        self.SearchBar.init(
+            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=css.components.search,
             items=[category['title'] for category in categories] + letters
         )
         self.NoCategoriesLbl.setVisible(False)

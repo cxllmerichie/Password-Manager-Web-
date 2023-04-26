@@ -94,7 +94,8 @@ class Field(Frame):
     @pyqtSlot()
     def execute_delete(self):
         def delete_ui_field():
-            API.field_identifiers.remove(self.identifier)
+            if self.identifier in API.field_identifiers:
+                API.field_identifiers.remove(self.identifier)
             self.setVisible(False)
             self.deleteLater()
         if self.field:
@@ -278,6 +279,7 @@ class RP_Item(Frame):
         self.HintLbl1.setVisible(True)
         self.DeleteBtn.setVisible(False)
         self.ImageButton.setIcon(ICONS.ITEM.icon)
+        self.ImageButton.setEnabled(True)
         self.EditBtn.setVisible(False)
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')
@@ -327,6 +329,7 @@ class RP_Item(Frame):
             self.ImageButton.setIcon(Icon(API.item['icon']).icon)
             self.CreateBtn.setVisible(False)
             self.show_item(API.item)
+            category = API.get_category(API.item['category_id'])
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CP_Items.refresh_items()
         else:
@@ -334,9 +337,12 @@ class RP_Item(Frame):
 
     @pyqtSlot()
     def execute_delete(self):
+        category_id = API.item['category_id']
         deleted = API.delete_item(API.item['id']).get('id')
         if deleted:
+            self.execute_cancel()
             self.show_create()
+            category = API.get_category(category_id)
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CP_Items.refresh_items()
         else:

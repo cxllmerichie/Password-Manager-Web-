@@ -19,8 +19,9 @@ class SplitterWidget(SplitterWidgetExt, Widget):
 
 
 class Splitter(ContextObjectExt, QSplitter):
-    def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None):
-        QSplitter.__init__(self, parent)
+    def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None,
+                 orientation: Qt.Orientation = Qt.Horizontal):
+        QSplitter.__init__(self, orientation, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
         if stylesheet:
             self.setStyleSheet(stylesheet)

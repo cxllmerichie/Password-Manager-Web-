@@ -82,7 +82,11 @@ class Api:
     @_logger.catch()
     def get_category(self, category_id: str):
         url = f'{self.URL}/categories/{category_id}/'
-        return _requests.get(url=url, headers=self.auth_headers()).json()
+        response = _requests.get(url=url, headers=self.auth_headers()).json()
+        if category_id := response.get('id'):
+            self.get_categories()
+            self.category = response
+        return response
 
     @_logger.catch()
     def update_category(self, category_id: int, category: dict[str, Any]):

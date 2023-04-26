@@ -59,7 +59,11 @@ fav_btn = f'''
 
 splitter = f'''
 #MainViewSplitter {{
-    background-color: {COLORS.RED};
+    background-color: {COLORS.Palette.LAYER_3};
+}}
+
+#MainViewSplitter::handle {{
+    background-color: {COLORS.TRANSPARENT};
 }}
 '''
 
@@ -70,5 +74,16 @@ search = f'''
     padding: 5px;
     color: {COLORS.TEXT_PRIMARY};
     border: none;
+}}
+
+#SearchBarPopup {{
+    background-color: {COLORS.Palette.LAYER_1};
+    border: none;
+    color: white;
+    font-size: 16px;
+}}
+
+QListView::item:hover {{
+    background-color: {COLORS.Palette.LAYER_6};
 }}
 '''
