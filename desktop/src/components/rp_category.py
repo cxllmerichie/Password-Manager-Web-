@@ -46,9 +46,8 @@ class RP_Category(Frame):
                     placeholder='description (optional)'
                 ), Layout.Top,
                 Label(self, 'HintLbl1', False).init(
-                    wrap=True, alignment=Layout.Center, text='Hint: Create category like "Social Media" to store '
-                                                             'your Twitter, Facebook or Instagram personal data',
-                    policy=(Layout.Expanding, Layout.Expanding)
+                    wrap=True, alignment=Layout.Center,
+                    text='Hint: Create category like "Social Media" to store your Twitter, Facebook or Instagram personal data'
                 ),
                 Spacer(False, True),
                 Label(self, 'ErrorLbl').init(

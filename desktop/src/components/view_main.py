@@ -1,4 +1,5 @@
 from qcontextapi.widgets import Layout, Widget, Splitter
+from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 
@@ -16,14 +17,19 @@ class MainView(Widget):
     def init(self) -> 'MainView':
         central_pages = CentralPages(self).init()
         right_pages = RightPages(self).init()
+        left_menu = LeftMenu(self).init()
+
+        splitter = Splitter(self, 'MainViewSplitter').init()
+        splitter.addWidget(left_menu)
+        splitter.addWidget(central_pages, False)
+        splitter.addWidget(right_pages)
+
         self.setLayout(Layout.vertical().init(
             items=[
                 Panel(self).init(), Qt.AlignTop,
-                Splitter(self, 'MainViewSplitter').init(items=[
-                    LeftMenu(self).init(),
-                    central_pages,
-                    right_pages
-                ])
+                splitter
             ]
         ))
+        CONTEXT.RP_Category.show_create()
+        right_pages.shrink()
         return self

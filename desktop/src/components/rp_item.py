@@ -177,17 +177,11 @@ class RP_Item(Frame):
                         ), Layout.Center
                     ]
                 ),
-                Label(self, 'HintLbl1', False).init(
-                    wrap=True, alignment=Layout.Center, text='Hint: Create item "Facebook" to store there your '
-                                                             'authorization data',
-                    policy=(Layout.Expanding, Layout.Expanding)
-                ),
-                Spacer(False, True),
                 Label(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Button(self, 'CreateBtn').init(
-                    text='Create item', slot=self.execute_create
+                    text='Create', slot=self.execute_create
                 ),
                 Frame(self, 'SaveCancelFrame', False).init(
                     layout=Layout.horizontal().init(
@@ -239,6 +233,7 @@ class RP_Item(Frame):
             'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite
         }).get('id')
         if updated:
+            category = API.get_category(API.item['category_id'])
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CP_Items.refresh_items()
             return True
@@ -276,7 +271,6 @@ class RP_Item(Frame):
 
     def show_create(self):
         API.item = None
-        self.HintLbl1.setVisible(True)
         self.DeleteBtn.setVisible(False)
         self.ImageButton.setIcon(ICONS.ITEM.icon)
         self.ImageButton.setEnabled(True)
@@ -288,11 +282,12 @@ class RP_Item(Frame):
         self.FieldScrollArea.clear([self.HintLbl2])
         self.CreateBtn.setVisible(True)
         self.FavouriteButton.setVisible(True)
+        self.FavouriteButton.click()
+        self.FavouriteButton.click()
         self.HintLbl2.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
         API.item = item
-        self.HintLbl1.setVisible(False)
         self.FavouriteButton.set(API.item['is_favourite'])
         self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)
@@ -308,8 +303,7 @@ class RP_Item(Frame):
         self.FieldScrollArea.clear([self.HintLbl2])
         for field in API.item['fields']:
             self.add_field(field)
-        if not len(API.item['fields']):
-            self.HintLbl2.setVisible(True)
+        self.HintLbl2.setVisible(not len(API.item['fields']))
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Item)
         CONTEXT.RightPages.expand()

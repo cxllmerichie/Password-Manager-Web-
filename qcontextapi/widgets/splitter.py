@@ -20,13 +20,14 @@ class SplitterWidget(SplitterWidgetExt, Widget):
 
 class Splitter(ContextObjectExt, QSplitter):
     def __init__(self, parent: QWidget, name: str, visible: bool = True, stylesheet: str = None,
-                 orientation: Qt.Orientation = Qt.Horizontal):
+                 orientation: Qt.Orientation = Qt.Horizontal, collapsible: bool = False,
+                 policy: tuple[QSizePolicy, QSizePolicy] = (QSizePolicy.Expanding, QSizePolicy.Expanding)):
         QSplitter.__init__(self, orientation, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
         if stylesheet:
             self.setStyleSheet(stylesheet)
             self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSizePolicy(*policy)
 
     def init(
             self, *,
@@ -36,6 +37,7 @@ class Splitter(ContextObjectExt, QSplitter):
             self.addWidget(item)
         return self
 
-    def addWidget(self, widget: QWidget) -> None:
+    def addWidget(self, widget: QWidget, collapsible: bool = True) -> None:
         super().addWidget(widget)
+        self.setCollapsible(self.count() - 1, collapsible)
         widget.splitter = self

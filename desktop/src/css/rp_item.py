@@ -12,12 +12,6 @@ css: str = f'''
     font-style: italic;
 }}
 
-#HintLbl1 {{
-    color: {COLORS.TEXT_PRIMARY};
-    font-size: 18px;
-    font-style: italic;
-}}
-
 #SaveBtn:hover {{
     background-color: {COLORS.GREEN_HOVER};
 }}

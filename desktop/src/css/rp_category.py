@@ -69,7 +69,7 @@ css: str = f'''
 
 #HintLbl1 {{
     color: {COLORS.TEXT_PRIMARY};
-    font-size: 20px;
+    font-size: 16px;
     font-style: italic;
 }}
 
