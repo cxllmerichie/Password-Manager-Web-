@@ -34,5 +34,5 @@ class Selector(ContextObjectExt, QComboBox):
             self.currentTextChanged.connect(textchanged)
         return self
 
-    def setCurrentText(self, text: str) -> None:
+    def setCurrentText(self, text: Any) -> None:
         super().setCurrentText(str(text))

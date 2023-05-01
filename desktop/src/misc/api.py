@@ -169,7 +169,6 @@ class Api:
     def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
         response = _requests.put(url=url, headers=self.auth_headers(), json=Api.clear_json(item, ['expires_at'])).json()
-        print(response)
         if item_id := response.get('id'):
             self.get_categories()
             self.item = response

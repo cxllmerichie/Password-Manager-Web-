@@ -11,7 +11,6 @@ class DateTimePicker(Frame):
     today = datetime.today()
     default_format = '%d.%m.%Y %H:%M'
 
-
     days = [str(day).zfill(2) for day in range(1, monthrange(today.year, today.month)[1] + 1)]
     months = [str(month).zfill(2) for month in range(1, 12 + 1)]
     years = [str(year) for year in range(today.year, today.year + 10)]
@@ -102,16 +101,16 @@ class DateTimePicker(Frame):
     def set_date(self, dt: date | datetime | str):
         if isinstance(dt, str):
             dt = self.parse(dt)
-        self.day_selector.setCurrentText(dt.day)
-        self.month_selector.setCurrentText(dt.month)
-        self.year_selector.setCurrentText(dt.year)
+        self.day_selector.setCurrentText(str(dt.day).zfill(2))
+        self.month_selector.setCurrentText(str(dt.month).zfill(2))
+        self.year_selector.setCurrentText(str(dt.year).zfill(2))
 
     def set_time(self, dt: time | datetime):
         if isinstance(dt, str):
             dt = self.parse(dt)
-        self.hour_selector.setCurrentText(dt.hour)
-        self.minute_selector.setCurrentText(dt.minute)
-        self.seconds.setCurrentText(dt.second)
+        self.hour_selector.setCurrentText(str(dt.hour).zfill(2))
+        self.minute_selector.setCurrentText(str(dt.minute).zfill(2))
+        self.second_selector.setCurrentText(str(dt.second).zfill(2))
 
     def set_datetime(self, dt: datetime):
         self.set_date(dt)

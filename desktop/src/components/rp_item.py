@@ -183,14 +183,14 @@ class RP_Item(Frame):
                             Layout.vertical().init(
                                 alignment=Layout.Top, spacing=5,
                                 items=[
-                                    Label(self, 'ExpiresLbl'),
                                     Selector(self, 'ExpiresSelector').init(
-                                        textchanged=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
+                                        textchanged=self.expires_selector_textchanged,
                                         items=[
                                             Selector.Item(text='No'),
                                             Selector.Item(text='Yes'),
                                         ]
                                     ),
+                                    Label(self, 'ExpiresLbl'),
                                     DateTimePicker(self, visible=False).init(
                                         spacing=5
                                     )
@@ -247,6 +247,11 @@ class RP_Item(Frame):
         return self
 
     @pyqtSlot()
+    def expires_selector_textchanged(self):
+       self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')
+       # self.ExpiresLbl.setVisible(self.ExpiresSelector.currentText() == 'No')
+
+    @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
         if self.HintLbl2.isVisible():
             self.HintLbl2.setVisible(False)
@@ -262,11 +267,12 @@ class RP_Item(Frame):
     def execute_edit(self):
         self.CreatedFrame.setVisible(False)
         self.ModifiedFrame.setVisible(False)
-        if API.item['expires_at']:
-            self.ExpiresSelector.setVisible(True)
-        else:
-            self.ExpiresSelector.setVisible(True)
-            self.ExpiresLbl.setVisible(False)
+        self.ExpiresLbl.setVisible(False)
+        self.ExpiresSelector.setVisible(True)
+        if expires_at := API.item['expires_at']:
+            self.DateTimePicker.set_datetime(expires_at)
+            self.DateTimePicker.setVisible(True)
+            self.ExpiresSelector.setCurrentText('Yes')
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
         self.DeleteBtn.setVisible(True)
@@ -317,6 +323,7 @@ class RP_Item(Frame):
     def execute_cancel(self):
         self.CreatedFrame.setVisible(True)
         self.ModifiedFrame.setVisible(True)
+        self.ExpiresLbl.setVisible(True)
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
@@ -355,24 +362,23 @@ class RP_Item(Frame):
         created_at = DateTimePicker.parse(item['created_at']).strftime(DateTimePicker.default_format)
         self.CreatedLbl.setText(created_at)
 
-        text = 'No'
         if modified_at := item['modified_at']:
-            text = DateTimePicker.parse(modified_at).strftime(DateTimePicker.default_format)
-        self.ModifiedLbl.setText(text)
-        self.ModifiedFrame.setVisible(True)
+            modified_at = DateTimePicker.parse(modified_at).strftime(DateTimePicker.default_format)
+            self.ModifiedLbl.setText(modified_at)
+            self.ModifiedFrame.setVisible(True)
+        else:
+            self.ModifiedFrame.setVisible(False)
 
         if expires_at := item['expires_at']:
             expires_at = DateTimePicker.parse(expires_at).strftime(DateTimePicker.default_format)
+            self.ExpiresFrame.setVisible(True)
             self.ExpiresLbl.setText(expires_at)
             self.ExpiresSelector.setVisible(False)
             self.DateTimePicker.setVisible(False)
             self.DateTimePicker.set_datetime(expires_at)
         else:
-            self.ExpiresLbl.setText('No')
-            self.ExpiresLbl.setVisible(True)
-            self.ExpiresSelector.setVisible(False)
-            self.DateTimePicker.setVisible(False)
-        self.ExpiresFrame.setVisible(True)
+            self.ExpiresFrame.setVisible(False)
+            self.ExpiresSelector.setCurrentText('No')
 
         self.FavouriteButton.set(API.item['is_favourite'])
         self.TitleInput.setText(API.item['title'])
