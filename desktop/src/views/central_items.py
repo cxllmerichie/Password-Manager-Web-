@@ -5,7 +5,7 @@ from typing import Any
 
 from ..misc import API
 from .. import css
-from .central_item import CentralItem
+from ..components.central_item import CentralItem
 
 
 class CentralItems(Frame):

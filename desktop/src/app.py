@@ -16,8 +16,8 @@ class App(QMainWindow):
 
     def init(self) -> 'App':
         from .misc import SIZES
-        from .components.central_widget import CentralWidget
-        from .components.status_bar import StatusBar
+        from .views.central_widget import CentralWidget
+        from desktop.src.components.status_bar import StatusBar
 
         self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)

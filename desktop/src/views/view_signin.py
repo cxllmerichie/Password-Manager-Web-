@@ -3,7 +3,7 @@ from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..misc import ICONS, api_remote
+from ..misc import ICONS, API
 from .view_main import MainView
 from .. import css
 
@@ -89,7 +89,7 @@ class SignIn(Widget):
         email = self.InputFieldEmail.text()
         if not len(email):
             return self.ErrorLbl.setText('Email can not be empty')
-        if not api.check_email(email):
+        if not API.check_email(email):
             return self.ErrorLbl.setText(f'Email is not registered')
         self.InputFramePassword.setVisible(True)
         self.InputLabelEmailEditBtn.setVisible(True)
@@ -104,7 +104,7 @@ class SignIn(Widget):
         if not len(password):
             return self.ErrorLbl.setText('Password can not be empty')
         user = {'email': email, 'password': password}
-        if not (token := api.login(user).get('access_token')):
+        if not (token := API.login(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
         CONTEXT.token = token
         CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())

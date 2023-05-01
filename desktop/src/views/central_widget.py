@@ -16,8 +16,8 @@ class CentralWidget(StackedWidget):
         self.layout().setAlignment(Qt.AlignHCenter)
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
-        # ui.token = None
-        if not CONTEXT.token:
+        # CONTEXT['token'] = None
+        if not CONTEXT['token']:
             self.setCurrentWidget(CONTEXT.SignIn)
         else:
             self.addWidget(widget := MainView(self).init())

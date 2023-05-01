@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
 
-from ..misc import ICONS, api_remote
+from ..misc import ICONS, API
 from .view_main import MainView
 from .. import css
 
@@ -112,8 +112,8 @@ class SignUp(Widget):
         if not self.validate_confpass():
             return
         user = {'email': self.InputFieldEmail.text(), 'password': self.InputFieldPassword.text()}
-        if not (token := api.create_user(user).get('access_token')):
+        if not (token := API.create_user(user).get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        api.set_token(token)
+        API.set_token(token)
         CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())
         CONTEXT.CentralWidget.setCurrentWidget(widget)

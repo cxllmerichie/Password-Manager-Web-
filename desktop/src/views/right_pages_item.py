@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
 from ..misc import ICONS, API
-from .right_pages_item_field import RightPagesItemField
+from ..components.right_pages_item_field import RightPagesItemField
 from .. import css
 
 
@@ -328,6 +328,6 @@ class RightPagesItem(Frame):
             self.show_create()
             category = API.get_category(category_id)
             CONTEXT.LeftMenu.refresh_categories()
-            CONTEXT.CP_Items.refresh_items()
+            CONTEXT.CentralItems.refresh_items()
         else:
             self.ErrorLbl.setText('Internal error, please try again')
