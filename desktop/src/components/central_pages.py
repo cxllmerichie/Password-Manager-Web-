@@ -1,13 +1,13 @@
 from qcontextapi.widgets import ScrollArea, Layout, Label, Frame, StackedWidget
 from qcontextapi.customs import SearchBar
+from PyQt5.QtWidgets import QWidget
 from qcontextapi.utils import Icon
 from qcontextapi import CONTEXT
-from PyQt5.QtWidgets import QWidget
-from contextlib import suppress
 from typing import Any
 
 from ..misc import API
 from .. import css
+from .profile import Profile
 
 
 class CP_Item(Frame):
@@ -52,7 +52,8 @@ class CP_Items(Frame):
                     orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, horizontal=False
                 ),
                 Label(self, 'NoCategoriesLbl', False).init(
-                    text='This category does not have items yet', wrap=True, alignment=Layout.Center
+                    text='', wrap=True, alignment=Layout.Center
+                    # text='This category does not have items yet', wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Label(self, 'HintLbl1').init(
                     text='Select some category in the left menu to see it\'s items', wrap=True, alignment=Layout.Center
@@ -126,5 +127,6 @@ class CentralPages(StackedWidget):
 
     def init(self) -> 'CentralPages':
         self.addWidget(cp_items := CP_Items(self).init())
+        self.addWidget(profile := Profile(self).init())
         self.setCurrentWidget(cp_items)
         return self

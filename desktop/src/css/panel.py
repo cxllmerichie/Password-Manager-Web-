@@ -2,6 +2,20 @@ from ..misc import SIZES, COLORS
 
 
 css: str = f'''
+#ProfileButton {{
+    min-width: 200px;
+    border: none;
+    border-radius: 5px;
+}}
+
+#ProfileButtonText {{
+    font-size: 16px;
+}}
+
+#ProfileButton:hover {{
+    background-color: {COLORS.HOVER};
+}}
+
 #Panel {{
     background-color: {COLORS.PANEL};
     min-height: {SIZES.Panel.h}px;

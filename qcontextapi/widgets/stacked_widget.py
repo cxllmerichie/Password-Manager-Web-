@@ -12,9 +12,9 @@ class StackedWidget(ContextObjectExt, QStackedWidget):
             self.setStyleSheet(stylesheet)
             self.setAttribute(Qt.WA_StyledBackground, True)
 
-        # костыль мирового масштаба, причина появления проблемы неизвестна
-        # бех этой хуйни, первый виджет в стаке имеет проблемы с родителем
-        # починка костыля включает в себя перезапись метода `setCurrentIndex`
+        # костыль мирового масштаба, причина появления проблемы неизвестна,
+        # без этой хуйни первый виджет в стаке имеет проблемы с родителем (сирота ебаная),
+        # костыль включает в себя перезапись метода `setCurrentIndex`
         self.addWidget(QWidget(self))
 
     def setCurrentIndex(self, index: int) -> None:

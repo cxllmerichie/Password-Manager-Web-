@@ -8,6 +8,7 @@ from .button import Button
 from .label import Label
 from .line_input import LineInput
 from .text_input import TextInput
+from .selector import Selector
 
 from .layout import Layout
 from .spacer import Spacer

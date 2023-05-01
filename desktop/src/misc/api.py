@@ -7,6 +7,7 @@ from qcontextapi import CONTEXT as _CONTEXT
 class Api:
     URL = 'http://127.0.0.1:8000'
 
+    user: dict[str, Any] = None
     __categories: list[dict[str, Any]] = None
     category: dict[str, Any] = None
     item: dict[str, Any] = None
@@ -44,7 +45,7 @@ class Api:
 
     # AUTH
     @_logger.catch()
-    def login(self, auth_data: dict[str, Any]):
+    def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/auth/token/'
         headers = {'accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
         data = f'grant_type=&username={auth_data["email"]}&password={auth_data["password"]}&scope=&client_id=&client_secret='
@@ -58,20 +59,31 @@ class Api:
 
     # USER
     @_logger.catch()
-    def create_user(self, user: dict[str, Any]):
+    def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/users/'
         headers = {"accept": "application/json", "Content-Type": "application/json"}
-        return _requests.post(url=url, headers=headers, json=user).json()
+        response = _requests.post(url=url, headers=headers, json=user).json()
+        if response.get('id'):
+            self.user = response
+        return response
+
+    @_logger.catch()
+    def current_user(self) -> dict[str, Any]:
+        url = f'{self.URL}/users/current/'
+        response = _requests.get(url=url, headers=self.auth_headers()).json()
+        if response.get('id'):
+            self.user = response
+        return response
 
     # CATEGORIES
     @_logger.catch()
-    def get_categories(self):
+    def get_categories(self) -> list[dict[str, Any]]:
         url = f'{self.URL}/categories/'
         self.__categories = _requests.get(url=url, headers=self.auth_headers()).json()
         return self.__categories
 
     @_logger.catch()
-    def create_category(self, category: dict[str, Any]):
+    def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/categories/'
         response = _requests.post(url=url, headers=self.auth_headers(), json=Api.clear_json(category)).json()
         if category_id := response.get('id'):
@@ -80,7 +92,7 @@ class Api:
         return response
 
     @_logger.catch()
-    def get_category(self, category_id: str):
+    def get_category(self, category_id: str) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
         response = _requests.get(url=url, headers=self.auth_headers()).json()
         if category_id := response.get('id'):
@@ -89,7 +101,7 @@ class Api:
         return response
 
     @_logger.catch()
-    def update_category(self, category_id: int, category: dict[str, Any]):
+    def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
         response = _requests.put(url=url, headers=self.auth_headers(), json=Api.clear_json(category)).json()
         if category_id := response.get('id'):
@@ -98,7 +110,7 @@ class Api:
         return response
 
     @_logger.catch()
-    def delete_category(self, category_id: int):
+    def delete_category(self, category_id: int) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
         response = _requests.delete(url=url, headers=self.auth_headers()).json()
         if category_id := response.get('id'):
@@ -109,23 +121,23 @@ class Api:
 
     # FIELDS
     @_logger.catch()
-    def add_field(self, item_id: int, field: dict[str, Any]):
+    def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/fields/'
         return _requests.post(url=url, headers=self.auth_headers(), json=field).json()
 
     @_logger.catch()
-    def update_field(self, field_id: int, field: dict[str, Any]):
+    def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/fields/{field_id}/'
         return _requests.put(url=url, headers=self.auth_headers(), json=field).json()
 
     @_logger.catch()
-    def remove_field(self, field_id: str):
+    def remove_field(self, field_id: str) -> dict[str, Any]:
         url = f'{self.URL}/fields/{field_id}/'
         return _requests.delete(url=url, headers=self.auth_headers()).json()
 
     # ITEMS
     @_logger.catch()
-    def create_item(self, category_id: int, item: dict[str, Any], fields: list[dict[str, Any]]):
+    def create_item(self, category_id: int, item: dict[str, Any], fields: list[dict[str, Any]]) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/items/'
         response = _requests.post(url=url, headers=self.auth_headers(), json=Api.clear_json(item)).json()
         if item_id := response.get('id'):
@@ -138,7 +150,7 @@ class Api:
         return response
 
     @_logger.catch()
-    def delete_item(self, item_id: str):
+    def delete_item(self, item_id: str) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
         response = _requests.delete(url=url, headers=self.auth_headers()).json()
         if item_id := response.get('id'):
@@ -147,12 +159,12 @@ class Api:
         return response
 
     @_logger.catch()
-    def get_item(self, item_id: str):
+    def get_item(self, item_id: str) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
         return _requests.get(url=url, headers=self.auth_headers()).json()
 
     @_logger.catch()
-    def update_item(self, item_id: int, item: dict[str, Any]):
+    def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
         response = _requests.put(url=url, headers=self.auth_headers(), json=Api.clear_json(item)).json()
         if item_id := response.get('id'):

@@ -37,7 +37,7 @@ class COLORS:
 
 
 class SIZES:
-    App = QSize(800, 600)
+    App = QSize(1000, 600)
     AuthTextBtn = Size(..., 20)
     AuthMainBtn = Size(200, 30)
     AuthInputLabel = Size(..., 25)

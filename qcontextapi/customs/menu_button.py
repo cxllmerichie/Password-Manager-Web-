@@ -6,8 +6,8 @@ from ..utils import Icon
 
 
 class MenuButton(Button):
-    def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__)
+    def __init__(self, parent: QWidget, name: str = None, visible: bool = True):
+        super().__init__(parent, name if name else self.__class__.__name__, visible)
 
     def init(
             self, *,

@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QApplication
 import sys
-from qcontextapi import CONTEXT
 
 from src import App
 
@@ -10,8 +9,6 @@ if __name__ == '__main__':
     qapp.setStyle('Windows')
     app = App().init()
     app.show()
-    # костыли ебаные, дерьмо не работает если вызывать до появления окна (что-то там с ресайзами)
-
     sys.exit(qapp.exec_())
 
 
