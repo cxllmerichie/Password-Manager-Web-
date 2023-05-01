@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QComboBox, QWidget
 from typing import Iterable, Any
 
-from ..extensions import ContextObjectExt
 from ..utils import Icon
+from ..extensions import ContextObjectExt
 
 
 class Selector(ContextObjectExt, QComboBox):
@@ -21,12 +21,18 @@ class Selector(ContextObjectExt, QComboBox):
 
     def init(
             self, *,
-            items: Iterable[Item] = (), indexchanged: callable = None, textchanged: callable = None
+            items: Iterable[Item | str] = (), indexchanged: callable = None, textchanged: callable = None
     ) -> 'Selector':
         for item in items:
-            self.addItem(*item.params)
+            if isinstance(item, Selector.Item):
+                self.addItem(*item.params)
+            elif isinstance(item, str):
+                self.addItem(item)
         if indexchanged:
             self.currentIndexChanged.connect(indexchanged)
         if textchanged:
             self.currentTextChanged.connect(textchanged)
         return self
+
+    def setCurrentText(self, text: str) -> None:
+        super().setCurrentText(str(text))

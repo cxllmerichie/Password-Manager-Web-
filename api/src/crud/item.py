@@ -1,4 +1,4 @@
-from apidevtools.utils import INF
+from apidevtools.utils import INF, now_tz_naive
 from uuid import UUID
 
 from .. import schemas
@@ -24,6 +24,7 @@ async def get_items(category_id: int, limit: int = INF, offset: int = 0, schema:
 
 
 async def update_item(item_id: UUID, item: schemas.ItemCreate) -> schemas.Item:
+    item.modified_at = now_tz_naive()
     db_item = await (await db.update(item, dict(id=item_id), schemas.Item, rel_depth=1)).first()
     return db_item
 

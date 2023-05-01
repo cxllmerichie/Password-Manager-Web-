@@ -34,7 +34,6 @@ class Panel(Widget):
         super().__init__(parent, self.__class__.__name__, stylesheet=css.panel.css)
 
     def init(self) -> 'Panel':
-        user = API.current_user()
         self.setLayout(Layout.horizontal().init(
             spacing=10,
             items=[
@@ -47,11 +46,6 @@ class Panel(Widget):
                 Label(self, 'PanelTitleLbl').init(
                     icon=ICONS.APP
                 ), Qt.AlignLeft,
-                Spacer(True, True),
-                ProfileButton(self).init(
-                    text=user['email'][0:user['email'].rfind('@')], icon=Icon(user['avatar'], (25, 25)),
-                    slot=CONTEXT.Profile.show_profile
-                ),
                 Spacer(True, True),
                 Frame(self, 'PanelFrame').init(
                     layout=Layout.horizontal().init(

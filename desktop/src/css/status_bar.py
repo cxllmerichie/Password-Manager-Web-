@@ -6,9 +6,24 @@ css: str = f'''
     background-color: {COLORS.STATUS};
 }}
 
-#StatusBarLbl {{
+#StorageLbl {{
     color: white;
     background-color: {COLORS.TRANSPARENT};
     font-size: 12px;
+}}
+
+#StorageSelector QAbstractItemView {{
+    border: none;
+    color: white;
+    background-color: {COLORS.RIGHT_MENU};
+}}
+
+#StorageSelector {{
+    min-width: 75px;
+    border: none;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background-color: {COLORS.TRANSPARENT};
 }}
 '''

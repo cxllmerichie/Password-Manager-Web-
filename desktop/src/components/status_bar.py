@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Layout, Label
+from qcontextapi.widgets import Layout, Label, Selector, Frame
 from PyQt5.QtWidgets import QStatusBar
 
 
@@ -13,7 +13,20 @@ class StatusBar(QStatusBar):
         items = [self.layout().itemAt(i) for i in range(self.layout().count())]
         for item in items:
             self.layout().removeItem(item)
-        self.layout().addWidget(Label(self, 'StatusBarLbl').init(
-            text='Password Manager © 2023 by <cxllmerichie>'
-        ), alignment=Layout.LeftBottom)
+        self.layout().addWidget(Frame(self, 'StatusBarFrame').init(
+            layout=Layout.horizontal().init(
+                alignment=Layout.LeftCenter,
+                items=[
+                    Label(self, 'StorageLbl').init(
+                        text='Storage type:'
+                    ),
+                    Selector(self, 'StorageSelector').init(
+                        items=[
+                            Selector.Item(text='local'),
+                            Selector.Item(text='remote'),
+                        ]
+                    ), Layout.LeftBottom
+                ]
+            )
+        ))
         return self

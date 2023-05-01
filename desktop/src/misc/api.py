@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Iterable
 import requests as _requests
 from loguru import logger as _logger
 from qcontextapi import CONTEXT as _CONTEXT
@@ -9,14 +9,14 @@ class Api:
 
     user: dict[str, Any] = None
     __categories: list[dict[str, Any]] = None
-    category: dict[str, Any] = None
+    __category: dict[str, Any] = None
     item: dict[str, Any] = None
     field_identifiers = []
 
     # UTILS
     @staticmethod
     @_logger.catch()
-    def clear_json(dictionary: dict[str, Any]) -> dict[str, Any]:
+    def clear_json(dictionary: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
         def validate(value):
             if isinstance(value, bool):
                 return True
@@ -25,7 +25,7 @@ class Api:
             elif isinstance(value, str):
                 return len(value)
 
-        return {key: value for key, value in dictionary.items() if validate(value)}
+        return {key: value for key, value in dictionary.items() if validate(value) or key in exceptions}
 
     # PROPERTIES
     @property
@@ -33,6 +33,16 @@ class Api:
         if not self.__categories:
             self.get_categories()
         return self.__categories
+
+    @property
+    def category(self):
+        if not self.__category:
+            self.__category = self.get_category(self.item['category_id'])
+        return self.__category
+
+    @category.setter
+    def category(self, value: dict[str | Any]):
+        self.__category = value
 
     @property
     def items(self) -> list[dict[str, Any]]:
@@ -63,14 +73,6 @@ class Api:
         url = f'{self.URL}/users/'
         headers = {"accept": "application/json", "Content-Type": "application/json"}
         response = _requests.post(url=url, headers=headers, json=user).json()
-        if response.get('id'):
-            self.user = response
-        return response
-
-    @_logger.catch()
-    def current_user(self) -> dict[str, Any]:
-        url = f'{self.URL}/users/current/'
-        response = _requests.get(url=url, headers=self.auth_headers()).json()
         if response.get('id'):
             self.user = response
         return response
@@ -166,7 +168,8 @@ class Api:
     @_logger.catch()
     def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
-        response = _requests.put(url=url, headers=self.auth_headers(), json=Api.clear_json(item)).json()
+        response = _requests.put(url=url, headers=self.auth_headers(), json=Api.clear_json(item, ['expires_at'])).json()
+        print(response)
         if item_id := response.get('id'):
             self.get_categories()
             self.item = response

@@ -7,7 +7,6 @@ from typing import Any
 
 from ..misc import API
 from .. import css
-from .profile import Profile
 
 
 class CP_Item(Frame):
@@ -127,6 +126,5 @@ class CentralPages(StackedWidget):
 
     def init(self) -> 'CentralPages':
         self.addWidget(cp_items := CP_Items(self).init())
-        self.addWidget(profile := Profile(self).init())
         self.setCurrentWidget(cp_items)
         return self

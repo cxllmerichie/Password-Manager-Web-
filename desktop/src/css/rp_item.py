@@ -2,6 +2,62 @@ from ..misc import COLORS, SIZES
 
 
 css: str = f'''
+#ExpiresFrame {{
+    min-height: 50px;
+}}
+
+#CreatedHintLbl,
+#ModifiedHintLbl,
+#ExpiresHintLbl {{
+    font-size: 14px;
+}}
+
+#CreatedLbl,
+#ExpiresLbl,
+#ModifiedLbl {{
+    font-size: 14px;
+    font-weight: bold;
+}}
+
+#ExpiresSelector QAbstractItemView,
+#DateTimePickerDaySelector QAbstractItemView,
+#DateTimePickerMonthSelector QAbstractItemView,
+#DateTimePickerYearSelector QAbstractItemView,
+#DateTimePickerHourSelector QAbstractItemView,
+#DateTimePickerMinuteSelector QAbstractItemView,
+#DateTimePickerSecondSelector QAbstractItemView {{
+    border: none;
+    color: white;
+    background-color: {COLORS.RIGHT_MENU};
+}}
+
+#DateTimePickerDaySelector,
+#DateTimePickerMonthSelector,
+#DateTimePickerYearSelector,
+#DateTimePickerHourSelector,
+#DateTimePickerMinuteSelector,
+#DateTimePickerSecondSelector,
+#ExpiresSelector {{
+    border: none;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background-color: {COLORS.TRANSPARENT};
+}}
+
+#DateTimePickerDaySelector,
+#DateTimePickerMonthSelector,
+#DateTimePickerYearSelector,
+#DateTimePickerHourSelector,
+#DateTimePickerMinuteSelector,
+#DateTimePickerSecondSelector {{
+    min-width: 25px;
+}}
+
+#DateTimePickerYearSelector {{
+    min-width: 45px;
+}}
+
 #SaveBtn {{
     background-color: {COLORS.GREEN};
 }}

@@ -1,5 +1,5 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Spacer
-from qcontextapi.customs import FavouriteButton, ImageButton
+from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector
+from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker
 from qcontextapi.utils import Icon
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame, QApplication
@@ -153,6 +153,52 @@ class RP_Item(Frame):
                 LineInput(self, 'TitleInput').init(
                     placeholder='title'
                 ), Layout.Top,
+                Frame(self, 'CreatedFrame', False).init(
+                    layout=Layout.horizontal().init(
+                        items=[
+                            Label(self, 'CreatedHintLbl').init(
+                                text='Created:'
+                            ),
+                            Label(self, 'CreatedLbl')
+                        ]
+                    )
+                ),
+                Frame(self, 'ModifiedFrame', False).init(
+                    layout=Layout.horizontal().init(
+                        items=[
+                            Label(self, 'ModifiedHintLbl').init(
+                                text='Modified:'
+                            ),
+                            Label(self, 'ModifiedLbl')
+                        ]
+                    )
+                ),
+                Frame(self, 'ExpiresFrame', False).init(
+                    layout=Layout.horizontal().init(
+                        alignment=Layout.Top,
+                        items=[
+                            Label(self, 'ExpiresHintLbl').init(
+                                text='Expires:'
+                            ), Layout.Top,
+                            Layout.vertical().init(
+                                alignment=Layout.Top, spacing=5,
+                                items=[
+                                    Label(self, 'ExpiresLbl'),
+                                    Selector(self, 'ExpiresSelector').init(
+                                        textchanged=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
+                                        items=[
+                                            Selector.Item(text='No'),
+                                            Selector.Item(text='Yes'),
+                                        ]
+                                    ),
+                                    DateTimePicker(self, visible=False).init(
+                                        spacing=5
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                ),
                 TextInput(self, 'DescriptionInput').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
@@ -214,6 +260,13 @@ class RP_Item(Frame):
 
     @pyqtSlot()
     def execute_edit(self):
+        self.CreatedFrame.setVisible(False)
+        self.ModifiedFrame.setVisible(False)
+        if API.item['expires_at']:
+            self.ExpiresSelector.setVisible(True)
+        else:
+            self.ExpiresSelector.setVisible(True)
+            self.ExpiresLbl.setVisible(False)
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
         self.DeleteBtn.setVisible(True)
@@ -245,19 +298,25 @@ class RP_Item(Frame):
         title = self.TitleInput.text()
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
+        expires_at = None
+        if self.ExpiresSelector.currentText() == 'Yes':
+            expires_at = str(self.DateTimePicker.get_datetime(tz=True))
         updated = API.update_item(API.item['id'], {
             'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
-            'is_favourite': self.FavouriteButton.is_favourite
+            'is_favourite': self.FavouriteButton.is_favourite, 'expires_at': expires_at
         }).get('id')
         if updated:
             self.execute_cancel()
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CP_Items.refresh_items()
+            CONTEXT.RP_Item.show_item(API.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def execute_cancel(self):
+        self.CreatedFrame.setVisible(True)
+        self.ModifiedFrame.setVisible(True)
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
@@ -270,6 +329,9 @@ class RP_Item(Frame):
         self.FieldScrollArea.setVisible(True)
 
     def show_create(self):
+        self.CreatedFrame.setVisible(False)
+        self.ModifiedFrame.setVisible(False)
+        self.ExpiresFrame.setVisible(True)
         API.item = None
         self.DeleteBtn.setVisible(False)
         self.ImageButton.setIcon(ICONS.ITEM.icon)
@@ -288,6 +350,30 @@ class RP_Item(Frame):
 
     def show_item(self, item: dict[str, Any]):
         API.item = item
+
+        self.CreatedFrame.setVisible(True)
+        created_at = DateTimePicker.parse(item['created_at']).strftime(DateTimePicker.default_format)
+        self.CreatedLbl.setText(created_at)
+
+        text = 'No'
+        if modified_at := item['modified_at']:
+            text = DateTimePicker.parse(modified_at).strftime(DateTimePicker.default_format)
+        self.ModifiedLbl.setText(text)
+        self.ModifiedFrame.setVisible(True)
+
+        if expires_at := item['expires_at']:
+            expires_at = DateTimePicker.parse(expires_at).strftime(DateTimePicker.default_format)
+            self.ExpiresLbl.setText(expires_at)
+            self.ExpiresSelector.setVisible(False)
+            self.DateTimePicker.setVisible(False)
+            self.DateTimePicker.set_datetime(expires_at)
+        else:
+            self.ExpiresLbl.setText('No')
+            self.ExpiresLbl.setVisible(True)
+            self.ExpiresSelector.setVisible(False)
+            self.DateTimePicker.setVisible(False)
+        self.ExpiresFrame.setVisible(True)
+
         self.FavouriteButton.set(API.item['is_favourite'])
         self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)

@@ -13,7 +13,7 @@ from ..const import images, keys
 
 class ItemBase(Schema):
     __tablename__ = 'item'
-    __noupdate__ = ['id']
+    __noupdate__ = ['id', 'created_at']
 
     id: UUID = Field(default_factory=uuid4)
     icon: Optional[str | bytes] = Field(default=None)
@@ -35,8 +35,6 @@ class ItemBase(Schema):
             self.icon = icon
         if not self.created_at:
             self.created_at = now_tz_naive()
-        else:
-            self.modified_at = now_tz_naive()
         if len(self.attachments):
             key = await keys.set(self.id, encryptor.randkey())
             self.attachments = [encryptor.encrypt(attachment, key)[0] for attachment in self.attachments]
