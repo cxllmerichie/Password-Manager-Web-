@@ -26,10 +26,10 @@ class LeftMenu(SplitterWidgetExt, Widget):
                     text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
                 ), Layout.Center,
                 AllItemsBtn := MenuButton(self).init(
-                    icon=ICONS.HOME, text='All items', slot=CONTEXT.CP_Items.show_all
+                    icon=ICONS.HOME, text='All items', slot=CONTEXT.CentralItems.show_all
                 ),
                 FavItemsBtn := MenuButton(self).init(
-                    icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite', slot=CONTEXT.CP_Items.show_favourite
+                    icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite', slot=CONTEXT.CentralItems.show_favourite
                 ),
                 LabelExtended(self, 'LeftMenuCategoriesLabel').init(
                     text='Categories', margins=SIZES.LeftMenuTitlesMargin
@@ -44,7 +44,7 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 ),
                 # Spacer(False, True),
                 Button(self, 'AddCategoryBtn').init(
-                    text='Category', icon=ICONS.PLUS, slot=CONTEXT.RP_Category.show_create
+                    text='Category', icon=ICONS.PLUS, slot=CONTEXT.RightPagesCategory.show_create
                 )
             ]
         ))
@@ -88,7 +88,7 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 ))
             layout.addWidget(MenuButton(self).init(
                 icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),
-                slot=lambda checked, _category=category: CONTEXT.RP_Category.show_category(_category)
+                slot=lambda checked, _category=category: CONTEXT.RightPagesCategory.show_category(_category)
             ))
         self.SearchBar.init(
             textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=css.components.search,

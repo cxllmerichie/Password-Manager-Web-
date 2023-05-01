@@ -2,131 +2,23 @@ from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Fra
 from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker
 from qcontextapi.utils import Icon
 from qcontextapi import CONTEXT
-from PyQt5.QtWidgets import QWidget, QFrame, QApplication
+from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import pyqtSlot
-from uuid import uuid4
 from typing import Any
 
 from ..misc import ICONS, API
+from .right_pages_item_field import RightPagesItemField
 from .. import css
 
 
-class Field(Frame):
-    def __init__(self, parent: QWidget, field: dict[str, Any]):
-        self.identifier = str(uuid4())
-        name = f'Field{self.identifier}'
-        super().__init__(parent, name, stylesheet=css.rp_item.field(name))
-
-        self.field = field
-
-    def init(self) -> 'Field':
-        self.setLayout(Layout.horizontal(self, f'FieldLayout').init(
-            spacing=5,
-            items=[
-                LineInput(self, f'FieldNameInput').init(
-                    placeholder='name', alignment=Layout.Right
-                ),
-                LineInput(self, f'FieldValueInput').init(
-                    placeholder='value'
-                ),
-                Button(self, 'FieldHideBtn').init(
-                    icon=ICONS.EYE, slot=self.FieldValueInput.toggle_echo
-                ),
-                Button(self, 'FieldCopyBtn').init(
-                    icon=ICONS.COPY, slot=lambda: QApplication.clipboard().setText(self.FieldValueInput.text())
-                ),
-                Button(self, f'FieldEditBtn').init(
-                    icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), slot=self.execute_edit
-                ),
-                Button(self, f'FieldSaveBtn').init(
-                    icon=ICONS.SAVE, slot=self.execute_save
-                ),
-                Button(self, f'FieldDeleteBtn').init(
-                    icon=ICONS.CROSS_CIRCLE, slot=self.execute_delete
-                )
-            ]
-        ))
-
-        if self.field and API.item:  # add field to existing item
-            self.FieldDeleteBtn.setVisible(False)
-            self.FieldNameInput.setText(self.field['name'])
-            self.FieldNameInput.setDisabled(True)
-            self.FieldValueInput.setText(self.field['value'])
-            self.FieldValueInput.hide_echo()
-            self.FieldValueInput.setDisabled(True)
-            self.FieldSaveBtn.setVisible(False)
-            self.FieldEditBtn.setVisible(True)
-        elif API.item:  # creating field for existing item
-            self.FieldDeleteBtn.setVisible(True)
-            self.FieldSaveBtn.setVisible(True)
-            self.FieldEditBtn.setVisible(False)
-            self.FieldCopyBtn.setVisible(False)
-            self.FieldHideBtn.setVisible(False)
-        else:  # creating field while creating item
-            self.FieldEditBtn.setVisible(False)
-            self.FieldSaveBtn.setVisible(True)
-            self.FieldCopyBtn.setVisible(False)
-            self.FieldHideBtn.setVisible(False)
-            self.FieldSaveBtn.setVisible(False)
-        return self
-
-    @pyqtSlot()
-    def execute_save(self):
-        field = {'name': self.FieldNameInput.text(), 'value': self.FieldValueInput.text()}
-        if self.field:
-            response = API.update_field(self.field['id'], field)
-        else:
-            response = API.add_field(API.item['id'], field)
-        if response.get('id'):
-            self.field = response
-            self.FieldCopyBtn.setVisible(True)
-            self.FieldHideBtn.setVisible(True)
-            self.FieldSaveBtn.setVisible(False)
-            self.FieldEditBtn.setVisible(True)
-            self.FieldDeleteBtn.setVisible(False)
-            self.FieldValueInput.hide_echo()
-            self.FieldValueInput.setDisabled(True)
-            self.FieldNameInput.setDisabled(True)
-        else:
-            self.setVisible(False)
-            self.deleteLater()
-
-    @pyqtSlot()
-    def execute_delete(self):
-        def delete_ui_field():
-            if self.identifier in API.field_identifiers:
-                API.field_identifiers.remove(self.identifier)
-            self.setVisible(False)
-            self.deleteLater()
-        if self.field:
-            if deleted := API.remove_field(self.field['id']).get('id'):
-                delete_ui_field()
-            else:
-                self.RP_Item.ErrorLbl.setText('Internal error, please try again')
-        if self.RP_Item.FieldScrollArea.widget().layout().count() == 2:  # one of them is `HintLbl2`, another `self`
-            self.RP_Item.HintLbl2.setVisible(True)
-        delete_ui_field()
-
-    @pyqtSlot()
-    def execute_edit(self):
-        self.FieldCopyBtn.setVisible(False)
-        self.FieldHideBtn.setVisible(False)
-        self.FieldSaveBtn.setVisible(True)
-        self.FieldDeleteBtn.setVisible(True)
-        self.FieldEditBtn.setVisible(False)
-        self.FieldNameInput.setDisabled(False)
-        self.FieldValueInput.setDisabled(False)
-        self.FieldValueInput.show_echo()
-
-
-class RP_Item(Frame):
+class RightPagesItem(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(
             parent, self.__class__.__name__,
-            stylesheet=css.rp_item.css + css.components.scroll + css.components.img_btn + css.components.fav_btn
+            stylesheet=css.right_pages_item.css + css.components.scroll + css.components.img_btn + css.components.fav_btn
         )
 
-    def init(self) -> 'RP_Item':
+    def init(self) -> 'RightPagesItem':
         self.setLayout(Layout.vertical().init(
             spacing=20, margins=(25, 10, 25, 20),
             items=[
@@ -249,14 +141,13 @@ class RP_Item(Frame):
     @pyqtSlot()
     def expires_selector_textchanged(self):
        self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')
-       # self.ExpiresLbl.setVisible(self.ExpiresSelector.currentText() == 'No')
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
         if self.HintLbl2.isVisible():
             self.HintLbl2.setVisible(False)
         layout = self.FieldScrollArea.widget().layout()
-        layout.addWidget(field := Field(self, field).init())
+        layout.addWidget(field := RightPagesItemField(self, field).init())
         API.field_identifiers.append(field.identifier)
 
     @pyqtSlot()
@@ -267,12 +158,17 @@ class RP_Item(Frame):
     def execute_edit(self):
         self.CreatedFrame.setVisible(False)
         self.ModifiedFrame.setVisible(False)
+        self.ExpiresFrame.setVisible(True)
         self.ExpiresLbl.setVisible(False)
         self.ExpiresSelector.setVisible(True)
         if expires_at := API.item['expires_at']:
             self.DateTimePicker.set_datetime(expires_at)
             self.DateTimePicker.setVisible(True)
             self.ExpiresSelector.setCurrentText('Yes')
+        else:
+            self.ExpiresSelector.setCurrentText('No')
+            self.DateTimePicker.setVisible(False)
+            self.DateTimePicker.set_datetime(DateTimePicker.now)
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
         self.DeleteBtn.setVisible(True)
@@ -307,15 +203,17 @@ class RP_Item(Frame):
         expires_at = None
         if self.ExpiresSelector.currentText() == 'Yes':
             expires_at = str(self.DateTimePicker.get_datetime(tz=True))
+        print(API.item['expires_at'])
         updated = API.update_item(API.item['id'], {
             'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
             'is_favourite': self.FavouriteButton.is_favourite, 'expires_at': expires_at
         }).get('id')
+        print(API.item['expires_at'])
         if updated:
             self.execute_cancel()
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CP_Items.refresh_items()
-            CONTEXT.RP_Item.show_item(API.item)
+            CONTEXT.RightPagesItem.show_item(API.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -397,7 +295,7 @@ class RP_Item(Frame):
             self.add_field(field)
         self.HintLbl2.setVisible(not len(API.item['fields']))
 
-        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Item)
+        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesItem)
         CONTEXT.RightPages.expand()
 
     @pyqtSlot()

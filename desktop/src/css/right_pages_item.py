@@ -19,43 +19,12 @@ css: str = f'''
     font-weight: bold;
 }}
 
-#ExpiresSelector QAbstractItemView,
-#DateTimePickerDaySelector QAbstractItemView,
-#DateTimePickerMonthSelector QAbstractItemView,
-#DateTimePickerYearSelector QAbstractItemView,
-#DateTimePickerHourSelector QAbstractItemView,
-#DateTimePickerMinuteSelector QAbstractItemView,
-#DateTimePickerSecondSelector QAbstractItemView {{
-    border: none;
-    color: white;
-    background-color: {COLORS.RIGHT_MENU};
-}}
-
-#DateTimePickerDaySelector,
-#DateTimePickerMonthSelector,
-#DateTimePickerYearSelector,
-#DateTimePickerHourSelector,
-#DateTimePickerMinuteSelector,
-#DateTimePickerSecondSelector,
 #ExpiresSelector {{
     border: none;
     font-size: 12px;
     font-weight: bold;
     color: white;
     background-color: {COLORS.TRANSPARENT};
-}}
-
-#DateTimePickerDaySelector,
-#DateTimePickerMonthSelector,
-#DateTimePickerYearSelector,
-#DateTimePickerHourSelector,
-#DateTimePickerMinuteSelector,
-#DateTimePickerSecondSelector {{
-    min-width: 25px;
-}}
-
-#DateTimePickerYearSelector {{
-    min-width: 45px;
 }}
 
 #SaveBtn {{
@@ -180,40 +149,3 @@ css: str = f'''
     background-color: {COLORS.TRANSPARENT};
 }}
 '''
-
-
-def field(name: str) -> str:
-    return f'''
-    #{name} {{
-        background-color: {COLORS.DARK_GRAY};
-        border-radius: 5px;
-    }}
-            
-    #FieldCopyBtn,
-    #FieldHideBtn,
-    #FieldDeleteBtn,
-    #FieldSaveBtn,
-    #FieldEditBtn {{
-        border: none;
-        border-radius: 9px;
-    }}
-    
-    #FieldNameInput,
-    #FieldValueInput {{
-        color: {COLORS.TEXT_PRIMARY};
-        border: none;
-        min-height: 30px;
-        background-color: {COLORS.TRANSPARENT};
-        font-size: 16px;
-    }}
-    
-    #FieldNameInput {{
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-    }}
-    
-    #FieldValueInput {{
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-    }}
-    '''

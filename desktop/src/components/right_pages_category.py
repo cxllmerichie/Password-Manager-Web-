@@ -10,12 +10,12 @@ from ..misc import ICONS, API
 from .. import css
 
 
-class RP_Category(Frame):
+class RightPagesCategory(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.rp_category.css + css.components.fav_btn + css.components.img_btn)
+                         stylesheet=css.right_pages_category.css + css.components.fav_btn + css.components.img_btn)
 
-    def init(self) -> 'RP_Category':
+    def init(self) -> 'RightPagesCategory':
         self.setLayout(Layout.vertical().init(
             spacing=20, margins=(25, 10, 25, 20),
             items=[
@@ -91,7 +91,7 @@ class RP_Category(Frame):
 
     @pyqtSlot()
     def add_item(self):
-        Item = self.RightPages.RP_Item
+        Item = self.RightPages.RightPagesItem
         self.RightPages.setCurrentWidget(Item)
         Item.show_create()
 
@@ -110,8 +110,8 @@ class RP_Category(Frame):
         self.DescriptionInput.setDisabled(False)
         self.DescriptionInput.setText('')
 
-        CONTEXT.CP_Items.refresh_items([])
-        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Category)
+        CONTEXT.CentralItems.refresh_items([])
+        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
 
     @pyqtSlot()
@@ -180,11 +180,10 @@ class RP_Category(Frame):
         self.DeleteBtn.setVisible(False)
         self.HintLbl1.setVisible(False)
 
-        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RP_Category)
+        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
 
-        CONTEXT.CentralPages.setCurrentWidget(CONTEXT.CP_Items)
-        CONTEXT.CP_Items.refresh_items()
+        CONTEXT.CentralItems.refresh_items()
 
     @pyqtSlot()
     def execute_create(self):

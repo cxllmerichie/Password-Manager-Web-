@@ -3,7 +3,7 @@ from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 
-from ..misc import ICONS, api
+from ..misc import ICONS, api_remote
 from .view_main import MainView
 from .. import css
 

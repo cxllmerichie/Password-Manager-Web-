@@ -1,46 +1,17 @@
-from qcontextapi.widgets import ScrollArea, Layout, Label, Frame, StackedWidget
+from qcontextapi.widgets import ScrollArea, Layout, Label, Frame
 from qcontextapi.customs import SearchBar
 from PyQt5.QtWidgets import QWidget
-from qcontextapi.utils import Icon
-from qcontextapi import CONTEXT
 from typing import Any
 
 from ..misc import API
 from .. import css
+from .central_item import CentralItem
 
 
-class CP_Item(Frame):
-    def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.central_pages.cp_item)
-
-    def init(self, item: dict[str, Any]) -> 'CP_Item':
-        super().init(layout=Layout.horizontal(self, 'ItemLayout').init(
-            margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
-            items=[
-                Label(self, 'ItemIconLbl').init(
-                    icon=Icon(item['icon'], (50, 50))
-                ), Layout.Left,
-                Layout.vertical().init(
-                    items=[
-                        Label(self, 'ItemTitleLbl').init(
-                            text=item['title'], policy=(Layout.Expanding, Layout.Minimum), elided=True
-                        ),
-                        Label(self, 'ItemDescriptionLbl').init(
-                            text=item['description'], elided=True
-                        )
-                    ]
-                )
-            ]
-        ))
-        self.mousePressEvent = lambda event: CONTEXT.RP_Item.show_item(item)
-        return self
-
-
-class CP_Items(Frame):
+class CentralItems(Frame):
     def __init__(self, parent: QWidget):
         Frame.__init__(self, parent, self.__class__.__name__,
-                       stylesheet=css.central_pages.cp_items + css.components.scroll + css.components.search)
+                       stylesheet=css.central_items.css + css.components.scroll + css.components.search)
 
     def init(self):
         super().init(layout=Layout.vertical().init(
@@ -98,7 +69,7 @@ class CP_Items(Frame):
                 layout.addWidget(Label(self, 'LetterLbl').init(
                     text=letter
                 ))
-            layout.addWidget(CP_Item(self).init(item))
+            layout.addWidget(CentralItem(self).init(item))
         self.SearchBar.init(
             textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=css.components.search,
             items=[item['title'] for item in items] + letters
@@ -118,13 +89,3 @@ class CP_Items(Frame):
         for category in API.categories:
             items += list(filter(lambda x: x['is_favourite'], category['items']))
         self.refresh_items(items)
-
-
-class CentralPages(StackedWidget):
-    def __init__(self, parent):
-        StackedWidget.__init__(self, parent, self.__class__.__name__, stylesheet=css.central_pages.css)
-
-    def init(self) -> 'CentralPages':
-        self.addWidget(cp_items := CP_Items(self).init())
-        self.setCurrentWidget(cp_items)
-        return self

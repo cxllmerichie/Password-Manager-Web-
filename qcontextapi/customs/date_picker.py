@@ -8,12 +8,12 @@ from ..widgets import Frame, Layout, Selector
 
 
 class DateTimePicker(Frame):
-    today = datetime.today()
+    now = datetime.now()
     default_format = '%d.%m.%Y %H:%M'
 
-    days = [str(day).zfill(2) for day in range(1, monthrange(today.year, today.month)[1] + 1)]
+    days = [str(day).zfill(2) for day in range(1, monthrange(now.year, now.month)[1] + 1)]
     months = [str(month).zfill(2) for month in range(1, 12 + 1)]
-    years = [str(year) for year in range(today.year, today.year + 10)]
+    years = [str(year) for year in range(now.year, now.year + 10)]
 
     hours = [str(hour).zfill(2) for hour in range(0, 23 + 1)]
     minutes = [str(minute).zfill(2) for minute in range(0, 59 + 1)]
