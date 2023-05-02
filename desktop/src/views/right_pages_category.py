@@ -1,5 +1,5 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
-from qcontextapi.customs import FavouriteButton, ImageButton
+from qcontextapi.customs import FavouriteButton, ImageButton, ErrorLabel
 from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
@@ -51,7 +51,7 @@ class RightPagesCategory(Frame):
                     text='Hint: Create category like "Social Media" to store your Twitter, Facebook or Instagram personal data'
                 ),
                 Spacer(False, True),
-                Label(self, 'ErrorLbl').init(
+                ErrorLabel(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Button(self, 'CreateBtn').init(

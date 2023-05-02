@@ -1,5 +1,5 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector
-from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker
+from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
 from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
@@ -118,7 +118,7 @@ class RightPagesItem(Frame):
                         ), Layout.Center
                     ]
                 ),
-                Label(self, 'ErrorLbl').init(
+                ErrorLabel(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Button(self, 'CreateBtn').init(
@@ -280,7 +280,7 @@ class RightPagesItem(Frame):
         self.FavouriteButton.set(API.item['is_favourite'])
         self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)
-        self.ImageButton.setIcon(Icon(API.item['icon']))
+        self.ImageButton.setIcon(Icon(API.item['icon']).icon)
         self.ImageButton.setDisabled(True)
         self.DescriptionInput.setText(API.item['description'])
         self.DescriptionInput.setDisabled(True)
@@ -310,7 +310,7 @@ class RightPagesItem(Frame):
             for identifier in API.field_identifiers:
                 field = self.findChild(QFrame, f'Field{identifier}')
                 API.add_field(item_id, {'name': field.FieldNameInput.text(), 'value': field.FieldValueInput.text()})
-            self.ImageButton.setIcon(Icon(API.item['icon']))
+            self.ImageButton.setIcon(Icon(API.item['icon']).icon)
             self.CreateBtn.setVisible(False)
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()

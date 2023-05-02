@@ -1,4 +1,5 @@
 from qcontextapi.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget
+from qcontextapi.customs import ErrorLabel
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
@@ -58,7 +59,7 @@ class SignIn(Widget):
                             ]
                         )
                     ), Qt.AlignHCenter,
-                    Label(self, 'ErrorLbl').init(
+                    ErrorLabel(self, 'ErrorLbl').init(
                         wrap=True, alignment=Layout.Center
                     ), Layout.Center,
                     Button(self, 'AuthTextBtn').init(
