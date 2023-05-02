@@ -1,8 +1,8 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector
 from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker
-from qcontextapi.utils import Icon
+from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
-from PyQt5.QtWidgets import QWidget, QFrame
+from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
@@ -79,7 +79,7 @@ class RightPagesItem(Frame):
                                 alignment=Layout.Top, spacing=5,
                                 items=[
                                     Selector(self, 'ExpiresSelector').init(
-                                        textchanged=self.expires_selector_textchanged,
+                                        textchanged=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
                                         items=[
                                             Selector.Item(text='No'),
                                             Selector.Item(text='Yes'),
@@ -101,7 +101,7 @@ class RightPagesItem(Frame):
                     layout=Layout.horizontal().init(
                         items=[
                             Button(self, 'AddDocumentBtn').init(
-                                text='Add document', icon=ICONS.PLUS
+                                text='Add document', icon=ICONS.PLUS, slot=self.add_document
                             ),
                             Button(self, 'AddFieldBtn').init(
                                 text='Add field', icon=ICONS.PLUS, slot=self.add_field
@@ -142,10 +142,6 @@ class RightPagesItem(Frame):
         return self
 
     @pyqtSlot()
-    def expires_selector_textchanged(self):
-        self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')
-
-    @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
         if self.HintLbl2.isVisible():
             self.HintLbl2.setVisible(False)
@@ -155,7 +151,12 @@ class RightPagesItem(Frame):
 
     @pyqtSlot()
     def add_document(self):
-        ...
+        filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'All files (*.*)')
+        if filepath:
+            if item := API.item:
+                with open(filepath, 'rb') as file:
+                    item['attachments'].append(file.read())
+                    API.update_item(API.item['id'], item)
 
     @pyqtSlot()
     def execute_edit(self):
@@ -189,7 +190,6 @@ class RightPagesItem(Frame):
             return True
         updated = API.set_item_favourite(API.item['id'], self.FavouriteButton.is_favourite).get('id')
         if updated:
-            category = API.get_category(API.item['category_id'])
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()
             return True
@@ -205,22 +205,22 @@ class RightPagesItem(Frame):
         if self.ExpiresSelector.currentText() == 'Yes':
             expires_at = str(self.DateTimePicker.get_datetime(tz=True))
         updated = API.update_item(API.item['id'], {
-            'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
+            'icon': self.ImageButton.image_bytes_str, 'title': title, 'description': self.DescriptionInput.toPlainText(),
             'is_favourite': self.FavouriteButton.is_favourite, 'expires_at': expires_at
         }).get('id')
         if updated:
             self.execute_cancel()
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()
-            CONTEXT.RightPagesItem.show_item(API.item)
+            self.show_item(API.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def execute_cancel(self):
+        self.ModifiedFrame.setVisible(API.item['modified_at'] is not None)
+        self.ExpiresFrame.setVisible(API.item['expires_at'] is not None)
         self.CreatedFrame.setVisible(True)
-        self.ModifiedFrame.setVisible(True)
-        self.ExpiresLbl.setVisible(True)
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
@@ -233,12 +233,14 @@ class RightPagesItem(Frame):
         self.FieldScrollArea.setVisible(True)
 
     def show_create(self):
+        API.item = None
+
         self.CreatedFrame.setVisible(False)
         self.ModifiedFrame.setVisible(False)
         self.ExpiresFrame.setVisible(True)
-        API.item = None
         self.DeleteBtn.setVisible(False)
         self.ImageButton.setIcon(ICONS.ITEM.icon)
+        self.ImageButton.image_bytes = None
         self.ImageButton.setEnabled(True)
         self.EditBtn.setVisible(False)
         self.TitleInput.setEnabled(True)
@@ -262,30 +264,29 @@ class RightPagesItem(Frame):
         if modified_at := item['modified_at']:
             modified_at = DateTimePicker.parse(modified_at).strftime(DateTimePicker.default_format)
             self.ModifiedLbl.setText(modified_at)
-            self.ModifiedFrame.setVisible(True)
-        else:
-            self.ModifiedFrame.setVisible(False)
+        self.ModifiedFrame.setVisible(modified_at is not None)
 
         if expires_at := item['expires_at']:
             expires_at = DateTimePicker.parse(expires_at).strftime(DateTimePicker.default_format)
-            self.ExpiresFrame.setVisible(True)
             self.ExpiresLbl.setText(expires_at)
+            self.ExpiresLbl.setVisible(True)
             self.ExpiresSelector.setVisible(False)
             self.DateTimePicker.setVisible(False)
             self.DateTimePicker.set_datetime(expires_at)
         else:
-            self.ExpiresFrame.setVisible(False)
             self.ExpiresSelector.setCurrentText('No')
+        self.ExpiresFrame.setVisible(expires_at is not None)
 
         self.FavouriteButton.set(API.item['is_favourite'])
         self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)
-        self.ImageButton.setIcon(Icon(API.item['icon']).icon)
+        self.ImageButton.setIcon(Icon(API.item['icon']))
         self.ImageButton.setDisabled(True)
         self.DescriptionInput.setText(API.item['description'])
         self.DescriptionInput.setDisabled(True)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
+        self.DeleteBtn.setVisible(False)
         self.EditBtn.setVisible(True)
         self.CreateBtn.setVisible(False)
 
@@ -301,32 +302,30 @@ class RightPagesItem(Frame):
     def execute_create(self):
         if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
-        created = API.create_item(
-            API.category['id'],
-            item={'icon': self.ImageButton.icon_bytes, 'description': self.DescriptionInput.toPlainText(),
-                  'title': title, 'is_favourite': self.FavouriteButton.is_favourite},
-            fields=[{'name': f.FieldNameInput.text(), 'value': f.FieldValueInput.text()
-                     } for f in [self.findChild(QFrame, f'Field{identifier}') for identifier in API.field_identifiers]]
-        ).get('id')
-        if created:
-            self.ImageButton.setIcon(Icon(API.item['icon']).icon)
+        created_item = API.create_item(API.category['id'], {
+            'icon': self.ImageButton.image_bytes_str, 'description': self.DescriptionInput.toPlainText(),
+            'title': title, 'is_favourite': self.FavouriteButton.is_favourite
+        })
+        if item_id := created_item.get('id'):
+            for identifier in API.field_identifiers:
+                field = self.findChild(QFrame, f'Field{identifier}')
+                API.add_field(item_id, {'name': field.FieldNameInput.text(), 'value': field.FieldValueInput.text()})
+            self.ImageButton.setIcon(Icon(API.item['icon']))
             self.CreateBtn.setVisible(False)
-            self.show_item(API.item)
-            category = API.get_category(API.item['category_id'])
             CONTEXT.LeftMenu.refresh_categories()
-            CONTEXT.CP_Items.refresh_items()
+            CONTEXT.CentralItems.refresh_items()
+            self.show_item(API.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def execute_delete(self):
-        category_id = API.item['category_id']
-        deleted = API.delete_item(API.item['id']).get('id')
-        if deleted:
+        deleted_item = API.delete_item(API.item['id'])
+        if item_id := deleted_item.get('id'):
             self.execute_cancel()
             self.show_create()
-            category = API.get_category(category_id)
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()
+            self.show_create()
         else:
             self.ErrorLbl.setText('Internal error, please try again')

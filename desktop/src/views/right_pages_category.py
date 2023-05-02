@@ -1,6 +1,6 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
 from qcontextapi.customs import FavouriteButton, ImageButton
-from qcontextapi.utils import Icon
+from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
@@ -12,8 +12,9 @@ from .. import css
 
 class RightPagesCategory(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.right_pages_category.css + css.components.favourite_button + css.components.image_button)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.right_pages_category.css +
+                                                                     css.components.favourite_button +
+                                                                     css.components.image_button)
 
     def init(self) -> 'RightPagesCategory':
         self.setLayout(Layout.vertical().init(
@@ -80,8 +81,9 @@ class RightPagesCategory(Frame):
     def toggle_favourite(self):
         if not API.category:
             return True
-        updated = API.set_category_favourite(API.category['id'], self.FavouriteButton.is_favourite).get('id')
-        if updated:
+        updated_category = API.set_category_favourite(API.category['id'], self.FavouriteButton.is_favourite).get('id')
+        if category_id := updated_category.get('id'):
+            self.ErrorLbl.setText('')
             CONTEXT.LeftMenu.refresh_categories()
             return True
         self.ErrorLbl.setText('Internal error, please try again')
@@ -89,9 +91,8 @@ class RightPagesCategory(Frame):
 
     @pyqtSlot()
     def add_item(self):
-        Item = self.RightPages.RightPagesItem
-        self.RightPages.setCurrentWidget(Item)
-        Item.show_create()
+        CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesItem)
+        CONTEXT.RightPagesItem.show_create()
 
     def show_create(self):
         API.category = None
@@ -102,6 +103,7 @@ class RightPagesCategory(Frame):
         self.AddItemBtn.setVisible(False)
         self.ImageButton.setDisabled(False)
         self.ImageButton.setIcon(ICONS.CATEGORY.icon)
+        self.ImageButton.image_bytes = None
         self.FavouriteButton.unset_favourite()
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')
@@ -118,8 +120,9 @@ class RightPagesCategory(Frame):
             self.TitleInput.setText('')
             self.DescriptionInput.setText('')
             self.DeleteBtn.setVisible(False)
-            self.show_create()
+
             CONTEXT.LeftMenu.refresh_categories()
+            self.show_create()
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -138,17 +141,19 @@ class RightPagesCategory(Frame):
     def execute_save(self):
         if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
-        API.update_category(API.category['id'], {
-            'icon': self.ImageButton.icon_bytes, 'title': title,
+        updated_category = API.update_category(API.category['id'], {
+            'icon': self.ImageButton.image_bytes_str, 'title': title,
             'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
         })
-        if API.category:
+        if category_id := updated_category.get('id'):
             self.execute_cancel()
+            self.EditBtn.setVisible(True)
+            self.DeleteBtn.setVisible(False)
+
+            CONTEXT.LeftMenu.refresh_categories()
+            self.show_category(API.category)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
-        self.EditBtn.setVisible(True)
-        self.DeleteBtn.setVisible(False)
-        CONTEXT.LeftMenu.refresh_categories()
 
     @pyqtSlot()
     def execute_cancel(self):
@@ -180,7 +185,6 @@ class RightPagesCategory(Frame):
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
-
         CONTEXT.CentralItems.refresh_items()
 
     @pyqtSlot()
@@ -188,11 +192,11 @@ class RightPagesCategory(Frame):
         title = self.TitleInput.text()
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
-        API.create_category({
-            'icon': self.ImageButton.icon_bytes, 'title': title,
+        created_category = API.create_category({
+            'icon': self.ImageButton.image_bytes_str, 'title': title,
             'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
         })
-        if API.category:
+        if created_category.get('id'):
             self.TitleInput.setText(API.category['title'])
             self.ImageButton.setIcon(Icon(API.category['icon']).icon)
             self.ImageButton.setDisabled(True)
@@ -203,6 +207,8 @@ class RightPagesCategory(Frame):
             self.CreateBtn.setVisible(False)
             self.EditBtn.setVisible(True)
             self.HintLbl1.setVisible(False)
+
+            CONTEXT.LeftMenu.refresh_categories()
+            self.show_category(API.category)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
-        CONTEXT.LeftMenu.refresh_categories()

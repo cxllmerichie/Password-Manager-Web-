@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtCore import Qt
 
 from ..widgets import Label, Layout, Button
-from ..utils import Icon
+from ..misc import Icon
 
 
 class MenuButton(Button):

@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtCore import Qt, QSize
 
 from ..widgets import Frame, Layout, Label
-from ..utils import Icon
+from ..misc import Icon
 
 
 # ToDo: fix setVisible and objectName for outer and inner object (maybe using inheritance from Label setting Layout)

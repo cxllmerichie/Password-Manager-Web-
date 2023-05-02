@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame, QWidget, QLayout
+from PyQt5.QtWidgets import QFrame, QWidget, QLayout, QSizePolicy
 
 from ..extensions import ContextObjectExt
 
@@ -12,7 +12,7 @@ class Frame(ContextObjectExt, QFrame):
 
     def init(
             self, *,
-            layout: QLayout = None
+            layout: QLayout = None, policy: tuple[QSizePolicy, QSizePolicy] = (QSizePolicy.Minimum, QSizePolicy.Minimum)
     ) -> 'Frame':
         if layout:
             self.setLayout(layout)

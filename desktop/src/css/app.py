@@ -6,4 +6,10 @@ css = f'''
     font-family: Verdana;
     color: {COLORS.TEXT_PRIMARY};
 }}
+
+#QPushButton:disabled {{
+    border: none;
+    color: rgba(0, 0, 0, 1);
+    background-color: transparent;
+}}
 '''

@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
+from qcontextapi import CONTEXT
 
 
 class App(QMainWindow):
@@ -24,4 +25,6 @@ class App(QMainWindow):
 
         self.setCentralWidget(CentralWidget(self).init())
         self.setStatusBar(StatusBar(self).init())
+        self.show()
+        CONTEXT.LeftMenu.expand()
         return self

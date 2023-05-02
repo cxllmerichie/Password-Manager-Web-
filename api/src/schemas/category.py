@@ -23,6 +23,8 @@ class CategoryBase(Schema):
                 icon = imgproc.default(text).bytes
                 await images.set(text, icon)
             self.icon = icon
+        else:
+            self.icon = imgproc.crop(eval(self.icon)).bytes
         return self
 
     async def from_db(self) -> Schema:

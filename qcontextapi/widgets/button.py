@@ -4,7 +4,7 @@ from PyQt5.QtCore import QSize
 from typing import Callable, Any
 from contextlib import suppress
 
-from ..utils import Icon
+from ..misc import Icon
 from ..extensions import ContextObjectExt
 
 

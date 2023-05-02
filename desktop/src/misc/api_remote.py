@@ -1,19 +1,19 @@
 from typing import Any
-import requests as _requests
-from loguru import logger as _logger
-from qcontextapi import CONTEXT as _CONTEXT
+import requests
+from loguru import logger
+from qcontextapi import CONTEXT
+from qcontextapi.misc import utils
+from uuid import UUID
 
-from .utils import clear_json
 
-
-class Api:
+class APIRemote:
     URL = 'http://127.0.0.1:8000'
 
-    user: dict[str, Any] = None
     __categories: list[dict[str, Any]] = None
     __category: dict[str, Any] = None
     item: dict[str, Any] = None
-    field_identifiers = []
+    field_identifiers: list[UUID] = []
+    attachments: list[bytes] = []
 
     # PROPERTIES
     @property
@@ -37,148 +37,141 @@ class Api:
         return self.category['items']
 
     # GENERAL
-    @_logger.catch()
+    @logger.catch()
     def auth_headers(self) -> dict[str, Any]:
-        return {'accept': 'application/json', 'Authorization': f'Bearer {_CONTEXT["token"]}'}
+        return {'accept': 'application/json', 'Authorization': f'Bearer {CONTEXT["token"]}'}
 
     # AUTH
-    @_logger.catch()
+    @logger.catch()
     def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/auth/token/'
         headers = {'accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
         data = f'grant_type=&username={auth_data["email"]}&password={auth_data["password"]}&scope=&client_id=&client_secret='
-        return _requests.post(url=url, headers=headers, data=data).json()
+        return requests.post(url=url, headers=headers, data=data).json()
 
-    @_logger.catch()
+    @logger.catch()
     def check_email(self, email: str) -> bool:
         url = f'{self.URL}/auth/{email}/'
         headers = {'accept': 'application/json'}
-        return _requests.get(url=url, headers=headers).json()
+        return requests.get(url=url, headers=headers).json()
 
     # USER
-    @_logger.catch()
+    @logger.catch()
     def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/users/'
         headers = {"accept": "application/json", "Content-Type": "application/json"}
-        response = _requests.post(url=url, headers=headers, json=user).json()
-        if response.get('id'):
-            self.user = response
-        return response
+        return requests.post(url=url, headers=headers, json=user).json()
 
     # CATEGORIES
-    @_logger.catch()
+    @logger.catch()
     def get_categories(self) -> list[dict[str, Any]]:
         url = f'{self.URL}/categories/'
-        self.__categories = _requests.get(url=url, headers=self.auth_headers()).json()
+        self.__categories = requests.get(url=url, headers=self.auth_headers()).json()
         return self.__categories
 
-    @_logger.catch()
+    @logger.catch()
     def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/categories/'
-        response = _requests.post(url=url, headers=self.auth_headers(), json=clear_json(category)).json()
+        response = requests.post(url=url, headers=self.auth_headers(), json=utils.serializable(category)).json()
         if category_id := response.get('id'):
-            self.get_categories()
+            self.__categories.append(response)
             self.category = response
         return response
 
-    @_logger.catch()
+    @logger.catch()
     def get_category(self, category_id: str) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
-        response = _requests.get(url=url, headers=self.auth_headers()).json()
+        response = requests.get(url=url, headers=self.auth_headers()).json()
         if category_id := response.get('id'):
-            self.get_categories()
-            self.category = response
+            c_idx, _ = utils.find(self.categories, 'id', category_id)
+            self.category = self.categories[c_idx] = response
         return response
 
-    @_logger.catch()
+    @logger.catch()
     def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/favourite/?is_favourite={is_favourite}'
-        response = _requests.put(url=url, headers=self.auth_headers()).json()
+        response = requests.put(url=url, headers=self.auth_headers()).json()
         if category_id := response.get('id'):
-            self.get_categories()
-            self.category = response
+            c_idx, _ = utils.find(self.categories, 'id', category_id)
+            self.category = self.categories[c_idx] = response
         return response
 
-    @_logger.catch()
+    @logger.catch()
     def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
-        response = _requests.put(url=url, headers=self.auth_headers(), json=clear_json(category)).json()
+        response = requests.put(url=url, headers=self.auth_headers(), json=utils.serializable(category)).json()
         if category_id := response.get('id'):
-            self.get_categories()
-            self.category = response
+            c_idx, _ = utils.find(self.categories, 'id', category_id)
+            self.category = self.categories[c_idx] = response
         return response
 
-    @_logger.catch()
+    @logger.catch()
     def delete_category(self, category_id: int) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
-        response = _requests.delete(url=url, headers=self.auth_headers()).json()
+        response = requests.delete(url=url, headers=self.auth_headers()).json()
         if category_id := response.get('id'):
-            self.get_categories()  # might be changed to simple list.remove(deleted_category)
-            self.category = None
-            self.item = None
+            c_idx, _ = utils.find(self.categories, 'id', category_id)
+            self.categories.pop(c_idx)
+            self.category = self.item = None
         return response
 
     # FIELDS
-    @_logger.catch()
+    @logger.catch()
     def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/fields/'
-        return _requests.post(url=url, headers=self.auth_headers(), json=field).json()
+        return requests.post(url=url, headers=self.auth_headers(), json=field).json()
 
-    @_logger.catch()
+    @logger.catch()
     def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/fields/{field_id}/'
-        return _requests.put(url=url, headers=self.auth_headers(), json=field).json()
+        return requests.put(url=url, headers=self.auth_headers(), json=field).json()
 
-    @_logger.catch()
+    @logger.catch()
     def remove_field(self, field_id: str) -> dict[str, Any]:
         url = f'{self.URL}/fields/{field_id}/'
-        return _requests.delete(url=url, headers=self.auth_headers()).json()
+        return requests.delete(url=url, headers=self.auth_headers()).json()
 
     # ITEMS
-    @_logger.catch()
-    def create_item(self, category_id: int, item: dict[str, Any], fields: list[dict[str, Any]]) -> dict[str, Any]:
+    @logger.catch()
+    def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/items/'
-        response = _requests.post(url=url, headers=self.auth_headers(), json=clear_json(item)).json()
+        response = requests.post(url=url, headers=self.auth_headers(), json=utils.serializable(item)).json()
         if item_id := response.get('id'):
-            response['fields'] = []
-            for field in fields:
-                if (f := self.add_field(item_id, field)).get('id', None):
-                    response['fields'].append(f)
-            self.get_categories()
+            c_idx, _ = utils.find(self.categories, 'id', self.category['id'])
+            self.categories[c_idx]['items'].append(response)
             self.item = response
         return response
 
-    @_logger.catch()
+    @logger.catch()
     def delete_item(self, item_id: str) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
-        response = _requests.delete(url=url, headers=self.auth_headers()).json()
+        response = requests.delete(url=url, headers=self.auth_headers()).json()
         if item_id := response.get('id'):
-            self.get_categories()
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            self.categories[c_idx]['items'].pop(i_idx)
             self.item = None
         return response
 
-    @_logger.catch()
-    def get_item(self, item_id: str) -> dict[str, Any]:
-        url = f'{self.URL}/items/{item_id}/'
-        return _requests.get(url=url, headers=self.auth_headers()).json()
-
-    @_logger.catch()
+    @logger.catch()
     def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
-        response = _requests.put(url=url, headers=self.auth_headers(), json=clear_json(item, ['expires_at'])).json()
+        response = requests.put(url=url, headers=self.auth_headers(), json=utils.serializable(item, ['expires_at'])).json()
         if item_id := response.get('id'):
-            self.get_categories()
-            self.item = response
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
-    @_logger.catch()
+    @logger.catch()
     def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/favourite/?is_favourite={is_favourite}'
-        response = _requests.put(url=url, headers=self.auth_headers()).json()
+        response = requests.put(url=url, headers=self.auth_headers()).json()
         if item_id := response.get('id'):
-            self.get_categories()
-            self.item = response
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
 
-API = Api()
+API = APIRemote()

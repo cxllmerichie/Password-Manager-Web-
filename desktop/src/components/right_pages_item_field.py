@@ -99,9 +99,9 @@ class RightPagesItemField(Frame):
             if deleted := API.remove_field(self.field['id']).get('id'):
                 delete_ui_field()
             else:
-                self.RP_Item.ErrorLbl.setText('Internal error, please try again')
-        if self.RP_Item.FieldScrollArea.widget().layout().count() == 2:  # one of them is `HintLbl2`, another `self`
-            self.RP_Item.HintLbl2.setVisible(True)
+                self.RightPagesItem.ErrorLbl.setText('Internal error, please try again')
+        if self.RightPagesItem.FieldScrollArea.widget().layout().count() == 2:  # one of them is `HintLbl2`, another `self`
+            self.RightPagesItem.HintLbl2.setVisible(True)
         delete_ui_field()
 
     @pyqtSlot()

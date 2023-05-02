@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QPixmap, QIcon, QImage
+from PyQt5.QtCore import QSize, QBuffer, QIODevice
 import base64
 import os
 from loguru import logger
@@ -54,6 +54,9 @@ class Icon:
             from_bytes(instance)
         else:
             raise AttributeError(f'unknown type ({type(instance)}) of instance ({instance}), can not set Icon.icon')
+        # fix of `QPushButton.setDisabled()`
+        pixmap = self.__icon.pixmap(1000)
+        self.icon.addPixmap(pixmap, mode=QIcon.Disabled)
 
     @size.setter
     def size(self, size: SizeType) -> None:
@@ -71,11 +74,22 @@ class Icon:
         else:
             raise AttributeError(f'unknown type ({type(size)}) of size ({size}), can not set Icon.size')
 
-    def adjusted(self, instance: IconType = None, size: SizeType = None) -> 'Icon':
-        if not instance and not size:
+    def adjusted(self, icon: IconType = None, size: SizeType = None) -> 'Icon':
+        if not icon and not size:
             logger.warning('Icon.adjusted() called without parameters. Redundant call.')
-        if instance:
-            self.icon = instance
+        if icon:
+            self.icon = icon
         if size:
             self.size = size
         return self
+
+    @staticmethod
+    def bytes(icon: IconType, size: SizeType = None) -> bytes:
+        icon = Icon(icon, size)
+        image = QImage(icon.icon.pixmap(icon.size).toImage())
+        buffer = QBuffer()
+        buffer.open(QIODevice.WriteOnly)
+        image.save(buffer, 'JPG')
+        image_bytes = buffer.data()
+        buffer.close()
+        return image_bytes

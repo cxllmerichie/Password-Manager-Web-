@@ -33,11 +33,13 @@ class ItemBase(Schema):
                 icon = imgproc.default(text).bytes
                 await images.set(text, icon)
             self.icon = icon
+        else:  # icon will be passed as string, as bytes is not json serializable
+            self.icon = imgproc.crop(eval(self.icon)).bytes
         if not self.created_at:
             self.created_at = now_tz_naive()
         if len(self.attachments):
             key = await keys.set(self.id, encryptor.randkey())
-            self.attachments = [encryptor.encrypt(attachment, key)[0] for attachment in self.attachments]
+            self.attachments = [encryptor.encrypt(eval(attachment), key)[0] for attachment in self.attachments]
         return self
 
     async def from_db(self) -> Schema:

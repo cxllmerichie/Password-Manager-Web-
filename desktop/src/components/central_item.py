@@ -1,6 +1,6 @@
 from qcontextapi.widgets import Layout, Label, Frame
 from PyQt5.QtWidgets import QWidget
-from qcontextapi.utils import Icon
+from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
 from typing import Any
 
@@ -24,11 +24,11 @@ class CentralItem(Frame):
                             text=item['title'], policy=(Layout.Expanding, Layout.Minimum), elided=True
                         ),
                         Label(self, 'ItemDescriptionLbl').init(
-                            text=item['description'], elided=True
+                            text=item['description'], policy=(Layout.Expanding, Layout.Minimum), elided=True
                         )
                     ]
                 )
             ]
-        ))
+        ), policy=(Layout.Expanding, Layout.Minimum))
         self.mousePressEvent = lambda event: CONTEXT.RightPagesItem.show_item(item)
         return self

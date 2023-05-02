@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from typing import Callable
 
 from ..widgets import Button
-from ..utils import Icon
+from ..misc import Icon
 
 
 class FavouriteButton(Button):

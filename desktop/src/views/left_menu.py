@@ -1,6 +1,6 @@
 from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget, Spacer
 from qcontextapi.extensions import SplitterWidgetExt
-from qcontextapi.utils import Icon
+from qcontextapi.misc import Icon
 from qcontextapi.customs import MenuButton, SearchBar, LabelExtended
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget

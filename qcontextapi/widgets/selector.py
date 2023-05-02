@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QComboBox, QWidget
 from typing import Iterable, Any
 
-from ..utils import Icon
+from ..misc import Icon
 from ..extensions import ContextObjectExt
 
 
