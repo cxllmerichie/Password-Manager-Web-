@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from .left_menu import LeftMenu
 from .right_pages import RightPages
 from .central_items import CentralItems
-from ..components.panel import Panel
+from ..components import Panel
 from .. import css
 
 

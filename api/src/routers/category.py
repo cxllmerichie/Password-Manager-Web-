@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from apidevtools.utils import LIMIT
 
 from .. import crud, schemas
+from ..const import db
 
 
 router = APIRouter(tags=['Category'])
@@ -36,6 +37,15 @@ async def _(limit: int = LIMIT, offset: int = 0, user: schemas.User = Depends(cr
 async def _(category_id: int, category: schemas.CategoryCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_category = await crud.update_category(category_id=category_id, category=category)
+    if not db_category:
+        raise HTTPException(status_code=404, detail=f'Category <{category_id}> does not exist')
+    return db_category
+
+
+@router.put('/categories/{category_id}/favourite/', name='Set item favourite by id', response_model=schemas.Category)
+async def _(category_id: int, is_favourite: bool,
+            user: schemas.User = Depends(crud.get_current_user)):
+    db_category = await (await db.update(dict(is_favourite=is_favourite), dict(id=category_id), schemas.Category, 'category', rel_depth=2)).first()
     if not db_category:
         raise HTTPException(status_code=404, detail=f'Category <{category_id}> does not exist')
     return db_category

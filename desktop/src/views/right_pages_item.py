@@ -7,16 +7,19 @@ from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
 from ..misc import ICONS, API
-from ..components.right_pages_item_field import RightPagesItemField
+from ..components import RightPagesItemField
 from .. import css
 
 
 class RightPagesItem(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(
-            parent, self.__class__.__name__,
-            stylesheet=css.right_pages_item.css + css.components.scroll + css.components.img_btn + css.components.fav_btn
-        )
+        super().__init__(parent, self.__class__.__name__,
+                         stylesheet=css.right_pages_item.css +
+                                    css.components.scroll +
+                                    css.components.image_button +
+                                    css.components.favourite_button +
+                                    css.components.date_time_picker
+                         )
 
     def init(self) -> 'RightPagesItem':
         self.setLayout(Layout.vertical().init(
@@ -140,7 +143,7 @@ class RightPagesItem(Frame):
 
     @pyqtSlot()
     def expires_selector_textchanged(self):
-       self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')
+        self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
@@ -184,13 +187,11 @@ class RightPagesItem(Frame):
     def toggle_favourite(self) -> bool:
         if not API.item:
             return True
-        updated = API.update_item(API.item['id'], {
-            'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite
-        }).get('id')
+        updated = API.set_item_favourite(API.item['id'], self.FavouriteButton.is_favourite).get('id')
         if updated:
             category = API.get_category(API.item['category_id'])
             CONTEXT.LeftMenu.refresh_categories()
-            CONTEXT.CP_Items.refresh_items()
+            CONTEXT.CentralItems.refresh_items()
             return True
         self.ErrorLbl.setText('Internal error, please try again')
         return False
@@ -203,16 +204,14 @@ class RightPagesItem(Frame):
         expires_at = None
         if self.ExpiresSelector.currentText() == 'Yes':
             expires_at = str(self.DateTimePicker.get_datetime(tz=True))
-        print(API.item['expires_at'])
         updated = API.update_item(API.item['id'], {
             'icon': self.ImageButton.icon_bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
             'is_favourite': self.FavouriteButton.is_favourite, 'expires_at': expires_at
         }).get('id')
-        print(API.item['expires_at'])
         if updated:
             self.execute_cancel()
             CONTEXT.LeftMenu.refresh_categories()
-            CONTEXT.CP_Items.refresh_items()
+            CONTEXT.CentralItems.refresh_items()
             CONTEXT.RightPagesItem.show_item(API.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')

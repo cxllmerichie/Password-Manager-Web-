@@ -13,7 +13,7 @@ from .. import css
 class RightPagesCategory(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.right_pages_category.css + css.components.fav_btn + css.components.img_btn)
+                         stylesheet=css.right_pages_category.css + css.components.favourite_button + css.components.image_button)
 
     def init(self) -> 'RightPagesCategory':
         self.setLayout(Layout.vertical().init(
@@ -80,9 +80,7 @@ class RightPagesCategory(Frame):
     def toggle_favourite(self):
         if not API.category:
             return True
-        updated = API.update_category(API.category['id'], {
-            'title': self.TitleInput.text(), 'is_favourite': self.FavouriteButton.is_favourite
-        }).get('id')
+        updated = API.set_category_favourite(API.category['id'], self.FavouriteButton.is_favourite).get('id')
         if updated:
             CONTEXT.LeftMenu.refresh_categories()
             return True

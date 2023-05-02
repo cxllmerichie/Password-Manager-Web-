@@ -24,7 +24,7 @@ class Api:
 
     @property
     def category(self):
-        if not self.__category:
+        if not self.__category and self.item:
             self.__category = self.get_category(self.item['category_id'])
         return self.__category
 
@@ -85,6 +85,15 @@ class Api:
     def get_category(self, category_id: str) -> dict[str, Any]:
         url = f'{self.URL}/categories/{category_id}/'
         response = _requests.get(url=url, headers=self.auth_headers()).json()
+        if category_id := response.get('id'):
+            self.get_categories()
+            self.category = response
+        return response
+
+    @_logger.catch()
+    def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
+        url = f'{self.URL}/categories/{category_id}/favourite/?is_favourite={is_favourite}'
+        response = _requests.put(url=url, headers=self.auth_headers()).json()
         if category_id := response.get('id'):
             self.get_categories()
             self.category = response
@@ -157,6 +166,15 @@ class Api:
     def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/'
         response = _requests.put(url=url, headers=self.auth_headers(), json=clear_json(item, ['expires_at'])).json()
+        if item_id := response.get('id'):
+            self.get_categories()
+            self.item = response
+        return response
+
+    @_logger.catch()
+    def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
+        url = f'{self.URL}/items/{item_id}/favourite/?is_favourite={is_favourite}'
+        response = _requests.put(url=url, headers=self.auth_headers()).json()
         if item_id := response.get('id'):
             self.get_categories()
             self.item = response

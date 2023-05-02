@@ -3,6 +3,7 @@ from apidevtools.utils import LIMIT
 from uuid import UUID
 
 from .. import crud, schemas
+from ..const import db
 
 
 router = APIRouter(tags=['Item'])
@@ -38,6 +39,15 @@ async def _(category_id: int, limit: int = LIMIT, offset: int = 0,
 async def _(item_id: UUID, item: schemas.ItemCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.update_item(item_id=item_id, item=item)
+    if not db_item:
+        raise HTTPException(status_code=404, detail=f'Item <{item_id}> does not exist')
+    return db_item
+
+
+@router.put('/items/{item_id}/favourite/', name='Set item favourite by id', response_model=schemas.Item)
+async def _(item_id: UUID, is_favourite: bool,
+            user: schemas.User = Depends(crud.get_current_user)):
+    db_item = await (await db.update(dict(is_favourite=is_favourite), dict(id=item_id), schemas.Item, 'item', rel_depth=1)).first()
     if not db_item:
         raise HTTPException(status_code=404, detail=f'Item <{item_id}> does not exist')
     return db_item

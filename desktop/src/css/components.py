@@ -37,7 +37,7 @@ QScrollBar::sub-page:vertical {{
 }}
 '''
 
-img_btn = f'''
+image_button = f'''
 #ImageButton::disabled {{
     
 }}
@@ -51,7 +51,7 @@ img_btn = f'''
 }}
 '''
 
-fav_btn = f'''
+favourite_button = f'''
 #FavouriteButton {{
     background-color: {COLORS.TRANSPARENT};
 }}
