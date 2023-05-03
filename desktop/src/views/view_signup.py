@@ -112,9 +112,8 @@ class SignUp(Widget):
             return
         if not self.validate_confpass():
             return
-        user = {'email': self.InputFieldEmail.text(), 'password': self.InputFieldPassword.text()}
-        if not (token := API.create_user(user).get('access_token')):
+        created_user = API.create_user({'email': self.InputFieldEmail.text(), 'password': self.InputFieldPassword.text()})
+        if not (token := created_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        API.set_token(token)
         CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())
         CONTEXT.CentralWidget.setCurrentWidget(widget)

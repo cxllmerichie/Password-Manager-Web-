@@ -3,26 +3,23 @@ from apidevtools.simpleorm import Schema, Relation
 from datetime import datetime
 from apidevtools.media import imgproc
 from pydantic import Field
-from uuid import UUID, uuid4
-from apidevtools.security import encryptor
 from apidevtools.utils import now_tz_naive
 
 from . import field
-from ..const import images, keys
+from . import attachment
+from ..const import images
 
 
 class ItemBase(Schema):
     __tablename__ = 'item'
-    __noupdate__ = ['id', 'created_at']
+    __noupdate__ = ['created_at']
 
-    id: UUID = Field(default_factory=uuid4)
     icon: Optional[str | bytes] = Field(default=None)
     title: str = Field(default=..., min_length=1, max_length=20)
     description: Optional[str] = Field(default=None, max_length=50)
     expires_at: Optional[datetime] = Field(default=None)
     modified_at: datetime = Field(default=None)
     created_at: datetime = Field(default=None)
-    attachments: list[str | bytes] = Field(default=[])
     is_favourite: bool = Field(default=False)
 
     async def into_db(self) -> Schema:
@@ -37,16 +34,10 @@ class ItemBase(Schema):
             self.icon = imgproc.crop(eval(self.icon)).bytes
         if not self.created_at:
             self.created_at = now_tz_naive()
-        if len(self.attachments):
-            key = await keys.set(self.id, encryptor.randkey())
-            self.attachments = [encryptor.encrypt(eval(attachment), key)[0] for attachment in self.attachments]
         return self
 
     async def from_db(self) -> Schema:
         self.icon = str(self.icon)
-        if len(self.attachments):
-            key = await keys.get(self.id, convert=True)
-            self.attachments = [encryptor.decrypt(attachment, key, convert=True) for attachment in self.attachments]
         return self
 
 
@@ -59,9 +50,13 @@ class ItemCreateCrud(ItemBase):
 
 
 class Item(ItemCreateCrud):
+    id: int = Field(default=...)
+
     fields: list[field.Field] = Field(default=[])
+    attachments: list[attachment.Attachment] = Field(default=[])
 
     def relations(self) -> list[Relation]:
         return [
-            Relation(Item, 'fields', field.Field, dict(item_id=self.id))
+            Relation(Item, 'fields', field.Field, dict(item_id=self.id)),
+            Relation(Item, 'attachments', attachment.Attachment, dict(item_id=self.id))
         ]

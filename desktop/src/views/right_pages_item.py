@@ -225,8 +225,8 @@ class RightPagesItem(Frame):
     @pyqtSlot()
     def execute_cancel(self):
         self.ExportBtn.setVisible(True)
-        self.ModifiedFrame.setVisible(API.item['modified_at'] is not None)
-        self.ExpiresFrame.setVisible(API.item['expires_at'] is not None)
+        self.ModifiedFrame.setVisible(API.item and API.item['modified_at'])
+        self.ExpiresFrame.setVisible(API.item and API.item['expires_at'])
         self.CreatedFrame.setVisible(True)
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)

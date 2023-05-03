@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from apidevtools.utils import LIMIT
-from uuid import UUID
 
 from .. import crud, schemas
 from ..const import db
@@ -20,7 +19,7 @@ async def _(category_id: int, item: schemas.ItemCreate,
 
 
 @router.get('/items/{item_id}/', name='Get item by id', response_model=schemas.Item)
-async def _(item_id: UUID,
+async def _(item_id: int,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.get_item(item_id=item_id)
     if not db_item:
@@ -36,7 +35,7 @@ async def _(category_id: int, limit: int = LIMIT, offset: int = 0,
 
 
 @router.put('/items/{item_id}/', name='Update item by id', response_model=schemas.Item)
-async def _(item_id: UUID, item: schemas.ItemCreate,
+async def _(item_id: int, item: schemas.ItemCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.update_item(item_id=item_id, item=item)
     if not db_item:
@@ -45,7 +44,7 @@ async def _(item_id: UUID, item: schemas.ItemCreate,
 
 
 @router.put('/items/{item_id}/favourite/', name='Set item favourite by id', response_model=schemas.Item)
-async def _(item_id: UUID, is_favourite: bool,
+async def _(item_id: int, is_favourite: bool,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await (await db.update(dict(is_favourite=is_favourite), dict(id=item_id), schemas.Item, 'item', rel_depth=1)).first()
     if not db_item:
@@ -54,7 +53,7 @@ async def _(item_id: UUID, is_favourite: bool,
 
 
 @router.delete('/items/{item_id}/', name='Delete item by id', response_model=schemas.Item)
-async def _(item_id: UUID,
+async def _(item_id: int,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.delete_item(item_id=item_id)
     if not db_item:

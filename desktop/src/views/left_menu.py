@@ -4,8 +4,7 @@ from qcontextapi.misc import Icon
 from qcontextapi.customs import MenuButton, SearchBar, LabelExtended
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
-from typing import Any
+from PyQt5.QtCore import Qt, pyqtSlot
 from contextlib import suppress
 
 from ..misc import ICONS, SIZES, API
@@ -18,7 +17,7 @@ class LeftMenu(SplitterWidgetExt, Widget):
                         stylesheet=css.left_menu.css + css.components.scroll + css.components.search)
         SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax, Qt.Horizontal)
 
-    def init(self, categories: list[dict[str, Any]] = API.get_categories()) -> 'LeftMenu':
+    def init(self) -> 'LeftMenu':
         self.setLayout(Layout.vertical().init(
             spacing=5, margins=(0, 10, 0, 10), alignment=Qt.AlignTop,
             items=[
@@ -34,10 +33,11 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 LabelExtended(self, 'LeftMenuCategoriesLabel').init(
                     text='Categories', margins=SIZES.LeftMenuTitlesMargin
                 ), Layout.Center,
+                SearchBar(self, visible=False),
                 Label(self, 'NoCategoriesLbl', False).init(
-                    text='You don\'t have any categories yet', alignment=Qt.AlignVCenter | Qt.AlignHCenter, wrap=True
-                ),
-                SearchBar(self),
+                    text='You don\'t have any categories yet', alignment=Qt.AlignHCenter, wrap=True,
+                    policy=(Layout.Expanding, Layout.Expanding)
+                ), Layout.HCenter,
                 ScrollArea(self, 'CategoriesScrollArea', False).init(
                     horizontal=False, vertical=True, orientation=Layout.Vertical, alignment=Layout.Top, spacing=5,
                     policy=(Layout.Minimum, Layout.Expanding)
@@ -53,6 +53,7 @@ class LeftMenu(SplitterWidgetExt, Widget):
         self.refresh_categories()
         return self
 
+    @pyqtSlot()
     def searchbar_textchanged(self):
         layout = self.CategoriesScrollArea.widget().layout()
         text = self.SearchBar.text()
@@ -71,6 +72,7 @@ class LeftMenu(SplitterWidgetExt, Widget):
         layout = self.CategoriesScrollArea.widget().layout()
         layout.clear()
         categories = API.categories
+        self.SearchBar.setVisible(bool(len(categories)))
         if not len(categories):
             self.CategoriesScrollArea.setVisible(False)
             return self.NoCategoriesLbl.setVisible(True)

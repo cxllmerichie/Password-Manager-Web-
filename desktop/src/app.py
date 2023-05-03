@@ -25,6 +25,4 @@ class App(QMainWindow):
 
         self.setCentralWidget(CentralWidget(self).init())
         self.setStatusBar(StatusBar(self).init())
-        self.show()
-        CONTEXT.LeftMenu.expand()
         return self

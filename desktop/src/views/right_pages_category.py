@@ -130,7 +130,7 @@ class RightPagesCategory(Frame):
             if item_id := imported_item.get('id'):
                 CONTEXT.LeftMenu.refresh_categories()
                 CONTEXT.CentralItems.refresh_items()
-                CONTEXT.RighPagesItem.show_item(imported_item)
+                CONTEXT.RightPagesItem.show_item(imported_item)
 
     @pyqtSlot()
     def execute_delete(self):

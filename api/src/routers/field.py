@@ -8,7 +8,7 @@ router = APIRouter(tags=['Field'])
 
 
 @router.post('/items/{item_id}/fields/', name='Add new field to item by id', response_model=schemas.Field, status_code=201)
-async def _(item_id: UUID, field: schemas.FieldCreate,
+async def _(item_id: int, field: schemas.FieldCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.get_item(item_id=item_id)
     if not db_item:
@@ -18,7 +18,7 @@ async def _(item_id: UUID, field: schemas.FieldCreate,
 
 
 @router.get('/items/{item_id}/fields/', name='Get field by id', response_model=list[schemas.Field])
-async def _(item_id: UUID,
+async def _(item_id: int,
             user: schemas.User = Depends(crud.get_current_user)):
     db_item = await crud.get_item(item_id=item_id)
     if not db_item:

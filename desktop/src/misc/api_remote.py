@@ -13,7 +13,7 @@ class APIRemote:
 
     __categories: list[dict[str, Any]] = None
     __category: dict[str, Any] = None
-    item: dict[str, Any] = None
+    __item: dict[str, Any] = None
     field_identifiers: list[UUID] = []
     attachments: list[bytes] = []
 
@@ -23,6 +23,14 @@ class APIRemote:
         if not self.__categories:
             self.get_categories()
         return self.__categories
+
+    @property
+    def item(self) -> dict[str, Any]:
+        return self.__item
+
+    @item.setter
+    def item(self, item: dict[str, Any]):
+        self.__item = item
 
     @property
     def category(self):
@@ -49,7 +57,10 @@ class APIRemote:
         url = f'{self.URL}/auth/token/'
         headers = {'accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
         data = f'grant_type=&username={auth_data["email"]}&password={auth_data["password"]}&scope=&client_id=&client_secret='
-        return requests.post(url=url, headers=headers, data=data).json()
+        response = requests.post(url=url, headers=headers, data=data).json()
+        if token := response.get('access_token'):
+            CONTEXT['token'] = token
+        return response
 
     @logger.catch()
     def check_email(self, email: str) -> bool:
@@ -62,7 +73,10 @@ class APIRemote:
     def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/users/'
         headers = {"accept": "application/json", "Content-Type": "application/json"}
-        return requests.post(url=url, headers=headers, json=user).json()
+        response = requests.post(url=url, headers=headers, json=user).json()
+        if token := response.get('access_token'):
+            CONTEXT['token'] = token
+        return response
 
     # CATEGORIES
     @logger.catch()
@@ -121,7 +135,13 @@ class APIRemote:
     @logger.catch()
     def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/items/{item_id}/fields/'
-        return requests.post(url=url, headers=self.auth_headers(), json=field).json()
+        response = requests.post(url=url, headers=self.auth_headers(), json=field).json()
+        if field_id := response.get('id'):
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            self.categories[c_idx]['items'][i_idx]['fields'].append(response)
+            self.item = self.categories[c_idx]['items'][i_idx]
+        return response
 
     @logger.catch()
     def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
@@ -190,12 +210,14 @@ class APIRemote:
     def import_item(self, filepath: str):
         with open(filepath, 'r') as file:
             item = json.load(file)
-        item_pop_keys = ['created_at', 'modified_at']
+        item_pop_keys = ['created_at', 'modified_at', 'fields']
+        fields = item['fields']
         for key in item_pop_keys:
             item.pop(key)
-        created_item = self.create_item(self.category['id'], item)
+        created_item = self.create_item(self.category['id'], utils.serializable(item))
         if item_id := created_item.get('id'):
-            for field in item['fields']:
+            for field in fields:
+                print(field)
                 API.add_field(item_id, field)
         return created_item
 
