@@ -15,6 +15,7 @@ class RightPagesItemField(Frame):
         super().__init__(parent, name, stylesheet=css.right_pages_item_field.field(name))
 
         self.field = field
+        API.field_identifiers.append(self.identifier)
 
     def init(self) -> 'RightPagesItemField':
         self.setLayout(Layout.horizontal(self, f'FieldLayout').init(

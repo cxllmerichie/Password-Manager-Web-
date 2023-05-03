@@ -57,16 +57,6 @@ favourite_button = f'''
 }}
 '''
 
-splitter = f'''
-#MainViewSplitter {{
-    background-color: {COLORS.Palette.LAYER_3};
-}}
-
-#MainViewSplitter::handle {{
-    background-color: {COLORS.TRANSPARENT};
-}}
-'''
-
 search = f'''
 #SearchBar {{
     background-color: {COLORS.SEARCH};

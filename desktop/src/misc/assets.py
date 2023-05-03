@@ -77,3 +77,5 @@ class ICONS:
     EYE_OFF = Icon('eye-off.svg', (20, 20))
     CATEGORY = Icon('tag.svg', SIZES.RightMenuImage.size)
     ITEM = Icon('archive.svg', SIZES.RightMenuImage.size)
+    EXPORT = Icon('arrow-up-circle.svg', (20, 20))
+    IMPORT = Icon('arrow-down-circle.svg', (20, 20))

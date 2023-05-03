@@ -3,7 +3,7 @@ from ..misc import COLORS
 
 css = f'''
 #CentralItems {{
-    background-image: url(".assets/background.png");
+    background-color: {COLORS.TRANSPARENT};
 }}
 
 #HintLbl1,

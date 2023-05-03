@@ -2,6 +2,10 @@ from ..misc import COLORS
 
 
 css = f'''
+#App {{
+    background-image: url(".assets/background.png");
+}}
+
 * {{
     font-family: Verdana;
     color: {COLORS.TEXT_PRIMARY};

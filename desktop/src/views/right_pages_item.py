@@ -121,6 +121,9 @@ class RightPagesItem(Frame):
                 ErrorLabel(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
+                Button(self, 'ExportBtn', False).init(
+                    text='Export to file', icon=ICONS.EXPORT, slot=self.export_item
+                ),
                 Button(self, 'CreateBtn').init(
                     text='Create', slot=self.execute_create
                 ),
@@ -142,24 +145,27 @@ class RightPagesItem(Frame):
         return self
 
     @pyqtSlot()
+    def export_item(self):
+        filepath, _ = QFileDialog.getSaveFileName(self, 'Choose a file to export', '', 'JSON Files (*.json)')
+        if filepath:
+            API.export_item(filepath)
+
+    @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
         if self.HintLbl2.isVisible():
             self.HintLbl2.setVisible(False)
         layout = self.FieldScrollArea.widget().layout()
-        layout.addWidget(field := RightPagesItemField(self, field).init())
-        API.field_identifiers.append(field.identifier)
+        layout.addWidget(RightPagesItemField(self, field).init())
 
     @pyqtSlot()
     def add_document(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'All files (*.*)')
+        filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'All files (*.txt, *.jpg)')
         if filepath:
-            if item := API.item:
-                with open(filepath, 'rb') as file:
-                    item['attachments'].append(file.read())
-                    API.update_item(API.item['id'], item)
+            API.add_attachment(filepath)
 
     @pyqtSlot()
     def execute_edit(self):
+        self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
         self.ModifiedFrame.setVisible(False)
         self.ExpiresFrame.setVisible(True)
@@ -218,6 +224,7 @@ class RightPagesItem(Frame):
 
     @pyqtSlot()
     def execute_cancel(self):
+        self.ExportBtn.setVisible(True)
         self.ModifiedFrame.setVisible(API.item['modified_at'] is not None)
         self.ExpiresFrame.setVisible(API.item['expires_at'] is not None)
         self.CreatedFrame.setVisible(True)
@@ -235,6 +242,7 @@ class RightPagesItem(Frame):
     def show_create(self):
         API.item = None
 
+        self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
         self.ModifiedFrame.setVisible(False)
         self.ExpiresFrame.setVisible(True)
@@ -256,6 +264,8 @@ class RightPagesItem(Frame):
 
     def show_item(self, item: dict[str, Any]):
         API.item = item
+
+        self.ExportBtn.setVisible(True)
 
         self.CreatedFrame.setVisible(True)
         created_at = DateTimePicker.parse(item['created_at']).strftime(DateTimePicker.default_format)

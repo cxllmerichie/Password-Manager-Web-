@@ -2,7 +2,7 @@ from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spa
 from qcontextapi.customs import FavouriteButton, ImageButton, ErrorLabel
 from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
@@ -70,8 +70,15 @@ class RightPagesCategory(Frame):
                         ]
                     )
                 ),
-                Button(self, 'AddItemBtn', False).init(
-                    text='Add item', icon=ICONS.PLUS, slot=self.add_item
+                Layout.horizontal().init(
+                    items=[
+                        Button(self, 'ImportBtn', False).init(
+                            text='Import from file', icon=ICONS.IMPORT, slot=self.import_item
+                        ),
+                        Button(self, 'AddItemBtn', False).init(
+                            text='Add item', icon=ICONS.PLUS, slot=self.add_item
+                        )
+                    ]
                 )
             ]
         ))
@@ -81,7 +88,7 @@ class RightPagesCategory(Frame):
     def toggle_favourite(self):
         if not API.category:
             return True
-        updated_category = API.set_category_favourite(API.category['id'], self.FavouriteButton.is_favourite).get('id')
+        updated_category = API.set_category_favourite(API.category['id'], self.FavouriteButton.is_favourite)
         if category_id := updated_category.get('id'):
             self.ErrorLbl.setText('')
             CONTEXT.LeftMenu.refresh_categories()
@@ -109,10 +116,21 @@ class RightPagesCategory(Frame):
         self.TitleInput.setText('')
         self.DescriptionInput.setDisabled(False)
         self.DescriptionInput.setText('')
+        self.ImportBtn.setVisible(False)
 
         CONTEXT.CentralItems.refresh_items([])
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
+
+    @pyqtSlot()
+    def import_item(self):
+        filepath, _ = QFileDialog.getOpenFileName(self, 'Choose a file to import', '', 'JSON Files (*.json)')
+        if filepath:
+            imported_item = API.import_item(filepath)
+            if item_id := imported_item.get('id'):
+                CONTEXT.LeftMenu.refresh_categories()
+                CONTEXT.CentralItems.refresh_items()
+                CONTEXT.RighPagesItem.show_item(imported_item)
 
     @pyqtSlot()
     def execute_delete(self):
@@ -128,6 +146,7 @@ class RightPagesCategory(Frame):
 
     @pyqtSlot()
     def execute_edit(self):
+        self.ImportBtn.setVisible(False)
         self.CreateBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(True)
         self.AddItemBtn.setVisible(False)
@@ -182,6 +201,7 @@ class RightPagesCategory(Frame):
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
         self.HintLbl1.setVisible(False)
+        self.ImportBtn.setVisible(True)
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()

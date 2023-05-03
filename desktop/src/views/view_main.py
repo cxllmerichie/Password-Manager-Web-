@@ -12,7 +12,7 @@ from .. import css
 
 class MainView(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.components.splitter)
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.view_main.css)
 
     def init(self) -> 'MainView':
         central_pages = CentralItems(self).init()

@@ -112,6 +112,7 @@ css: str = f'''
     min-height: {SIZES.ERROR.h}px;
 }}
 
+#ExportBtn,
 #AddDocumentBtn,
 #AddFieldBtn,
 #AddItemBtn {{
@@ -126,6 +127,7 @@ css: str = f'''
     min-width: 200px;
 }}
 
+#ExportBtn:hover,
 #AddDocumentBtn:hover,
 #AddFieldBtn:hover,
 #AddItemBtn:hover {{

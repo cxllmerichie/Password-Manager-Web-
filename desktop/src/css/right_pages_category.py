@@ -80,6 +80,7 @@ css: str = f'''
     min-height: {SIZES.ERROR.h}px;
 }}
 
+#ImportBtn,
 #AddItemBtn {{
     color: {COLORS.TEXT_PRIMARY};
     background-color: {COLORS.TRANSPARENT};
@@ -88,6 +89,7 @@ css: str = f'''
     min-height: 30px;
 }}
 
+#ImportBtn:hover,
 #AddItemBtn:hover {{
     background-color: {COLORS.HOVER};
 }}

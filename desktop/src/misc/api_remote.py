@@ -4,6 +4,8 @@ from loguru import logger
 from qcontextapi import CONTEXT
 from qcontextapi.misc import utils
 from uuid import UUID
+import ujson as json
+from copy import copy
 
 
 class APIRemote:
@@ -172,6 +174,36 @@ class APIRemote:
             i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
+
+    def export_item(self, filepath: str):
+        item = copy(self.item)
+        item_pop_keys = ['icon', 'attachments', 'id', 'category_id']
+        for key in item_pop_keys:
+            item.pop(key)
+        field_pop_keys = ['id', 'item_id']
+        for index in range(len(item['fields'])):
+            for key in field_pop_keys:
+                item['fields'][index].pop(key)
+        with open(filepath, 'w') as file:
+            json.dump(item, file, indent=4)
+
+    def import_item(self, filepath: str):
+        with open(filepath, 'r') as file:
+            item = json.load(file)
+        item_pop_keys = ['created_at', 'modified_at']
+        for key in item_pop_keys:
+            item.pop(key)
+        created_item = self.create_item(self.category['id'], item)
+        if item_id := created_item.get('id'):
+            for field in item['fields']:
+                API.add_field(item_id, field)
+        return created_item
+
+    def add_attachment(self, filepath: str):
+        if item := API.item:
+            with open(filepath, 'rb') as file:
+                item['attachments'].append(file.read())
+                API.update_item(API.item['id'], item)
 
 
 API = APIRemote()
