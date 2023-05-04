@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QTextEdit, QWidget
+from PyQt5.QtWidgets import QTextEdit, QWidget, QSizePolicy
 
 from ..extensions import ContextObjectExt
 
@@ -10,10 +10,13 @@ class TextInput(ContextObjectExt, QTextEdit):
 
     def init(
             self, *,
-            placeholder: str = '', text: str = '', textchanged: callable = None
+            placeholder: str = '', text: str = '', textchanged: callable = None,
+            policy: tuple[QSizePolicy, QSizePolicy] = None
     ) -> 'TextInput':
         self.setText(text)
         self.setPlaceholderText(placeholder)
         if textchanged:
             self.textChanged.connect(textchanged)
+        if policy:
+            self.setSizePolicy(*policy)
         return self

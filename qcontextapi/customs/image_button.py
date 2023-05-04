@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QFileDialog
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QSize
 from PyQt5.QtGui import QIcon
+from contextlib import suppress
 
 from ..widgets import Button
 from ..misc import Icon
@@ -17,19 +18,44 @@ class ImageButton(Button):
 
     def init(
             self, *,
-            icon: Icon, slot: callable = lambda: None
+            icon: Icon, slot: callable = lambda: None, directory: str = ''
     ) -> 'ImageButton':
-        super().init(icon=icon, slot=lambda: self.choose_image(slot))
+        super().init(icon=icon, slot=lambda: self.choose_image(slot, directory))
+        self.RemoveImageBtn = Button(self, f'{self.objectName()}RemoveImageBtn').init(
+            icon=Icon('x-circle.svg', (30, 30)), size=QSize(30, 30), slot=self.remove_icon
+        )
+        self.RemoveImageBtn.move(self.width() - 30, 0)
+        self.RemoveImageBtn.setStyleSheet(f'''
+            #{self.objectName()}RemoveImageBtn {{background-color: transparent; border-radius: 14px;}}
+            #{self.objectName()}RemoveImageBtn:hover {{background-color: rgba(255, 255, 255, 0.5);}}
+        ''')
         return self
+
+    def remove_icon(self):
+        super().setIcon(QIcon())
+        self.image_bytes = None
+        with suppress(AttributeError):
+            self.RemoveImageBtn.setVisible(False)
 
     def setIcon(self, icon: QIcon) -> None:
         self.image_bytes = Icon.bytes(icon, self.iconSize())
         super().setIcon(icon)
+        with suppress(AttributeError):
+            self.RemoveImageBtn.setVisible(True)
+
+    def setDisabled(self, disabled: bool) -> None:
+        with suppress(AttributeError):
+            self.RemoveImageBtn.setVisible(not disabled)
+        super().setDisabled(disabled)
+
+    def setEnabled(self, enabled: bool) -> None:
+        with suppress(AttributeError):
+            self.RemoveImageBtn.setVisible(enabled)
+        super().setEnabled(enabled)
 
     @pyqtSlot()
-    def choose_image(self, slot: callable = lambda: None):
-        dialog = QFileDialog()
-        filepath, _ = dialog.getOpenFileName(self, 'Choose image', '', 'Images (*.jpg)', options=dialog.Options())
+    def choose_image(self, slot: callable = lambda: None, directory: str = ''):
+        filepath, _ = QFileDialog.getOpenFileName(self, 'Choose image', directory, 'Images (*.jpg)')
         if filepath:
             with open(filepath, 'rb') as file:
                 self.setIcon(Icon(file.read()).icon)

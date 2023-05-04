@@ -1,32 +1,11 @@
 from qcontextapi.widgets import Button, Label, Layout, Frame, Widget, Spacer
-from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt
 from contextlib import suppress
 
-from ..misc import ICONS, SIZES, API, Icon
+from ..misc import ICONS, SIZES
 from .. import css
-
-
-class ProfileButton(Frame):
-    def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__)
-
-    def init(self, icon: Icon.IconType, text: str, slot: callable = None) -> 'ProfileButton':
-        self.setLayout(Layout.horizontal().init(
-            margins=(10, 0, 10, 0), spacing=10, alignment=Layout.Center,
-            items=[
-                Label(self, 'ProfileButtonIcon').init(
-                    icon=icon
-                ),
-                Label(self, 'ProfileButtonText').init(
-                    text=text
-                )
-            ]
-        ))
-        self.mousePressEvent = lambda event: slot()
-        return self
 
 
 class Panel(Widget):

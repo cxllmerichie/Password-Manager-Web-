@@ -8,14 +8,16 @@ css: str = f'''
 
 #CreatedHintLbl,
 #ModifiedHintLbl,
-#ExpiresHintLbl {{
+#ExpiresHintLbl,
+#CreatedLbl,
+#ExpiresLbl,
+#ModifiedLbl {{
     font-size: 14px;
 }}
 
 #CreatedLbl,
 #ExpiresLbl,
 #ModifiedLbl {{
-    font-size: 14px;
     font-weight: bold;
 }}
 
@@ -31,6 +33,7 @@ css: str = f'''
     background-color: {COLORS.GREEN};
 }}
 
+#HintLbl3,
 #HintLbl2 {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
@@ -47,6 +50,10 @@ css: str = f'''
 
 #CancelBtn:hover {{
     background-color: {COLORS.RED_HOVER};
+}}
+
+#CreateBtn:hover {{
+    background-color: {COLORS.GREEN_HOVER};
 }}
 
 #SaveBtn,
@@ -69,10 +76,6 @@ css: str = f'''
     font-weight: bold;
 }}
 
-#CreateBtn:hover {{
-    background-color: rgba(0, 255, 0, 0.2);
-}}
-
 #IconBtn {{
     background-color: {COLORS.LIGHT_GRAY};
     min-width: 120px;
@@ -85,15 +88,11 @@ css: str = f'''
 #DescriptionInput {{
     border: none;
     background-color: {COLORS.LIGHT_GRAY};
-    min-width: 180px;
     color: {COLORS.TEXT_PRIMARY};
     font-size: 18px;
     padding: 5px;
     border-radius: 5px;
 }} 
-
-#DescriptionInput {{
-}}
 
 #DeleteBtn,
 #EditBtn,
@@ -113,9 +112,8 @@ css: str = f'''
 }}
 
 #ExportBtn,
-#AddDocumentBtn,
-#AddFieldBtn,
-#AddItemBtn {{
+#AddAttachmentBtn,
+#AddFieldBtn {{
     color: {COLORS.TEXT_PRIMARY};
     background-color: {COLORS.TRANSPARENT};
     font-size: 14px;
@@ -123,30 +121,29 @@ css: str = f'''
     min-height: 30px;
 }}
 
-#AddItemBtn {{
-    min-width: 200px;
-}}
-
 #ExportBtn:hover,
-#AddDocumentBtn:hover,
-#AddFieldBtn:hover,
-#AddItemBtn:hover {{
-    background-color: rgba(255, 255, 255, 0.1);
+#AddAttachmentBtn:hover,
+#AddFieldBtn:hover {{
+    background-color: {COLORS.HOVER};
 }}
 
-#AddDocumentBtn,
+#AddAttachmentBtn,
 #AddFieldBtn {{
-    min-width: 140px;
+    background-color: {COLORS.BUTTON};
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }}
 
+#AttachmentScrollArea,
 #FieldScrollArea {{
     background-color: {COLORS.LIGHT_GRAY};
-    min-width: 300px;
-    min-height: 200px;
+    min-height: 90px;
     border: none;
-    border-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }}
 
+#AttachmentScrollAreaWidget,
 #FieldScrollAreaWidget {{
     background-color: {COLORS.TRANSPARENT};
 }}

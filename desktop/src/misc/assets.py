@@ -2,6 +2,15 @@ from qcontextapi.misc import Size, Icon
 from PyQt5.QtCore import QSize
 
 
+class PATHS:
+    ICONS = 'icons'
+
+
+class EXTENSIONS:
+    ICON = 'jpg'
+    TEXT = 'txt'
+
+
 class PALETTE:
     LAYER_1 = '#0E1621'
     LAYER_2 = '#17212B'
@@ -23,6 +32,7 @@ class COLORS:
     GREEN = 'darkgreen'
     GREEN_HOVER = 'rgba(0, 255, 0, 0.5)'
     HOVER = 'rgba(255, 255, 255, 0.1)'
+    BUTTON = 'rgba(255, 255, 255, 0.2)'
     SEARCH = PALETTE.LAYER_3
 
     PANEL = PALETTE.LAYER_3

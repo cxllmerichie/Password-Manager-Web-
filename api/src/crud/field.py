@@ -1,5 +1,5 @@
 from .. import schemas
-from ..const import db
+from ..const import db, keys
 
 
 async def create_field(item_id: int, field: schemas.FieldCreate) -> schemas.Field:
@@ -27,4 +27,5 @@ async def update_field(field_id: int, field: schemas.FieldCreate) -> schemas.Fie
 
 async def delete_field(field_id: int) -> schemas.Field:
     db_field = await (await db.delete(dict(id=field_id), schemas.Field, 'field')).first()
+    await keys.delete(db_field.id)
     return db_field

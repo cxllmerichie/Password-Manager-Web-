@@ -8,7 +8,7 @@ import ujson as json
 from copy import copy
 
 
-class APIRemote:
+class Api:
     URL = 'http://127.0.0.1:8000'
 
     __categories: list[dict[str, Any]] = None
@@ -217,10 +217,10 @@ class APIRemote:
         created_item = self.create_item(self.category['id'], utils.serializable(item))
         if item_id := created_item.get('id'):
             for field in fields:
-                print(field)
                 API.add_field(item_id, field)
         return created_item
 
+    # ATTACHMENT
     def add_attachment(self, filepath: str):
         if item := API.item:
             with open(filepath, 'rb') as file:
@@ -228,4 +228,4 @@ class APIRemote:
                 API.update_item(API.item['id'], item)
 
 
-API = APIRemote()
+API = Api()

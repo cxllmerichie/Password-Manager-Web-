@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..misc import ICONS, API
+from ..misc import ICONS, API, utils, PATHS
 from .. import css
 
 
@@ -38,7 +38,7 @@ class RightPagesCategory(Frame):
                     ]
                 ),
                 ImageButton(self).init(
-                    icon=ICONS.CATEGORY
+                    icon=ICONS.CATEGORY, directory=PATHS.ICONS
                 ), Layout.TopCenter,
                 LineInput(self, 'TitleInput').init(
                     placeholder='title'
@@ -73,7 +73,7 @@ class RightPagesCategory(Frame):
                 Layout.horizontal().init(
                     items=[
                         Button(self, 'ImportBtn', False).init(
-                            text='Import from file', icon=ICONS.IMPORT, slot=self.import_item
+                            text='Import item', icon=ICONS.IMPORT, slot=self.import_item
                         ),
                         Button(self, 'AddItemBtn', False).init(
                             text='Add item', icon=ICONS.PLUS, slot=self.add_item
@@ -108,8 +108,8 @@ class RightPagesCategory(Frame):
         self.EditBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(False)
-        self.ImageButton.setDisabled(False)
         self.ImageButton.setIcon(ICONS.CATEGORY.icon)
+        self.ImageButton.setDisabled(False)
         self.ImageButton.image_bytes = None
         self.FavouriteButton.unset_favourite()
         self.TitleInput.setEnabled(True)
@@ -154,23 +154,25 @@ class RightPagesCategory(Frame):
         self.EditBtn.setVisible(False)
         self.TitleInput.setEnabled(True)
         self.DescriptionInput.setDisabled(False)
+        self.DescriptionInput.setVisible(True)
         self.DeleteBtn.setVisible(True)
 
     @pyqtSlot()
     def execute_save(self):
         if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
+        prev_icon = API.category['icon']
         updated_category = API.update_category(API.category['id'], {
             'icon': self.ImageButton.image_bytes_str, 'title': title,
             'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
         })
         if category_id := updated_category.get('id'):
-            self.execute_cancel()
-            self.EditBtn.setVisible(True)
-            self.DeleteBtn.setVisible(False)
-
             CONTEXT.LeftMenu.refresh_categories()
+            self.execute_cancel()
             self.show_category(API.category)
+
+            if prev_icon != (curr_icon := API.category['icon']):
+                utils.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -178,8 +180,10 @@ class RightPagesCategory(Frame):
     def execute_cancel(self):
         self.ErrorLbl.setText('')
         self.TitleInput.setEnabled(False)
+        self.ImageButton.setIcon(Icon(API.category['icon']).icon)
         self.ImageButton.setDisabled(True)
         self.DescriptionInput.setDisabled(True)
+        self.DescriptionInput.setVisible(API.category['description'] is not None)
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
@@ -190,10 +194,11 @@ class RightPagesCategory(Frame):
         self.FavouriteButton.set(API.category['is_favourite'])
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(API.category['title'])
-        self.ImageButton.setDisabled(True)
         self.ImageButton.setIcon(Icon(API.category['icon']).icon)
+        self.ImageButton.setDisabled(True)
         self.DescriptionInput.setText(API.category['description'])
         self.DescriptionInput.setDisabled(True)
+        self.DescriptionInput.setVisible(API.category['description'] is not None)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(True)
@@ -217,17 +222,6 @@ class RightPagesCategory(Frame):
             'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
         })
         if created_category.get('id'):
-            self.TitleInput.setText(API.category['title'])
-            self.ImageButton.setIcon(Icon(API.category['icon']).icon)
-            self.ImageButton.setDisabled(True)
-            self.ErrorLbl.setText('')
-            self.TitleInput.setEnabled(False)
-            self.DescriptionInput.setDisabled(True)
-            self.AddItemBtn.setVisible(True)
-            self.CreateBtn.setVisible(False)
-            self.EditBtn.setVisible(True)
-            self.HintLbl1.setVisible(False)
-
             CONTEXT.LeftMenu.refresh_categories()
             self.show_category(API.category)
         else:

@@ -1,5 +1,5 @@
 from .. import schemas
-from ..const import db
+from ..const import db, keys
 
 
 async def create_attachment(item_id: int, attachment: schemas.AttachmentCreate) -> schemas.Attachment:
@@ -27,4 +27,5 @@ async def update_attachment(attachment_id: int, attachment: schemas.AttachmentCr
 
 async def delete_attachment(attachment_id: int) -> schemas.Attachment:
     db_attachment = await (await db.delete(dict(id=attachment_id), schemas.Attachment, 'attachment')).first()
+    await keys.delete(db_attachment.id)
     return db_attachment

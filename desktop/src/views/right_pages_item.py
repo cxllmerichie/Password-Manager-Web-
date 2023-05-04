@@ -6,20 +6,18 @@ from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..misc import ICONS, API
+from ..misc import ICONS, API, utils, PATHS
 from ..components import RightPagesItemField
 from .. import css
 
 
 class RightPagesItem(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__,
-                         stylesheet=css.right_pages_item.css +
-                                    css.components.scroll +
-                                    css.components.image_button +
-                                    css.components.favourite_button +
-                                    css.components.date_time_picker
-                         )
+        super().__init__(parent, self.__class__.__name__, stylesheet=css.right_pages_item.css +
+                                                                     css.components.scroll +
+                                                                     css.components.image_button +
+                                                                     css.components.favourite_button +
+                                                                     css.components.date_time_picker)
 
     def init(self) -> 'RightPagesItem':
         self.setLayout(Layout.vertical().init(
@@ -43,7 +41,7 @@ class RightPagesItem(Frame):
                     ]
                 ),
                 ImageButton(self).init(
-                    icon=ICONS.ITEM
+                    icon=ICONS.ITEM, directory=PATHS.ICONS
                 ), Layout.TopCenter,
                 LineInput(self, 'TitleInput').init(
                     placeholder='title'
@@ -97,11 +95,17 @@ class RightPagesItem(Frame):
                 TextInput(self, 'DescriptionInput').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
-                Frame(self, 'AddBtnsFrame').init(
-                    layout=Layout.horizontal().init(
+                Frame(self, 'FieldFrame').init(
+                    layout=Layout.vertical().init(
                         items=[
-                            Button(self, 'AddDocumentBtn').init(
-                                text='Add document', icon=ICONS.PLUS, slot=self.add_document
+                            ScrollArea(self, 'FieldScrollArea').init(
+                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
+                                items=[
+                                    Label(self, 'HintLbl2').init(
+                                        wrap=True, alignment=Layout.Center,
+                                        text='Add new field with name "password" or "username" and it\'s value'
+                                    ), Layout.Center
+                                ]
                             ),
                             Button(self, 'AddFieldBtn').init(
                                 text='Add field', icon=ICONS.PLUS, slot=self.add_field
@@ -109,14 +113,23 @@ class RightPagesItem(Frame):
                         ]
                     )
                 ),
-                ScrollArea(self, 'FieldScrollArea').init(
-                    orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
-                    items=[
-                        Label(self, 'HintLbl2').init(
-                            wrap=True, alignment=Layout.Center,
-                            text='Add new field with name "password" or "username" and it\'s value'
-                        ), Layout.Center
-                    ]
+                Frame(self, 'AttachmentFrame').init(
+                    layout=Layout.vertical().init(
+                        items=[
+                            ScrollArea(self, 'AttachmentScrollArea').init(
+                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
+                                items=[
+                                    Label(self, 'HintLbl3').init(
+                                        wrap=True, alignment=Layout.Center,
+                                        text='Attach *.txt or *.jpg files to the item'
+                                    ), Layout.Center
+                                ]
+                            ),
+                            Button(self, 'AddAttachmentBtn').init(
+                                text='Add document', icon=ICONS.PLUS, slot=self.add_attachment
+                            )
+                        ]
+                    )
                 ),
                 ErrorLabel(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
@@ -158,7 +171,7 @@ class RightPagesItem(Frame):
         layout.addWidget(RightPagesItemField(self, field).init())
 
     @pyqtSlot()
-    def add_document(self):
+    def add_attachment(self):
         filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'All files (*.txt, *.jpg)')
         if filepath:
             API.add_attachment(filepath)
@@ -185,9 +198,10 @@ class RightPagesItem(Frame):
         self.SaveCancelFrame.setVisible(True)
         self.TitleInput.setDisabled(False)
         self.DescriptionInput.setDisabled(False)
+        self.DescriptionInput.setVisible(True)
         self.ImageButton.setDisabled(False)
         self.AddFieldBtn.setVisible(False)
-        self.AddDocumentBtn.setVisible(False)
+        self.AddAttachmentBtn.setVisible(False)
         self.FieldScrollArea.setVisible(False)
 
     @pyqtSlot()
@@ -210,23 +224,26 @@ class RightPagesItem(Frame):
         expires_at = None
         if self.ExpiresSelector.currentText() == 'Yes':
             expires_at = str(self.DateTimePicker.get_datetime(tz=True))
+        prev_icon = API.item['icon']
         updated = API.update_item(API.item['id'], {
             'icon': self.ImageButton.image_bytes_str, 'title': title, 'description': self.DescriptionInput.toPlainText(),
             'is_favourite': self.FavouriteButton.is_favourite, 'expires_at': expires_at
         }).get('id')
         if updated:
-            self.execute_cancel()
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()
+            self.execute_cancel()
             self.show_item(API.item)
+            if prev_icon != (curr_icon := API.item['icon']):
+                utils.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @pyqtSlot()
     def execute_cancel(self):
         self.ExportBtn.setVisible(True)
-        self.ModifiedFrame.setVisible(API.item and API.item['modified_at'])
-        self.ExpiresFrame.setVisible(API.item and API.item['expires_at'])
+        self.ModifiedFrame.setVisible(bool(API.item and API.item['modified_at']))
+        self.ExpiresFrame.setVisible(bool(API.item and API.item['expires_at']))
         self.CreatedFrame.setVisible(True)
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)
@@ -234,13 +251,17 @@ class RightPagesItem(Frame):
         self.SaveCancelFrame.setVisible(False)
         self.TitleInput.setDisabled(True)
         self.DescriptionInput.setDisabled(True)
+        self.DescriptionInput.setVisible(bool(API.item and API.item['description']))
+        if API.item:
+            self.ImageButton.setIcon(Icon(API.item['icon']).icon)
         self.ImageButton.setDisabled(True)
         self.AddFieldBtn.setVisible(True)
-        self.AddDocumentBtn.setVisible(True)
+        self.AddAttachmentBtn.setVisible(True)
         self.FieldScrollArea.setVisible(True)
 
     def show_create(self):
         API.item = None
+        API.field_identifiers.clear()
 
         self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
@@ -258,8 +279,7 @@ class RightPagesItem(Frame):
         self.FieldScrollArea.clear([self.HintLbl2])
         self.CreateBtn.setVisible(True)
         self.FavouriteButton.setVisible(True)
-        self.FavouriteButton.click()
-        self.FavouriteButton.click()
+        self.FavouriteButton.unset_favourite()
         self.HintLbl2.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
@@ -293,6 +313,7 @@ class RightPagesItem(Frame):
         self.ImageButton.setIcon(Icon(API.item['icon']).icon)
         self.ImageButton.setDisabled(True)
         self.DescriptionInput.setText(API.item['description'])
+        self.DescriptionInput.setVisible(API.item['description'] is not None)
         self.DescriptionInput.setDisabled(True)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
@@ -320,8 +341,6 @@ class RightPagesItem(Frame):
             for identifier in API.field_identifiers:
                 field = self.findChild(QFrame, f'Field{identifier}')
                 API.add_field(item_id, {'name': field.FieldNameInput.text(), 'value': field.FieldValueInput.text()})
-            self.ImageButton.setIcon(Icon(API.item['icon']).icon)
-            self.CreateBtn.setVisible(False)
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()
             self.show_item(API.item)
@@ -332,10 +351,9 @@ class RightPagesItem(Frame):
     def execute_delete(self):
         deleted_item = API.delete_item(API.item['id'])
         if item_id := deleted_item.get('id'):
-            self.execute_cancel()
-            self.show_create()
             CONTEXT.LeftMenu.refresh_categories()
             CONTEXT.CentralItems.refresh_items()
+            self.execute_cancel()
             self.show_create()
         else:
             self.ErrorLbl.setText('Internal error, please try again')

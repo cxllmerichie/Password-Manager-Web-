@@ -86,7 +86,8 @@ class Icon:
     @staticmethod
     def bytes(icon: IconType, size: SizeType = None) -> bytes:
         icon = Icon(icon, size)
-        image = QImage(icon.icon.pixmap(icon.size).toImage())
+        # image = QImage(icon.icon.pixmap(icon.size).toImage())
+        image = QImage(icon.icon.pixmap(QSize(512, 512)).toImage())
         buffer = QBuffer()
         buffer.open(QIODevice.WriteOnly)
         image.save(buffer, 'JPG')
