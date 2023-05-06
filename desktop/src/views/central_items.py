@@ -22,15 +22,13 @@ class CentralItems(Frame):
                     orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, horizontal=False
                 ),
                 Label(self, 'NoCategoriesLbl', False).init(
-                    text='', wrap=True, alignment=Layout.Center
-                    # text='This category does not have items yet', wrap=True, alignment=Layout.Center
+                    text='This category does not have items yet', wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Label(self, 'HintLbl1').init(
                     text='Select some category in the left menu to see it\'s items', wrap=True, alignment=Layout.Center
                 ), Layout.Center,
             ]
         ))
-        # self.ItemsScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         return self
 
     def searchbar_textchanged(self):

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from uuid import UUID
 
 from .. import crud, schemas
 
@@ -27,14 +28,14 @@ async def _(item_id: int,
 
 
 @router.get('/attachments/{attachment_id}/', name='Get attachment by id', response_model=schemas.Attachment)
-async def _(attachment_id: int,
+async def _(attachment_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
     db_attachment = await crud.get_attachment(attachment_id=attachment_id)
     return db_attachment
 
 
 @router.put('/attachments/{attachment_id}/', name='Update attachment by id', response_model=schemas.Attachment)
-async def _(attachment_id: int, attachment: schemas.AttachmentCreate,
+async def _(attachment_id: UUID, attachment: schemas.AttachmentCreate,
             user: schemas.User = Depends(crud.get_current_user)):
     db_attachment = await crud.update_attachment(attachment_id=attachment_id, attachment=attachment)
     if not db_attachment:
@@ -43,7 +44,7 @@ async def _(attachment_id: int, attachment: schemas.AttachmentCreate,
 
 
 @router.delete('/attachments/{attachment_id}/', name='Delete attachment by id', response_model=schemas.Attachment)
-async def _(attachment_id: int,
+async def _(attachment_id: UUID,
             user: schemas.User = Depends(crud.get_current_user)):
     db_attachment = await crud.delete_attachment(attachment_id=attachment_id)
     if not db_attachment:

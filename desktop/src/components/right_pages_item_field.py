@@ -1,4 +1,5 @@
 from qcontextapi.widgets import Button, LineInput, Layout, Frame
+from qcontextapi.customs import FavouriteButton
 from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSlot
 from uuid import uuid4
@@ -18,7 +19,7 @@ class RightPagesItemField(Frame):
         API.field_identifiers.append(self.identifier)
 
     def init(self) -> 'RightPagesItemField':
-        self.setLayout(Layout.horizontal(self, f'FieldLayout').init(
+        self.setLayout(Layout.horizontal().init(
             spacing=5,
             items=[
                 LineInput(self, f'FieldNameInput').init(
@@ -27,14 +28,14 @@ class RightPagesItemField(Frame):
                 LineInput(self, f'FieldValueInput').init(
                     placeholder='value'
                 ),
-                Button(self, 'FieldHideBtn').init(
-                    icon=ICONS.EYE, slot=self.FieldValueInput.toggle_echo
+                FavouriteButton(self, 'FieldHideBtn').init(
+                    if_set_icon=ICONS.EYE, if_unset_icon=ICONS.EYE_OFF, pre_slot=self.hide_value
                 ),
                 Button(self, 'FieldCopyBtn').init(
                     icon=ICONS.COPY, slot=lambda: QApplication.clipboard().setText(self.FieldValueInput.text())
                 ),
                 Button(self, f'FieldEditBtn').init(
-                    icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), slot=self.execute_edit
+                    icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), slot=self.show_edit
                 ),
                 Button(self, f'FieldSaveBtn').init(
                     icon=ICONS.SAVE, slot=self.execute_save
@@ -45,6 +46,10 @@ class RightPagesItemField(Frame):
             ]
         ))
 
+        self.show_field()
+        return self
+
+    def show_field(self):
         if self.field and API.item:  # add field to existing item
             self.FieldDeleteBtn.setVisible(False)
             self.FieldNameInput.setText(self.field['name'])
@@ -66,7 +71,11 @@ class RightPagesItemField(Frame):
             self.FieldCopyBtn.setVisible(False)
             self.FieldHideBtn.setVisible(False)
             self.FieldSaveBtn.setVisible(False)
-        return self
+
+    @pyqtSlot()
+    def hide_value(self):
+        self.FieldValueInput.toggle_echo()
+        return True
 
     @pyqtSlot()
     def execute_save(self):
@@ -77,17 +86,13 @@ class RightPagesItemField(Frame):
             response = API.add_field(API.item['id'], field)
         if response.get('id'):
             self.field = response
-            self.FieldCopyBtn.setVisible(True)
-            self.FieldHideBtn.setVisible(True)
-            self.FieldSaveBtn.setVisible(False)
-            self.FieldEditBtn.setVisible(True)
-            self.FieldDeleteBtn.setVisible(False)
-            self.FieldValueInput.hide_echo()
-            self.FieldValueInput.setDisabled(True)
-            self.FieldNameInput.setDisabled(True)
+            self.show_field()
         else:
-            self.setVisible(False)
-            self.deleteLater()
+            if not self.field:
+                self.setVisible(False)
+                self.deleteLater()
+            else:
+                self.show_field()
 
     @pyqtSlot()
     def execute_delete(self):
@@ -97,7 +102,8 @@ class RightPagesItemField(Frame):
             self.setVisible(False)
             self.deleteLater()
         if self.field:
-            if deleted := API.remove_field(self.field['id']).get('id'):
+            deleted_field = API.delete_field(self.field['id'])
+            if field_id := deleted_field.get('id'):
                 delete_ui_field()
             else:
                 self.RightPagesItem.ErrorLbl.setText('Internal error, please try again')
@@ -106,7 +112,7 @@ class RightPagesItemField(Frame):
         delete_ui_field()
 
     @pyqtSlot()
-    def execute_edit(self):
+    def show_edit(self):
         self.FieldCopyBtn.setVisible(False)
         self.FieldHideBtn.setVisible(False)
         self.FieldSaveBtn.setVisible(True)

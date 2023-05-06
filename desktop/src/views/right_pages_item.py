@@ -5,9 +5,11 @@ from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
+import os
+from mimetypes import MimeTypes
 
 from ..misc import ICONS, API, utils, PATHS
-from ..components import RightPagesItemField
+from ..components import RightPagesItemField, RightPagesItemAttachment
 from .. import css
 
 
@@ -165,16 +167,24 @@ class RightPagesItem(Frame):
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
-        if self.HintLbl2.isVisible():
-            self.HintLbl2.setVisible(False)
+        self.HintLbl2.setVisible(False)
         layout = self.FieldScrollArea.widget().layout()
         layout.addWidget(RightPagesItemField(self, field).init())
 
     @pyqtSlot()
-    def add_attachment(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'All files (*.txt, *.jpg)')
-        if filepath:
-            API.add_attachment(filepath)
+    def add_attachment(self, attachment: dict[str, Any] = None):
+        creating = attachment is None
+        if not attachment:
+            filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Images (*.jpg);;Text files (*.txt)')
+            if filepath:
+                with open(filepath, 'rb') as file:
+                    data = file.read()
+                icon = Icon(data)
+                attachment = {'content': str(Icon.bytes(icon.icon)), 'filename': os.path.basename(filepath), 'mime': MimeTypes().guess_type(filepath)[0]}
+        if attachment:
+            self.HintLbl3.setVisible(False)
+            layout = self.AttachmentScrollArea.widget().layout()
+            layout.addWidget(RightPagesItemAttachment(self, attachment, creating).init())
 
     @pyqtSlot()
     def execute_edit(self):
@@ -276,6 +286,7 @@ class RightPagesItem(Frame):
         self.TitleInput.setText('')
         self.DescriptionInput.setEnabled(True)
         self.DescriptionInput.setText('')
+        self.DescriptionInput.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
         self.CreateBtn.setVisible(True)
         self.FavouriteButton.setVisible(True)
@@ -325,6 +336,11 @@ class RightPagesItem(Frame):
         for field in API.item['fields']:
             self.add_field(field)
         self.HintLbl2.setVisible(not len(API.item['fields']))
+
+        self.AttachmentScrollArea.clear([self.HintLbl3])
+        for attachment in API.item['attachments']:
+            self.add_attachment(attachment)
+        self.HintLbl3.setVisible(not len(API.item['attachments']))
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesItem)
         CONTEXT.RightPages.expand()

@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import Field
 from apidevtools.simpleorm import Schema, Relation
 from apidevtools.media import imgproc
+import zlib
 
 from .item import Item
 from ..const import images
@@ -25,9 +26,11 @@ class CategoryBase(Schema):
             self.icon = icon
         else:
             self.icon = imgproc.crop(eval(self.icon)).bytes
+        # self.icon = zlib.compress(self.icon)
         return self
 
     async def from_db(self) -> Schema:
+        # self.icon = str(zlib.decompress(self.icon))
         self.icon = str(self.icon)
         return self
 

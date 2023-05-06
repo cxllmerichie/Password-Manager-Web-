@@ -21,6 +21,7 @@ async def get_field(field_id: int, schema: type = schemas.Field) -> schemas.Fiel
 
 
 async def update_field(field_id: int, field: schemas.FieldCreate) -> schemas.Field:
+    field.id = field_id
     db_field = await (await db.update(field, dict(id=field_id), schemas.Field)).first()
     return db_field
 

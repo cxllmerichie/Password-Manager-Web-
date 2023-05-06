@@ -116,6 +116,7 @@ class RightPagesCategory(Frame):
         self.TitleInput.setText('')
         self.DescriptionInput.setDisabled(False)
         self.DescriptionInput.setText('')
+        self.DescriptionInput.setVisible(True)
         self.ImportBtn.setVisible(False)
 
         CONTEXT.CentralItems.refresh_items([])

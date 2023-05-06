@@ -15,7 +15,7 @@ class Api:
     __category: dict[str, Any] = None
     __item: dict[str, Any] = None
     field_identifiers: list[UUID] = []
-    attachments: list[bytes] = []
+    attachment_identifiers: list[UUID] = []
 
     # PROPERTIES
     @property
@@ -138,7 +138,7 @@ class Api:
         response = requests.post(url=url, headers=self.auth_headers(), json=field).json()
         if field_id := response.get('id'):
             c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            i_idx, _ = utils.find(self.items, 'id', item_id)
             self.categories[c_idx]['items'][i_idx]['fields'].append(response)
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
@@ -146,12 +146,25 @@ class Api:
     @logger.catch()
     def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
         url = f'{self.URL}/fields/{field_id}/'
-        return requests.put(url=url, headers=self.auth_headers(), json=field).json()
+        response = requests.put(url=url, headers=self.auth_headers(), json=field).json()
+        if field_id := response.get('id'):
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.items, 'id', response['item_id'])
+            f_idx, _ = utils.find(self.items[i_idx]['fields'], 'id', field_id)
+            self.categories[c_idx]['items'][i_idx]['fields'][f_idx] = response
+            self.item = self.categories[c_idx]['items'][i_idx]
+        return response
 
     @logger.catch()
-    def remove_field(self, field_id: str) -> dict[str, Any]:
+    def delete_field(self, field_id: str) -> dict[str, Any]:
         url = f'{self.URL}/fields/{field_id}/'
-        return requests.delete(url=url, headers=self.auth_headers()).json()
+        response = requests.delete(url=url, headers=self.auth_headers()).json()
+        if field_id := response.get('id'):
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.items, 'id', response['item_id'])
+            self.categories[c_idx]['items'][i_idx]['fields'].remove(response)
+            self.item = self.categories[c_idx]['items'][i_idx]
+        return response
 
     # ITEMS
     @logger.catch()
@@ -195,6 +208,7 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
+    @logger.catch()
     def export_item(self, filepath: str):
         item = copy(self.item)
         item_pop_keys = ['icon', 'attachments', 'id', 'category_id']
@@ -207,6 +221,7 @@ class Api:
         with open(filepath, 'w') as file:
             json.dump(item, file, indent=4)
 
+    @logger.catch()
     def import_item(self, filepath: str):
         with open(filepath, 'r') as file:
             item = json.load(file)
@@ -221,11 +236,39 @@ class Api:
         return created_item
 
     # ATTACHMENT
-    def add_attachment(self, filepath: str):
-        if item := API.item:
-            with open(filepath, 'rb') as file:
-                item['attachments'].append(file.read())
-                API.update_item(API.item['id'], item)
+    @logger.catch()
+    def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
+        url = f'{self.URL}/items/{item_id}/attachments/'
+        response = requests.post(url=url, headers=self.auth_headers(), json=attachment).json()
+        if attachment_id := response.get('id'):
+            c_idx, _ = utils.find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            self.categories[c_idx]['items'][i_idx]['attachments'].append(response)
+            self.item = self.categories[c_idx]['items'][i_idx]
+        return response
+
+    @logger.catch()
+    def update_attachment(self, attachment_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
+        url = f'{self.URL}/attachments/{attachment_id}/'
+        response = requests.put(url=url, headers=self.auth_headers(), json=attachment).json()
+        if attachment_id := response.get('id'):
+            i_idx, _ = utils.find(self.items, 'id', response['item_id'])
+            c_idx, _ = utils.find(self.categories, 'id', self.items[i_idx]['category_id'])
+            a_idx, _ = utils.find(self.items[i_idx]['attachments'], 'id', attachment_id)
+            self.categories[c_idx]['items'][i_idx]['attachments'][a_idx] = response
+            self.item = self.categories[c_idx]['items'][i_idx]
+        return response
+
+    @logger.catch()
+    def delete_attachment(self, attachment_id: str) -> dict[str, Any]:
+        url = f'{self.URL}/attachments/{attachment_id}/'
+        response = requests.delete(url=url, headers=self.auth_headers()).json()
+        if attachment_id := response.get('id'):
+            i_idx, _ = utils.find(self.items, 'id', response['item_id'])
+            c_idx, _ = utils.find(self.categories, 'id', self.items[i_idx]['category_id'])
+            self.categories[c_idx]['items'][i_idx]['attachments'].remove(response)
+            self.item = self.categories[c_idx]['items'][i_idx]
+        return response
 
 
 API = Api()

@@ -4,9 +4,10 @@ from datetime import datetime
 from apidevtools.media import imgproc
 from pydantic import Field
 from apidevtools.utils import now_tz_naive
+import zlib
 
 from . import field
-from . import attachment
+from .attachment import Attachment
 from ..const import images
 
 
@@ -30,13 +31,15 @@ class ItemBase(Schema):
                 icon = imgproc.default(text).bytes
                 await images.set(text, icon)
             self.icon = icon
-        else:  # icon will be passed as string, as bytes is not json serializable
+        else:
             self.icon = imgproc.crop(eval(self.icon)).bytes
+        # self.icon = zlib.compress(self.icon)
         if not self.created_at:
             self.created_at = now_tz_naive()
         return self
 
     async def from_db(self) -> Schema:
+        # self.icon = str(zlib.decompress(self.icon))
         self.icon = str(self.icon)
         return self
 
@@ -53,10 +56,10 @@ class Item(ItemCreateCrud):
     id: int = Field(default=...)
 
     fields: list[field.Field] = Field(default=[])
-    attachments: list[attachment.Attachment] = Field(default=[])
+    attachments: list[Attachment] = Field(default=[])
 
     def relations(self) -> list[Relation]:
         return [
             Relation(Item, 'fields', field.Field, dict(item_id=self.id)),
-            Relation(Item, 'attachments', attachment.Attachment, dict(item_id=self.id))
+            Relation(Item, 'attachments', Attachment, dict(item_id=self.id))
         ]
