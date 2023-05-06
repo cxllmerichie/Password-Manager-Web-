@@ -1,8 +1,10 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Frame, Label
-from PyQt5.QtWidgets import QWidget, QApplication
-from PyQt5.QtCore import pyqtSlot
+from qcontextapi.widgets import Button, LineInput, Layout, Frame
+from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtCore import pyqtSlot, QUrl
+from PyQt5.QtGui import QDesktopServices
 from uuid import uuid4
 from typing import Any
+import tempfile
 
 from ..misc import ICONS, API
 from .. import css
@@ -26,11 +28,11 @@ class RightPagesItemAttachment(Frame):
                     text=self.attachment['filename']
                 ),
                 Button(self, 'AttachmentShowBtn').init(
-                    icon=ICONS.EYE
+                    icon=ICONS.EYE, slot=self.execute_show
                 ),
-                Button(self, 'AttachmentDownloadBtn').init(
-                    icon=ICONS.DOWNLOAD
-                ),
+#                 # Button(self, 'AttachmentDownloadBtn').init(
+                #     icon=ICONS.DOWNLOAD, slot=self.execute_download
+                # ),
                 Button(self, f'AttachmentEditBtn').init(
                     icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), slot=self.show_edit
                 ),
@@ -53,14 +55,14 @@ class RightPagesItemAttachment(Frame):
             self.AttachmentSaveBtn.setVisible(False)
             self.AttachmentEditBtn.setVisible(True)
             self.AttachmentShowBtn.setVisible(True)
-            self.AttachmentDownloadBtn.setVisible(True)
+            # self.AttachmentDownloadBtn.setVisible(True)
         elif API.item:  # creating attachment for existing item
             self.AttachmentFilenameInput.setDisabled(False)
             self.AttachmentDeleteBtn.setVisible(True)
             self.AttachmentSaveBtn.setVisible(True)
             self.AttachmentEditBtn.setVisible(False)
             self.AttachmentShowBtn.setVisible(False)
-            self.AttachmentDownloadBtn.setVisible(False)
+            # self.AttachmentDownloadBtn.setVisible(False)
         else:  # creating attachment while creating item
             self.AttachmentFilenameInput.setDisabled(False)
             self.AttachmentDeleteBtn.setVisible(True)
@@ -68,7 +70,22 @@ class RightPagesItemAttachment(Frame):
             self.AttachmentSaveBtn.setVisible(False)
             self.AttachmentSaveBtn.setVisible(False)
             self.AttachmentShowBtn.setVisible(False)
-            self.AttachmentDownloadBtn.setVisible(False)
+            # self.AttachmentDownloadBtn.setVisible(False)
+
+    @pyqtSlot()
+    def execute_download(self):
+        filepath, _ = QFileDialog.getSaveFileName(self, 'Choose a file', '', 'Image (*.jpg);;Text file (*.txt)')
+        if filepath:
+            API.download_attachment(filepath)
+
+    @pyqtSlot()
+    def execute_show(self):
+        idx = self.attachment['filename'].rfind('.')
+        filename, extension = self.attachment['filename'][0:idx], self.attachment['filename'][idx:]
+        temp_file = tempfile.NamedTemporaryFile(prefix=filename, suffix=extension, delete=False)
+        temp_file.write(eval(self.attachment['content']))
+        temp_file.close()
+        QDesktopServices.openUrl(QUrl('file:///' + temp_file.name))
 
     @pyqtSlot()
     def execute_save(self):
@@ -79,6 +96,7 @@ class RightPagesItemAttachment(Frame):
             response = API.add_attachment(API.item['id'], self.attachment)
         if response.get('id'):
             self.attachment = response
+            self.creating = False
             self.show_attachment()
         else:
             if self.creating:
@@ -110,5 +128,5 @@ class RightPagesItemAttachment(Frame):
         self.AttachmentDeleteBtn.setVisible(True)
         self.AttachmentEditBtn.setVisible(False)
         self.AttachmentShowBtn.setVisible(False)
-        self.AttachmentDownloadBtn.setVisible(False)
+        # self.AttachmentDownloadBtn.setVisible(False)
         self.AttachmentFilenameInput.setDisabled(False)

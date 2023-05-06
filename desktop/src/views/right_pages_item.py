@@ -177,10 +177,14 @@ class RightPagesItem(Frame):
         if not attachment:
             filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Images (*.jpg);;Text files (*.txt)')
             if filepath:
-                with open(filepath, 'rb') as file:
-                    data = file.read()
-                icon = Icon(data)
-                attachment = {'content': str(Icon.bytes(icon.icon)), 'filename': os.path.basename(filepath), 'mime': MimeTypes().guess_type(filepath)[0]}
+                mime = MimeTypes().guess_type(filepath)[0]
+                if mime == 'image/jpeg':
+                    with open(filepath, 'rb') as file:
+                        content = str(Icon.bytes(Icon(file.read()).icon))
+                elif mime == 'text/plain':
+                    with open(filepath, 'rb') as file:
+                        content = str(file.read())
+                attachment = {'content': content, 'filename': os.path.basename(filepath), 'mime': mime}
         if attachment:
             self.HintLbl3.setVisible(False)
             layout = self.AttachmentScrollArea.widget().layout()

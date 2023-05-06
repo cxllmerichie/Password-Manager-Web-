@@ -270,5 +270,10 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
+    @logger.catch()
+    def download_attachment(self, filepath: str, attachment: dict[str, Any]):
+        with open(filepath, 'wb') as file:
+            file.write(eval(attachment['content']))
+
 
 API = Api()
