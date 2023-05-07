@@ -5,7 +5,7 @@ import random
 from .. import schemas
 
 
-router = APIRouter(tags=['Password'])
+router = APIRouter(tags=['Utilities'])
 
 
 @router.get('/generate/', name='Generate password', response_model=schemas.Password)

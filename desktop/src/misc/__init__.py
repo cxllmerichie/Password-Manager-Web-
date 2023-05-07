@@ -1,3 +1,7 @@
 from .assets import COLORS, SIZES, ICONS, PATHS
-from .api import API
+from .api_remote import APIRemote
+from .api_local import APILocal
 from . import utils
+
+
+API = APIRemote()

@@ -12,7 +12,6 @@ if __name__ == '__main__':
     sys.exit(qapp.exec_())
 
 
-# ToDo: Item attachments
 # ToDo: local/remote storage (fetch from both if local chosen, any new added to local, colors of local/remote are different)
 
 # ToDo: add password generating procedure (fetch from api)
