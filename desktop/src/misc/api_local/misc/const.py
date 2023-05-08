@@ -41,18 +41,18 @@ class SQLMap:
 
     async def set(self, key: Any, value: Any) -> Any:
         try:
-            if exists := await (await db.select(f'SELECT "value" FROM "map" WHERE "key" = "{key}";')).first():
+            if exists := await self.get(key):
                 mapping = await (await db.update(dict(key=key, value=value), dict(key=key), tablename='map')).first()
             else:
                 mapping = await db.insert(dict(key=key, value=value), tablename='map')
-            return value
+            return mapping['value']
         except Exception as error:
             self.logger.error(error)
         return None
 
     async def get(self, key: Any, convert: bool = False) -> bytes | None:
         try:
-            mapping = await (await db.select(f'SELECT "value" FROM "map" WHERE "key" = "{key}";')).first()
+            mapping = await (await db.select(f'SELECT "value" FROM "map" WHERE "key" = "{str(key)}";')).first()
             return self.evaluate(mapping['value'], convert)
         except Exception as error:
             self.logger.error(error)

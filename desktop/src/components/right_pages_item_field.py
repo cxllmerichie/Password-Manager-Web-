@@ -45,12 +45,13 @@ class RightPagesItemField(Frame):
                 )
             ]
         ))
-
         self.show_field()
         return self
 
     def show_field(self):
         if self.field and API.item:  # add field to existing item
+            self.FieldHideBtn.setVisible(True)
+            self.FieldCopyBtn.setVisible(True)
             self.FieldDeleteBtn.setVisible(False)
             self.FieldNameInput.setText(self.field['name'])
             self.FieldNameInput.setDisabled(True)

@@ -25,7 +25,7 @@ async def get_field(field_id: UUID) -> dict[str, Any] | None:
 
 async def update_field(field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
     field = schemas.FieldCreate(**field)
-    field.id = field_id
+    field.id = str(field_id)
     db_field = await (await db.update(field, dict(id=field_id), schemas.Field)).first()
     return db_field.dict()
 

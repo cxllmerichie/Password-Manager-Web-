@@ -138,7 +138,7 @@ class RightPagesItem(Frame):
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 Button(self, 'ExportBtn', False).init(
-                    text='Export to file', icon=ICONS.EXPORT, slot=self.export_item
+                    text='Export item', icon=ICONS.EXPORT, slot=self.export_item
                 ),
                 Button(self, 'CreateBtn').init(
                     text='Create', slot=self.execute_create
@@ -162,9 +162,17 @@ class RightPagesItem(Frame):
 
     @pyqtSlot()
     def export_item(self):
-        filepath, _ = QFileDialog.getSaveFileName(self, 'Choose a file to export', '', 'JSON Files (*.json)')
-        if filepath:
-            API.export_item(filepath)
+        # Create a file dialog to select a directory
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.Directory)
+        dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        dialog.setWindowTitle('Choose a directory to export item data')
+        # Run the file dialog and get the selected directory
+        directory = None
+        if dialog.exec_() == QFileDialog.Accepted:
+            directory = dialog.selectedFiles()[0]
+        if directory:
+            API.export_item(directory)
 
     @pyqtSlot()
     def add_field(self, field: dict[str, Any] = None):
@@ -277,6 +285,7 @@ class RightPagesItem(Frame):
     def show_create(self):
         API.item = None
         API.field_identifiers.clear()
+        API.attachment_identifiers.clear()
 
         self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
@@ -293,10 +302,12 @@ class RightPagesItem(Frame):
         self.DescriptionInput.setText('')
         self.DescriptionInput.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
+        self.HintLbl2.setVisible(True)
+        self.AttachmentScrollArea.clear([self.HintLbl3])
+        self.HintLbl3.setVisible(True)
         self.CreateBtn.setVisible(True)
         self.FavouriteButton.setVisible(True)
         self.FavouriteButton.unset_favourite()
-        self.HintLbl2.setVisible(True)
 
     def show_item(self, item: dict[str, Any]):
         API.item = item

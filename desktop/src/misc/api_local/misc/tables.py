@@ -19,33 +19,33 @@ CREATE TABLE IF NOT EXISTS "item" (
     "created_at" TIMESTAMP NOT NULL,
     "is_favourite" BOOLEAN DEFAULT FALSE,
 
-    "category_id" INT NOT NULL,
+    "category_id" INTEGER NOT NULL,
     CONSTRAINT fk_category FOREIGN KEY("category_id") REFERENCES "category" ("id")
 );
 
 CREATE TABLE IF NOT EXISTS "field" (
-    "id" UUID PRIMARY KEY,
+    "id" TEXT PRIMARY KEY,
 
     "name" BYTEA NOT NULL,
     "value" BYTEA NOT NULL,
 
-    "item_id" INT NOT NULL,
+    "item_id" INTEGER NOT NULL,
     CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")
 );
 
 CREATE TABLE IF NOT EXISTS "attachment" (
-    "id" UUID PRIMARY KEY,
+    "id" TEXT PRIMARY KEY,
 
     "content" BYTEA NOT NULL,
     "mime" TEXT NOT NULL,
     "filename" TEXT NOT NULL,
 
-    "item_id" INT NOT NULL,
+    "item_id" INTEGER NOT NULL,
     CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")
 );
 
 CREATE TABLE IF NOT EXISTS "map" (
     "key" TEXT,
-    "value" TEXT
+    "value" BYTEA
 );
 '''

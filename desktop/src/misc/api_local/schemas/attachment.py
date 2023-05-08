@@ -10,19 +10,23 @@ from desktop.src.misc.api_local.misc.const import keys
 class AttachmentBase(Schema):
     __tablename__ = 'attachment'
 
-    id: UUID = Field(default_factory=uuid4)
+    id: str | UUID = Field(default_factory=uuid4)  # see comment in schemas.field
     content: str | bytes = Field(default=..., min_length=1)
     mime: str = Field()
     filename: str = Field(min_length=3)
 
     async def into_db(self) -> Schema:
-        self.content, key = encryptor.encrypt(zlib.compress(eval(self.content)))
-        await keys.set(self.id, key)
+        self.id = str(self.id)
+        if not (key := await keys.get(self.id)):
+            await keys.set(self.id, key := encryptor.randkey())
+        self.content, _ = encryptor.encrypt(zlib.compress(eval(self.content)), key)
         return self
 
     async def from_db(self) -> Schema:
-        if key := await keys.get(self.id, convert=True):
+        if key := await keys.get(self.id):
             self.content = str(zlib.decompress(encryptor.decrypt(self.content, key, convert=True)))
+        else:
+            self.content = 'CORRUPTED'
         return self
 
 

@@ -1,9 +1,11 @@
+from datetime import datetime
 from abc import abstractmethod
 from typing import Any
 from loguru import logger
 from qcontextapi.misc import utils
-from copy import copy
+from copy import deepcopy
 import ujson as json
+import os
 
 from .api_cache import Cache
 
@@ -80,23 +82,39 @@ class CacheAPI(Cache):
         ...
 
     @logger.catch()
-    def export_item(self, filepath: str) -> None:
-        item = copy(self.item)
-        item_pop_keys = ['icon', 'attachments', 'id', 'category_id']
+    def export_item(self, directory: str) -> None:
+        # create copy to manage dict keys later on
+        item = deepcopy(self.item)
+        # create sub dir in selected dir to save there all the data
+        export_dir = os.path.join(directory, item['title'])
+        attachments_dir = os.path.join(export_dir, 'attachments')
+        os.makedirs(attachments_dir)
+        # manage necessary keys to make human-readable *.json file
+        item_pop_keys = ['icon', 'id', 'category_id']
         for key in item_pop_keys:
             item.pop(key)
         field_pop_keys = ['id', 'item_id']
         for index in range(len(item['fields'])):
             for key in field_pop_keys:
                 item['fields'][index].pop(key)
-        with open(filepath, 'w') as file:
+        attachment_pop_keys = ['id', 'item_id', 'content', 'mime', 'filename']
+        for index in range(len(item['attachments'])):
+            filepath = os.path.abspath(os.path.join(attachments_dir, item['attachments'][index]['filename']))
+            item['attachments'][index]['file'] = filepath
+            self.download_attachment(filepath, item['attachments'][index])
+            for key in attachment_pop_keys:
+                item['attachments'][index].pop(key)
+        for key, value in item.items():
+            if isinstance(value, datetime):
+                item[key] = str(value)
+        with open(os.path.join(export_dir, 'item.json'), 'w') as file:
             json.dump(item, file, indent=4)
 
     @logger.catch()
     def import_item(self, filepath: str) -> dict[str, Any]:
         with open(filepath, 'r') as file:
             item = json.load(file)
-        item_pop_keys = ['created_at', 'modified_at', 'fields']
+        item_pop_keys = ['created_at', 'modified_at', 'fields', 'attachments']
         fields = item['fields']
         for key in item_pop_keys:
             item.pop(key)
@@ -112,6 +130,7 @@ class CacheAPI(Cache):
     def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         ...
 
+    @abstractmethod
     @logger.catch()
     def update_attachment(self, attachment_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         ...

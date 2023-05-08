@@ -25,7 +25,7 @@ async def get_attachment(attachment_id: UUID) -> dict[str, Any] | None:
 
 async def update_attachment(attachment_id: UUID, attachment: dict[str, Any]) -> dict[str, Any]:
     attachment = schemas.AttachmentCreate(**attachment)
-    attachment.id = attachment_id
+    attachment.id = str(attachment_id)
     db_attachment = await (await db.update(attachment, dict(id=attachment_id), schemas.Attachment)).first()
     return db_attachment.dict()
 
