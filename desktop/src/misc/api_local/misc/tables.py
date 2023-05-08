@@ -1,26 +1,15 @@
 sql = '''
-CREATE TABLE IF NOT EXISTS "user" (
-    "id" SERIAL PRIMARY KEY,
-
-    "avatar" BYTEA NOT NULL,
-    "email" TEXT UNIQUE NOT NULL,
-    "password" TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS "category" (
-    "id" SERIAL PRIMARY KEY,
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
 
     "icon" BYTEA NOT NULL,
     "title" TEXT NOT NULL UNIQUE,
     "description" TEXT DEFAULT NULL,
-    "is_favourite" BOOLEAN DEFAULT FALSE,
-
-    "user_id" INT NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY("user_id") REFERENCES "user" ("id")
+    "is_favourite" BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS "item" (
-    "id" SERIAL PRIMARY KEY,
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
 
     "icon" BYTEA NOT NULL,
     "title" TEXT NOT NULL,
@@ -53,5 +42,10 @@ CREATE TABLE IF NOT EXISTS "attachment" (
 
     "item_id" INT NOT NULL,
     CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "map" (
+    "key" TEXT,
+    "value" TEXT
 );
 '''

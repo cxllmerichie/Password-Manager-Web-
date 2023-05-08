@@ -1,3 +1,4 @@
+import datetime
 from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector
 from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
 from qcontextapi.misc import Icon
@@ -303,17 +304,20 @@ class RightPagesItem(Frame):
         self.ExportBtn.setVisible(True)
 
         self.CreatedFrame.setVisible(True)
-        created_at = DateTimePicker.parse(item['created_at']).strftime(DateTimePicker.default_format)
-        self.CreatedLbl.setText(created_at)
+        if not isinstance(created_at := item['created_at'], datetime.datetime):
+            created_at = DateTimePicker.parse(item['created_at'])
+        self.CreatedLbl.setText(created_at.strftime(DateTimePicker.default_format))
 
         if modified_at := item['modified_at']:
-            modified_at = DateTimePicker.parse(modified_at).strftime(DateTimePicker.default_format)
-            self.ModifiedLbl.setText(modified_at)
+            if not isinstance(modified_at, datetime.datetime):
+                modified_at = DateTimePicker.parse(modified_at)
+            self.ModifiedLbl.setText(modified_at.strftime(DateTimePicker.default_format))
         self.ModifiedFrame.setVisible(modified_at is not None)
 
         if expires_at := item['expires_at']:
-            expires_at = DateTimePicker.parse(expires_at).strftime(DateTimePicker.default_format)
-            self.ExpiresLbl.setText(expires_at)
+            if not isinstance(expires_at, datetime.datetime):
+                expires_at = DateTimePicker.parse(expires_at)
+            self.ExpiresLbl.setText(expires_at.strftime(DateTimePicker.default_format))
             self.ExpiresLbl.setVisible(True)
             self.ExpiresSelector.setVisible(False)
             self.DateTimePicker.setVisible(False)

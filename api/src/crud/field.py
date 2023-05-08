@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from .. import schemas
 from ..const import db, keys
 
@@ -14,19 +16,19 @@ async def get_fields(item_id: int, schema: type = schemas.Field) -> list[schemas
     return db_fields
 
 
-async def get_field(field_id: int, schema: type = schemas.Field) -> schemas.Field | None:
+async def get_field(field_id: UUID, schema: type = schemas.Field) -> schemas.Field | None:
     query, args = f'SELECT * FROM "field" WHERE "id" = $1;', (field_id, )
     db_field = await (await db.select(query, args, schema)).first()
     return db_field
 
 
-async def update_field(field_id: int, field: schemas.FieldCreate) -> schemas.Field:
+async def update_field(field_id: UUID, field: schemas.FieldCreate) -> schemas.Field:
     field.id = field_id
     db_field = await (await db.update(field, dict(id=field_id), schemas.Field)).first()
     return db_field
 
 
-async def delete_field(field_id: int) -> schemas.Field:
+async def delete_field(field_id: UUID) -> schemas.Field:
     db_field = await (await db.delete(dict(id=field_id), schemas.Field, 'field')).first()
     await keys.delete(db_field.id)
     return db_field

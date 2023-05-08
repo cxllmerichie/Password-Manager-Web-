@@ -17,9 +17,9 @@ class CentralWidget(StackedWidget):
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
         # CONTEXT['token'] = None
-        if not CONTEXT['token']:
-            self.setCurrentWidget(CONTEXT.SignIn)
-        else:
+        if CONTEXT['is_local'] or CONTEXT['token']:
             self.addWidget(widget := MainView(self).init())
             self.setCurrentWidget(widget)
+        else:
+            self.setCurrentWidget(CONTEXT.SignIn)
         return self
