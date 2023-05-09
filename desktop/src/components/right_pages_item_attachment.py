@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Frame
+from qcontextapi.widgets import Button, LineInput, Layout, Frame, Popup
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot, QUrl
 from PyQt5.QtGui import QDesktopServices
@@ -25,7 +25,7 @@ class RightPagesItemAttachment(Frame):
             spacing=5,
             items=[
                 LineInput(self, f'AttachmentFilenameInput').init(
-                    text=self.attachment['filename']
+                    text=self.attachment['filename'], alignment=Layout.Center
                 ),
                 Button(self, 'AttachmentShowBtn').init(
                     icon=ICONS.EYE, slot=self.execute_show
@@ -40,7 +40,11 @@ class RightPagesItemAttachment(Frame):
                     icon=ICONS.SAVE, slot=self.execute_save
                 ),
                 Button(self, f'AttachmentDeleteBtn').init(
-                    icon=ICONS.CROSS_CIRCLE, slot=self.execute_delete
+                    icon=ICONS.CROSS_CIRCLE,
+                    slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
+                        message=f'Delete attachment\n"{self.AttachmentFilenameInput.text()}"?',
+                        on_success=self.execute_delete
+                    )
                 ),
             ]
         ))

@@ -11,7 +11,9 @@ from .. import stylesheets
 class RightPages(SplitterWidgetExt, StackedWidget):
     def __init__(self, parent: QWidget):
         StackedWidget.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.right_pages.css)
-        SplitterWidgetExt.__init__(self, 300, expand_max=SIZES.RightMenu.w, orientation=Layout.Horizontal)
+        SplitterWidgetExt.__init__(self, SIZES.RightMenuDefault.w,
+                                   expand_max=SIZES.RightMenuMax.w, expand_min=SIZES.RightMenuMin.w,
+                                   orientation=Layout.Horizontal)
 
     def init(self) -> 'RightPages':
         self.addWidget(RightPagesCategory(self).init())

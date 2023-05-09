@@ -58,7 +58,9 @@ class SIZES:
     Panel = Size(..., 30)
     CATEGORY = Size(300, ...)
     ERROR = Size(300, 50)
-    RightMenu = Size(600, ...)
+    RightMenuMin = Size(400, ...)
+    RightMenuMax = Size(800, ...)
+    RightMenuDefault = Size(400, ...)
     MenuBtnIcon = Size(30, 30)
     RightMenuImage = Size(80, 80)
     LeftMenuMin = 250

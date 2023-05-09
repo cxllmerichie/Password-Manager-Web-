@@ -19,7 +19,7 @@ css: str = f'''
 }}
 
 #StorageSelector {{
-    min-width: 75px;
+    min-width: 55px;
     border: none;
     font-size: 12px;
     font-weight: bold;

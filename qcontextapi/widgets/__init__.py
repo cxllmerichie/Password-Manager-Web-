@@ -9,6 +9,7 @@ from .label import Label
 from .line_input import LineInput
 from .text_input import TextInput
 from .selector import Selector
+from .popup import Popup
 
 from .layout import Layout
 from .spacer import Spacer

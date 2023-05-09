@@ -6,8 +6,8 @@ from src import App
 
 
 if __name__ == '__main__':
-    CONTEXT['storage'] = None
-    CONTEXT['token'] = None
+    # CONTEXT['storage'] = None
+    # CONTEXT['token'] = None
 
     qapp = QApplication(sys.argv)
     qapp.setStyle('Windows')

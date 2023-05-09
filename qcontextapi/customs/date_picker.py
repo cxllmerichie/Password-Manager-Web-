@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from calendar import monthrange
 from dateutil import parser
 
-from ..widgets import Frame, Layout, Selector
+from ..widgets import Frame, Layout, Selector, Label
 
 
 class DateTimePicker(Frame):
@@ -27,12 +27,15 @@ class DateTimePicker(Frame):
             show_date: bool = True, show_time: bool = True,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None
     ) -> 'DateTimePicker':
-        self.setLayout(Layout.horizontal().init(
+        self.setLayout(Layout.vertical().init(
             margins=margins, spacing=spacing, alignment=alignment,
             items=[
                 Frame(self, f'{self.objectName()}DateFrame').init(
                     layout=Layout.horizontal().init(
                         items=[
+                            Label(self, f'{self.objectName()}DateLbl').init(
+                                text='Date:'
+                            ),
                             day_selector := Selector(self, f'{self.objectName()}DaySelector').init(
                                 items=self.days
                             ),
@@ -48,6 +51,9 @@ class DateTimePicker(Frame):
                 Frame(self, f'{self.objectName()}TimeFrame').init(
                     layout=Layout.horizontal().init(
                         items=[
+                            Label(self, f'{self.objectName()}TimeLbl').init(
+                                text='Time:'
+                            ),
                             hour_selector := Selector(self, f'{self.objectName()}HourSelector').init(
                                 items=self.hours
                             ),

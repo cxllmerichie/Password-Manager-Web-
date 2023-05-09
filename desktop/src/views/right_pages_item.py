@@ -1,11 +1,11 @@
-import datetime
-from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector
+from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup
 from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
 from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
+import datetime
 
 from ..misc import ICONS, API, utils, PATHS
 from ..components import RightPagesItemField, RightPagesItemAttachment
@@ -34,7 +34,11 @@ class RightPagesItem(Frame):
                             icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
                         Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)),
+                            slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
+                                message=f'Delete item\n\'{API.item["title"]}\'?',
+                                on_success=self.execute_delete
+                            )
                         ),
                         Button(self, 'CloseBtn').init(
                             icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink
@@ -217,6 +221,7 @@ class RightPagesItem(Frame):
         self.AddFieldBtn.setVisible(False)
         self.AddAttachmentBtn.setVisible(False)
         self.FieldScrollArea.setVisible(False)
+        self.AttachmentScrollArea.setVisible(False)
 
     @pyqtSlot()
     def toggle_favourite(self) -> bool:
@@ -342,11 +347,13 @@ class RightPagesItem(Frame):
         self.EditBtn.setVisible(True)
         self.CreateBtn.setVisible(False)
 
+        self.FieldScrollArea.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
         for field in API.item['fields']:
             self.add_field(field)
         self.HintLbl2.setVisible(not len(API.item['fields']))
 
+        self.AttachmentScrollArea.setVisible(True)
         self.AttachmentScrollArea.clear([self.HintLbl3])
         for attachment in API.item['attachments']:
             self.add_attachment(attachment)

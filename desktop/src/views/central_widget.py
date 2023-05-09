@@ -1,7 +1,7 @@
 from qcontextapi.widgets import StackedWidget
 from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt
 
 from .view_signin import SignIn
 from .view_signup import SignUp

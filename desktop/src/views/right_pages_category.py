@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame
+from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup
 from qcontextapi.customs import FavouriteButton, ImageButton, ErrorLabel
 from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
@@ -30,7 +30,11 @@ class RightPagesCategory(Frame):
                             icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
                         ),
                         Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)), slot=self.execute_delete
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)),
+                            slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
+                                message=f'Delete category\n\'{API.category["title"]}\'?',
+                                on_success=self.execute_delete
+                            )
                         ),
                         Button(self, 'CloseBtn').init(
                             icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink

@@ -69,7 +69,7 @@ search = f'''
 #SearchBarPopup {{
     background-color: {COLORS.Palette.LAYER_1};
     border: none;
-    color: white;
+    color: {COLORS.RED};
     font-size: 16px;
 }}
 
@@ -88,7 +88,7 @@ date_time_picker = f'''
 #DateTimePickerSecondSelector QAbstractItemView {{
     border: none;
     color: white;
-    background-color: {COLORS.RIGHT_MENU};
+    background-color: {COLORS.PANEL};
 }}
 
 #DateTimePickerDaySelector,
@@ -109,13 +109,20 @@ date_time_picker = f'''
 #DateTimePickerMonthSelector,
 #DateTimePickerYearSelector,
 #DateTimePickerHourSelector,
-#DateTimePickerMinuteSelector,
-#DateTimePickerSecondSelector {{
+#DateTimePickerMinuteSelector {{
     min-width: 25px;
 }}
 
-#DateTimePickerYearSelector {{
+#DateTimePickerYearSelector,
+#DateTimePickerSecondSelector {{
     min-width: 45px;
+}}
+
+#DateTimePickerDateLbl,
+#DateTimePickerTimeLbl {{
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
 }}
 '''
 
@@ -185,4 +192,48 @@ active_button = f'''
 inactive_button = f'''
     background-color: gray;
     border: none;
+'''
+
+popup = f'''
+#Popup {{
+    background-color: {COLORS.HOVER};
+}}
+
+#PopupFrame {{
+    background-color: {COLORS.LEFT_MENU};
+    min-width: 400px;
+    min-height: 200px;
+    border-radius: 20px;
+}}
+
+#PopupMessageLbl {{
+    color: white;
+    font-size: 24px;
+    background-color: {COLORS.TRANSPARENT};
+}}
+
+#PopupYesBtn,
+#PopupNoBtn {{
+    color: white;
+    border: none;
+    font-size: 18px; 
+    border-radius: 5px;
+    min-height: 40px;
+}}
+
+#PopupYesBtn {{
+    background-color: {COLORS.GREEN};
+}}
+
+#PopupYesBtn:hover {{
+    background-color: {COLORS.GREEN_HOVER};
+}}
+
+#PopupNoBtn {{
+    background-color: {COLORS.RED};
+}}
+
+#PopupNoBtn:hover {{
+    background-color: {COLORS.RED_HOVER};
+}}
 '''

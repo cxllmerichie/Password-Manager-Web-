@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Frame
+from qcontextapi.widgets import Button, LineInput, Layout, Frame, Popup
 from qcontextapi.customs import FavouriteButton
 from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSlot
@@ -41,7 +41,11 @@ class RightPagesItemField(Frame):
                     icon=ICONS.SAVE, slot=self.execute_save
                 ),
                 Button(self, f'FieldDeleteBtn').init(
-                    icon=ICONS.CROSS_CIRCLE, slot=self.execute_delete
+                    icon=ICONS.CROSS_CIRCLE,
+                    slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
+                        message=f'Delete attachment\n"{self.FieldNameInput.text()}"?',
+                        on_success=self.execute_delete
+                    )
                 )
             ]
         ))
