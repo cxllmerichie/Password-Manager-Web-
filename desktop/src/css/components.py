@@ -1,4 +1,4 @@
-from ..misc import COLORS
+from ..misc import COLORS, SIZES
 
 
 scroll: str = f'''
@@ -117,4 +117,72 @@ date_time_picker = f'''
 #DateTimePickerYearSelector {{
     min-width: 45px;
 }}
+'''
+
+fullscreen_popup = f'''
+#FullscreenPopup {{
+    background-color: {COLORS.HOVER};
+}}
+
+#StorageLbl {{
+    font-weight: bold;
+    color: white;
+    font-size: 28px;
+}}
+
+#LocalBtn,
+#RemoteBtn {{
+    min-height: 50px;
+    color: white;
+    font-size: 20px;
+    min-width: 400px;
+}}
+
+#LocalBtn:hover,
+#RemoteBtn:hover {{
+    background-color: {COLORS.RED_HOVER};
+}}
+
+#HintLbl1 {{
+    color: white;
+    font-size: 20px;
+}}
+
+#HintLbl2 {{
+    color: white;
+    font-size: 16px;
+}}
+
+#ContinueBtn {{
+    min-width: {SIZES.AuthMainBtn.w}px;
+    height: {SIZES.AuthMainBtn.h}px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: {COLORS.RED};
+    color: white;
+}}
+
+#ContinueBtn:hover  {{
+    background-color: {COLORS.RED_HOVER};
+}}
+
+#AuthExitBtn {{
+    background-color: {COLORS.TRANSPARENT};
+    border: none;    
+}}
+
+#AuthExitBtn:hover {{
+    background-color: {COLORS.RED_HOVER};
+}}
+
+'''
+
+active_button = f'''
+    background-color: {COLORS.RED};
+    border: none;
+'''
+
+inactive_button = f'''
+    background-color: gray;
+    border: none;
 '''

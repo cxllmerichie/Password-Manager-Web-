@@ -4,7 +4,7 @@ from apidevtools.simpleorm import Schema, Relation
 from apidevtools.media import imgproc
 
 from .item import Item
-from ..misc import images
+from ..utils import db
 
 
 class CategoryBase(Schema):
@@ -19,9 +19,9 @@ class CategoryBase(Schema):
         self.title = self.title.capitalize()
         if not self.icon:
             text = self.title[0]
-            if not (icon := await images.get(text)):
+            if not (icon := await db.get(text)):
                 icon = imgproc.default(text).bytes
-                await images.set(text, icon)
+                await db.set(text, icon)
             self.icon = icon
         else:
             self.icon = imgproc.crop(eval(self.icon)).bytes

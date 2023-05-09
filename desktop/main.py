@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QApplication
+from qcontextapi import CONTEXT
 import sys
 
 from src import App
 
 
-if __name__ == '__main__':
+def main():
     qapp = QApplication(sys.argv)
     qapp.setStyle('Windows')
     app = App().init()
@@ -12,7 +13,13 @@ if __name__ == '__main__':
     sys.exit(qapp.exec_())
 
 
-# ToDo: local/remote storage (fetch from both if local chosen, any new added to local, colors of local/remote are different)
+if __name__ == '__main__':
+    main()
+    from src.misc import utils
+
+    if CONTEXT['local']:
+        utils.stop_local()
+
 
 # ToDo: add password generating procedure (fetch from api)
 # ToDo: create "Loader" using threads while waiting for displaying items in CentralPagesItems

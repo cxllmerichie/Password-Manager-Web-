@@ -2,7 +2,7 @@ from typing import Any
 from uuid import UUID
 
 from .. import schemas
-from ..misc import db, keys
+from ..utils import db
 
 
 async def create_field(item_id: int, field: dict[str, Any]) -> dict[str, Any]:
@@ -32,5 +32,5 @@ async def update_field(field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
 
 async def delete_field(field_id: UUID) -> dict[str, Any]:
     db_field = await (await db.delete(dict(id=field_id), schemas.Field, 'field')).first()
-    await keys.delete(db_field.id)
+    await db.remove(db_field.id)
     return db_field.dict()

@@ -6,8 +6,6 @@ from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
-import os
-from mimetypes import MimeTypes
 
 from ..misc import ICONS, API, utils, PATHS
 from ..components import RightPagesItemField, RightPagesItemAttachment
@@ -186,14 +184,7 @@ class RightPagesItem(Frame):
         if not attachment:
             filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Images (*.jpg);;Text files (*.txt)')
             if filepath:
-                mime = MimeTypes().guess_type(filepath)[0]
-                if mime == 'image/jpeg':
-                    with open(filepath, 'rb') as file:
-                        content = str(Icon.bytes(Icon(file.read()).icon))
-                elif mime == 'text/plain':
-                    with open(filepath, 'rb') as file:
-                        content = str(file.read())
-                attachment = {'content': content, 'filename': os.path.basename(filepath), 'mime': mime}
+                attachment = API.get_attachment_data(filepath)
         if attachment:
             self.HintLbl3.setVisible(False)
             layout = self.AttachmentScrollArea.widget().layout()

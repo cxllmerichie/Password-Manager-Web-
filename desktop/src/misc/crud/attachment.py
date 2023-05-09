@@ -2,7 +2,7 @@ from uuid import UUID
 from typing import Any
 
 from .. import schemas
-from ..misc import db, keys
+from ..utils import db
 
 
 async def create_attachment(item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
@@ -32,5 +32,5 @@ async def update_attachment(attachment_id: UUID, attachment: dict[str, Any]) -> 
 
 async def delete_attachment(attachment_id: UUID) -> dict[str, Any]:
     db_attachment = await (await db.delete(dict(id=attachment_id), schemas.Attachment, 'attachment')).first()
-    await keys.delete(db_attachment.id)
+    await db.remove(db_attachment.id)
     return db_attachment.dict()

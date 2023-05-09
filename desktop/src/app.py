@@ -17,12 +17,22 @@ class App(QMainWindow):
 
     def init(self) -> 'App':
         from .misc import SIZES
-        from .views.central_widget import CentralWidget
-        from desktop.src.components.status_bar import StatusBar
 
         self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
+        CONTEXT['local'] = False
+        CONTEXT['storage'] = None
+        if not CONTEXT['storage']:
+            from .components import FullscreenPopup
 
-        self.setCentralWidget(CentralWidget(self).init())
-        self.setStatusBar(StatusBar(self).init())
+            fspopup = FullscreenPopup(self).init()
+        else:
+            from .views.central_widget import CentralWidget
+            from desktop.src.components.status_bar import StatusBar
+            from .misc import utils
+
+            self.setCentralWidget(CentralWidget(self).init())
+            self.setStatusBar(StatusBar(self).init())
+            if CONTEXT['local']:
+                utils.start_local()
         return self

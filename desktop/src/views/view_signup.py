@@ -20,7 +20,7 @@ class SignUp(Widget):
                 spacing=10, alignment=Qt.AlignVCenter,
                 items=[
                     Button(self, 'AuthExitBtn').init(
-                        icon=ICONS.CROSS, slot=self.parent().parent().close
+                        icon=ICONS.CROSS, slot=self.core.close
                     ), Layout.RightTop,
                     Spacer(False, True),
                     Label(self, 'InfoLbl').init(

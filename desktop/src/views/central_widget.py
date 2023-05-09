@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt
 from .view_signin import SignIn
 from .view_signup import SignUp
 from .view_main import MainView
+from ..misc import utils
 
 
 class CentralWidget(StackedWidget):
@@ -17,7 +18,7 @@ class CentralWidget(StackedWidget):
         self.addWidget(SignIn(self).init())
         self.addWidget(SignUp(self).init())
         # CONTEXT['token'] = None
-        if CONTEXT['is_local'] or CONTEXT['token']:
+        if CONTEXT['storage'] == utils.Storage.LOCAL or CONTEXT['token'] or not utils.is_connected():
             self.addWidget(widget := MainView(self).init())
             self.setCurrentWidget(widget)
         else:

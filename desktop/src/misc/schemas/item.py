@@ -7,7 +7,7 @@ from apidevtools.utils import now_tz_naive
 
 from . import field
 from .attachment import Attachment
-from desktop.src.misc.api_local.misc.const import images
+from ..utils import db
 
 
 class ItemBase(Schema):
@@ -26,9 +26,9 @@ class ItemBase(Schema):
         self.title = self.title.capitalize()
         if not self.icon:
             text = self.title[0]
-            if not (icon := await images.get(text)):
+            if not (icon := await db.get(text)):
                 icon = imgproc.default(text).bytes
-                await images.set(text, icon)
+                await db.set(text, icon)
             self.icon = icon
         else:
             self.icon = imgproc.crop(eval(self.icon)).bytes

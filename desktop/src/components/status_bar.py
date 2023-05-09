@@ -1,5 +1,9 @@
 from qcontextapi.widgets import Layout, Label, Selector, Frame
 from PyQt5.QtWidgets import QStatusBar
+from PyQt5.QtCore import pyqtSlot
+from qcontextapi import CONTEXT
+
+from ..misc import utils
 
 
 class StatusBar(QStatusBar):
@@ -21,12 +25,21 @@ class StatusBar(QStatusBar):
                         text='Storage type:'
                     ),
                     Selector(self, 'StorageSelector').init(
+                        textchanged=self.storage_selector_textchanged,
                         items=[
-                            Selector.Item(text='local'),
-                            Selector.Item(text='remote'),
+                            Selector.Item(text=utils.Storage.LOCAL.value),
+                            Selector.Item(text=utils.Storage.REMOTE.value),
                         ]
                     ), Layout.LeftBottom
                 ]
             )
         ))
+        self.storage_selector_textchanged()
         return self
+
+    @pyqtSlot()
+    def storage_selector_textchanged(self):
+        if self.StorageSelector.currentText() == utils.Storage.LOCAL.value:
+            CONTEXT['storage'] = utils.Storage.LOCAL.value
+        else:
+            CONTEXT['storage'] = utils.Storage.REMOTE.value
