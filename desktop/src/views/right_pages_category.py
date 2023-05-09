@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
-from ..misc import ICONS, API, utils, PATHS
+from ..misc import ICONS, API, utils, PATHS, SIZES, COLORS
 from .. import stylesheets
 
 
@@ -14,7 +14,7 @@ class RightPagesCategory(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_category.css +
                                                                      stylesheets.components.favourite_button +
-                                                                     stylesheets.components.image_button)
+                                                                     stylesheets.components.image_button(COLORS.DARK))
 
     def init(self) -> 'RightPagesCategory':
         self.setLayout(Layout.vertical().init(
@@ -24,20 +24,20 @@ class RightPagesCategory(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         FavouriteButton(self).init(
-                            pre_slot=self.toggle_favourite
+                            pre_slot=self.toggle_favourite, size=SIZES.CONTROL
                         ), Layout.Left,
                         Button(self, 'EditBtn', False).init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit, size=SIZES.CONTROL
                         ),
                         Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)),
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), size=SIZES.CONTROL,
                             slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
                                 message=f'Delete category\n\'{API.category["title"]}\'?',
                                 on_success=self.execute_delete
                             )
                         ),
                         Button(self, 'CloseBtn').init(
-                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink, size=SIZES.CONTROL
                         ), Layout.Right
                     ]
                 ),

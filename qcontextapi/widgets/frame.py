@@ -12,8 +12,11 @@ class Frame(ContextObjectExt, QFrame):
 
     def init(
             self, *,
+            style: ... = None,
             layout: QLayout = None, policy: tuple[QSizePolicy, QSizePolicy] = (QSizePolicy.Minimum, QSizePolicy.Minimum)
     ) -> 'Frame':
+        if style:
+            self.setFrameStyle(style)
         if layout:
             self.setLayout(layout)
         return self

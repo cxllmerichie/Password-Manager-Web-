@@ -56,6 +56,10 @@ css: str = f'''
     background-color: {COLORS.GREEN_HOVER};
 }}
 
+#ControlFrame {{
+    background-color: {COLORS.HOVER};
+}}
+
 #SaveBtn,
 #CancelBtn {{
     color: {COLORS.TEXT_PRIMARY};
@@ -76,18 +80,10 @@ css: str = f'''
     font-weight: bold;
 }}
 
-#IconBtn {{
-    background-color: {COLORS.LIGHT_GRAY};
-    min-width: 120px;
-    min-height: 120px;
-    border-radius: 59px;
-    border: none;
-}}
-
 #TitleInput,
 #DescriptionInput {{
     border: none;
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT};
     color: {COLORS.TEXT_PRIMARY};
     font-size: 18px;
     padding: 5px;
@@ -98,10 +94,18 @@ css: str = f'''
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
+    border-radius: {SIZES.CONTROL.width() // 2 - 1};
     background-color: {COLORS.TRANSPARENT};
 }}
 
-#ControlBtns {{
+#EditBtn:hover,
+#FavouriteBtn:hover {{
+    background-color: {COLORS.HOVER};
+}}
+
+#DeleteBtn:hover,
+#CloseBtn:hover {{
+    background-color: {COLORS.RED_HOVER};
 }}
 
 #ErrorLbl {{
@@ -136,7 +140,7 @@ css: str = f'''
 
 #AttachmentScrollArea,
 #FieldScrollArea {{
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT};
     min-height: 90px;
     border: none;
     border-top-left-radius: 5px;

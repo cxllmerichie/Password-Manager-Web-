@@ -24,8 +24,8 @@ class PALETTE:
 class COLORS:
     Palette = PALETTE
     TRANSPARENT = 'transparent'
-    LIGHT_GRAY = PALETTE.LAYER_6
-    DARK_GRAY = PALETTE.LAYER_5
+    LIGHT = PALETTE.LAYER_6
+    DARK = PALETTE.LAYER_5
     RED = 'rgba(182, 0, 40, 1)'
     RED_HOVER = 'rgba(182, 0, 40, 0.5)'
     INPUT = 'rgba(27, 29, 40, 0.5)'
@@ -34,6 +34,9 @@ class COLORS:
     HOVER = 'rgba(255, 255, 255, 0.1)'
     BUTTON = 'rgba(255, 255, 255, 0.2)'
     SEARCH = PALETTE.LAYER_3
+
+    SIGNIN = PALETTE.LAYER_1
+    SIGNUP = PALETTE.LAYER_1
 
     PANEL = PALETTE.LAYER_3
     STATUS = PALETTE.LAYER_3
@@ -47,6 +50,7 @@ class COLORS:
 
 
 class SIZES:
+    CONTROL = QSize(40, 40)
     App = QSize(1000, 600)
     AuthTextBtn = Size(..., 20)
     AuthMainBtn = Size(200, 30)
@@ -92,3 +96,4 @@ class ICONS:
     ITEM = Icon('archive.svg', SIZES.RightMenuImage.size)
     EXPORT = Icon('arrow-up-circle.svg', (20, 20))
     IMPORT = Icon('arrow-down-circle.svg', (20, 20))
+    LOGOUT = Icon('log-out.svg', (18, 18))

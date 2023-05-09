@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSlot
 from typing import Any
 import datetime
 
-from ..misc import ICONS, API, utils, PATHS
+from ..misc import ICONS, API, utils, PATHS, SIZES
 from ..components import RightPagesItemField, RightPagesItemAttachment
 from .. import stylesheets
 
@@ -16,7 +16,7 @@ class RightPagesItem(Frame):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_item.css +
                                                                      stylesheets.components.scroll +
-                                                                     stylesheets.components.image_button +
+                                                                     stylesheets.components.image_button() +
                                                                      stylesheets.components.favourite_button +
                                                                      stylesheets.components.date_time_picker)
 
@@ -28,20 +28,20 @@ class RightPagesItem(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         FavouriteButton(self).init(
-                            pre_slot=self.toggle_favourite
+                            pre_slot=self.toggle_favourite, size=SIZES.CONTROL
                         ), Layout.Left,
                         Button(self, 'EditBtn').init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit, size=SIZES.CONTROL
                         ),
                         Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)),
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), size=SIZES.CONTROL,
                             slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
                                 message=f'Delete item\n\'{API.item["title"]}\'?',
                                 on_success=self.execute_delete
                             )
                         ),
                         Button(self, 'CloseBtn').init(
-                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink, size=SIZES.CONTROL
                         ), Layout.Right
                     ]
                 ),
@@ -275,8 +275,9 @@ class RightPagesItem(Frame):
             self.ImageButton.setIcon(Icon(API.item['icon']).icon)
         self.ImageButton.setDisabled(True)
         self.AddFieldBtn.setVisible(True)
-        self.AddAttachmentBtn.setVisible(True)
         self.FieldScrollArea.setVisible(True)
+        self.AddAttachmentBtn.setVisible(True)
+        self.AttachmentScrollArea.setVisible(True)
 
     def show_create(self):
         API.item = None

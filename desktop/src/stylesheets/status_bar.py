@@ -2,14 +2,19 @@ from ..misc import COLORS
 
 
 css: str = f'''
+QStatusBar::item {{
+    border: none;
+}}
+
 #StatusBar {{
     background-color: {COLORS.STATUS};
+    min-height: 25px;
 }}
 
 #StorageLbl {{
     color: white;
     background-color: {COLORS.TRANSPARENT};
-    font-size: 12px;
+    font-size: 14px;
 }}
 
 #StorageSelector QAbstractItemView {{
@@ -19,11 +24,23 @@ css: str = f'''
 }}
 
 #StorageSelector {{
-    min-width: 55px;
+    min-width: 65px;
     border: none;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     color: white;
     background-color: {COLORS.TRANSPARENT};
+}}
+
+#LogoutBtn {{
+    background-color: {COLORS.TRANSPARENT};
+    font-size: 14px;
+    color: white;
+    min-height: 20px;
+    min-width: 85px;
+}}
+
+#LogoutBtn:hover {{
+    background-color: {COLORS.RED_HOVER};
 }}
 '''

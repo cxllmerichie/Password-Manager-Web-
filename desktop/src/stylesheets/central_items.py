@@ -4,6 +4,7 @@ from ..misc import COLORS
 css = f'''
 #CentralItems {{
     background-color: {COLORS.TRANSPARENT};
+    min-width: 300px;
 }}
 
 #HintLbl1,

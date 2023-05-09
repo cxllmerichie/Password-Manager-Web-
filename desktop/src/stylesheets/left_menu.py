@@ -6,6 +6,7 @@ css = f'''
 #LetterLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
+    font-weight: bold;
 }}
 
 #LeftMenu {{
@@ -19,16 +20,22 @@ css = f'''
     font-weight: bold;
 }}
 
+#AllItemsBtnIconBtn,
+#FavItemsBtnIconBtn,
 #MenuButtonIconBtn {{
     background-color: {COLORS.TRANSPARENT};
 }}
 
+#AllItemsBtnTextLbl,
+#FavItemsBtnTextLbl,
 #MenuButtonTextLbl {{
     background-color: {COLORS.TRANSPARENT};
     font-size: 20px;
     color: {COLORS.TEXT_PRIMARY};
 }}
 
+#AllItemsBtnTotalLbl,
+#FavItemsBtnTotalLbl,
 #MenuButtonTotalLbl {{
     background-color: {COLORS.TRANSPARENT};
     font-size: 14px;
@@ -40,15 +47,26 @@ css = f'''
 }}
 
 #MenuButton {{
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.DARK};
     min-height: 40px;
     color: {COLORS.TEXT_PRIMARY};
     height: 25px;
     border: none;
 }}
 
+#AllItemsBtn,
+#FavItemsBtn {{
+    background-color: {COLORS.LIGHT};
+    min-height: 40px;
+    color: {COLORS.TEXT_PRIMARY};
+    height: 25px;
+    border: none;
+}}
+
+#AllItemsBtn:hover,
+#FavItemsBtn:hover,
 #MenuButton:hover {{
-    background-color: {COLORS.RED};
+    background-color: {COLORS.HOVER};
 }}
 
 #NoCategoriesLbl {{

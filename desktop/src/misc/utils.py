@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS "map" (
 '''
 
 db = ORMNMap(connector=SQLite(database='storage.sqlite'))
+
 asyncio.get_event_loop().run_until_complete(db.create_pool())
 asyncio.get_event_loop().run_until_complete(db.execute(tables))
 

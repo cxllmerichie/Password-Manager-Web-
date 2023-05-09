@@ -27,7 +27,7 @@ css: str = f'''
 }}
 
 #ToggleLeftMenuBtn:hover {{
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT};
 }}
 
 #PanelMinimizeBtn,
@@ -39,7 +39,7 @@ css: str = f'''
 
 #PanelMinimizeBtn:hover,
 #PanelRestoreBtn:hover {{
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT};
 }}
 
 #PanelCloseBtn:hover {{

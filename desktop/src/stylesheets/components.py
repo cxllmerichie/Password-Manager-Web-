@@ -37,19 +37,18 @@ QScrollBar::sub-page:vertical {{
 }}
 '''
 
-image_button = f'''
-#ImageButton::disabled {{
-    
-}}
 
-#ImageButton {{
-    background-color: {COLORS.LIGHT_GRAY};
-    min-width: 120px;
-    min-height: 120px;
-    border-radius: 59px;
-    border: none;
-}}
-'''
+def image_button(color=COLORS.LIGHT):
+    return f'''
+        #ImageButton {{
+            background-color: {color};
+            min-width: 120px;
+            min-height: 120px;
+            border-radius: 59px;
+            border: none;
+        }}
+        '''
+
 
 favourite_button = f'''
 #FavouriteButton {{
@@ -69,8 +68,9 @@ search = f'''
 #SearchBarPopup {{
     background-color: {COLORS.Palette.LAYER_1};
     border: none;
-    color: {COLORS.RED};
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: bold;
+    color: {COLORS.TEXT_PRIMARY};
 }}
 
 QListView::item:hover {{

@@ -3,7 +3,7 @@ from ..misc import COLORS
 
 css = f'''
 #CentralItem {{
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.LIGHT};
     border-radius: 10px;
     min-height: 75px;
     max-width: 400px;

@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSlot, QSize
 from PyQt5.QtGui import QIcon
 from contextlib import suppress
 
-from ..widgets import Button
+from ..widgets import Button, Popup
 from ..misc import Icon
 
 
@@ -22,12 +22,16 @@ class ImageButton(Button):
     ) -> 'ImageButton':
         super().init(icon=icon, slot=lambda: self.choose_image(slot, directory))
         self.RemoveImageBtn = Button(self, f'{self.objectName()}RemoveImageBtn').init(
-            icon=Icon('x-circle.svg', (30, 30)), size=QSize(30, 30), slot=self.remove_icon
+            icon=Icon('x-circle.svg', (30, 30)), size=QSize(30, 30),
+            slot=lambda: Popup(self.core).init(
+                message=f'Remove icon?',
+                on_success=self.remove_icon
+            )
         )
         self.RemoveImageBtn.move(self.width() - 30, 0)
         self.RemoveImageBtn.setStyleSheet(f'''
             #{self.objectName()}RemoveImageBtn {{background-color: transparent; border-radius: 14px;}}
-            #{self.objectName()}RemoveImageBtn:hover {{background-color: rgba(255, 255, 255, 0.5);}}
+            #{self.objectName()}RemoveImageBtn:hover {{background-color: rgba(255, 255, 255, 0.3);}}
         ''')
         return self
 

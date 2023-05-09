@@ -16,8 +16,10 @@ class FavouriteButton(Button):
 
     def init(
             self, *,
-            if_set_icon: Icon = None, if_unset_icon: Icon = None, pre_slot: Callable[..., bool]
+            if_set_icon: Icon = None, if_unset_icon: Icon = None, pre_slot: Callable[..., bool],
+            **kwargs
     ) -> 'Button':
+        super().init(**kwargs)
         self.clicked.connect(lambda: self.slot(pre_slot))
         if if_unset_icon:
             self.setIcon(QIcon(if_unset_icon.icon))

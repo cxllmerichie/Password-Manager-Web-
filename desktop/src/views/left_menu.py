@@ -25,10 +25,10 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 LabelExtended(self, 'LeftMenuItemsLabel').init(
                     text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
                 ), Layout.Center,
-                AllItemsBtn := MenuButton(self).init(
+                MenuButton(self, 'AllItemsBtn').init(
                     icon=ICONS.HOME, text='All items', slot=CONTEXT.CentralItems.show_all
                 ),
-                FavItemsBtn := MenuButton(self).init(
+                MenuButton(self, 'FavItemsBtn').init(
                     icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite', slot=CONTEXT.CentralItems.show_favourite
                 ),
                 LabelExtended(self, 'LeftMenuCategoriesLabel').init(
@@ -49,8 +49,6 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 )
             ]
         ))
-        self.AllItemsBtn = AllItemsBtn
-        self.FavItemsBtn = FavItemsBtn
         self.refresh_categories()
         return self
 
@@ -101,5 +99,5 @@ class LeftMenu(SplitterWidgetExt, Widget):
         )
         self.NoCategoriesLbl.setVisible(False)
         self.CategoriesScrollArea.setVisible(True)
-        self.AllItemsBtn.MenuButtonTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
-        self.FavItemsBtn.MenuButtonTotalLbl.setText(str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))
+        self.AllItemsBtn.AllItemsBtnTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
+        self.FavItemsBtn.FavItemsBtnTotalLbl.setText(str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))

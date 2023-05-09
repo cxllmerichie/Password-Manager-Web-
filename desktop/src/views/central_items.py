@@ -10,8 +10,9 @@ from ..components.central_item import CentralItem
 
 class CentralItems(Frame):
     def __init__(self, parent: QWidget):
-        Frame.__init__(self, parent, self.__class__.__name__,
-                       stylesheet=stylesheets.central_items.css + stylesheets.components.scroll + stylesheets.components.search)
+        Frame.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.central_items.css +
+                                                                         stylesheets.components.scroll +
+                                                                         stylesheets.components.search)
 
     def init(self):
         super().init(layout=Layout.vertical().init(

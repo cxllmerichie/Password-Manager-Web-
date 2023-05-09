@@ -18,6 +18,11 @@ css: str = f'''
     background-color: {COLORS.RED_HOVER};
 }}
 
+#ControlFrame {{
+    background-color: {COLORS.HOVER};
+    max-height: 50px;
+}}
+
 #SaveBtn,
 #CancelBtn {{
     color: {COLORS.TEXT_PRIMARY};
@@ -45,7 +50,7 @@ css: str = f'''
 #TitleInput,
 #DescriptionInput {{
     border: none;
-    background-color: {COLORS.LIGHT_GRAY};
+    background-color: {COLORS.DARK};
     min-width: {SIZES.CATEGORY.w}px;
     color: {COLORS.TEXT_PRIMARY};
     font-size: 18px;
@@ -64,7 +69,22 @@ css: str = f'''
     background-color: {COLORS.TRANSPARENT};
 }}
 
-#ControlBtns {{
+#DeleteBtn,
+#EditBtn,
+#FavouriteBtn,
+#CloseBtn {{
+    border-radius: {SIZES.CONTROL.width() // 2 - 1};
+    background-color: {COLORS.TRANSPARENT};
+}}
+
+#EditBtn:hover,
+#FavouriteBtn:hover {{
+    background-color: {COLORS.HOVER};
+}}
+
+#DeleteBtn:hover,
+#CloseBtn:hover {{
+    background-color: {COLORS.RED_HOVER};
 }}
 
 #HintLbl1 {{

@@ -31,6 +31,6 @@ class MainView(Widget):
             ]
         ))
         CONTEXT.RightPagesCategory.show_create()
-        right_pages.shrink()
         left_menu.expand()
+        right_pages.shrink()
         return self

@@ -1,40 +1,54 @@
-from qcontextapi.widgets import Layout, Label, Selector, Frame
-from PyQt5.QtWidgets import QStatusBar
+from qcontextapi.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
 from PyQt5.QtCore import pyqtSlot
 from qcontextapi import CONTEXT
 
-from ..misc import utils, API
+from ..misc import utils, API, ICONS
+from .. import stylesheets
 
 
-class StatusBar(QStatusBar):
+class StatusBar(CStatusBar):
     def __init__(self, parent):
-        super().__init__(parent)
-        self.setObjectName(self.__class__.__name__)
+        super().__init__(parent, self.__class__.__name__)
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
 
     def init(self) -> 'StatusBar':
-        self.layout().setContentsMargins(5, 0, 0, 0)
-        items = [self.layout().itemAt(i) for i in range(self.layout().count())]
-        for item in items:
-            self.layout().removeItem(item)
-        self.layout().addWidget(Frame(self, 'StatusBarFrame').init(
+        self.addWidget(Frame(self, 'LeftFrame', stylesheet='border: none').init(
             layout=Layout.horizontal().init(
-                alignment=Layout.LeftTop,
+                alignment=Layout.Left,
+                items=[
+                    Button(self, 'LogoutBtn').init(
+                        icon=ICONS.LOGOUT, text='Log out',
+                        slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
+                            message=f'Do you want to log out?',
+                            on_success=self.log_out
+                        )
+                    )
+                ]
+            )
+        ), 3)
+        self.addWidget(Frame(self, 'CenterFrame').init(
+            layout=Layout.horizontal().init(
+                alignment=Layout.VCenter,
                 items=[
                     Label(self, 'StorageLbl').init(
                         text='Storage type:'
-                    ),
+                    ), Layout.Right,
                     Selector(self, 'StorageSelector').init(
                         textchanged=self.storage_selector_textchanged,
                         items=[
                             Selector.Item(text=utils.Storage.LOCAL.value),
                             Selector.Item(text=utils.Storage.REMOTE.value),
                         ]
-                    ), Layout.LeftBottom
+                    ), Layout.Left,
                 ]
             )
-        ))
+        ), 3)
+        self.addWidget(Frame(self, 'RightFrame'), 3)
         return self
+
+    def log_out(self):
+        CONTEXT['token'] = None
+        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
 
     def post_init(self):
         self.StorageSelector.setCurrentText(CONTEXT['storage'].value)
