@@ -4,13 +4,13 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
 from qcontextapi import CONTEXT
 
-from .. import css
+from .. import stylesheets
 from ..misc import utils, ICONS
 
 
 class FullscreenPopup(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.components.fullscreen_popup)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.components.fullscreen_popup)
 
     def init(self) -> 'FullscreenPopup':
         self.setLayout(Layout.vertical().init(
@@ -61,7 +61,7 @@ class FullscreenPopup(Widget):
 
     @pyqtSlot()
     def execute_continue(self):
-        if self.LocalBtn.styleSheet() == css.components.active_button:
+        if self.LocalBtn.styleSheet() == stylesheets.components.active_button:
             CONTEXT['storage'] = utils.Storage.LOCAL
         else:
             CONTEXT['storage'] = utils.Storage.REMOTE
@@ -72,14 +72,14 @@ class FullscreenPopup(Widget):
     def storage_choice(self):
         name = self.sender().objectName()
         if name == 'LocalBtn':
-            self.LocalBtn.setStyleSheet(css.components.active_button)
-            self.RemoteBtn.setStyleSheet(css.components.inactive_button)
+            self.LocalBtn.setStyleSheet(stylesheets.components.active_button)
+            self.RemoteBtn.setStyleSheet(stylesheets.components.inactive_button)
             self.HintLbl1.setText('Storing data locally gives you access to the data any time even without '
                                   'internet connection but erases in case of file corruption of deleting the storage. '
                                   'Also a little quicker.')
         else:
-            self.LocalBtn.setStyleSheet(css.components.inactive_button)
-            self.RemoteBtn.setStyleSheet(css.components.active_button)
+            self.LocalBtn.setStyleSheet(stylesheets.components.inactive_button)
+            self.RemoteBtn.setStyleSheet(stylesheets.components.active_button)
             self.HintLbl1.setText('Storing data remotely gives you access to the data only with internet connection '
                                   'and in any device logging in using your personal account. Also a little slower.')
 

@@ -19,7 +19,7 @@ class StatusBar(QStatusBar):
             self.layout().removeItem(item)
         self.layout().addWidget(Frame(self, 'StatusBarFrame').init(
             layout=Layout.horizontal().init(
-                alignment=Layout.LeftCenter,
+                alignment=Layout.Top,
                 items=[
                     Label(self, 'StorageLbl').init(
                         text='Storage type:'

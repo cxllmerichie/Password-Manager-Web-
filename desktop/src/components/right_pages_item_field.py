@@ -6,14 +6,14 @@ from uuid import uuid4
 from typing import Any
 
 from ..misc import ICONS, API
-from .. import css
+from .. import stylesheets
 
 
 class RightPagesItemField(Frame):
     def __init__(self, parent: QWidget, field: dict[str, Any]):
         self.identifier = str(uuid4())
         name = f'Field{self.identifier}'
-        super().__init__(parent, name, stylesheet=css.right_pages_item_field.field(name))
+        super().__init__(parent, name, stylesheet=stylesheets.right_pages_item_field.field(name))
 
         self.field = field
         API.field_identifiers.append(self.identifier)

@@ -7,12 +7,12 @@ from .left_menu import LeftMenu
 from .right_pages import RightPages
 from .central_items import CentralItems
 from ..components import Panel
-from .. import css
+from .. import stylesheets
 
 
 class MainView(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.view_main.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_main.css)
 
     def init(self) -> 'MainView':
         central_items = CentralItems(self).init()

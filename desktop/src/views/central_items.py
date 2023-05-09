@@ -4,14 +4,14 @@ from PyQt5.QtWidgets import QWidget
 from typing import Any
 
 from ..misc import API
-from .. import css
+from .. import stylesheets
 from ..components.central_item import CentralItem
 
 
 class CentralItems(Frame):
     def __init__(self, parent: QWidget):
         Frame.__init__(self, parent, self.__class__.__name__,
-                       stylesheet=css.central_items.css + css.components.scroll + css.components.search)
+                       stylesheet=stylesheets.central_items.css + stylesheets.components.scroll + stylesheets.components.search)
 
     def init(self):
         super().init(layout=Layout.vertical().init(
@@ -69,7 +69,7 @@ class CentralItems(Frame):
                 ))
             layout.addWidget(CentralItem(self).init(item))
         self.SearchBar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=css.components.search,
+            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=stylesheets.components.search,
             items=[item['title'] for item in items] + letters
         )
         self.SearchBar.setVisible(True)

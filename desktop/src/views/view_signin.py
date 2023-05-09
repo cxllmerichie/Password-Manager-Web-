@@ -6,12 +6,12 @@ from PyQt5.QtCore import Qt, pyqtSlot
 
 from ..misc import ICONS, API
 from .view_main import MainView
-from .. import css
+from .. import stylesheets
 
 
 class SignIn(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.view_signin.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_signin.css)
 
     def init(self) -> 'SignIn':
         self.setLayout(

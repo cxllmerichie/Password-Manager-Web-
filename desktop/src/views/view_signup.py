@@ -7,12 +7,12 @@ import email_validator
 
 from ..misc import ICONS, API
 from .view_main import MainView
-from .. import css
+from .. import stylesheets
 
 
 class SignUp(Widget):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.view_signup.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_signup.css)
 
     def init(self) -> 'SignUp':
         self.setLayout(

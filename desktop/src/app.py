@@ -9,11 +9,11 @@ class App(QMainWindow):
     # with main created thread in `main.py` creating more threads in `assets`
 
     def __init__(self):
-        from . import css
+        from . import stylesheets
 
         super().__init__()
         self.setObjectName(self.__class__.__name__)
-        self.setStyleSheet(css.app.css + css.status_bar.css)
+        self.setStyleSheet(stylesheets.app.css + stylesheets.status_bar.css)
 
     def init(self) -> 'App':
         from .misc import SIZES

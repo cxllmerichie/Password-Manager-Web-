@@ -9,13 +9,13 @@ from contextlib import suppress
 from typing import Any
 
 from ..misc import ICONS, SIZES, API
-from .. import css
+from .. import stylesheets
 
 
 class LeftMenu(SplitterWidgetExt, Widget):
     def __init__(self, parent: QWidget):
         Widget.__init__(self, parent, self.__class__.__name__,
-                        stylesheet=css.left_menu.css + css.components.scroll + css.components.search)
+                        stylesheet=stylesheets.left_menu.css + stylesheets.components.scroll + stylesheets.components.search)
         SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax, Qt.Horizontal)
 
     def init(self) -> 'LeftMenu':
@@ -96,7 +96,7 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 slot=lambda checked, _category=category: CONTEXT.RightPagesCategory.show_category(_category)
             ))
         self.SearchBar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=css.components.search,
+            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=stylesheets.components.search,
             items=[category['title'] for category in categories] + letters
         )
         self.NoCategoriesLbl.setVisible(False)

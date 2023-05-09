@@ -7,14 +7,14 @@ from PyQt5.QtCore import pyqtSlot
 from typing import Any
 
 from ..misc import ICONS, API, utils, PATHS
-from .. import css
+from .. import stylesheets
 
 
 class RightPagesCategory(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.right_pages_category.css +
-                                                                     css.components.favourite_button +
-                                                                     css.components.image_button)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_category.css +
+                                                                     stylesheets.components.favourite_button +
+                                                                     stylesheets.components.image_button)
 
     def init(self) -> 'RightPagesCategory':
         self.setLayout(Layout.vertical().init(

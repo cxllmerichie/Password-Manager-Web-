@@ -9,16 +9,16 @@ from typing import Any
 
 from ..misc import ICONS, API, utils, PATHS
 from ..components import RightPagesItemField, RightPagesItemAttachment
-from .. import css
+from .. import stylesheets
 
 
 class RightPagesItem(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.right_pages_item.css +
-                                                                     css.components.scroll +
-                                                                     css.components.image_button +
-                                                                     css.components.favourite_button +
-                                                                     css.components.date_time_picker)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_item.css +
+                                                                     stylesheets.components.scroll +
+                                                                     stylesheets.components.image_button +
+                                                                     stylesheets.components.favourite_button +
+                                                                     stylesheets.components.date_time_picker)
 
     def init(self) -> 'RightPagesItem':
         self.setLayout(Layout.vertical().init(

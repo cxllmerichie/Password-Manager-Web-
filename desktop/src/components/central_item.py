@@ -4,12 +4,12 @@ from qcontextapi.misc import Icon
 from qcontextapi import CONTEXT
 from typing import Any
 
-from .. import css
+from .. import stylesheets
 
 
 class CentralItem(Frame):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, self.__class__.__name__, stylesheet=css.central_item.css)
+        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.central_item.css)
 
     def init(self, item: dict[str, Any]) -> 'CentralItem':
         super().init(layout=Layout.horizontal(self, 'ItemLayout').init(

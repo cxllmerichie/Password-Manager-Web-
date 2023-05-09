@@ -27,7 +27,7 @@ class StylesheetParser:
         return stylesheet
 
 # from css_parser import CSSParser
-# from css_parser.css.cssstyledeclaration import CSSStyleDeclaration
+# from css_parser.stylesheets.cssstyledeclaration import CSSStyleDeclaration
 #
 #
 # class StylesheetParser:

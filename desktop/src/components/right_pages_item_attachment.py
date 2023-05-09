@@ -7,14 +7,14 @@ from typing import Any
 import tempfile
 
 from ..misc import ICONS, API
-from .. import css
+from .. import stylesheets
 
 
 class RightPagesItemAttachment(Frame):
     def __init__(self, parent: QWidget, attachment: dict[str, Any], creating: bool):
         self.identifier = str(uuid4())
         name = f'Attachment{self.identifier}'
-        super().__init__(parent, name, stylesheet=css.right_pages_item_attachment.attachment(name))
+        super().__init__(parent, name, stylesheet=stylesheets.right_pages_item_attachment.attachment(name))
 
         self.creating = creating
         self.attachment = attachment

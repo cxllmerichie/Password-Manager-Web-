@@ -5,12 +5,12 @@ from PyQt5.QtWidgets import QWidget
 from .right_pages_category import RightPagesCategory
 from .right_pages_item import RightPagesItem
 from ..misc import SIZES
-from .. import css
+from .. import stylesheets
 
 
 class RightPages(SplitterWidgetExt, StackedWidget):
     def __init__(self, parent: QWidget):
-        StackedWidget.__init__(self, parent, self.__class__.__name__, stylesheet=css.right_pages.css)
+        StackedWidget.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.right_pages.css)
         SplitterWidgetExt.__init__(self, 300, expand_max=SIZES.RightMenu.w, orientation=Layout.Horizontal)
 
     def init(self) -> 'RightPages':
