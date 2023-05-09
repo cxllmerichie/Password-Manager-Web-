@@ -107,5 +107,7 @@ class SignIn(Widget):
         current_user = API.login({'email': email, 'password': password})
         if not (token := current_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())
-        CONTEXT.CentralWidget.setCurrentWidget(widget)
+        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
+        CONTEXT.LeftMenu.refresh_categories(API.get_categories())
+        CONTEXT.RightPagesCategory.show_create()
+        CONTEXT.RightPages.shrink()

@@ -115,5 +115,4 @@ class SignUp(Widget):
         created_user = API.create_user({'email': self.InputFieldEmail.text(), 'password': self.InputFieldPassword.text()})
         if not (token := created_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        CONTEXT.CentralWidget.addWidget(widget := MainView(self).init())
-        CONTEXT.CentralWidget.setCurrentWidget(widget)
+        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

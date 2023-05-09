@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import Qt
 from qcontextapi import CONTEXT
+from PyQt5.QtCore import Qt
 
 
 class App(QMainWindow):
@@ -20,8 +20,6 @@ class App(QMainWindow):
 
         self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
-        CONTEXT['local'] = False
-        CONTEXT['storage'] = None
         if not CONTEXT['storage']:
             from .components import FullscreenPopup
 
@@ -29,10 +27,9 @@ class App(QMainWindow):
         else:
             from .views.central_widget import CentralWidget
             from desktop.src.components.status_bar import StatusBar
-            from .misc import utils
 
+            statusbar = StatusBar(self).init()
             self.setCentralWidget(CentralWidget(self).init())
-            self.setStatusBar(StatusBar(self).init())
-            if CONTEXT['local']:
-                utils.start_local()
+            self.setStatusBar(statusbar)
+            statusbar.post_init()
         return self

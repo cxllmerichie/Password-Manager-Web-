@@ -5,20 +5,15 @@ import sys
 from src import App
 
 
-def main():
+if __name__ == '__main__':
+    CONTEXT['storage'] = None
+    CONTEXT['token'] = None
+
     qapp = QApplication(sys.argv)
     qapp.setStyle('Windows')
     app = App().init()
     app.show()
     sys.exit(qapp.exec_())
-
-
-if __name__ == '__main__':
-    main()
-    from src.misc import utils
-
-    if CONTEXT['local']:
-        utils.stop_local()
 
 
 # ToDo: add password generating procedure (fetch from api)

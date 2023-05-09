@@ -15,13 +15,13 @@ class MainView(Widget):
         super().__init__(parent, self.__class__.__name__, stylesheet=css.view_main.css)
 
     def init(self) -> 'MainView':
-        central_pages = CentralItems(self).init()
+        central_items = CentralItems(self).init()
         right_pages = RightPages(self).init()
         left_menu = LeftMenu(self).init()
 
         splitter = Splitter(self, 'MainViewSplitter').init()
         splitter.addWidget(left_menu)
-        splitter.addWidget(central_pages, False)
+        splitter.addWidget(central_items, False)
         splitter.addWidget(right_pages)
 
         self.setLayout(Layout.vertical().init(

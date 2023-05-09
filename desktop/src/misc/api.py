@@ -29,6 +29,10 @@ class Api:
             self.get_categories()
         return self.__categories
 
+    @categories.setter
+    def categories(self, categories: list[dict[str, Any]]):
+        self.__categories = categories
+
     @property
     def item(self) -> dict[str, Any]:
         return self.__item
@@ -86,7 +90,7 @@ class Api:
     # CATEGORIES
     @logger.catch()
     def get_categories(self) -> list[dict[str, Any]]:
-        if CONTEXT['storage'] == Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/'
             response = requests.get(url=url, headers=self.auth_headers()).json()
         else:
@@ -96,7 +100,7 @@ class Api:
 
     @logger.catch()
     def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/'
             response = requests.post(url=url, headers=self.auth_headers(), json=utils.serializable(category)).json()
         else:
@@ -108,7 +112,7 @@ class Api:
 
     @logger.catch()
     def get_category(self, category_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/{category_id}/'
             response = requests.get(url=url, headers=self.auth_headers()).json()
         else:
@@ -120,7 +124,7 @@ class Api:
 
     @logger.catch()
     def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/{category_id}/favourite/?is_favourite={is_favourite}'
             response = requests.put(url=url, headers=self.auth_headers()).json()
         else:
@@ -132,7 +136,7 @@ class Api:
 
     @logger.catch()
     def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/{category_id}/'
             response = requests.put(url=url, headers=self.auth_headers(), json=utils.serializable(category)).json()
         else:
@@ -144,7 +148,7 @@ class Api:
 
     @logger.catch()
     def delete_category(self, category_id: int) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/{category_id}/'
             response = requests.delete(url=url, headers=self.auth_headers()).json()
         else:
@@ -158,7 +162,7 @@ class Api:
     # ITEMS
     @logger.catch()
     def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/categories/{category_id}/items/'
             response = requests.post(url=url, headers=self.auth_headers(), json=utils.serializable(item)).json()
         else:
@@ -171,7 +175,7 @@ class Api:
 
     @logger.catch()
     def delete_item(self, item_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/items/{item_id}/'
             response = requests.delete(url=url, headers=self.auth_headers()).json()
         else:
@@ -185,7 +189,7 @@ class Api:
 
     @logger.catch()
     def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/items/{item_id}/'
             response = requests.put(url=url, headers=self.auth_headers(), json=utils.serializable(item, ['expires_at'])).json()
         else:
@@ -198,7 +202,7 @@ class Api:
 
     @logger.catch()
     def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/items/{item_id}/favourite/?is_favourite={is_favourite}'
             response = requests.put(url=url, headers=self.auth_headers()).json()
         else:
@@ -257,7 +261,7 @@ class Api:
     # FIELDS
     @logger.catch()
     def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/items/{item_id}/fields/'
             response = requests.post(url=url, headers=self.auth_headers(), json=field).json()
         else:
@@ -271,7 +275,7 @@ class Api:
 
     @logger.catch()
     def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/fields/{field_id}/'
             response = requests.put(url=url, headers=self.auth_headers(), json=field).json()
         else:
@@ -286,7 +290,7 @@ class Api:
 
     @logger.catch()
     def delete_field(self, field_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/fields/{field_id}/'
             response = requests.delete(url=url, headers=self.auth_headers()).json()
         else:
@@ -301,7 +305,7 @@ class Api:
     # ATTACHMENT
     @logger.catch()
     def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/items/{item_id}/attachments/'
             response = requests.post(url=url, headers=self.auth_headers(), json=attachment).json()
         else:
@@ -315,7 +319,7 @@ class Api:
 
     @logger.catch()
     def update_attachment(self, attachment_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/attachments/{attachment_id}/'
             response = requests.put(url=url, headers=self.auth_headers(), json=attachment).json()
         else:
@@ -330,7 +334,7 @@ class Api:
 
     @logger.catch()
     def delete_attachment(self, attachment_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] is Storage.REMOTE:
+        if CONTEXT['storage'].value == Storage.REMOTE.value:
             url = f'{self.URL}/attachments/{attachment_id}/'
             response = requests.delete(url=url, headers=self.auth_headers()).json()
         else:

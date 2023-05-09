@@ -1,7 +1,6 @@
 from apidevtools.simpleorm.connectors.sqlite import SQLite
 from apidevtools.simpleorm import ORM
 from typing import Any, Coroutine
-from qcontextapi import CONTEXT
 from datetime import datetime
 from enum import Enum
 import asyncio
@@ -39,16 +38,16 @@ class ORMNMap(ORM):
 
     async def get(self, key: Any, convert: bool = False) -> bytes | None:
         try:
-            mapping = await (await self.select(f'SELECT "value" FROM "map" WHERE "key" = "{str(key)}";')).first()
-            return self.evaluate(mapping['value'], convert)
+            if mapping := await (await self.select(f'SELECT "value" FROM "map" WHERE "key" = "{str(key)}";')).first():
+                return self.evaluate(mapping['value'], convert)
         except Exception as error:
             self.logger.error(error)
             return None
 
     async def remove(self, key: Any, convert: bool = False) -> bytes | None:
         try:
-            mapping = await (await self.delete(dict(key=key), tablename='map')).first()
-            return self.evaluate(mapping['value'], convert)
+            if mapping := await (await self.delete(dict(key=key), tablename='map')).first():
+                return self.evaluate(mapping['value'], convert)
         except Exception as error:
             self.logger.error(error)
             return None
@@ -106,18 +105,9 @@ CREATE TABLE IF NOT EXISTS "map" (
 );
 '''
 
-db = ORMNMap(connector=SQLite(database='storage.db'))
-
-
-def start_local():
-    asyncio.get_event_loop().run_until_complete(db.create_pool())
-    asyncio.get_event_loop().run_until_complete(db.execute(tables))
-    CONTEXT['local'] = True
-
-
-def stop_local():
-    asyncio.get_event_loop().run_until_complete(db.close_pool())
-    CONTEXT['local'] = False
+db = ORMNMap(connector=SQLite(database='storage.sqlite'))
+asyncio.get_event_loop().run_until_complete(db.create_pool())
+asyncio.get_event_loop().run_until_complete(db.execute(tables))
 
 
 class Storage(Enum):

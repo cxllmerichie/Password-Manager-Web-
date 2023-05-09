@@ -65,9 +65,8 @@ class FullscreenPopup(Widget):
             CONTEXT['storage'] = utils.Storage.LOCAL
         else:
             CONTEXT['storage'] = utils.Storage.REMOTE
-        self.setVisible(False)
-        self.hide()
         self.core.init()
+        self.deleteLater()
 
     @pyqtSlot()
     def storage_choice(self):

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QStatusBar
 from PyQt5.QtCore import pyqtSlot
 from qcontextapi import CONTEXT
 
-from ..misc import utils
+from ..misc import utils, API
 
 
 class StatusBar(QStatusBar):
@@ -34,12 +34,20 @@ class StatusBar(QStatusBar):
                 ]
             )
         ))
-        self.storage_selector_textchanged()
         return self
+
+    def post_init(self):
+        self.StorageSelector.setCurrentText(CONTEXT['storage'].value)
 
     @pyqtSlot()
     def storage_selector_textchanged(self):
         if self.StorageSelector.currentText() == utils.Storage.LOCAL.value:
-            CONTEXT['storage'] = utils.Storage.LOCAL.value
+            CONTEXT['storage'] = utils.Storage.LOCAL
         else:
-            CONTEXT['storage'] = utils.Storage.REMOTE.value
+            CONTEXT['storage'] = utils.Storage.REMOTE
+            if not CONTEXT['token']:
+                return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
+        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
+        CONTEXT.LeftMenu.refresh_categories(API.get_categories())
+        CONTEXT.RightPagesCategory.show_create()
+        CONTEXT.RightPages.shrink()

@@ -1,11 +1,12 @@
-from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget, Spacer
+from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget
+from qcontextapi.customs import MenuButton, SearchBar, LabelExtended
 from qcontextapi.extensions import SplitterWidgetExt
 from qcontextapi.misc import Icon
-from qcontextapi.customs import MenuButton, SearchBar, LabelExtended
 from qcontextapi import CONTEXT
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtWidgets import QWidget
 from contextlib import suppress
+from typing import Any
 
 from ..misc import ICONS, SIZES, API
 from .. import css
@@ -68,9 +69,11 @@ class LeftMenu(SplitterWidgetExt, Widget):
         with suppress(AttributeError):  # self.FavouriteLbl may not exist if none of items['is_favourite']
             self.FavouriteLbl.setVisible(not text)
 
-    def refresh_categories(self):
+    def refresh_categories(self, categories: list[dict[str, Any]] = None):
         layout = self.CategoriesScrollArea.widget().layout()
         layout.clear()
+        if categories:
+            API.categories = categories
         categories = API.categories
         self.SearchBar.setVisible(bool(len(categories)))
         if not len(categories):
