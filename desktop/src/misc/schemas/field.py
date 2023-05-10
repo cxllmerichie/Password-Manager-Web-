@@ -3,7 +3,7 @@ from apidevtools.simpleorm import Schema
 from uuid import uuid4, UUID
 import pydantic
 
-from ..utils import db
+from ..const import db
 
 
 class FieldBase(Schema):

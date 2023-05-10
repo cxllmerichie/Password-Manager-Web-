@@ -61,6 +61,7 @@ class StatusBar(CStatusBar):
             CONTEXT['storage'] = utils.Storage.REMOTE
             if not CONTEXT['token']:
                 return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
+        API.get_categories()
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
         CONTEXT.LeftMenu.refresh_categories(API.get_categories())
         CONTEXT.RightPagesCategory.show_create()

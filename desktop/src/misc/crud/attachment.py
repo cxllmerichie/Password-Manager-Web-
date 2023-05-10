@@ -2,7 +2,7 @@ from uuid import UUID
 from typing import Any
 
 from .. import schemas
-from ..utils import db
+from ..const import db
 
 
 async def create_attachment(item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:

@@ -7,7 +7,7 @@ from apidevtools.utils import now_tz_naive
 
 from . import field
 from .attachment import Attachment
-from ..utils import db
+from ..const import db
 
 
 class ItemBase(Schema):

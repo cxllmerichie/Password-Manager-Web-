@@ -4,7 +4,7 @@ from apidevtools.simpleorm import Schema, Relation
 from apidevtools.media import imgproc
 
 from .item import Item
-from ..utils import db
+from ..const import db
 
 
 class CategoryBase(Schema):

@@ -2,7 +2,7 @@ from apidevtools.utils import INF
 from typing import Any
 
 from .. import schemas
-from ..utils import db
+from ..const import db
 
 
 async def create_category(category: dict[str, Any]) -> dict[str, Any]:
