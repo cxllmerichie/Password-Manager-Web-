@@ -1,6 +1,6 @@
 from qcontextapi.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
-from PyQt5.QtCore import pyqtSlot
 from qcontextapi import CONTEXT
+from qasync import asyncSlot
 
 from ..misc import utils, API, ICONS
 from .. import stylesheets
@@ -11,14 +11,14 @@ class StatusBar(CStatusBar):
         super().__init__(parent, self.__class__.__name__)
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
 
-    def init(self) -> 'StatusBar':
-        self.addWidget(Frame(self, 'LeftFrame', stylesheet='border: none').init(
-            layout=Layout.horizontal().init(
+    async def init(self) -> 'StatusBar':
+        self.addWidget(await Frame(self, 'LeftFrame', stylesheet='border: none').init(
+            layout=await Layout.horizontal().init(
                 alignment=Layout.Left,
                 items=[
-                    Button(self, 'LogoutBtn').init(
+                    await Button(self, 'LogoutBtn').init(
                         icon=ICONS.LOGOUT, text='Log out',
-                        slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).init(
+                        slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
                             message=f'Do you want to log out?',
                             on_success=self.log_out
                         )
@@ -26,18 +26,18 @@ class StatusBar(CStatusBar):
                 ]
             )
         ), 3)
-        self.addWidget(Frame(self, 'CenterFrame').init(
-            layout=Layout.horizontal().init(
+        self.addWidget(await Frame(self, 'CenterFrame').init(
+            layout=await Layout.horizontal().init(
                 alignment=Layout.VCenter,
                 items=[
-                    Label(self, 'StorageLbl').init(
+                    await Label(self, 'StorageLbl').init(
                         text='Storage type:'
                     ), Layout.Right,
-                    Selector(self, 'StorageSelector').init(
+                    await Selector(self, 'StorageSelector').init(
                         textchanged=self.storage_selector_textchanged,
                         items=[
-                            Selector.Item(text=utils.Storage.LOCAL.value),
-                            Selector.Item(text=utils.Storage.REMOTE.value),
+                            Selector.Item(text=utils.Storage.LOCAL),
+                            Selector.Item(text=utils.Storage.REMOTE),
                         ]
                     ), Layout.Left,
                 ]
@@ -50,19 +50,18 @@ class StatusBar(CStatusBar):
         CONTEXT['token'] = None
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
 
-    def post_init(self):
-        self.StorageSelector.setCurrentText(CONTEXT['storage'].value)
+    async def post_init(self):
+        self.StorageSelector.setCurrentText(CONTEXT['storage'])
 
-    @pyqtSlot()
-    def storage_selector_textchanged(self):
-        if self.StorageSelector.currentText() == utils.Storage.LOCAL.value:
+    @asyncSlot()
+    async def storage_selector_textchanged(self):
+        if self.StorageSelector.currentText() == utils.Storage.LOCAL:
             CONTEXT['storage'] = utils.Storage.LOCAL
         else:
             CONTEXT['storage'] = utils.Storage.REMOTE
             if not CONTEXT['token']:
                 return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
-        API.get_categories()
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
-        CONTEXT.LeftMenu.refresh_categories(API.get_categories())
-        CONTEXT.RightPagesCategory.show_create()
+        await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
+        await CONTEXT.RightPagesCategory.show_create()
         CONTEXT.RightPages.shrink()

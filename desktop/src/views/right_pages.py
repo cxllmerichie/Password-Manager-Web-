@@ -15,7 +15,7 @@ class RightPages(SplitterWidgetExt, StackedWidget):
                                    expand_max=SIZES.RightMenuMax.w, expand_min=SIZES.RightMenuMin.w,
                                    orientation=Layout.Horizontal)
 
-    def init(self) -> 'RightPages':
-        self.addWidget(RightPagesCategory(self).init())
-        self.addWidget(RightPagesItem(self).init())
+    async def init(self) -> 'RightPages':
+        self.addWidget(await RightPagesCategory(self).init())
+        self.addWidget(await RightPagesItem(self).init())
         return self

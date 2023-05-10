@@ -2,7 +2,7 @@ from apidevtools.utils import INF, now_tz_naive
 from typing import Any
 
 from .. import schemas
-from ..const import db
+from ..utils import db
 
 
 async def create_item(category_id: int, item: dict[str, Any]) -> dict[str, Any]:

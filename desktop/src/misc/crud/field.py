@@ -2,7 +2,7 @@ from typing import Any
 from uuid import UUID
 
 from .. import schemas
-from ..const import db
+from ..utils import db
 
 
 async def create_field(item_id: int, field: dict[str, Any]) -> dict[str, Any]:

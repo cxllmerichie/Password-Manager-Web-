@@ -9,7 +9,7 @@ class LineInput(ContextObjectExt, QLineEdit):
         QLineEdit.__init__(self, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
 
-    def init(
+    async def init(
             self, *,
             placeholder: str = '', text: str = '', hidden: bool = False,
             textchanged: callable = None, alignment: Qt.Alignment = None

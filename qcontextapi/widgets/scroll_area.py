@@ -14,7 +14,7 @@ class ScrollArea(ContextObjectExt, QScrollArea):
         if stylesheet:
             self.setStyleSheet(stylesheet)
 
-    def init(
+    async def init(
             self, *,
             orientation: Qt.Orientation, horizontal: bool = True, vertical: bool = True,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
@@ -28,8 +28,8 @@ class ScrollArea(ContextObjectExt, QScrollArea):
         if policy:
             self.setSizePolicy(*policy)
         frame = Frame(self, f'{self.objectName()}Widget')
-        self.setWidget(frame.init(
-            layout=Layout.oriented(orientation, frame, f'{frame.objectName()}Layout').init(
+        self.setWidget(await frame.init(
+            layout=await Layout.oriented(orientation, frame, f'{frame.objectName()}Layout').init(
                 margins=margins, spacing=spacing, alignment=alignment, items=items
             )
         ))

@@ -15,20 +15,21 @@ class App(Window):
                                                              stylesheets.status_bar.css)
 
     async def init(self) -> 'App':
-        from .misc import SIZES
+        from .misc import SIZES, utils
 
+        await utils.db.create_pool()
         self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
         if not CONTEXT['storage']:
             from .components import FullscreenPopup
 
-            fspopup = FullscreenPopup(self).init()
+            fspopup = await FullscreenPopup(self).init()
         else:
             from .views.central_widget import CentralWidget
             from desktop.src.components.status_bar import StatusBar
 
-            statusbar = StatusBar(self).init()
-            self.setCentralWidget(CentralWidget(self).init())
+            statusbar = await StatusBar(self).init()
+            self.setCentralWidget(await CentralWidget(self).init())
             self.setStatusBar(statusbar)
-            statusbar.post_init()
+            await statusbar.post_init()
         return self

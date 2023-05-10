@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMessageBox, QWidget
+from qasync import asyncSlot
 
 from .widget import Widget
 from .layout import Layout
@@ -62,28 +62,29 @@ class Popup(Widget):
     def __init__(self, parent: QWidget, name: str = None, stylesheet: str = stylesheet):
         super().__init__(parent, name if name else self.__class__.__name__, True, stylesheet)
 
-    def init(
+    @asyncSlot()
+    async def display(
             self, *,
             message: str = '',
             on_success: callable = lambda: None, on_failure: callable = lambda: None
     ) -> 'Popup':
-        self.setLayout(Layout.vertical().init(
+        self.setLayout(await Layout.vertical().init(
             spacing=10, alignment=Layout.Center, margins=(20, 20, 20, 20),
             items=[
-                Frame(self, f'{self.objectName()}Frame').init(
-                    layout=Layout.vertical().init(
+                await Frame(self, f'{self.objectName()}Frame').init(
+                    layout=await Layout.vertical().init(
                         spacing=20, margins=(20, 20, 20, 20),
                         items=[
-                            Label(self, f'{self.objectName()}MessageLbl').init(
+                            await Label(self, f'{self.objectName()}MessageLbl').init(
                                 text=message, wrap=True, alignment=Layout.Center
                             ),
-                            Layout.horizontal().init(
+                            await Layout.horizontal().init(
                                 spacing=20,
                                 items=[
-                                    Button(self, f'{self.objectName()}YesBtn').init(
+                                    await Button(self, f'{self.objectName()}YesBtn').init(
                                         text='Yes', slot=lambda: self.slot(on_success)
                                     ),
-                                    Button(self, f'{self.objectName()}NoBtn').init(
+                                    await Button(self, f'{self.objectName()}NoBtn').init(
                                         text='No', slot=lambda: self.slot(on_failure)
                                     )
                                 ]
@@ -95,8 +96,8 @@ class Popup(Widget):
         ))
         return self
 
-    @pyqtSlot()
-    def slot(self, slot: callable):
+    @asyncSlot()
+    async def slot(self, slot: callable):
         slot()
         self.deleteLater()
 

@@ -8,5 +8,5 @@ class StatusBar(ContextObjectExt, QStatusBar):
         QStatusBar.__init__(self, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
 
-    def init(self) -> 'StatusBar':
+    async def init(self) -> 'StatusBar':
         return self

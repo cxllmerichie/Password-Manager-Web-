@@ -22,45 +22,45 @@ class DateTimePicker(Frame):
     def __init__(self, parent: QWidget, name: str = None, visible: bool = True):
         super().__init__(parent, name if name else self.__class__.__name__, visible)
 
-    def init(
+    async def init(
             self, *,
             show_date: bool = True, show_time: bool = True,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None
     ) -> 'DateTimePicker':
-        self.setLayout(Layout.vertical().init(
+        self.setLayout(await Layout.vertical().init(
             margins=margins, spacing=spacing, alignment=alignment,
             items=[
-                Frame(self, f'{self.objectName()}DateFrame').init(
-                    layout=Layout.horizontal().init(
+                await Frame(self, f'{self.objectName()}DateFrame').init(
+                    layout=await Layout.horizontal().init(
                         items=[
-                            Label(self, f'{self.objectName()}DateLbl').init(
+                            await Label(self, f'{self.objectName()}DateLbl').init(
                                 text='Date:'
                             ),
-                            day_selector := Selector(self, f'{self.objectName()}DaySelector').init(
+                            day_selector := await Selector(self, f'{self.objectName()}DaySelector').init(
                                 items=self.days
                             ),
-                            month_selector := Selector(self, f'{self.objectName()}MonthSelector').init(
+                            month_selector := await Selector(self, f'{self.objectName()}MonthSelector').init(
                                 items=self.months
                             ),
-                            year_selector := Selector(self, f'{self.objectName()}YearSelector').init(
+                            year_selector := await Selector(self, f'{self.objectName()}YearSelector').init(
                                 items=self.years
                             )
                         ]
                     )
                 ),
-                Frame(self, f'{self.objectName()}TimeFrame').init(
-                    layout=Layout.horizontal().init(
+                await Frame(self, f'{self.objectName()}TimeFrame').init(
+                    layout=await Layout.horizontal().init(
                         items=[
-                            Label(self, f'{self.objectName()}TimeLbl').init(
+                            await Label(self, f'{self.objectName()}TimeLbl').init(
                                 text='Time:'
                             ),
-                            hour_selector := Selector(self, f'{self.objectName()}HourSelector').init(
+                            hour_selector := await Selector(self, f'{self.objectName()}HourSelector').init(
                                 items=self.hours
                             ),
-                            minute_selector := Selector(self, f'{self.objectName()}MinuteSelector').init(
+                            minute_selector := await Selector(self, f'{self.objectName()}MinuteSelector').init(
                                 items=self.minutes
                             ),
-                            second_selector := Selector(self, f'{self.objectName()}SecondSelector').init(
+                            second_selector := await Selector(self, f'{self.objectName()}SecondSelector').init(
                                 items=self.seconds
                             )
                         ]

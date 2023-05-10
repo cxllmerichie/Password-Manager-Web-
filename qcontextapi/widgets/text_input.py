@@ -8,7 +8,7 @@ class TextInput(ContextObjectExt, QTextEdit):
         QTextEdit.__init__(self, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
 
-    def init(
+    async def init(
             self, *,
             placeholder: str = '', text: str = '', textchanged: callable = None,
             policy: tuple[QSizePolicy, QSizePolicy] = None

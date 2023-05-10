@@ -1,8 +1,8 @@
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton, QWidget, QSizePolicy
 from PyQt5.QtCore import QSize
-from typing import Callable, Any
+from PyQt5.QtGui import QIcon
 from contextlib import suppress
+from typing import Coroutine
 
 from ..misc import Icon
 from ..extensions import ContextObjectExt
@@ -13,17 +13,18 @@ class Button(ContextObjectExt, QPushButton):
         QPushButton.__init__(self, parent)
         ContextObjectExt.__init__(self, parent, name, visible)
 
-    def init(
+    async def init(
             self, *,
             text: str = '', size: QSize = None, icon: Icon = None, disabled: bool = False,
-            slot: Callable[..., Any] = lambda: None, policy: tuple[QSizePolicy, QSizePolicy] = None
+            slot: callable = None, policy: tuple[QSizePolicy, QSizePolicy] = None
     ) -> 'Button':
         self.setText(text)
         self.setDisabled(disabled)
 
         with suppress(Exception):
             self.clicked.disconnect()
-        self.clicked.connect(slot)
+        if slot:
+            self.clicked.connect(slot)
 
         if size:
             self.setFixedSize(size)

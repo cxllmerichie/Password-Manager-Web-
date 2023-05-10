@@ -29,7 +29,7 @@ class Splitter(ContextObjectExt, QSplitter):
             self.setAttribute(Qt.WA_StyledBackground, True)
         self.setSizePolicy(*policy)
 
-    def init(
+    async def init(
             self, *,
             items: Iterable[QWidget] = ()
     ) -> 'Splitter':

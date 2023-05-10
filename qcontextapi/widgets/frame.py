@@ -10,7 +10,7 @@ class Frame(ContextObjectExt, QFrame):
         if stylesheet:
             self.setStyleSheet(stylesheet)
 
-    def init(
+    async def init(
             self, *,
             style: ... = None,
             layout: QLayout = None, policy: tuple[QSizePolicy, QSizePolicy] = (QSizePolicy.Minimum, QSizePolicy.Minimum)

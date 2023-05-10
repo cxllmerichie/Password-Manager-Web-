@@ -19,7 +19,7 @@ class Selector(ContextObjectExt, QComboBox):
         QComboBox.__init__(self)
         ContextObjectExt.__init__(self, parent, name, visible)
 
-    def init(
+    async def init(
             self, *,
             items: Iterable[Item | str] = (), indexchanged: callable = None, textchanged: callable = None
     ) -> 'Selector':

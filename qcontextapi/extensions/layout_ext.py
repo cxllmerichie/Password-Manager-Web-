@@ -4,7 +4,7 @@ from typing import Sequence, Iterable
 
 
 class LayoutExt:
-    def init(
+    async def init(
             self, *,
             margins: tuple[int, ...] = (0, 0, 0, 0), spacing: int = 0, alignment: Qt.Alignment = None,
             items: Sequence[QObject] = ()

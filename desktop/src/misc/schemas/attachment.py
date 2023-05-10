@@ -4,7 +4,7 @@ from uuid import uuid4, UUID
 from pydantic import Field
 import zlib
 
-from ..const import db
+from ..utils import db
 
 
 class AttachmentBase(Schema):

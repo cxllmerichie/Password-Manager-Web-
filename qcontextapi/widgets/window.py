@@ -9,5 +9,5 @@ class Window(QMainWindow):
         if stylesheet:
             self.setStyleSheet(stylesheet)
 
-    def init(self) -> 'Window':
+    async def init(self) -> 'Window':
         return self

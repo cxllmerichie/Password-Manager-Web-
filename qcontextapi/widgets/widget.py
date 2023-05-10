@@ -12,7 +12,7 @@ class Widget(ContextObjectExt, QWidget):
             self.setAttribute(Qt.WA_StyledBackground, True)
             self.setStyleSheet(stylesheet)
 
-    def init(
+    async def init(
             self, *,
             layout: QLayout = None
     ) -> 'Widget':

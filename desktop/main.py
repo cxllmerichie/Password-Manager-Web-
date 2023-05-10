@@ -19,9 +19,9 @@ async def amain() -> bool:
     if hasattr(qapp, 'aboutToQuit'):
         getattr(qapp, 'aboutToQuit').connect(functools.partial(close_future, future, loop))
 
-    # from qcontextapi import CONTEXT
-    # CONTEXT['storage'] = None
-    # CONTEXT['token'] = None
+    from qcontextapi import CONTEXT
+    CONTEXT['storage'] = None
+    CONTEXT['token'] = None
     app = await App().init()
     app.show()
 
@@ -29,7 +29,7 @@ async def amain() -> bool:
     return True
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         qasync.run(amain())
     except asyncio.exceptions.CancelledError:

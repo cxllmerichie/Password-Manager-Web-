@@ -21,7 +21,7 @@ class Label(ContextObjectExt, QLabel):
             self.non_elided_text = non_elided_text
         super().paintEvent(event)
 
-    def init(
+    async def init(
             self, *,
             text: str = '', alignment: Qt.Alignment = None, wrap: bool = False, size: QSize = None,
             icon: Icon = None, elided: bool = False, policy: tuple[QSizePolicy, QSizePolicy] = None

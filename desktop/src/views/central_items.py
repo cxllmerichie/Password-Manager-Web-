@@ -2,6 +2,8 @@ from qcontextapi.widgets import ScrollArea, Layout, Label, Frame
 from qcontextapi.customs import SearchBar
 from PyQt5.QtWidgets import QWidget
 from typing import Any
+from contextlib import suppress
+from qasync import asyncSlot
 
 from ..misc import API
 from .. import stylesheets
@@ -14,25 +16,26 @@ class CentralItems(Frame):
                                                                          stylesheets.components.scroll +
                                                                          stylesheets.components.search)
 
-    def init(self):
-        super().init(layout=Layout.vertical().init(
+    async def init(self):
+        await super().init(layout=await Layout.vertical().init(
             spacing=20, margins=(30, 10, 30, 10),
             items=[
                 SearchBar(self, visible=False),
-                ScrollArea(self, 'ItemsScrollArea', False).init(
+                await ScrollArea(self, 'ItemsScrollArea', False).init(
                     orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, horizontal=False
                 ),
-                Label(self, 'NoCategoriesLbl', False).init(
+                await Label(self, 'NoCategoriesLbl', False).init(
                     text='This category does not have items yet', wrap=True, alignment=Layout.Center
                 ), Layout.Center,
-                Label(self, 'HintLbl1').init(
+                await Label(self, 'HintLbl1').init(
                     text='Select some category in the left menu to see it\'s items', wrap=True, alignment=Layout.Center
                 ), Layout.Center,
             ]
         ))
         return self
 
-    def searchbar_textchanged(self):
+    @asyncSlot()
+    async def searchbar_textchanged(self):
         layout = self.ItemsScrollArea.widget().layout()
         text = self.SearchBar.text()
         for i in range(layout.count()):
@@ -43,10 +46,11 @@ class CentralItems(Frame):
             elif widget.__class__.__name__ in 'CP_Item':
                 visible = text.lower() in widget.ItemTitleLbl.text().lower()
             widget.setVisible(visible)
-        # with suppress(AttributeError):
-        #     self.FavouriteLbl.setVisible(not text)
+        with suppress(AttributeError):
+            self.FavouriteLbl.setVisible(not text)
 
-    def refresh_items(self, items: list[dict[str, Any]] = None):
+    @asyncSlot()
+    async def refresh_items(self, items: list[dict[str, Any]] = None):
         if items is None:
             items = API.items
         self.HintLbl1.setVisible(False)
@@ -59,32 +63,34 @@ class CentralItems(Frame):
         self.ItemsScrollArea.clear()
         items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
         if any([item['is_favourite'] for item in items]):
-            layout.addWidget(Label(self, 'FavouriteLbl').init(
+            layout.addWidget(await Label(self, 'FavouriteLbl').init(
                 text='Favourite'
             ))
         for item in items:
             if not item['is_favourite'] and (letter := item['title'][0]) not in letters:
                 letters.append(letter)
-                layout.addWidget(Label(self, 'LetterLbl').init(
+                layout.addWidget(await Label(self, 'LetterLbl').init(
                     text=letter
                 ))
-            layout.addWidget(CentralItem(self).init(item))
-        self.SearchBar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=stylesheets.components.search,
+            layout.addWidget(await CentralItem(self).init(item))
+        await self.SearchBar.init(
+            textchanged=self.searchbar_textchanged, placeholder='Search',
             items=[item['title'] for item in items] + letters
         )
         self.SearchBar.setVisible(True)
         self.NoCategoriesLbl.setVisible(False)
         self.ItemsScrollArea.setVisible(True)
 
-    def show_all(self):
+    @asyncSlot()
+    async def show_all(self):
         items = []
         for category in API.categories:
             items += category['items']
-        self.refresh_items(items)
+        await self.refresh_items(items)
 
-    def show_favourite(self):
+    @asyncSlot()
+    async def show_favourite(self):
         items = []
         for category in API.categories:
             items += list(filter(lambda x: x['is_favourite'], category['items']))
-        self.refresh_items(items)
+        await self.refresh_items(items)
