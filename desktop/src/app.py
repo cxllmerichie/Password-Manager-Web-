@@ -14,7 +14,7 @@ class App(Window):
         super().__init__(self.__class__.__name__, stylesheet=stylesheets.app.css +
                                                              stylesheets.status_bar.css)
 
-    def init(self) -> 'App':
+    async def init(self) -> 'App':
         from .misc import SIZES
 
         self.resize(SIZES.App)

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication
+from qasync import QApplication
 import functools
 import asyncio
 import qasync
@@ -7,7 +7,7 @@ import sys
 from src import App
 
 
-async def main():
+async def amain() -> bool:
     def close_future(future, loop):
         loop.call_later(10, future.cancel)
         future.cancel()
@@ -15,18 +15,15 @@ async def main():
     loop = asyncio.get_event_loop()
     future = asyncio.Future()
 
-    app = QApplication.instance()
-    if hasattr(app, "aboutToQuit"):
-        getattr(app, "aboutToQuit").connect(
-            functools.partial(close_future, future, loop)
-        )
+    qapp = QApplication.instance()
+    if hasattr(qapp, 'aboutToQuit'):
+        getattr(qapp, 'aboutToQuit').connect(functools.partial(close_future, future, loop))
 
     # from qcontextapi import CONTEXT
     # CONTEXT['storage'] = None
     # CONTEXT['token'] = None
-    qapp = QApplication(sys.argv)
-    qapp.setStyle('Windows')
-    App().init().show()
+    app = await App().init()
+    app.show()
 
     await future
     return True
@@ -34,7 +31,7 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        qasync.run(main())
+        qasync.run(amain())
     except asyncio.exceptions.CancelledError:
         sys.exit(0)
 
