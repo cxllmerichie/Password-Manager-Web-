@@ -4,8 +4,7 @@ from .. import schemas
 from ..const import db
 
 
-async def create_category(user_id: int, category: schemas.CategoryCreate) -> schemas.Category:
-    category = schemas.CategoryCreateCrud(**dict(category), user_id=user_id)
+async def create_category(category: schemas.CategoryCreate) -> schemas.Category:
     db_category = await db.insert(category, schemas.Category)
     return db_category
 
@@ -18,8 +17,8 @@ async def get_category(category_id: int = None, title: str = None, schema: type 
     return db_category
 
 
-async def get_categories(user_id: int, limit: int = INF, offset: int = 0, schema: type = schemas.Category) -> list[schemas.Category]:
-    query, args = f'SELECT * FROM "category" WHERE "user_id" = $1 ORDER BY "is_favourite" DESC, "title", "description" LIMIT $2 OFFSET $3;', (user_id, limit, offset)
+async def get_categories(limit: int = INF, offset: int = 0, schema: type = schemas.Category) -> list[schemas.Category]:
+    query, args = f'SELECT * FROM "category" ORDER BY "is_favourite" DESC, "title", "description" LIMIT $2 OFFSET $3;', (limit, offset)
     db_categories = await (await db.select(query, args, schema, rel_depth=2)).all()
     return db_categories
 

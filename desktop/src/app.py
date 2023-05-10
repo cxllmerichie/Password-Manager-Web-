@@ -15,9 +15,8 @@ class App(Window):
                                                              stylesheets.status_bar.css)
 
     async def init(self) -> 'App':
-        from .misc import SIZES, utils
+        from .misc import SIZES
 
-        await utils.db.create_pool()
         self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
         if not CONTEXT['storage']:

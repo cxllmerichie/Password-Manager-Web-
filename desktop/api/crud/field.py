@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from .. import schemas
-from ..const import db, keys
+from ..const import db
 
 
 async def create_field(item_id: int, field: schemas.FieldCreate) -> schemas.Field:
@@ -30,5 +30,5 @@ async def update_field(field_id: UUID, field: schemas.FieldCreate) -> schemas.Fi
 
 async def delete_field(field_id: UUID) -> schemas.Field:
     db_field = await (await db.delete(dict(id=field_id), schemas.Field, 'field')).first()
-    await keys.delete(db_field.id)
+    await db.remove(db_field.id)
     return db_field

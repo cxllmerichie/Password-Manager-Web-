@@ -1,87 +1,108 @@
-from dotenv import load_dotenv
-from os import getenv
 from apidevtools.simpleorm import ORM
-from apidevtools.simpleorm.connectors.postgresql import PostgreSQL
-from apidevtools.logman import LoggerManager, Logger
-from apidevtools.simpleorm.redis import Redis
+from apidevtools.simpleorm.connectors.sqlite import SQLite
+import ast
+from typing import Any
 
 
-assert load_dotenv('api/.env')
+API_HOST: str = '127.0.0.1'
+API_PORT: int = 8888
+API_CORS_ORIGINS: list[str] = '*'
+# API_CORS_ORIGINS: list[str] = ['localhost']
 
-POSTGRESQL_DATABASE: str = getenv('POSTGRESQL_DATABASE')
-POSTGRESQL_HOST: str = getenv('POSTGRESQL_HOST')
-POSTGRESQL_PORT: int = int(getenv('POSTGRESQL_PORT'))
-POSTGRESQL_USER: str = getenv('POSTGRESQL_USER')
-POSTGRESQL_PASSWORD: str = getenv('POSTGRESQL_PASSWORD')
 
-REDIS_KEYS_DATABASE: int = int(getenv('REDIS_KEYS_DATABASE'))
-REDIS_TOKENS_DATABASE: int = int(getenv('REDIS_TOKENS_DATABASE'))
-REDIS_IMAGES_DATABASE: int = int(getenv('REDIS_IMAGES_DATABASE'))
-REDIS_HOST: str = getenv('REDIS_HOST')
-REDIS_PORT: int = int(getenv('REDIS_PORT'))
-REDIS_USER: str = getenv('REDIS_USER', None)
-REDIS_PASSWORD: str = getenv('REDIS_PASSWORD')
+class ORMNMap(ORM):
+    @staticmethod
+    def evaluate(value: bytes, convert: bool = True) -> Any:
+        if not convert:
+            return value
+        try:
+            return ast.literal_eval(value.decode())
+        except ValueError:
+            return ast.literal_eval(f'\'{value.decode()}\'')
+        except SyntaxError:
+            return value.decode()
+        except AttributeError:
+            return None
 
-API_HOST: str = getenv('API_HOST', '127.0.0.1')
-API_PORT: int = int(getenv('API_PORT', 8000))
+    async def set(self, key: Any, value: Any) -> Any:
+        try:
+            if exists := await self.get(key):
+                mapping = await (await self.update(dict(key=key, value=value), dict(key=key), tablename='map')).first()
+            else:
+                mapping = await self.insert(dict(key=key, value=value), tablename='map')
+            return mapping['value']
+        except Exception as error:
+            self.logger.error(error)
+        return None
 
-API_TITLE: str = getenv('API_TITLE')
-API_DESCRIPTION: str = getenv('API_DESCRIPTION')
-API_VERSION: str = getenv('API_VERSION')
-API_CONTACT_NAME: str = getenv('API_CONTACT_NAME')
-API_CONTACT_URL: str = getenv('API_CONTACT_URL')
-API_CONTACT_EMAIL: str = getenv('API_CONTACT_EMAIL')
+    async def get(self, key: Any, convert: bool = False) -> bytes | None:
+        try:
+            if mapping := await (await self.select(f'SELECT "value" FROM "map" WHERE "key" = "{str(key)}";')).first():
+                return self.evaluate(mapping['value'], convert)
+        except Exception as error:
+            self.logger.error(error)
+            return None
 
-API_CORS_ORIGINS: list[str] = getenv('API_CORS_ORIGINS', '*').split(',')
-API_CORS_ALLOW_CREDENTIALS: bool = getenv('API_CORS_ALLOW_CREDENTIALS', 'Y')[0].upper() == 'Y'
-API_CORS_METHODS: list[str] = getenv('API_CORS_METHODS', '*').split(',')
-API_CORS_HEADERS: list[str] = getenv('API_CORS_HEADERS', '*').split(',')
+    async def remove(self, key: Any, convert: bool = False) -> bytes | None:
+        try:
+            if mapping := await (await self.delete(dict(key=key), tablename='map')).first():
+                return self.evaluate(mapping['value'], convert)
+        except Exception as error:
+            self.logger.error(error)
+            return None
 
-JWT_SECRET_KEY: str = getenv('JWT_SECRET_KEY')
-JWT_ALGORITHM: str = getenv('JWT_ALGORITHM')
 
-LOGMAN: LoggerManager = LoggerManager()
-LOGGER: Logger = LOGMAN.add('MAIN', 'logs/log.log')
-LOGGER_API: Logger = LOGMAN.add('API', 'logs/api.log')
-LOGGER_POSTGRES: Logger = LOGMAN.add('DATABASE', 'logs/database.log')
-LOGGER_KEYS: Logger = LOGMAN.add('KEYS', 'logs/keys.log')
-LOGGER_TOKENS: Logger = LOGMAN.add('TOKENS', 'logs/tokens.log')
-LOGGER_IMAGES: Logger = LOGMAN.add('IMAGES', 'logs/images.log')
+db = ORMNMap(connector=SQLite(database='storage.sqlite'))
 
-db = ORM(
-    connector=PostgreSQL(
-        database=POSTGRESQL_DATABASE,
-        host=POSTGRESQL_HOST,
-        port=POSTGRESQL_PORT,
-        user=POSTGRESQL_USER,
-        password=POSTGRESQL_PASSWORD
-    ),
-    logger=LOGGER_POSTGRES
-)
 
-keys = Redis(
-    database=REDIS_KEYS_DATABASE,
-    host=REDIS_HOST,
-    port=REDIS_PORT,
-    user=REDIS_USER,
-    password=REDIS_PASSWORD,
-    logger=LOGGER_KEYS
-)
+tables: str = '''
+CREATE TABLE IF NOT EXISTS "category" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
 
-tokens = Redis(
-    database=REDIS_TOKENS_DATABASE,
-    host=REDIS_HOST,
-    port=REDIS_PORT,
-    user=REDIS_USER,
-    password=REDIS_PASSWORD,
-    logger=LOGGER_TOKENS
-)
+    "icon" BYTEA NOT NULL,
+    "title" TEXT NOT NULL UNIQUE,
+    "description" TEXT DEFAULT NULL,
+    "is_favourite" BOOLEAN DEFAULT FALSE
+);
 
-images = Redis(
-    database=REDIS_IMAGES_DATABASE,
-    host=REDIS_HOST,
-    port=REDIS_PORT,
-    user=REDIS_USER,
-    password=REDIS_PASSWORD,
-    logger=LOGGER_IMAGES
-)
+CREATE TABLE IF NOT EXISTS "item" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    "icon" BYTEA NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT DEFAULT NULL,
+    "expires_at" TIMESTAMP DEFAULT NULL,
+    "modified_at" TIMESTAMP DEFAULT NULL,
+    "created_at" TIMESTAMP NOT NULL,
+    "is_favourite" BOOLEAN DEFAULT FALSE,
+
+    "category_id" INTEGER NOT NULL,
+    CONSTRAINT fk_category FOREIGN KEY("category_id") REFERENCES "category" ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "field" (
+    "id" TEXT PRIMARY KEY,
+
+    "name" BYTEA NOT NULL,
+    "value" BYTEA NOT NULL,
+
+    "item_id" INTEGER NOT NULL,
+    CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "attachment" (
+    "id" TEXT PRIMARY KEY,
+
+    "content" BYTEA NOT NULL,
+    "mime" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+
+    "item_id" INTEGER NOT NULL,
+    CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "map" (
+    "key" TEXT,
+    "value" BYTEA
+);
+'''

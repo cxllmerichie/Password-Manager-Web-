@@ -1,21 +1,46 @@
 from qcontextapi.misc import utils, Icon
 from qcontextapi import CONTEXT
 from mimetypes import MimeTypes
+from contextlib import suppress
 from datetime import datetime
 from copy import deepcopy
 from loguru import logger
 from typing import Any
 from uuid import UUID
 import ujson as json
-import requests
+import aiohttp
+import socket
+import re
 import os
 
-from . import crud
 from .utils import Storage
 
 
+async def request(
+        method: str, url: str,
+        *,
+        params: dict[str, Any] = None, body: dict[str, Any] = None, headers: dict[str, Any] = None
+) -> Any:
+    assert (method := method.lower()) in ('get', 'post', 'put', 'delete')
+    async with aiohttp.ClientSession(Api.url(), json_serialize=json.dumps) as session:
+        # convert params values to str
+        for key, value in params.items() if params else {}:
+            params[key] = str(value)
+        request_method = getattr(session, method)
+        async with request_method(url, json=body, params=params, headers=headers) as response:
+            return await response.json()
+
+
 class Api:
-    URL = 'http://127.0.0.1:8000'
+    REMOTE_URL: str = 'http://127.0.0.1:8000'
+    LOCAL_URL: str = 'http://127.0.0.1:8888'
+
+    @staticmethod
+    def url() -> str:
+        if CONTEXT['storage'] == Storage.REMOTE:
+            return Api.REMOTE_URL
+        return Api.LOCAL_URL
+
     __categories: list[dict[str, Any]] = None
     __category: dict[str, Any] = None
     __item: dict[str, Any] = None
@@ -57,33 +82,40 @@ class Api:
         return self.category['items']
 
     # GENERAL
-    @logger.catch()
-    def auth_headers(self) -> dict[str, Any]:
-        return {'accept': 'application/json', 'Authorization': f'Bearer {CONTEXT["token"]}'}
+    @property
+    def headers_auth(self) -> dict[str, Any]:
+        return self.headers_accept_json | {'Authorization': f'Bearer {CONTEXT["token"]}'}
+
+    @property
+    def headers_accept_json(self) -> dict[str, Any]:
+        return {'accept': 'application/json'}
+
+    @property
+    def headers_content_json(self) -> dict[str, Any]:
+        return {'Content-Type': 'application/json'}
+
+    @property
+    def headers_login(self) -> dict[str, Any]:
+        return self.headers_accept_json | {'Content-Type': 'application/x-www-form-urlencoded'}
 
     # AUTH
     @logger.catch()
     async def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
-        url = f'{self.URL}/auth/token/'
-        headers = {'accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
-        data = f'grant_type=&username={auth_data["email"]}&password={auth_data["password"]}&scope=&client_id=&client_secret='
-        response = requests.post(url=url, headers=headers, data=data).json()
+        params = dict(username=auth_data["email"], password=auth_data["password"],
+                      grant_type='', scope='', client_id='', client_secret='')
+        response = await request('post', '/auth/token/', headers=self.headers_login, params=params)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
 
     @logger.catch()
     async def check_email(self, email: str) -> bool:
-        url = f'{self.URL}/auth/{email}/'
-        headers = {'accept': 'application/json'}
-        return requests.get(url=url, headers=headers).json()
+        return await request('get', f'/auth/{email}/', headers=self.headers_accept_json)
 
     # USER
     @logger.catch()
     async def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
-        url = f'{self.URL}/users/'
-        headers = {"accept": "application/json", "Content-Type": "application/json"}
-        response = requests.post(url=url, headers=headers, json=user).json()
+        response = await request('post', '/users/', headers=self.headers_content_json, body=user)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
@@ -91,21 +123,12 @@ class Api:
     # CATEGORIES
     @logger.catch()
     async def get_categories(self) -> list[dict[str, Any]]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/'
-            response = requests.get(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.get_categories()
-        self.__categories = response
+        self.__categories = response = await request('get', '/categories/', headers=self.headers_auth)
         return response
 
     @logger.catch()
     async def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/'
-            response = requests.post(url=url, headers=self.auth_headers(), json=await utils.serializable(category)).json()
-        else:
-            response = await crud.create_category(await utils.serializable(category))
+        response = await request('post', '/categories/', headers=self.headers_auth, body=await utils.serializable(category))
         if category_id := response.get('id'):
             self.__categories.append(response)
             self.category = response
@@ -113,11 +136,7 @@ class Api:
 
     @logger.catch()
     async def get_category(self, category_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/{category_id}/'
-            response = requests.get(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.get_category(int(category_id))
+        response = await request('get', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', category_id)
             self.category = self.categories[c_idx] = response
@@ -125,11 +144,7 @@ class Api:
 
     @logger.catch()
     async def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/{category_id}/favourite/?is_favourite={is_favourite}'
-            response = requests.put(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.set_category_favourite(int(category_id), is_favourite)
+        response = await request('put', f'/categories/{category_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite))
         if category_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', category_id)
             self.category = self.categories[c_idx] = response
@@ -137,11 +152,7 @@ class Api:
 
     @logger.catch()
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/{category_id}/'
-            response = requests.put(url=url, headers=self.auth_headers(), json=await utils.serializable(category)).json()
-        else:
-            response = await crud.update_category(int(category_id), await utils.serializable(category))
+        response = await request('put', f'/categories/{category_id}/', headers=self.headers_auth, body=await utils.serializable(category))
         if category_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', category_id)
             self.category = self.categories[c_idx] = response
@@ -149,11 +160,7 @@ class Api:
 
     @logger.catch()
     async def delete_category(self, category_id: int) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/{category_id}/'
-            response = requests.delete(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.delete_category(int(category_id))
+        response = await request('delete', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', category_id)
             self.categories.pop(c_idx)
@@ -163,11 +170,7 @@ class Api:
     # ITEMS
     @logger.catch()
     async def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/categories/{category_id}/items/'
-            response = requests.post(url=url, headers=self.auth_headers(), json=await utils.serializable(item)).json()
-        else:
-            response = await crud.create_item(int(category_id), await utils.serializable(item))
+        response = await request('post', f'/categories/{category_id}/items/', headers=self.headers_auth, body=await utils.serializable(item))
         if item_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.category['id'])
             self.categories[c_idx]['items'].append(response)
@@ -176,11 +179,7 @@ class Api:
 
     @logger.catch()
     async def delete_item(self, item_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/items/{item_id}/'
-            response = requests.delete(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.delete_item(int(item_id))
+        response = await request('delete', f'/items/{item_id}/', headers=self.headers_auth)
         if item_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
@@ -190,11 +189,7 @@ class Api:
 
     @logger.catch()
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/items/{item_id}/'
-            response = requests.put(url=url, headers=self.auth_headers(), json=await utils.serializable(item, ['expires_at'])).json()
-        else:
-            response = await crud.update_item(int(item_id), await utils.serializable(item, ['expires_at']))
+        response = await request('put', f'/items/{item_id}/', headers=self.headers_auth, body=await utils.serializable(item, ['expires_at']))
         if item_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
@@ -203,11 +198,7 @@ class Api:
 
     @logger.catch()
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/items/{item_id}/favourite/?is_favourite={is_favourite}'
-            response = requests.put(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.set_item_favourite(int(item_id), is_favourite)
+        response = await request('put', f'/items/{item_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite))
         if item_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
@@ -262,11 +253,7 @@ class Api:
     # FIELDS
     @logger.catch()
     async def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/items/{item_id}/fields/'
-            response = requests.post(url=url, headers=self.auth_headers(), json=field).json()
-        else:
-            response = await crud.create_field(int(item_id), field)
+        response = await request('post', f'/items/{item_id}/fields/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.items, 'id', item_id)
@@ -276,11 +263,7 @@ class Api:
 
     @logger.catch()
     async def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/fields/{field_id}/'
-            response = requests.put(url=url, headers=self.auth_headers(), json=field).json()
-        else:
-            response = await crud.update_field(field_id, field)
+        response = await request('put', f'/fields/{field_id}/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
@@ -291,11 +274,7 @@ class Api:
 
     @logger.catch()
     async def delete_field(self, field_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/fields/{field_id}/'
-            response = requests.delete(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.delete_field(field_id)
+        response = await request('delete', f'/fields/{field_id}/', headers=self.headers_auth)
         if field_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
@@ -306,11 +285,7 @@ class Api:
     # ATTACHMENT
     @logger.catch()
     async def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/items/{item_id}/attachments/'
-            response = requests.post(url=url, headers=self.auth_headers(), json=attachment).json()
-        else:
-            response = await crud.create_attachment(item_id, attachment)
+        response = await request('post', f'/items/{item_id}/attachments/', headers=self.headers_auth, body=attachment)
         if attachment_id := response.get('id'):
             c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
@@ -320,11 +295,7 @@ class Api:
 
     @logger.catch()
     async def update_attachment(self, attachment_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/attachments/{attachment_id}/'
-            response = requests.put(url=url, headers=self.auth_headers(), json=attachment).json()
-        else:
-            response = await crud.update_attachment(attachment_id, attachment)
+        response = await request('put', f'/attachments/{attachment_id}/', headers=self.headers_auth, body=attachment)
         if attachment_id := response.get('id'):
             i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
             c_idx, _ = await utils.find(self.categories, 'id', self.items[i_idx]['category_id'])
@@ -335,11 +306,7 @@ class Api:
 
     @logger.catch()
     async def delete_attachment(self, attachment_id: str) -> dict[str, Any]:
-        if CONTEXT['storage'] == Storage.REMOTE:
-            url = f'{self.URL}/attachments/{attachment_id}/'
-            response = requests.delete(url=url, headers=self.auth_headers()).json()
-        else:
-            response = await crud.delete_attachment(attachment_id)
+        response = await request('delete', f'/attachments/{attachment_id}/', headers=self.headers_auth)
         if attachment_id := response.get('id'):
             i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
             c_idx, _ = await utils.find(self.categories, 'id', self.items[i_idx]['category_id'])
@@ -362,3 +329,12 @@ class Api:
             with open(filepath, 'rb') as file:
                 content = str(file.read())
         return {'content': content, 'filename': os.path.basename(filepath), 'mime': mime}
+
+    # UTILS
+    async def is_connected(self):
+        match = re.match(r'^http://([\d.]+):(\d+)', self.REMOTE_URL)
+        domain, port = match.group(1), int(match.group(2))
+        with suppress(Exception):
+            socket.create_connection((domain, port))
+            return True
+        return False

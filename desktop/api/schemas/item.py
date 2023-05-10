@@ -8,7 +8,7 @@ import zlib
 
 from . import field
 from .attachment import Attachment
-from ..const import images
+from ..const import db
 
 
 class ItemBase(Schema):
@@ -27,9 +27,9 @@ class ItemBase(Schema):
         self.title = self.title.capitalize()
         if not self.icon:
             text = self.title[0]
-            if not (icon := await images.get(text)):
+            if not (icon := await db.get(text)):
                 icon = imgproc.default(text).bytes
-                await images.set(text, icon)
+                await db.set(text, icon)
             self.icon = icon
         else:
             self.icon = imgproc.crop(eval(self.icon)).bytes

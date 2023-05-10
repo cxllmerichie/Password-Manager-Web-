@@ -43,7 +43,9 @@ class StatusBar(CStatusBar):
                 ]
             )
         ), 3)
-        self.addWidget(Frame(self, 'RightFrame'), 3)
+        self.addWidget(await Frame(self, 'RightFrame').init(
+
+        ), 3)
         return self
 
     def log_out(self):

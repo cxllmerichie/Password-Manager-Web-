@@ -5,7 +5,7 @@ from apidevtools.media import imgproc
 import zlib
 
 from .item import Item
-from ..const import images
+from ..const import db
 
 
 class CategoryBase(Schema):
@@ -20,9 +20,9 @@ class CategoryBase(Schema):
         self.title = self.title.capitalize()
         if not self.icon:
             text = self.title[0]
-            if not (icon := await images.get(text)):
+            if not (icon := await db.get(text)):
                 icon = imgproc.default(text).bytes
-                await images.set(text, icon)
+                await db.set(text, icon)
             self.icon = icon
         else:
             self.icon = imgproc.crop(eval(self.icon)).bytes
@@ -39,11 +39,7 @@ class CategoryCreate(CategoryBase):
     ...
 
 
-class CategoryCreateCrud(CategoryBase):
-    user_id: int = Field(default=...)
-
-
-class Category(CategoryCreateCrud):
+class Category(CategoryCreate):
     id: int = Field(default=...)
 
     items: list[Item] = Field(default=[])

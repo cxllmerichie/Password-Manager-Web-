@@ -3,7 +3,7 @@ from apidevtools.simpleorm import Schema
 from uuid import uuid4, UUID
 import pydantic
 
-from ..const import keys
+from ..const import db
 
 
 class FieldBase(Schema):
@@ -16,11 +16,11 @@ class FieldBase(Schema):
     async def into_db(self) -> Schema:
         self.name, key = encryptor.encrypt(self.name)
         self.value, _ = encryptor.encrypt(self.value, key)
-        await keys.set(self.id, key)
+        await db.set(self.id, key)
         return self
 
     async def from_db(self) -> Schema:
-        if key := await keys.get(self.id, convert=True):
+        if key := await db.get(self.id, convert=True):
             self.name = encryptor.decrypt(self.name, key, convert=True)
             self.value = encryptor.decrypt(self.value, key, convert=True)
         return self

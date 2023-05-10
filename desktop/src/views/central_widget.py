@@ -7,7 +7,7 @@ from qasync import asyncSlot
 from .view_signin import SignIn
 from .view_signup import SignUp
 from .view_main import MainView
-from ..misc import utils
+from ..misc import utils, API
 
 
 class CentralWidget(StackedWidget):
@@ -22,7 +22,7 @@ class CentralWidget(StackedWidget):
         self.addWidget(await SignUp(self).init())
         self.addWidget(MainView(self))
         # enum comparison gives invalid result, so comparing values (reason: QObject.setProperty() uses `pickle`)
-        if CONTEXT['storage'] is utils.Storage.LOCAL or not utils.is_connected() or CONTEXT['token']:
+        if CONTEXT['storage'] is utils.Storage.LOCAL or not await API.is_connected() or CONTEXT['token']:
             self.setCurrentWidget(CONTEXT.MainView)
         else:
             self.setCurrentWidget(CONTEXT.SignIn)

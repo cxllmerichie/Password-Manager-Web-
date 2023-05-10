@@ -1,51 +1,73 @@
-from qasync import QApplication
-import functools
-import asyncio
-import qasync
-import sys
+def run_gui():
+    from qasync import QApplication
+    import functools
+    import asyncio
+    import qasync
+    import sys
 
-from src import App
+    from src import App
+
+    async def run():
+        def close_future(future, loop):
+            loop.call_later(10, future.cancel)
+            future.cancel()
+
+        loop = asyncio.get_event_loop()
+        future = asyncio.Future()
+
+        qapp = QApplication.instance()
+        if hasattr(qapp, 'aboutToQuit'):
+            getattr(qapp, 'aboutToQuit').connect(functools.partial(close_future, future, loop))
+
+        from qcontextapi import CONTEXT
+        CONTEXT['storage'] = None
+        CONTEXT['token'] = None
+        app = await App().init()
+        app.show()
+
+        await future
+        return True
+
+    try:
+        qasync.run(run())
+    except asyncio.exceptions.CancelledError:
+        sys.exit(0)
 
 
-async def api():
+def run_api():
+    import contextlib
+    import time
+    import threading
     import uvicorn
 
-    from src.app import app, const
+    from api.app import app
+    from api.const import API_HOST, API_PORT
 
-    def main():
-        uvicorn.run(app=app, host=const.API_HOST, port=const.API_PORT)
+    class Server(uvicorn.Server):
+        def install_signal_handlers(self):
+            pass
 
-    if __name__ == '__main__':
-        main()
+        @contextlib.contextmanager
+        def run_in_thread(self):
+            thread = threading.Thread(target=self.run)
+            thread.start()
+            try:
+                while not self.started:
+                    time.sleep(1e-3)
+                yield
+            finally:
+                self.should_exit = True
+                thread.join()
 
+    config = uvicorn.Config(app, host=API_HOST, port=API_PORT, log_level='info')
+    server = Server(config=config)
 
-async def amain() -> bool:
-    def close_future(future, loop):
-        loop.call_later(10, future.cancel)
-        future.cancel()
-
-    loop = asyncio.get_event_loop()
-    future = asyncio.Future()
-
-    qapp = QApplication.instance()
-    if hasattr(qapp, 'aboutToQuit'):
-        getattr(qapp, 'aboutToQuit').connect(functools.partial(close_future, future, loop))
-
-    from qcontextapi import CONTEXT
-    CONTEXT['storage'] = None
-    CONTEXT['token'] = None
-    app = await App().init()
-    app.show()
-
-    await future
-    return True
+    with server.run_in_thread():
+        run_gui()
 
 
 if __name__ == '__main__':
-    try:
-        qasync.run(amain())
-    except asyncio.exceptions.CancelledError:
-        sys.exit(0)
+    run_api()
 
 
 # ToDo: add password generating procedure (fetch from api)
