@@ -7,6 +7,18 @@ import sys
 from src import App
 
 
+async def api():
+    import uvicorn
+
+    from src.app import app, const
+
+    def main():
+        uvicorn.run(app=app, host=const.API_HOST, port=const.API_PORT)
+
+    if __name__ == '__main__':
+        main()
+
+
 async def amain() -> bool:
     def close_future(future, loop):
         loop.call_later(10, future.cancel)
