@@ -1,6 +1,7 @@
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QMessageBox, QWidget
 from qasync import asyncSlot
+from typing import Iterable
 
 from .widget import Widget
 from .layout import Layout
@@ -33,6 +34,8 @@ class Popup(Widget):
             background-color: transparent;
         }}
 
+        #PopupOkBtn,
+        #PopupCancelBtn,
         #PopupYesBtn,
         #PopupNoBtn {{
             color: white;
@@ -42,18 +45,22 @@ class Popup(Widget):
             min-height: 40px;
         }}
 
+        #PopupOkBtn,
         #PopupYesBtn {{
             background-color: darkgreen;
         }}
-
+    
+        #PopupOkBtn:hover,
         #PopupYesBtn:hover {{
             background-color: rgba(0, 255, 0, 0.5);
         }}
-
+        
+        #PopupCancelBtn,
         #PopupNoBtn {{
             background-color: rgba(182, 0, 40, 1);
         }}
 
+        #PopupCancelBtn:hover,
         #PopupNoBtn:hover {{
             background-color: rgba(182, 0, 40, 0.5);
         }}
@@ -65,9 +72,29 @@ class Popup(Widget):
     @asyncSlot()
     async def display(
             self, *,
-            message: str = '',
+            message: str = '', buttons: Iterable = (),
             on_success: callable = lambda: None, on_failure: callable = lambda: None
     ) -> 'Popup':
+        if not buttons:
+            buttons = [Popup.YES, Popup.NO]
+        btns = []
+        if Popup.YES in buttons:
+            btns.append(await Button(self, f'{self.objectName()}YesBtn').init(
+                text='Yes', slot=lambda: self.slot(on_success)
+            ))
+        if Popup.NO in buttons:
+            btns.append(await Button(self, f'{self.objectName()}NoBtn').init(
+                text='No', slot=lambda: self.slot(on_failure)
+            ))
+        if Popup.OK in buttons:
+            btns.append(await Button(self, f'{self.objectName()}OkBtn').init(
+                text='Ok', slot=lambda: self.slot(on_success)
+            ))
+        if Popup.CANCEL in buttons:
+            btns.append(await Button(self, f'{self.objectName()}CancelBtn').init(
+                text='Cancel', slot=lambda: self.slot(on_failure)
+            ))
+
         self.setLayout(await Layout.vertical().init(
             spacing=10, alignment=Layout.Center, margins=(20, 20, 20, 20),
             items=[
@@ -79,15 +106,7 @@ class Popup(Widget):
                                 text=message, wrap=True, alignment=Layout.Center
                             ),
                             await Layout.horizontal().init(
-                                spacing=20,
-                                items=[
-                                    await Button(self, f'{self.objectName()}YesBtn').init(
-                                        text='Yes', slot=lambda: self.slot(on_success)
-                                    ),
-                                    await Button(self, f'{self.objectName()}NoBtn').init(
-                                        text='No', slot=lambda: self.slot(on_failure)
-                                    )
-                                ]
+                                spacing=20, items=btns
                             )
                         ]
                     )

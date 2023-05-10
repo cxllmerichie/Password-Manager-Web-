@@ -22,7 +22,7 @@ async def request(
         params: dict[str, Any] = None, body: dict[str, Any] = None, headers: dict[str, Any] = None
 ) -> Any:
     assert (method := method.lower()) in ('get', 'post', 'put', 'delete')
-    async with aiohttp.ClientSession(Api.url(), json_serialize=json.dumps) as session:
+    async with aiohttp.ClientSession(base_url=Api.url(), json_serialize=json.dumps) as session:
         # convert params values to str
         for key, value in params.items() if params else {}:
             params[key] = str(value)

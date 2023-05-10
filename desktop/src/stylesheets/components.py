@@ -137,19 +137,6 @@ fullscreen_popup = f'''
     font-size: 28px;
 }}
 
-#LocalBtn,
-#RemoteBtn {{
-    min-height: 50px;
-    color: white;
-    font-size: 20px;
-    min-width: 400px;
-}}
-
-#LocalBtn:hover,
-#RemoteBtn:hover {{
-    background-color: {COLORS.RED_HOVER};
-}}
-
 #HintLbl1 {{
     color: white;
     font-size: 20px;
@@ -184,14 +171,34 @@ fullscreen_popup = f'''
 
 '''
 
-active_button = f'''
-    background-color: {COLORS.RED};
+common_button = f'''
     border: none;
+    min-height: 50px;
+    color: white;
+    font-size: 20px;
+    min-width: 400px;
+'''
+
+active_button = f'''
+#StorageBtn {{
+    {common_button}
+    background-color: {COLORS.RED};
+}}
+
+#StorageBtn: hover {{
+    background-color: {COLORS.RED_HOVER};
+}}
 '''
 
 inactive_button = f'''
+#StorageBtn {{
+    {common_button}
     background-color: gray;
-    border: none;
+}}
+
+#StorageBtn:hover {{
+    background-color: {COLORS.HOVER};
+}}
 '''
 
 popup = f'''

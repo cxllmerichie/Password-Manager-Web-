@@ -1,37 +1,15 @@
-def run_gui():
-    from qasync import QApplication
-    import functools
-    import asyncio
-    import qasync
-    import sys
+from qcontextapi.qasyncio import AsyncApp
 
-    from src import App
+from src import App
 
-    async def run():
-        def close_future(future, loop):
-            loop.call_later(10, future.cancel)
-            future.cancel()
 
-        loop = asyncio.get_event_loop()
-        future = asyncio.Future()
-
-        qapp = QApplication.instance()
-        if hasattr(qapp, 'aboutToQuit'):
-            getattr(qapp, 'aboutToQuit').connect(functools.partial(close_future, future, loop))
-
+async def run_app():
+    async with AsyncApp():
         from qcontextapi import CONTEXT
         CONTEXT['storage'] = None
         CONTEXT['token'] = None
         app = await App().init()
         app.show()
-
-        await future
-        return True
-
-    try:
-        qasync.run(run())
-    except asyncio.exceptions.CancelledError:
-        sys.exit(0)
 
 
 def run_api():
@@ -63,7 +41,7 @@ def run_api():
     server = Server(config=config)
 
     with server.run_in_thread():
-        run_gui()
+        AsyncApp.run(run_app)
 
 
 if __name__ == '__main__':

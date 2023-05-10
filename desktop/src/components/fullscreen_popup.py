@@ -1,11 +1,11 @@
-from qcontextapi.widgets import Widget, Label, Layout, Spacer, Button, Frame
+from qcontextapi.widgets import Widget, Label, Layout, Spacer, Button, Frame, Popup
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
 from qcontextapi import CONTEXT
 from qasync import asyncSlot
 
 from .. import stylesheets
-from ..misc import utils, ICONS
+from ..misc import utils, ICONS, API
 
 
 class FullscreenPopup(Widget):
@@ -30,11 +30,11 @@ class FullscreenPopup(Widget):
                             Spacer(False, True),
                             await Layout.horizontal().init(
                                 items=[
-                                    await Button(self, 'LocalBtn').init(
-                                        text='[LOCAL] On my computer', slot=self.storage_choice
+                                    LocalBtn := await Button(self, 'StorageBtn').init(
+                                        text='[LOCAL] On my computer', slot=self.set_storage_local
                                     ),
-                                    await Button(self, 'RemoteBtn').init(
-                                        text='[REMOTE] On the server', slot=self.storage_choice
+                                    RemoteBtn := await Button(self, 'StorageBtn').init(
+                                        text='[REMOTE] On the server', slot=self.set_storage_remote
                                     )
                                 ]
                             ),
@@ -56,35 +56,37 @@ class FullscreenPopup(Widget):
                 )
             ]
         ))
-        self.LocalBtn.setStyleSheet(stylesheets.components.inactive_button)
-        self.RemoteBtn.setStyleSheet(stylesheets.components.active_button)
-        self.HintLbl1.setText('Storing data remotely gives you access to the data only with internet connection '
-                              'and in any device logging in using your personal account. Also a little slower.')
+        self.LocalBtn = LocalBtn
+        self.RemoteBtn = RemoteBtn
+        await self.set_storage_local()
         return self
 
     @asyncSlot()
     async def execute_continue(self):
-        if self.LocalBtn.styleSheet() == stylesheets.components.active_button:
-            CONTEXT['storage'] = utils.Storage.LOCAL
-        else:
-            CONTEXT['storage'] = utils.Storage.REMOTE
         await self.core.init()
         self.deleteLater()
 
     @asyncSlot()
-    async def storage_choice(self):
-        name = self.sender().objectName()
-        if name == 'LocalBtn':
-            self.LocalBtn.setStyleSheet(stylesheets.components.active_button)
-            self.RemoteBtn.setStyleSheet(stylesheets.components.inactive_button)
-            self.HintLbl1.setText('Storing data locally gives you access to the data any time even without '
-                                  'internet connection but erases in case of file corruption of deleting the storage. '
-                                  'Also a little quicker.')
-        else:
-            self.LocalBtn.setStyleSheet(stylesheets.components.inactive_button)
-            self.RemoteBtn.setStyleSheet(stylesheets.components.active_button)
-            self.HintLbl1.setText('Storing data remotely gives you access to the data only with internet connection '
-                                  'and in any device logging in using your personal account. Also a little slower.')
+    async def set_storage_local(self):
+        self.LocalBtn.setStyleSheet(stylesheets.components.active_button)
+        self.RemoteBtn.setStyleSheet(stylesheets.components.inactive_button)
+        self.HintLbl1.setText('Storing data locally gives you access to the data any time even without '
+                              'internet connection but erases in case of file corruption of deleting the storage. '
+                              'Also a little quicker.')
+        CONTEXT['storage'] = utils.Storage.LOCAL
+
+    @asyncSlot()
+    async def set_storage_remote(self):
+        if not await API.is_connected():
+            return await Popup(self.core).display(
+                buttons=[Popup.OK],
+                message='Remote storage is not available at the moment'
+            )
+        self.LocalBtn.setStyleSheet(stylesheets.components.inactive_button)
+        self.RemoteBtn.setStyleSheet(stylesheets.components.active_button)
+        self.HintLbl1.setText('Storing data remotely gives you access to the data only with internet connection '
+                              'and in any device logging in using your personal account. Also a little slower.')
+        CONTEXT['storage'] = utils.Storage.REMOTE
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resize(self.parent().size())

@@ -57,12 +57,15 @@ class StatusBar(CStatusBar):
 
     @asyncSlot()
     async def storage_selector_textchanged(self):
-        if self.StorageSelector.currentText() == utils.Storage.LOCAL:
-            CONTEXT['storage'] = utils.Storage.LOCAL
-        else:
-            CONTEXT['storage'] = utils.Storage.REMOTE
-            if not CONTEXT['token']:
-                return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
+        if self.StorageSelector.currentText() == utils.Storage.REMOTE and not await API.is_connected():
+            await Popup(self.core).display(
+                buttons=[Popup.OK],
+                message='Remote storage is not available at the moment'
+            )
+            return self.StorageSelector.setCurrentText(utils.Storage.LOCAL)
+        CONTEXT['storage'] = self.StorageSelector.currentText()
+        if CONTEXT['storage'] == utils.Storage.REMOTE and not CONTEXT['token']:
+            return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
         await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
         await CONTEXT.RightPagesCategory.show_create()

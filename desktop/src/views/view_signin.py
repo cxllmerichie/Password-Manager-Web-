@@ -1,9 +1,9 @@
 from qcontextapi.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget
 from qcontextapi.customs import ErrorLabel
-from qcontextapi import CONTEXT
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt, pyqtSlot
+from qcontextapi import CONTEXT
 from qasync import asyncSlot
+from PyQt5.QtCore import Qt
 
 from ..misc import ICONS, API
 from .. import stylesheets

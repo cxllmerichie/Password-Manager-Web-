@@ -218,7 +218,7 @@ class RightPagesCategory(Frame):
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
-        CONTEXT.CentralItems.refresh_items()
+        await CONTEXT.CentralItems.refresh_items()
 
     @asyncSlot()
     async def execute_create(self):
@@ -230,7 +230,7 @@ class RightPagesCategory(Frame):
             'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
         })
         if created_category.get('id'):
-            CONTEXT.LeftMenu.refresh_categories()
+            await CONTEXT.LeftMenu.refresh_categories()
             await self.show_category(API.category)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
