@@ -1,51 +1,21 @@
 from qcontextapi.qasyncio import AsyncApp
+from qcontextapi.misc.uvicorn_threaded_server import Server, Config
 
 from src import App
-
-
-async def run_app():
-    async with AsyncApp():
-        from qcontextapi import CONTEXT
-        CONTEXT['storage'] = None
-        CONTEXT['token'] = None
-        app = await App().init()
-        app.show()
-
-
-def run_api():
-    import contextlib
-    import time
-    import threading
-    import uvicorn
-
-    from api.app import app
-    from api.const import API_HOST, API_PORT
-
-    class Server(uvicorn.Server):
-        def install_signal_handlers(self):
-            pass
-
-        @contextlib.contextmanager
-        def run_in_thread(self):
-            thread = threading.Thread(target=self.run)
-            thread.start()
-            try:
-                while not self.started:
-                    time.sleep(1e-3)
-                yield
-            finally:
-                self.should_exit = True
-                thread.join()
-
-    config = uvicorn.Config(app, host=API_HOST, port=API_PORT, log_level='info')
-    server = Server(config=config)
-
-    with server.run_in_thread():
-        AsyncApp.run(run_app)
+from api.app import app
+from api.const import API_HOST, API_PORT
 
 
 if __name__ == '__main__':
-    run_api()
+    async def run_app():
+        async with AsyncApp():
+            # from qcontextapi import CONTEXT
+            # CONTEXT['storage'] = None
+            # CONTEXT['token'] = None
+            (await App().init()).show()
+
+    with Server(config=Config(app, host=API_HOST, port=API_PORT)).run_in_thread():
+        AsyncApp.run(run_app)
 
 
 # ToDo: add password generating procedure (fetch from api)

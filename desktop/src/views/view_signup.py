@@ -118,4 +118,5 @@ class SignUp(Widget):
         })
         if not (token := created_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
+        await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

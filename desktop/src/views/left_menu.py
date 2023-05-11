@@ -51,7 +51,6 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 )
             ]
         ))
-        await self.refresh_categories()
         return self
 
     @asyncSlot()

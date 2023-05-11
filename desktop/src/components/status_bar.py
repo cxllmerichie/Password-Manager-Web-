@@ -50,7 +50,7 @@ class StatusBar(CStatusBar):
 
     def log_out(self):
         CONTEXT['token'] = None
-        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
+        self.StorageSelector.setCurrentText(utils.Storage.REMOTE)
 
     async def post_init(self):
         self.StorageSelector.setCurrentText(CONTEXT['storage'])
@@ -66,7 +66,5 @@ class StatusBar(CStatusBar):
         CONTEXT['storage'] = self.StorageSelector.currentText()
         if CONTEXT['storage'] == utils.Storage.REMOTE and not CONTEXT['token']:
             return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
-        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
         await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
-        await CONTEXT.RightPagesCategory.show_create()
-        CONTEXT.RightPages.shrink()
+        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

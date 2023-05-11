@@ -1,5 +1,5 @@
 ToDo:
-    make all widgets to be async
+    move to pyside6
     favourite_label is actually a TwoStateIconLabel
     error_label is actually a PopupTextLabel
     make all widgets to have:

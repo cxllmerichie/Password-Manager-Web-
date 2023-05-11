@@ -7,20 +7,19 @@ from qasync import asyncSlot
 from .view_signin import SignIn
 from .view_signup import SignUp
 from .view_main import MainView
-from ..misc import utils, API
+from ..misc import utils
 
 
 class CentralWidget(StackedWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__)
-        self.loaded: bool = False
         self.currentChanged.connect(self.current_widget_changed)
 
     async def init(self) -> 'CentralWidget':
         self.layout().setAlignment(Qt.AlignHCenter)
         self.addWidget(await SignIn(self).init())
         self.addWidget(await SignUp(self).init())
-        self.addWidget(MainView(self))
+        self.addWidget(await MainView(self).init())
         # enum comparison gives invalid result, so comparing values (reason: QObject.setProperty() uses `pickle`)
         if CONTEXT['storage'] == utils.Storage.LOCAL or CONTEXT['token']:
             self.setCurrentWidget(CONTEXT.MainView)
@@ -32,6 +31,6 @@ class CentralWidget(StackedWidget):
     async def current_widget_changed(self):
         CONTEXT.LogoutBtn.setVisible(CONTEXT['token'] is not None)
         if self.currentWidget().objectName() == 'MainView':
-            if not self.loaded:
-                await self.currentWidget().init()
-                self.loaded = True
+            await CONTEXT.LeftMenu.refresh_categories()
+            await CONTEXT.RightPagesCategory.show_create()
+            CONTEXT.RightPages.shrink()

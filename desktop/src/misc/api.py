@@ -1,4 +1,5 @@
 from qcontextapi.misc import utils, Icon
+from qcontextapi.misc.aiorequest import request
 from qcontextapi import CONTEXT
 from mimetypes import MimeTypes
 from contextlib import suppress
@@ -8,7 +9,6 @@ from loguru import logger
 from typing import Any
 from uuid import UUID
 import ujson as json
-import aiohttp
 import socket
 import re
 import os
@@ -16,27 +16,15 @@ import os
 from .utils import Storage
 
 
-async def request(
-        method: str, url: str,
-        *,
-        params: dict[str, Any] = None, body: dict[str, Any] = None, headers: dict[str, Any] = None
-) -> Any:
-    assert (method := method.lower()) in ('get', 'post', 'put', 'delete')
-    async with aiohttp.ClientSession(base_url=Api.url(), json_serialize=json.dumps) as session:
-        # convert params values to str
-        for key, value in params.items() if params else {}:
-            params[key] = str(value)
-        request_method = getattr(session, method)
-        async with request_method(url, json=body, params=params, headers=headers) as response:
-            return await response.json()
-
-
 class Api:
     REMOTE_URL: str = 'http://127.0.0.1:8000'
     LOCAL_URL: str = 'http://127.0.0.1:8888'
 
+    def __init__(self):
+        request.base_url = Api.url
+
     @staticmethod
-    def url() -> str:
+    async def url() -> str:
         if CONTEXT['storage'] == Storage.REMOTE:
             return Api.REMOTE_URL
         return Api.LOCAL_URL
@@ -103,7 +91,7 @@ class Api:
     async def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
         params = dict(username=auth_data["email"], password=auth_data["password"],
                       grant_type='', scope='', client_id='', client_secret='')
-        response = await request('post', '/auth/token/', headers=self.headers_login, params=params)
+        response = await request('post', '/auth/token/', headers=self.headers_login, data=params)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
