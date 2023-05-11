@@ -51,7 +51,7 @@ class Panel(Widget):
         self.core.setProperty('position', event.globalPos())
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        with suppress(Exception):
+        with suppress(Exception):  # when moving core through panel clicking on panel child ui item
             delta = event.globalPos() - self.core.property('position')
             self.core.move(self.core.x() + delta.x(), self.core.y() + delta.y())
             self.core.setProperty('position', event.globalPos())

@@ -20,7 +20,6 @@ class CentralWidget(StackedWidget):
         self.addWidget(await SignIn(self).init())
         self.addWidget(await SignUp(self).init())
         self.addWidget(await MainView(self).init())
-        # enum comparison gives invalid result, so comparing values (reason: QObject.setProperty() uses `pickle`)
         if CONTEXT['storage'] == utils.Storage.LOCAL or CONTEXT['token']:
             self.setCurrentWidget(CONTEXT.MainView)
         else:

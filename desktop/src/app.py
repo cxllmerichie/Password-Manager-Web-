@@ -11,8 +11,8 @@ class App(Window):
     def __init__(self):
         from . import stylesheets
 
-        super().__init__(self.__class__.__name__, stylesheet=stylesheets.app.css +
-                                                             stylesheets.status_bar.css)
+        super().__init__(self.__class__.__name__, stylesheet=stylesheets.status_bar.css +
+                                                             stylesheets.app.css)
 
     async def init(self) -> 'App':
         from .misc import SIZES
@@ -20,9 +20,9 @@ class App(Window):
         self.resize(SIZES.App)
         self.setWindowFlag(Qt.FramelessWindowHint)
         if not CONTEXT['storage']:
-            from .components import FullscreenPopup
+            from .components import IntroPopup
 
-            fspopup = await FullscreenPopup(self).init()
+            fspopup = await IntroPopup(self).init()
         else:
             from .views.central_widget import CentralWidget
             from desktop.src.components.status_bar import StatusBar

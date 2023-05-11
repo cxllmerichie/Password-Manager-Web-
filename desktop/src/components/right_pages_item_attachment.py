@@ -1,8 +1,8 @@
 from qcontext.widgets import Button, LineInput, Layout, Frame, Popup
+from qcontext.qasyncio import asyncSlot
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QUrl
-from qasync import asyncSlot
 from uuid import uuid4
 from typing import Any
 import tempfile

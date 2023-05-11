@@ -8,11 +8,11 @@ from .. import stylesheets
 from ..misc import utils, ICONS, API
 
 
-class FullscreenPopup(Widget):
+class IntroPopup(Widget):
     def __init__(self, parent: QWidget):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.components.fullscreen_popup)
 
-    async def init(self) -> 'FullscreenPopup':
+    async def init(self) -> 'IntroPopup':
         self.setLayout(await Layout.vertical().init(
             spacing=10,
             items=[
