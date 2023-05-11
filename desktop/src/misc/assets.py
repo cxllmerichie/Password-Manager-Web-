@@ -1,9 +1,11 @@
 from qcontext.misc import Size, Icon
 from PyQt5.QtCore import QSize
+import os
 
 
 class PATHS:
-    ICONS = 'icons'
+    ASSETS = os.path.abspath('.assets')
+    ICONS = os.path.join(ASSETS, 'icons')
 
 
 class EXTENSIONS:
@@ -75,7 +77,7 @@ class SIZES:
 
 
 class ICONS:
-    APP = Icon('icon.png', (25, 25))
+    APP = Icon(os.path.join(PATHS.ASSETS, 'icon.png'), (25, 25))
     MINIMIZE = Icon('minus.svg', (25, 25))
     RESTORE = Icon('square.svg', (20, 20))
     CROSS = Icon('x.svg', (27, 27))

@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from typing import Any
 import datetime
 
-from ..misc import ICONS, API, utils, PATHS, SIZES
+from ..misc import ICONS, API, PATHS, SIZES
 from ..components import RightPagesItemField, RightPagesItemAttachment
 from .. import stylesheets
 
@@ -260,7 +260,7 @@ class RightPagesItem(Frame):
             await self.execute_cancel()
             await self.show_item(API.item)
             if prev_icon != (curr_icon := API.item['icon']):
-                utils.save_icon(curr_icon)
+                await API.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 

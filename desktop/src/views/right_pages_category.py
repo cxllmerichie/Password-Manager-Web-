@@ -6,7 +6,7 @@ from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from typing import Any
 
-from ..misc import ICONS, API, utils, PATHS, SIZES, COLORS
+from ..misc import ICONS, API, PATHS, SIZES, COLORS
 from .. import stylesheets
 
 
@@ -179,7 +179,7 @@ class RightPagesCategory(Frame):
             await self.show_category(API.category)
 
             if prev_icon != (curr_icon := API.category['icon']):
-                utils.save_icon(curr_icon)
+                await API.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 

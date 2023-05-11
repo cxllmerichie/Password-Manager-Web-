@@ -6,8 +6,7 @@ from typing import Any
 
 API_HOST: str = '127.0.0.1'
 API_PORT: int = 8888
-API_CORS_ORIGINS: list[str] = '*'
-# API_CORS_ORIGINS: list[str] = ['localhost']
+API_CORS_ORIGINS: list[str] = ['localhost']
 
 
 class ORMNMap(ORM):

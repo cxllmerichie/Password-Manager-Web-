@@ -4,8 +4,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import const, routers
 
 
-app = FastAPI()
+import os
+# with open(os.devnull, 'w') as null:
+#     stdout = os.dup(1)
+#     stderr = os.dup(2)
+#     os.dup2(null.fileno(), 1)
+#     os.dup2(null.fileno(), 2)
+# from logging import getLogger
+# getLogger('uvicorn.error').disabled = True
+# getLogger('uvicorn.access').disabled = True
+import sys
+sys.stdout = open(os.devnull, 'w')
 
+app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=const.API_CORS_ORIGINS)
 
 app.include_router(routers.password_router)

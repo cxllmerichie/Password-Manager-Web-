@@ -15,13 +15,19 @@ if __name__ == '__main__':
             # CONTEXT['token'] = None
 
             (await App().init()).show()
-            return True
+
+
+    import os
+    # with open(os.devnull, 'w') as null:
+    #     stdout = os.dup(1)
+    #     stderr = os.dup(2)
+    #     os.dup2(null.fileno(), 1)
+    #     os.dup2(null.fileno(), 2)
+    # from logging import getLogger
+    # getLogger('uvicorn.error').disabled = True
+    # getLogger('uvicorn.access').disabled = True
+    import sys
+    sys.stdout = open(os.devnull, 'w')
 
     with Server(config=Config(app, host=API_HOST, port=API_PORT)).run_in_thread():
         AsyncApp.run(run_app)
-
-
-# ToDo: add password generating procedure (fetch from api)
-# ToDo: create "Loader" using threads while waiting for displaying items in CentralPagesItems
-# ToDo: multilang (translations)
-

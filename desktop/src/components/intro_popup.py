@@ -5,7 +5,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
 from .. import stylesheets
-from ..misc import utils, ICONS, API
+from ..misc import ICONS, API
 
 
 class IntroPopup(Widget):
@@ -73,7 +73,7 @@ class IntroPopup(Widget):
         self.HintLbl1.setText('Storing data locally gives you access to the data any time even without '
                               'internet connection but erases in case of file corruption of deleting the storage. '
                               'Also a little quicker.')
-        CONTEXT['storage'] = utils.Storage.LOCAL
+        CONTEXT['storage'] = API.Storage.LOCAL
 
     @asyncSlot()
     async def set_storage_remote(self):
@@ -86,7 +86,7 @@ class IntroPopup(Widget):
         self.RemoteBtn.setStyleSheet(stylesheets.components.active_button)
         self.HintLbl1.setText('Storing data remotely gives you access to the data only with internet connection '
                               'and in any device logging in using your personal account. Also a little slower.')
-        CONTEXT['storage'] = utils.Storage.REMOTE
+        CONTEXT['storage'] = API.Storage.REMOTE
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resize(self.parent().size())

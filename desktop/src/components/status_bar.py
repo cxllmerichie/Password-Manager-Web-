@@ -2,7 +2,7 @@ from qcontext.widgets import Layout, Label, Selector, Frame, Button, Popup, Stat
 from qcontext.qasyncio import asyncSlot
 from qcontext import CONTEXT
 
-from ..misc import utils, API, ICONS
+from ..misc import API, ICONS
 from .. import stylesheets
 
 
@@ -36,8 +36,8 @@ class StatusBar(CStatusBar):
                     await Selector(self, 'StorageSelector').init(
                         textchanged=self.storage_selector_textchanged,
                         items=[
-                            Selector.Item(text=utils.Storage.LOCAL),
-                            Selector.Item(text=utils.Storage.REMOTE),
+                            Selector.Item(text=API.Storage.LOCAL),
+                            Selector.Item(text=API.Storage.REMOTE),
                         ]
                     ), Layout.Left,
                 ]
@@ -50,21 +50,21 @@ class StatusBar(CStatusBar):
 
     def log_out(self):
         CONTEXT['token'] = None
-        self.StorageSelector.setCurrentText(utils.Storage.REMOTE)
+        self.StorageSelector.setCurrentText(API.Storage.REMOTE)
 
     async def post_init(self):
         self.StorageSelector.setCurrentText(CONTEXT['storage'])
 
     @asyncSlot()
     async def storage_selector_textchanged(self):
-        if self.StorageSelector.currentText() == utils.Storage.REMOTE and not await API.is_connected():
+        if self.StorageSelector.currentText() == API.Storage.REMOTE and not await API.is_connected():
             await Popup(self.core).display(
                 buttons=[Popup.OK],
                 message='Remote storage is not available at the moment'
             )
-            return self.StorageSelector.setCurrentText(utils.Storage.LOCAL)
+            return self.StorageSelector.setCurrentText(API.Storage.LOCAL)
         CONTEXT['storage'] = self.StorageSelector.currentText()
-        if CONTEXT['storage'] == utils.Storage.REMOTE and not CONTEXT['token']:
+        if CONTEXT['storage'] == API.Storage.REMOTE and not CONTEXT['token']:
             return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
         await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

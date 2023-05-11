@@ -5,7 +5,6 @@ from mimetypes import MimeTypes
 from contextlib import suppress
 from datetime import datetime
 from copy import deepcopy
-from loguru import logger
 from typing import Any
 from uuid import UUID
 import ujson as json
@@ -13,10 +12,15 @@ import socket
 import re
 import os
 
-from .utils import Storage
+from .assets import EXTENSIONS, PATHS
 
 
 class Api:
+    class Storage:
+        LOCAL = 'local'
+        REMOTE = 'remote'
+        HYBRID = 'hybrid'
+
     REMOTE_URL: str = 'http://127.0.0.1:8000'
     LOCAL_URL: str = 'http://127.0.0.1:8888'
 
@@ -25,7 +29,7 @@ class Api:
 
     @staticmethod
     async def url() -> str:
-        if CONTEXT['storage'] == Storage.REMOTE:
+        if CONTEXT['storage'] == Api.Storage.REMOTE:
             return Api.REMOTE_URL
         return Api.LOCAL_URL
 
@@ -87,7 +91,6 @@ class Api:
         return self.headers_accept_json | {'Content-Type': 'application/x-www-form-urlencoded'}
 
     # AUTH
-    @logger.catch()
     async def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
         params = dict(username=auth_data["email"], password=auth_data["password"],
                       grant_type='', scope='', client_id='', client_secret='')
@@ -96,12 +99,10 @@ class Api:
             CONTEXT['token'] = token
         return response
 
-    @logger.catch()
     async def check_email(self, email: str) -> bool:
         return await request('get', f'/auth/{email}/', headers=self.headers_accept_json)
 
     # USER
-    @logger.catch()
     async def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', '/users/', headers=self.headers_content_json, body=user)
         if token := response.get('access_token'):
@@ -109,12 +110,10 @@ class Api:
         return response
 
     # CATEGORIES
-    @logger.catch()
     async def get_categories(self) -> list[dict[str, Any]]:
         self.__categories = response = await request('get', '/categories/', headers=self.headers_auth)
         return response
 
-    @logger.catch()
     async def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', '/categories/', headers=self.headers_auth, body=await utils.serializable(category))
         if category_id := response.get('id'):
@@ -122,7 +121,6 @@ class Api:
             self.category = response
         return response
 
-    @logger.catch()
     async def get_category(self, category_id: str) -> dict[str, Any]:
         response = await request('get', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
@@ -130,7 +128,6 @@ class Api:
             self.category = self.categories[c_idx] = response
         return response
 
-    @logger.catch()
     async def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
         response = await request('put', f'/categories/{category_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite))
         if category_id := response.get('id'):
@@ -138,7 +135,6 @@ class Api:
             self.category = self.categories[c_idx] = response
         return response
 
-    @logger.catch()
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/categories/{category_id}/', headers=self.headers_auth, body=await utils.serializable(category))
         if category_id := response.get('id'):
@@ -146,7 +142,6 @@ class Api:
             self.category = self.categories[c_idx] = response
         return response
 
-    @logger.catch()
     async def delete_category(self, category_id: int) -> dict[str, Any]:
         response = await request('delete', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
@@ -156,7 +151,6 @@ class Api:
         return response
 
     # ITEMS
-    @logger.catch()
     async def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', f'/categories/{category_id}/items/', headers=self.headers_auth, body=await utils.serializable(item))
         if item_id := response.get('id'):
@@ -165,7 +159,6 @@ class Api:
             self.item = response
         return response
 
-    @logger.catch()
     async def delete_item(self, item_id: str) -> dict[str, Any]:
         response = await request('delete', f'/items/{item_id}/', headers=self.headers_auth)
         if item_id := response.get('id'):
@@ -175,7 +168,6 @@ class Api:
             self.item = None
         return response
 
-    @logger.catch()
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/items/{item_id}/', headers=self.headers_auth, body=await utils.serializable(item, ['expires_at']))
         if item_id := response.get('id'):
@@ -184,7 +176,6 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
-    @logger.catch()
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
         response = await request('put', f'/items/{item_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite))
         if item_id := response.get('id'):
@@ -193,7 +184,6 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
-    @logger.catch()
     async def export_item(self, directory: str) -> None:
         # create copy to manage dict keys later on
         item = deepcopy(self.item)
@@ -222,7 +212,6 @@ class Api:
         with open(os.path.join(export_dir, 'item.json'), 'w') as file:
             json.dump(item, file, indent=4)
 
-    @logger.catch()
     async def import_item(self, filepath: str) -> dict[str, Any]:
         with open(filepath, 'r') as file:
             item = json.load(file)
@@ -239,7 +228,6 @@ class Api:
         return created_item
 
     # FIELDS
-    @logger.catch()
     async def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', f'/items/{item_id}/fields/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
@@ -249,7 +237,6 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
-    @logger.catch()
     async def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/fields/{field_id}/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
@@ -260,7 +247,6 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
-    @logger.catch()
     async def delete_field(self, field_id: str) -> dict[str, Any]:
         response = await request('delete', f'/fields/{field_id}/', headers=self.headers_auth)
         if field_id := response.get('id'):
@@ -271,7 +257,6 @@ class Api:
         return response
 
     # ATTACHMENT
-    @logger.catch()
     async def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', f'/items/{item_id}/attachments/', headers=self.headers_auth, body=attachment)
         if attachment_id := response.get('id'):
@@ -281,7 +266,6 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
-    @logger.catch()
     async def update_attachment(self, attachment_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/attachments/{attachment_id}/', headers=self.headers_auth, body=attachment)
         if attachment_id := response.get('id'):
@@ -292,7 +276,6 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
-    @logger.catch()
     async def delete_attachment(self, attachment_id: str) -> dict[str, Any]:
         response = await request('delete', f'/attachments/{attachment_id}/', headers=self.headers_auth)
         if attachment_id := response.get('id'):
@@ -302,12 +285,10 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
-    @logger.catch()
     async def download_attachment(self, filepath: str, attachment: dict[str, Any]):
         with open(filepath, 'wb') as file:
             file.write(eval(attachment['content']))
 
-    @logger.catch()
     async def get_attachment_data(self, filepath: str) -> dict[str, Any]:
         mime = MimeTypes().guess_type(filepath)[0]
         if mime == 'image/jpeg':
@@ -326,3 +307,8 @@ class Api:
             socket.create_connection((domain, port))
             return True
         return False
+
+    async def save_icon(self, icon: bytes | str) -> None:
+        filename = f"{datetime.now().strftime('%d.%m.%Y %H-%M-%S')}.{EXTENSIONS.ICON}"
+        with open(os.path.join(PATHS.ICONS, filename), 'wb') as file:
+            file.write(eval(icon))
