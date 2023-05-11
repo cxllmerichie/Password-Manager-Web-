@@ -1,9 +1,9 @@
-from qcontextapi.widgets import ScrollArea, Layout, Label, Frame
-from qcontextapi.customs import SearchBar
+from qcontext.widgets import ScrollArea, Layout, Label, Frame
+from qcontext.widgets.custom import SearchBar
+from qcontext.qasyncio import asyncSlot
 from PyQt5.QtWidgets import QWidget
 from typing import Any
 from contextlib import suppress
-from qasync import asyncSlot
 
 from ..misc import API
 from .. import stylesheets

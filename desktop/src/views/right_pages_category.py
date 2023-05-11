@@ -1,10 +1,10 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup
-from qcontextapi.customs import FavouriteButton, ImageButton, ErrorLabel
-from qcontextapi.misc import Icon
-from qcontextapi import CONTEXT
+from qcontext.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup
+from qcontext.widgets.custom import FavouriteButton, ImageButton, ErrorLabel
+from qcontext.qasyncio import asyncSlot
+from qcontext.misc import Icon
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from typing import Any
-from qasync import asyncSlot
 
 from ..misc import ICONS, API, utils, PATHS, SIZES, COLORS
 from .. import stylesheets

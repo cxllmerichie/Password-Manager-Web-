@@ -1,4 +1,4 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Frame, Popup
+from qcontext.widgets import Button, LineInput, Layout, Frame, Popup
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QUrl

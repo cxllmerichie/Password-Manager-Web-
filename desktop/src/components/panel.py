@@ -1,9 +1,8 @@
-from qcontextapi.widgets import Button, Label, Layout, Frame, Widget, Spacer
+from qcontext.widgets import Button, Label, Layout, Frame, Widget, Spacer
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtCore import Qt
 from contextlib import suppress
-from qcontextapi import CONTEXT
 
 from ..misc import ICONS, SIZES
 from .. import stylesheets
@@ -19,13 +18,13 @@ class Panel(Widget):
             items=[
                 await Button(self, 'ToggleLeftMenuBtn').init(
                     slot=lambda: CONTEXT.LeftMenu.toggle(), icon=ICONS.MENU
-                ), Qt.AlignLeft,
+                ), Layout.Left,
                 await Label(self, 'PanelTitleLbl').init(
                     text='Password Manager'
-                ), Qt.AlignLeft,
+                ), Layout.Left,
                 await Label(self, 'PanelTitleLbl').init(
                     icon=ICONS.APP
-                ), Qt.AlignLeft,
+                ), Layout.Left,
                 Spacer(True, True),
                 await Frame(self, 'PanelFrame').init(
                     layout=await Layout.horizontal().init(

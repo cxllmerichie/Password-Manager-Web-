@@ -1,7 +1,7 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Frame, Popup
-from qcontextapi.customs import FavouriteButton
+from qcontext.widgets import Button, LineInput, Layout, Frame, Popup
+from qcontext.widgets.custom import FavouriteButton
+from qcontext.qasyncio import asyncSlot
 from PyQt5.QtWidgets import QWidget, QApplication
-from qasync import asyncSlot
 from uuid import uuid4
 from typing import Any
 

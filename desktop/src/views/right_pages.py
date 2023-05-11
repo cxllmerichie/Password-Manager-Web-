@@ -1,5 +1,5 @@
-from qcontextapi.widgets import StackedWidget, Layout
-from qcontextapi.extensions import SplitterWidgetExt
+from qcontext.widgets import StackedWidget, Layout
+from qcontext.widgets.extensions import SplitterWidgetExt
 from PyQt5.QtWidgets import QWidget
 
 from .right_pages_category import RightPagesCategory

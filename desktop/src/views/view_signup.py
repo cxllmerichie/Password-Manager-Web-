@@ -1,10 +1,9 @@
-from qcontextapi.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget
-from qcontextapi.customs import ErrorLabel
-from qcontextapi import CONTEXT
+from qcontext.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget
+from qcontext.widgets.custom import ErrorLabel
+from qcontext.qasyncio import asyncSlot
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt, pyqtSlot
 import email_validator
-from qasync import asyncSlot
 
 from ..misc import ICONS, API
 from .. import stylesheets
@@ -16,7 +15,7 @@ class SignUp(Widget):
 
     async def init(self) -> 'SignUp':
         self.setLayout(await Layout.vertical().init(
-            spacing=10, alignment=Qt.AlignVCenter,
+            spacing=10, alignment=Layout.VCenter,
             items=[
                 await Button(self, 'AuthExitBtn').init(
                     icon=ICONS.CROSS, slot=self.core.close
@@ -38,7 +37,7 @@ class SignUp(Widget):
                             )
                         ]
                     )
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 await Frame(self, 'InputFramePassword').init(
                     layout=await Layout.vertical(self).init(
                         margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
@@ -51,7 +50,7 @@ class SignUp(Widget):
                             )
                         ]
                     )
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 await Frame(self, 'InputFrameConfpass').init(
                     layout=await Layout.vertical(self).init(
                         margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
@@ -64,16 +63,16 @@ class SignUp(Widget):
                             )
                         ]
                     )
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 await ErrorLabel(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 await Button(self, 'AuthTextBtn').init(
                     text='Already have an account?', slot=lambda: CONTEXT.CentralWidget.setCurrentIndex(0)
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 await Button(self, 'AuthMainBtn').init(
                     text='Create Account', slot=self.sign_up
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 Spacer(False, True)
             ]
         ))

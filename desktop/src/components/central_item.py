@@ -1,7 +1,7 @@
-from qcontextapi.widgets import Layout, Label, Frame, Button
+from qcontext.widgets import Layout, Label, Frame, Button
+from qcontext.misc import Icon
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget
-from qcontextapi.misc import Icon
-from qcontextapi import CONTEXT
 from typing import Any
 
 from .. import stylesheets

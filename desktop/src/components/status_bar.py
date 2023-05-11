@@ -1,6 +1,6 @@
-from qcontextapi.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
-from qcontextapi import CONTEXT
-from qasync import asyncSlot
+from qcontext.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
+from qcontext.qasyncio import asyncSlot
+from qcontext import CONTEXT
 
 from ..misc import utils, API, ICONS
 from .. import stylesheets

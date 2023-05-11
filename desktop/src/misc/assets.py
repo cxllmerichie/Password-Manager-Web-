@@ -1,4 +1,4 @@
-from qcontextapi.misc import Size, Icon
+from qcontext.misc import Size, Icon
 from PyQt5.QtCore import QSize
 
 

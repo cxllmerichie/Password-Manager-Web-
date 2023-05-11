@@ -1,5 +1,5 @@
-from qcontextapi.widgets import Window
-from qcontextapi import CONTEXT
+from qcontext.widgets import Window
+from qcontext import CONTEXT
 from PyQt5.QtCore import Qt
 
 

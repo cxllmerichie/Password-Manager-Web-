@@ -1,7 +1,6 @@
-from qcontextapi.widgets import Layout, Widget, Splitter
-from qcontextapi import CONTEXT
+from qcontext.widgets import Layout, Widget, Splitter
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
 
 from .left_menu import LeftMenu
 from .right_pages import RightPages
@@ -28,7 +27,7 @@ class MainView(Widget):
             items=[
                 await Panel(self).init(
 
-                ), Qt.AlignTop,
+                ), Layout.Top,
                 splitter
             ]
         ))

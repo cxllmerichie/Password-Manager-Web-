@@ -1,8 +1,8 @@
-from qcontextapi.widgets import Widget, Label, Layout, Spacer, Button, Frame, Popup
+from qcontext.widgets import Widget, Label, Layout, Spacer, Button, Frame, Popup
+from qcontext.qasyncio import asyncSlot
+from qcontext import CONTEXT
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
-from qcontextapi import CONTEXT
-from qasync import asyncSlot
 
 from .. import stylesheets
 from ..misc import utils, ICONS, API

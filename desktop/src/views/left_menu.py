@@ -1,10 +1,10 @@
-from qcontextapi.widgets import Label, Layout, ScrollArea, Button, Widget
-from qcontextapi.customs import MenuButton, SearchBar, LabelExtended
-from qcontextapi.extensions import SplitterWidgetExt
-from qcontextapi.misc import Icon, utils
-from qcontextapi import CONTEXT
+from qcontext.widgets import Label, Layout, ScrollArea, Button, Widget
+from qcontext.widgets.custom import MenuButton, SearchBar, LabelExtended
+from qcontext.widgets.extensions import SplitterWidgetExt
+from qcontext.qasyncio import asyncSlot
+from qcontext.misc import Icon
+from qcontext import CONTEXT
 from PyQt5.QtCore import Qt
-from qasync import asyncSlot
 from PyQt5.QtWidgets import QWidget
 from contextlib import suppress
 from typing import Any

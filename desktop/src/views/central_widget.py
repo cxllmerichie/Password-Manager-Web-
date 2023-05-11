@@ -1,8 +1,8 @@
-from qcontextapi.widgets import StackedWidget
-from qcontextapi import CONTEXT
+from qcontext.widgets import StackedWidget
+from qcontext.qasyncio import asyncSlot
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
-from qasync import asyncSlot
 
 from .view_signin import SignIn
 from .view_signup import SignUp

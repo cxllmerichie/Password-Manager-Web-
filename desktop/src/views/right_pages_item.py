@@ -1,10 +1,10 @@
-from qcontextapi.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup
-from qcontextapi.customs import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
-from qcontextapi.misc import Icon
-from qcontextapi import CONTEXT
+from qcontext.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup
+from qcontext.widgets.custom import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
+from qcontext.qasyncio import asyncSlot
+from qcontext.misc import Icon
+from qcontext import CONTEXT
 from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
 from typing import Any
-from qasync import asyncSlot
 import datetime
 
 from ..misc import ICONS, API, utils, PATHS, SIZES

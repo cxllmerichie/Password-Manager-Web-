@@ -1,6 +1,6 @@
-from qcontextapi.misc import utils, Icon
-from qcontextapi.misc.aiorequest import request
-from qcontextapi import CONTEXT
+from qcontext.misc.aiorequest import request
+from qcontext.misc import utils, Icon
+from qcontext import CONTEXT
 from mimetypes import MimeTypes
 from contextlib import suppress
 from datetime import datetime
