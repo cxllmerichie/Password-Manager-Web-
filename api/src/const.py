@@ -6,7 +6,7 @@ from apidevtools.logman import LoggerManager, Logger
 from apidevtools.simpleorm.redis import Redis
 
 
-assert load_dotenv('api/.env')
+assert load_dotenv('.env')
 
 POSTGRESQL_DATABASE: str = getenv('POSTGRESQL_DATABASE')
 POSTGRESQL_HOST: str = getenv('POSTGRESQL_HOST')
@@ -21,6 +21,8 @@ REDIS_HOST: str = getenv('REDIS_HOST')
 REDIS_PORT: int = int(getenv('REDIS_PORT'))
 REDIS_USER: str = getenv('REDIS_USER', None)
 REDIS_PASSWORD: str = getenv('REDIS_PASSWORD')
+with open('build/postgres.sql', 'r') as file:
+    POSTGRESQL_CREATE_TABLES = file.read()
 
 API_HOST: str = getenv('API_HOST', '127.0.0.1')
 API_PORT: int = int(getenv('API_PORT', 8000))

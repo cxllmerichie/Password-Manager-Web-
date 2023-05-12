@@ -52,8 +52,7 @@ async def _():
         await const.images.create_pool(),
         await const.db.create_pool(),
     ))
-    with open('api/build/postgres.sql', 'r') as file:
-        await const.db.execute(file.read())
+    await const.db.execute(const.POSTGRESQL_CREATE_TABLES)
 
 
 @app.on_event('shutdown')
