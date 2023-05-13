@@ -1,3 +1,4 @@
+from qcontext.qasyncio import asyncSlot
 from qcontext.widgets import Window
 from qcontext import CONTEXT
 from PyQt5.QtCore import Qt
@@ -14,7 +15,10 @@ class App(Window):
         super().__init__(self.__class__.__name__, stylesheet=stylesheets.status_bar.css +
                                                              stylesheets.app.css)
 
-    async def init(self) -> 'App':
+    async def init(
+            self, *,
+            on_close: callable = None
+    ) -> 'App':
         from .misc import SIZES
 
         self.resize(SIZES.App)
@@ -31,4 +35,12 @@ class App(Window):
             self.setCentralWidget(await CentralWidget(self).init())
             self.setStatusBar(statusbar)
             await statusbar.post_init()
+
+        if on_close:
+            self.on_close = on_close
         return self
+
+    @asyncSlot()
+    async def close(self) -> bool:
+        await self.on_close()
+        return super().close()
