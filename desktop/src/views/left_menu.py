@@ -69,14 +69,13 @@ class LeftMenu(SplitterWidgetExt, Widget):
             self.FavouriteLbl.setVisible(not text)
 
     @asyncSlot()
-    async def refresh_categories(self, categories: list[dict[str, Any]] = None):
+    async def refresh_categories(self):
         layout = self.CategoriesScrollArea.widget().layout()
         layout.clear()
-        if categories:
-            API.categories = categories
-        if not (categories := API.categories):
-            categories = await API.get_categories()
+        categories = await API.get_categories()
         self.SearchBar.setVisible(bool(len(categories)))
+        self.AllItemsBtn.AllItemsBtnTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
+        self.FavItemsBtn.FavItemsBtnTotalLbl.setText(str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))
         if not len(categories):
             self.CategoriesScrollArea.setVisible(False)
             return self.NoCategoriesLbl.setVisible(True)
@@ -102,5 +101,3 @@ class LeftMenu(SplitterWidgetExt, Widget):
         )
         self.NoCategoriesLbl.setVisible(False)
         self.CategoriesScrollArea.setVisible(True)
-        self.AllItemsBtn.AllItemsBtnTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
-        self.FavItemsBtn.FavItemsBtnTotalLbl.setText(str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))

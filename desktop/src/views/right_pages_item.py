@@ -268,7 +268,11 @@ class RightPagesItem(Frame):
     async def execute_cancel(self):
         self.ExportBtn.setVisible(True)
         self.ModifiedFrame.setVisible(bool(API.item and API.item['modified_at']))
-        self.ExpiresFrame.setVisible(bool(API.item and API.item['expires_at']))
+        if API.item and API.item['expires_at']:
+            self.ExpiresFrame.setVisible(True)
+            self.ExpiresSelector.setVisible(False)
+            self.DateTimePicker.setVisible(False)
+
         self.CreatedFrame.setVisible(True)
         self.ErrorLbl.setText('')
         self.EditBtn.setVisible(True)

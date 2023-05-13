@@ -57,6 +57,7 @@ class StatusBar(CStatusBar):
 
     @asyncSlot()
     async def storage_selector_textchanged(self):
+        # if trying to switch to remote  but api is not active at the moment
         if self.StorageSelector.currentText() == API.Storage.REMOTE and not await API.is_connected():
             await Popup(self.core).display(
                 buttons=[Popup.OK],
@@ -66,5 +67,6 @@ class StatusBar(CStatusBar):
         CONTEXT['storage'] = self.StorageSelector.currentText()
         if CONTEXT['storage'] == API.Storage.REMOTE and not CONTEXT['token']:
             return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
-        await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
+        if CONTEXT.CentralWidget.currentWidget().objectName() == 'MainView':
+            await CONTEXT.LeftMenu.refresh_categories()
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

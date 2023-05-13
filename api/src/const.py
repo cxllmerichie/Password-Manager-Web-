@@ -42,13 +42,11 @@ API_CORS_HEADERS: list[str] = getenv('API_CORS_HEADERS', '*').split(',')
 JWT_SECRET_KEY: str = getenv('JWT_SECRET_KEY')
 JWT_ALGORITHM: str = getenv('JWT_ALGORITHM')
 
-LOGMAN: LoggerManager = LoggerManager()
-LOGGER: Logger = LOGMAN.add('MAIN', 'logs/log.log')
-LOGGER_API: Logger = LOGMAN.add('API', 'logs/api.log')
-LOGGER_POSTGRES: Logger = LOGMAN.add('DATABASE', 'logs/database.log')
-LOGGER_KEYS: Logger = LOGMAN.add('KEYS', 'logs/keys.log')
-LOGGER_TOKENS: Logger = LOGMAN.add('TOKENS', 'logs/tokens.log')
-LOGGER_IMAGES: Logger = LOGMAN.add('IMAGES', 'logs/images.log')
+LOGGER_API: Logger = LoggerManager.add('logs/api.log')
+LOGGER_POSTGRES: Logger = LoggerManager.add('logs/database.log')
+LOGGER_KEYS: Logger = LoggerManager.add('logs/keys.log')
+LOGGER_TOKENS: Logger = LoggerManager.add('logs/tokens.log')
+LOGGER_IMAGES: Logger = LoggerManager.add('logs/images.log')
 
 db = ORM(
     connector=PostgreSQL(

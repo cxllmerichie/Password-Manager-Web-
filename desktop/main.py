@@ -17,17 +17,9 @@ if __name__ == '__main__':
             (await App().init()).show()
 
 
-    import os
-    # with open(os.devnull, 'w') as null:
-    #     stdout = os.dup(1)
-    #     stderr = os.dup(2)
-    #     os.dup2(null.fileno(), 1)
-    #     os.dup2(null.fileno(), 2)
-    # from logging import getLogger
-    # getLogger('uvicorn.error').disabled = True
-    # getLogger('uvicorn.access').disabled = True
-    import sys
-    sys.stdout = open(os.devnull, 'w')
+    # import os
+    # import sys
+    # sys.stdout = open(os.devnull, 'w')
 
     with Server(config=Config(app, host=API_HOST, port=API_PORT)).run_in_thread():
         AsyncApp.run(run_app)

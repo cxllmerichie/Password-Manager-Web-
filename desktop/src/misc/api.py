@@ -2,14 +2,12 @@ from qcontext.misc.aiorequest import request
 from qcontext.misc import utils, Icon
 from qcontext import CONTEXT
 from mimetypes import MimeTypes
-from contextlib import suppress
 from datetime import datetime
 from copy import deepcopy
 from typing import Any
 from uuid import UUID
 import ujson as json
-import socket
-import re
+import aiohttp
 import os
 
 from .assets import EXTENSIONS, PATHS
@@ -21,7 +19,7 @@ class Api:
         REMOTE = 'remote'
         HYBRID = 'hybrid'
 
-    REMOTE_URL: str = 'http://127.0.0.1:8000'
+    REMOTE_URL: str = 'https://pmapi.cxllmerichie.com/'
     LOCAL_URL: str = 'http://127.0.0.1:8888'
 
     def __init__(self):
@@ -104,7 +102,7 @@ class Api:
 
     # USER
     async def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
-        response = await request('post', '/users/', headers=self.headers_content_json, body=user)
+        response = await request('post', '/users/', headers=self.headers_accept_json | self.headers_content_json, body=user)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
@@ -300,13 +298,10 @@ class Api:
         return {'content': content, 'filename': os.path.basename(filepath), 'mime': mime}
 
     # UTILS
-    async def is_connected(self):
-        match = re.match(r'^http://([\d.]+):(\d+)', self.REMOTE_URL)
-        domain, port = match.group(1), int(match.group(2))
-        with suppress(Exception):
-            socket.create_connection((domain, port))
-            return True
-        return False
+    async def is_connected(self) -> bool:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'{self.REMOTE_URL}/docs') as response:
+                return response.status == 200
 
     async def save_icon(self, icon: bytes | str) -> None:
         filename = f"{datetime.now().strftime('%d.%m.%Y %H-%M-%S')}.{EXTENSIONS.ICON}"

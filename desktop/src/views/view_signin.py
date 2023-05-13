@@ -105,5 +105,4 @@ class SignIn(Widget):
         current_user = await API.login({'email': email, 'password': password})
         if not (token := current_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
-        await CONTEXT.LeftMenu.refresh_categories(await API.get_categories())
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
