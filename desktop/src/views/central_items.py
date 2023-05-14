@@ -1,7 +1,6 @@
-from qcontext.widgets import ScrollArea, Layout, Label, Frame
-from qcontext.widgets.custom import SearchBar
-from qcontext.qasyncio import asyncSlot
-from PyQt5.QtWidgets import QWidget
+from aioqui.widgets import ScrollArea, Layout, Label, Frame, Parent
+from aioqui.widgets.custom import SearchBar
+from aioqui.qasyncio import asyncSlot
 from typing import Any
 from contextlib import suppress
 
@@ -11,7 +10,7 @@ from ..components.central_item import CentralItem
 
 
 class CentralItems(Frame):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         Frame.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.central_items.css +
                                                                          stylesheets.components.scroll +
                                                                          stylesheets.components.search)
@@ -22,13 +21,16 @@ class CentralItems(Frame):
             items=[
                 SearchBar(self, visible=False),
                 await ScrollArea(self, 'ItemsScrollArea', False).init(
-                    orientation=Layout.Vertical, alignment=Layout.TopCenter, spacing=10, horizontal=False
+                    hpolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical,
+                    alignment=Layout.TopCenter, spacing=10
                 ),
                 await Label(self, 'NoCategoriesLbl', False).init(
-                    text='This category does not have items yet', wrap=True, alignment=Layout.Center
+                    wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
+                    text='This category does not have items yet'
                 ), Layout.Center,
                 await Label(self, 'HintLbl1').init(
-                    text='Select some category in the left menu to see it\'s items', wrap=True, alignment=Layout.Center
+                    wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
+                    text='Select some category in the left menu to see it\'s items',
                 ), Layout.Center,
             ]
         ))

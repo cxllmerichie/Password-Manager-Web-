@@ -94,7 +94,7 @@ css: str = f'''
 #EditBtn,
 #FavouriteBtn,
 #CloseBtn {{
-    border-radius: {SIZES.CONTROL.width() // 2 - 1};
+    border-radius: {SIZES.CONTROL.w // 2 - 1};
     background-color: {COLORS.TRANSPARENT};
 }}
 

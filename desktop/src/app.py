@@ -1,7 +1,6 @@
-from qcontext.qasyncio import asyncSlot
-from qcontext.widgets import Window
-from qcontext import CONTEXT
-from PyQt5.QtCore import Qt
+from aioqui.widgets import Window
+from aioqui.objects import EventedObj
+from aioqui import CONTEXT
 
 
 class App(Window):
@@ -19,14 +18,16 @@ class App(Window):
             self, *,
             on_close: callable = None
     ) -> 'App':
+        await super().init(events=EventedObj.Events(on_close=on_close))
+
         from .misc import SIZES
 
         self.resize(SIZES.App)
-        self.setWindowFlag(Qt.FramelessWindowHint)
+        self.setWindowFlag(Window.Frameless)
         if not CONTEXT['storage']:
             from .components import IntroPopup
 
-            fspopup = await IntroPopup(self).init()
+            _ = await IntroPopup(self).init()
         else:
             from .views.central_widget import CentralWidget
             from desktop.src.components.status_bar import StatusBar
@@ -35,12 +36,4 @@ class App(Window):
             self.setCentralWidget(await CentralWidget(self).init())
             self.setStatusBar(statusbar)
             await statusbar.post_init()
-
-        if on_close:
-            self.on_close = on_close
         return self
-
-    @asyncSlot()
-    async def close(self) -> bool:
-        await self.on_close()
-        return super().close()

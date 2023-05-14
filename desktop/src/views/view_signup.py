@@ -1,8 +1,7 @@
-from qcontext.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget
-from qcontext.widgets.custom import ErrorLabel
-from qcontext.qasyncio import asyncSlot
-from qcontext import CONTEXT
-from PyQt5.QtWidgets import QWidget
+from aioqui.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget, Parent
+from aioqui.widgets.custom import ErrorLabel
+from aioqui.qasyncio import asyncSlot
+from aioqui import CONTEXT
 import email_validator
 
 from ..misc import ICONS, API
@@ -10,7 +9,7 @@ from .. import stylesheets
 
 
 class SignUp(Widget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_signup.css)
 
     async def init(self) -> 'SignUp':
@@ -18,7 +17,7 @@ class SignUp(Widget):
             spacing=10, alignment=Layout.VCenter,
             items=[
                 await Button(self, 'AuthExitBtn').init(
-                    icon=ICONS.CROSS, slot=self.core.close
+                    icon=ICONS.CROSS, events=Button.Events(on_click=self.core.close)
                 ), Layout.RightTop,
                 Spacer(False, True),
                 await Label(self, 'InfoLbl').init(
@@ -33,7 +32,7 @@ class SignUp(Widget):
                                 text='Email'
                             ),
                             await LineInput(self, 'InputFieldEmail').init(
-                                placeholder='address@domain.tld', textchanged=self.validate_email
+                                placeholder='address@domain.tld', events=LineInput.Events(on_change=self.validate_email)
                             )
                         ]
                     )
@@ -46,7 +45,7 @@ class SignUp(Widget):
                                 text='Password'
                             ),
                             await LineInput(self, 'InputFieldPassword').init(
-                                placeholder='password', hidden=True, textchanged=self.validate_password
+                                placeholder='password', hidden=True, events=LineInput.Events(on_change=self.validate_password)
                             )
                         ]
                     )
@@ -59,19 +58,19 @@ class SignUp(Widget):
                                 text='Confirm password'
                             ),
                             await LineInput(self, 'InputFieldConfpass').init(
-                                placeholder='password', hidden=True, textchanged=self.validate_confpass
+                                placeholder='password', hidden=True, events=LineInput.Events(on_change=self.validate_confpass)
                             )
                         ]
                     )
                 ), Layout.HCenter,
                 await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, alignment=Layout.Center
+                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
                 ), Layout.Center,
                 await Button(self, 'AuthTextBtn').init(
-                    text='Already have an account?', slot=lambda: CONTEXT.CentralWidget.setCurrentIndex(0)
+                    text='Already have an account?', events=LineInput.Events(on_click=lambda: CONTEXT.CentralWidget.setCurrentIndex(0))
                 ), Layout.HCenter,
                 await Button(self, 'AuthMainBtn').init(
-                    text='Create Account', slot=self.sign_up
+                    text='Create Account', events=LineInput.Events(on_click=self.sign_up)
                 ), Layout.HCenter,
                 Spacer(False, True)
             ]

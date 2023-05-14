@@ -1,5 +1,5 @@
-from qcontext.misc import Size, Icon
-from PyQt5.QtCore import QSize
+from aioqui.types import Size, Icon
+from PySide6.QtCore import QSize
 import os
 
 
@@ -51,7 +51,7 @@ class COLORS:
 
 
 class SIZES:
-    CONTROL = QSize(40, 40)
+    CONTROL = Size(40, 40)
     App = QSize(1000, 600)
     AuthTextBtn = Size(..., 20)
     AuthMainBtn = Size(200, 30)

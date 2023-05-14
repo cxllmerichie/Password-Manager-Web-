@@ -5,23 +5,24 @@ from zipfile import ZipFile
 
 
 if __name__ == '__main__':
-    VERSION = '1.1.1'
-    NAME = 'PasswordManager'
-    ROOT = path.abspath(path.join(getcwd(), pardir))
+    VERSION, NAME = '1.1.3', 'PasswordManager'
+
+    # ROOT = path.abspath(path.join(getcwd(), pardir))
+    ROOT = 'C:\\Projects\\Python\\PasswordManager\\desktop'
     MAIN = f'{ROOT}\\main.py'
     BUILD = f'{ROOT}\\build'
+    OUTDIR = f'{BUILD}\\{NAME}'
     ASSETS = f'{ROOT}\\.assets'
     ICON = f'{ASSETS}\\icon.ico'
 
-    command = f'pyinstaller --add-data "{ASSETS};.assets" --noconsole --onefile --windowed --specpath {BUILD} --workpath {BUILD} --distpath {BUILD} --icon={ICON} --name={NAME} {MAIN}'
-
+    command = f"python -m nuitka --standalone --output-dir={OUTDIR} --enable-plugin=pyside6 main.py"
     process = Popen(command, shell=True, stdin=PIPE, stdout=PIPE)
     print(command)
     out, err = process.communicate()
     print(out.decode())
 
-    rmdir(f'{BUILD}\\{NAME}')
-    rmfile(f'{BUILD}\\{NAME}.spec')
+    # rmdir(f'{BUILD}\\{NAME}')
+    # rmfile(f'{BUILD}\\{NAME}.spec')
 
     # with ZipFile(f'{BUILD}\\Releases\\{NAME}-v{VERSION}.zip', 'w') as zip_release:
     #     zip_release.write(f'{NAME}.exe')

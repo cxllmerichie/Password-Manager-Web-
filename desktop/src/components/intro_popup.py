@@ -1,15 +1,14 @@
-from qcontext.widgets import Widget, Label, Layout, Spacer, Button, Frame, Popup
-from qcontext.qasyncio import asyncSlot
-from qcontext import CONTEXT
-from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QWidget
+from aioqui.widgets import Widget, Label, Layout, Spacer, Button, Frame, Popup, Parent
+from aioqui.qasyncio import asyncSlot
+from aioqui import CONTEXT
+from PySide6.QtGui import QResizeEvent
 
 from .. import stylesheets
 from ..misc import ICONS, API
 
 
 class IntroPopup(Widget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.components.fullscreen_popup)
 
     async def init(self) -> 'IntroPopup':
@@ -17,7 +16,7 @@ class IntroPopup(Widget):
             spacing=10,
             items=[
                 await Button(self, 'AuthExitBtn').init(
-                    icon=ICONS.CROSS, slot=self.core.close
+                    icon=ICONS.CROSS, events=Button.Events(on_click=self.core.close)
                 ), Layout.RightTop,
                 await Frame(self, 'FullscreenFrame').init(
                     layout=await Layout.vertical().init(
@@ -25,30 +24,30 @@ class IntroPopup(Widget):
                         items=[
                             Spacer(False, True),
                             await Label(self, 'StorageLbl').init(
-                                text='How do you want to store your data?', alignment=Layout.Center
+                                text='How do you want to store your data?', sizes=Label.Sizes(alignment=Layout.Center)
                             ),
                             Spacer(False, True),
                             await Layout.horizontal().init(
                                 items=[
                                     LocalBtn := await Button(self, 'StorageBtn').init(
-                                        text='[LOCAL] On my computer', slot=self.set_storage_local
+                                        text='[LOCAL] On my computer', events=Button.Events(on_click=self.set_storage_local)
                                     ),
                                     RemoteBtn := await Button(self, 'StorageBtn').init(
-                                        text='[REMOTE] On the server', slot=self.set_storage_remote
+                                        text='[REMOTE] On the server', events=Button.Events(on_click=self.set_storage_remote)
                                     )
                                 ]
                             ),
                             await Label(self, 'HintLbl1').init(
-                                wrap=True, alignment=Layout.Center
+                                wrap=True, sizes=Label.Sizes(alignment=Layout.Center)
                             ),
                             Spacer(False, True),
                             await Label(self, 'HintLbl2').init(
-                                wrap=True, alignment=Layout.Center,
+                                wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
                                 text='You will be able to change your choice any time in the left lower corner '
                                      'of the app after pressing "Continue"'
                             ),
                             await Button(self, 'ContinueBtn').init(
-                                text='Continue', slot=self.execute_continue
+                                text='Continue', events=Button.Events(on_click=self.execute_continue)
                             ),
                             Spacer(False, True),
                         ]

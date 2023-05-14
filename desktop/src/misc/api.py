@@ -1,6 +1,7 @@
-from qcontext.misc.aiorequest import request
-from qcontext.misc import utils, Icon
-from qcontext import CONTEXT
+from aioqui.misc.aiorequest import request
+from aioqui.misc.utils import serializable, find
+from aioqui.types import Icon
+from aioqui import CONTEXT
 from mimetypes import MimeTypes
 from datetime import datetime
 from copy import deepcopy
@@ -113,7 +114,7 @@ class Api:
         return response
 
     async def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
-        response = await request('post', '/categories/', headers=self.headers_auth, body=await utils.serializable(category))
+        response = await request('post', '/categories/', headers=self.headers_auth, body=await serializable(category))
         if category_id := response.get('id'):
             self.__categories.append(response)
             self.category = response
@@ -122,37 +123,37 @@ class Api:
     async def get_category(self, category_id: str) -> dict[str, Any]:
         response = await request('get', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', category_id)
+            c_idx, _ = await find(self.categories, 'id', category_id)
             self.category = self.categories[c_idx] = response
         return response
 
     async def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
         response = await request('put', f'/categories/{category_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite))
         if category_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', category_id)
+            c_idx, _ = await find(self.categories, 'id', category_id)
             self.category = self.categories[c_idx] = response
         return response
 
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
-        response = await request('put', f'/categories/{category_id}/', headers=self.headers_auth, body=await utils.serializable(category))
+        response = await request('put', f'/categories/{category_id}/', headers=self.headers_auth, body=await serializable(category))
         if category_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', category_id)
+            c_idx, _ = await find(self.categories, 'id', category_id)
             self.category = self.categories[c_idx] = response
         return response
 
     async def delete_category(self, category_id: int) -> dict[str, Any]:
         response = await request('delete', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', category_id)
+            c_idx, _ = await find(self.categories, 'id', category_id)
             self.categories.pop(c_idx)
             self.category = self.item = None
         return response
 
     # ITEMS
     async def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        response = await request('post', f'/categories/{category_id}/items/', headers=self.headers_auth, body=await utils.serializable(item))
+        response = await request('post', f'/categories/{category_id}/items/', headers=self.headers_auth, body=await serializable(item))
         if item_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.category['id'])
+            c_idx, _ = await find(self.categories, 'id', self.category['id'])
             self.categories[c_idx]['items'].append(response)
             self.item = response
         return response
@@ -160,25 +161,25 @@ class Api:
     async def delete_item(self, item_id: str) -> dict[str, Any]:
         response = await request('delete', f'/items/{item_id}/', headers=self.headers_auth)
         if item_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
             self.categories[c_idx]['items'].pop(i_idx)
             self.item = None
         return response
 
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        response = await request('put', f'/items/{item_id}/', headers=self.headers_auth, body=await utils.serializable(item, ['expires_at']))
+        response = await request('put', f'/items/{item_id}/', headers=self.headers_auth, body=await serializable(item, ['expires_at']))
         if item_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
         response = await request('put', f'/items/{item_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite))
         if item_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
@@ -217,7 +218,7 @@ class Api:
         fields, attachments = item['fields'], item['attachments']
         for key in item_pop_keys:
             item.pop(key)
-        created_item = await self.create_item(self.category['id'], await utils.serializable(item))
+        created_item = await self.create_item(self.category['id'], await serializable(item))
         if item_id := created_item.get('id'):
             for field in fields:
                 await self.add_field(item_id, field)
@@ -229,8 +230,8 @@ class Api:
     async def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', f'/items/{item_id}/fields/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.items, 'id', item_id)
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.items, 'id', item_id)
             self.categories[c_idx]['items'][i_idx]['fields'].append(response)
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
@@ -238,9 +239,9 @@ class Api:
     async def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/fields/{field_id}/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
-            f_idx, _ = await utils.find(self.items[i_idx]['fields'], 'id', field_id)
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.items, 'id', response['item_id'])
+            f_idx, _ = await find(self.items[i_idx]['fields'], 'id', field_id)
             self.categories[c_idx]['items'][i_idx]['fields'][f_idx] = response
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
@@ -248,8 +249,8 @@ class Api:
     async def delete_field(self, field_id: str) -> dict[str, Any]:
         response = await request('delete', f'/fields/{field_id}/', headers=self.headers_auth)
         if field_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.items, 'id', response['item_id'])
             self.categories[c_idx]['items'][i_idx]['fields'].remove(response)
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
@@ -258,8 +259,8 @@ class Api:
     async def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         response = await request('post', f'/items/{item_id}/attachments/', headers=self.headers_auth, body=attachment)
         if attachment_id := response.get('id'):
-            c_idx, _ = await utils.find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await utils.find(self.categories[c_idx]['items'], 'id', item_id)
+            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
+            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
             self.categories[c_idx]['items'][i_idx]['attachments'].append(response)
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
@@ -267,9 +268,9 @@ class Api:
     async def update_attachment(self, attachment_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/attachments/{attachment_id}/', headers=self.headers_auth, body=attachment)
         if attachment_id := response.get('id'):
-            i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
-            c_idx, _ = await utils.find(self.categories, 'id', self.items[i_idx]['category_id'])
-            a_idx, _ = await utils.find(self.items[i_idx]['attachments'], 'id', attachment_id)
+            i_idx, _ = await find(self.items, 'id', response['item_id'])
+            c_idx, _ = await find(self.categories, 'id', self.items[i_idx]['category_id'])
+            a_idx, _ = await find(self.items[i_idx]['attachments'], 'id', attachment_id)
             self.categories[c_idx]['items'][i_idx]['attachments'][a_idx] = response
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
@@ -277,8 +278,8 @@ class Api:
     async def delete_attachment(self, attachment_id: str) -> dict[str, Any]:
         response = await request('delete', f'/attachments/{attachment_id}/', headers=self.headers_auth)
         if attachment_id := response.get('id'):
-            i_idx, _ = await utils.find(self.items, 'id', response['item_id'])
-            c_idx, _ = await utils.find(self.categories, 'id', self.items[i_idx]['category_id'])
+            i_idx, _ = await find(self.items, 'id', response['item_id'])
+            c_idx, _ = await find(self.categories, 'id', self.items[i_idx]['category_id'])
             self.categories[c_idx]['items'][i_idx]['attachments'].remove(response)
             self.item = self.categories[c_idx]['items'][i_idx]
         return response

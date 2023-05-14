@@ -1,6 +1,5 @@
-from qcontext.widgets import Layout, Widget, Splitter
-from qcontext import CONTEXT
-from PyQt5.QtWidgets import QWidget
+from aioqui.widgets import Layout, Widget, Splitter, Parent
+from aioqui import CONTEXT
 
 from .left_menu import LeftMenu
 from .right_pages import RightPages
@@ -10,7 +9,7 @@ from .. import stylesheets
 
 
 class MainView(Widget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_main.css)
 
     async def init(self) -> 'MainView':

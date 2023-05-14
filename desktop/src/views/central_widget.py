@@ -1,8 +1,6 @@
-from qcontext.widgets import StackedWidget
-from qcontext.qasyncio import asyncSlot
-from qcontext import CONTEXT
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
+from aioqui.widgets import StackedWidget, Parent
+from aioqui.qasyncio import asyncSlot
+from aioqui import CONTEXT
 
 from .view_signin import SignIn
 from .view_signup import SignUp
@@ -11,15 +9,18 @@ from ..misc import API
 
 
 class CentralWidget(StackedWidget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__)
-        self.currentChanged.connect(self.current_widget_changed)
 
     async def init(self) -> 'CentralWidget':
-        self.layout().setAlignment(Qt.AlignHCenter)
-        self.addWidget(await SignIn(self).init())
-        self.addWidget(await SignUp(self).init())
-        self.addWidget(await MainView(self).init())
+        await super().init(
+            events=StackedWidget.Events(on_change=self.current_widget_changed),
+            items=[
+                await SignIn(self).init(),
+                await SignUp(self).init(),
+                await MainView(self).init()
+            ]
+        )
         if CONTEXT['storage'] == API.Storage.LOCAL or CONTEXT['token']:
             self.setCurrentWidget(CONTEXT.MainView)
         else:

@@ -1,18 +1,19 @@
-from qcontext.misc.uvicorn_threaded_server import Server, Config
-from qcontext.qasyncio import AsyncApp
+from aioqui.misc.server import Server, Config
+from aioqui.qasyncio import AsyncApp
+import loguru
 import sys
 
 from src import App
 from api.app import app
-from api.const import API_HOST, API_PORT
+from api.const import API_HOST, API_PORT, LOG_CONFIG
 
 
 if __name__ == '__main__':
-    # import os
-    # import sys
-    # sys.stdout = open(os.devnull, 'w')
+    loguru.logger.disable('apidevttols')
+    loguru.logger.disable('qcontext')
+    loguru.logger.disable('__main__')
 
-    server = Server(config=Config(app, host=API_HOST, port=API_PORT))
+    server = Server(config=Config(app, host=API_HOST, port=API_PORT, log_config=LOG_CONFIG))
     with server.run_in_thread():
         async def on_close():
             server.stop()

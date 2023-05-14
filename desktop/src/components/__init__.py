@@ -4,3 +4,4 @@ from .panel import Panel
 from .right_pages_item_attachment import RightPagesItemAttachment
 from .right_pages_item_field import RightPagesItemField
 from .status_bar import StatusBar
+from .label_extended import LabelExtended

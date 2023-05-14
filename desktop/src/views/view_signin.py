@@ -1,24 +1,22 @@
-from qcontext.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget
-from qcontext.widgets.custom import ErrorLabel
-from qcontext.qasyncio import asyncSlot
-from qcontext import CONTEXT
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
+from aioqui.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget, Parent
+from aioqui.widgets.custom import ErrorLabel
+from aioqui.qasyncio import asyncSlot
+from aioqui import CONTEXT
 
 from ..misc import ICONS, API
 from .. import stylesheets
 
 
 class SignIn(Widget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_signin.css)
 
     async def init(self) -> 'SignIn':
         self.setLayout(await Layout.vertical().init(
-            spacing=10, alignment=Qt.AlignVCenter,
+            spacing=10, alignment=Layout.VCenter,
             items=[
                 await Button(self, 'AuthExitBtn').init(
-                    icon=ICONS.CROSS, slot=self.core.close
+                    icon=ICONS.CROSS, events=Button.Events(on_click=self.core.close)
                 ), Layout.RightTop,
                 Spacer(False, True),
                 await Label(self, 'InfoLbl').init(
@@ -35,7 +33,7 @@ class SignIn(Widget):
                                         text='Email'
                                     ),
                                     await Button(self, 'InputLabelEmailEditBtn', False).init(
-                                        text='Edit', slot=self.edit
+                                        text='Edit', events=Button.Events(on_click=self.edit)
                                     ), Layout.Right
                                 ]
                             ),
@@ -44,7 +42,7 @@ class SignIn(Widget):
                             )
                         ]
                     )
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 await Frame(self, 'InputFramePassword', False).init(
                     layout=await Layout.vertical(self).init(
                         margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
@@ -57,19 +55,19 @@ class SignIn(Widget):
                             )
                         ]
                     )
-                ), Qt.AlignHCenter,
+                ), Layout.HCenter,
                 await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, alignment=Layout.Center
+                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
                 ), Layout.Center,
                 await Button(self, 'AuthTextBtn').init(
-                    text='Don\'t have an account?', slot=lambda: CONTEXT.CentralWidget.setCurrentIndex(1)
-                ), Qt.AlignHCenter,
+                    text='Don\'t have an account?', events=Button.Events(on_click=lambda: CONTEXT.CentralWidget.setCurrentIndex(1))
+                ), Layout.HCenter,
                 await Button(self, 'ContinueBtn').init(
-                    text='Continue', slot=self.continue_log_in
-                ), Qt.AlignHCenter,
+                    text='Continue', events=Button.Events(on_click=self.continue_log_in)
+                ), Layout.HCenter,
                 await Button(self, 'LogInBtn', False).init(
-                    text='Log In', slot=self.log_in
-                ), Qt.AlignHCenter,
+                    text='Log In', events=Button.Events(on_click=self.log_in)
+                ), Layout.HCenter,
                 Spacer(False, True)
             ]
         ))

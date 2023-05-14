@@ -1,6 +1,6 @@
-from qcontext.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
-from qcontext.qasyncio import asyncSlot
-from qcontext import CONTEXT
+from aioqui.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
+from aioqui.qasyncio import asyncSlot
+from aioqui import CONTEXT
 
 from ..misc import API, ICONS
 from .. import stylesheets
@@ -17,10 +17,11 @@ class StatusBar(CStatusBar):
                 alignment=Layout.Left,
                 items=[
                     await Button(self, 'LogoutBtn').init(
-                        icon=ICONS.LOGOUT, text='Log out',
-                        slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                            message=f'Do you want to log out?',
-                            on_success=self.log_out
+                        icon=ICONS.LOGOUT, text='Log out', events=Button.Events(
+                            on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
+                                message=f'Do you want to log out?',
+                                on_success=self.log_out
+                            )
                         )
                     )
                 ]
@@ -34,7 +35,7 @@ class StatusBar(CStatusBar):
                         text='Storage type:'
                     ), Layout.Right,
                     await Selector(self, 'StorageSelector').init(
-                        textchanged=self.storage_selector_textchanged,
+                        events=Selector.Events(on_change=self.storage_selector_textchanged),
                         items=[
                             Selector.Item(text=API.Storage.LOCAL),
                             Selector.Item(text=API.Storage.REMOTE),

@@ -1,28 +1,26 @@
-from qcontext.widgets import Label, Layout, ScrollArea, Button, Widget
-from qcontext.widgets.custom import MenuButton, SearchBar, LabelExtended
-from qcontext.widgets.extensions import SplitterWidgetExt
-from qcontext.qasyncio import asyncSlot
-from qcontext.misc import Icon
-from qcontext import CONTEXT
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget
+from aioqui.widgets import Label, Layout, ScrollArea, Button, Widget, Parent
+from aioqui.widgets.custom import MenuButton, SearchBar
+from aioqui.widgets.extensions import SplitterWidgetExt
+from aioqui.qasyncio import asyncSlot
+from aioqui.types import Icon
+from aioqui import CONTEXT
 from contextlib import suppress
-from typing import Any
 
 from ..misc import ICONS, SIZES, API
+from ..components import LabelExtended
 from .. import stylesheets
 
 
 class LeftMenu(SplitterWidgetExt, Widget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         Widget.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.left_menu.css +
                                                                           stylesheets.components.scroll +
                                                                           stylesheets.components.search)
-        SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax, Qt.Horizontal)
+        SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax, SplitterWidgetExt.Horizontal)
 
     async def init(self) -> 'LeftMenu':
         self.setLayout(await Layout.vertical().init(
-            spacing=5, margins=(0, 10, 0, 10), alignment=Qt.AlignTop,
+            spacing=5, margins=(0, 10, 0, 10), alignment=Layout.Top,
             items=[
                 await LabelExtended(self, 'LeftMenuItemsLabel').init(
                     text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
@@ -39,15 +37,15 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 ), Layout.Center,
                 SearchBar(self, visible=False),
                 await Label(self, 'NoCategoriesLbl', False).init(
-                    text='You don\'t have any categories yet', alignment=Qt.AlignHCenter, wrap=True,
-                    policy=(Layout.Expanding, Layout.Expanding)
+                    text='You don\'t have any categories yet', wrap=True,
+                    sizes=Label.Sizes(vpolicy=Layout.Expanding, hpolicy=Layout.Expanding, alignment=Layout.HCenter)
                 ), Layout.HCenter,
                 await ScrollArea(self, 'CategoriesScrollArea', False).init(
-                    horizontal=False, vertical=True, orientation=Layout.Vertical, alignment=Layout.Top, spacing=5,
-                    policy=(Layout.Minimum, Layout.Expanding)
+                    hpolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical, alignment=Layout.Top, spacing=5,
+                    sizes=ScrollArea.Sizes(hpolicy=ScrollArea.Minimum)
                 ),
                 await Button(self, 'AddCategoryBtn').init(
-                    text='Category', icon=ICONS.PLUS, slot=CONTEXT.RightPagesCategory.show_create
+                    text='Category', icon=ICONS.PLUS, events=Button.Events(on_click=CONTEXT.RightPagesCategory.show_create)
                 )
             ]
         ))

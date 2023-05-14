@@ -1,9 +1,9 @@
-from qcontext.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup
-from qcontext.widgets.custom import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
-from qcontext.qasyncio import asyncSlot
-from qcontext.misc import Icon
-from qcontext import CONTEXT
-from PyQt5.QtWidgets import QWidget, QFrame, QFileDialog
+from aioqui.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup, Parent
+from aioqui.widgets.custom import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
+from aioqui.qasyncio import asyncSlot
+from aioqui.types import Icon
+from aioqui import CONTEXT
+from PySide6.QtWidgets import QFrame, QFileDialog
 from typing import Any
 import datetime
 
@@ -13,7 +13,7 @@ from .. import stylesheets
 
 
 class RightPagesItem(Frame):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_item.css +
                                                                      stylesheets.components.scroll +
                                                                      stylesheets.components.image_button() +
@@ -28,20 +28,24 @@ class RightPagesItem(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         await FavouriteButton(self).init(
-                            pre_slot=self.toggle_favourite, size=SIZES.CONTROL
+                            pre_slot=self.toggle_favourite, sizes=FavouriteButton.Sizes(fixed_size=SIZES.CONTROL)
                         ), Layout.Left,
                         await Button(self, 'EditBtn').init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit, size=SIZES.CONTROL
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), events=Button.Events(on_click=self.execute_edit),
+                            sizes=Button.Sizes(fixed_size=SIZES.CONTROL)
                         ),
                         await Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)), size=SIZES.CONTROL,
-                            slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                                message=f'Delete item\n\'{API.item["title"]}\'?',
-                                on_success=self.execute_delete
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
+                            events=Button.Events(
+                                on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
+                                    message=f'Delete item\n\'{API.item["title"]}\'?',
+                                    on_success=self.execute_delete
+                                )
                             )
                         ),
                         await Button(self, 'CloseBtn').init(
-                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink, size=SIZES.CONTROL
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
+                            events=Button.Events(on_click=CONTEXT.RightPages.shrink)
                         ), Layout.Right
                     ]
                 ),
@@ -86,7 +90,7 @@ class RightPagesItem(Frame):
                                 alignment=Layout.Top, spacing=5,
                                 items=[
                                     await Selector(self, 'ExpiresSelector').init(
-                                        textchanged=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
+                                        events=Selector.Events(on_change=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')),
                                         items=[
                                             Selector.Item(text='No'),
                                             Selector.Item(text='Yes'),
@@ -113,13 +117,13 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl2').init(
-                                        wrap=True, alignment=Layout.Center,
+                                        wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
                                         text='Add new field with name "password" or "username" and it\'s value'
                                     ), Layout.Center
                                 ]
                             ),
                             await Button(self, 'AddFieldBtn').init(
-                                text='Add field', icon=ICONS.PLUS, slot=self.add_field
+                                text='Add field', icon=ICONS.PLUS, events=Button.Events(on_click=self.add_field)
                             )
                         ]
                     )
@@ -131,35 +135,35 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl3').init(
-                                        wrap=True, alignment=Layout.Center,
+                                        wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
                                         text='Attach *.txt or *.jpg files to the item'
                                     ), Layout.Center
                                 ]
                             ),
                             await Button(self, 'AddAttachmentBtn').init(
-                                text='Add document', icon=ICONS.PLUS, slot=self.add_attachment
+                                text='Add document', icon=ICONS.PLUS, events=Button.Events(on_click=self.add_attachment)
                             )
                         ]
                     )
                 ),
                 await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, alignment=Layout.Center
+                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
                 ), Layout.Center,
                 await Button(self, 'ExportBtn', False).init(
-                    text='Export item', icon=ICONS.EXPORT, slot=self.export_item
+                    text='Export item', icon=ICONS.EXPORT, events=Button.Events(on_click=self.export_item)
                 ),
                 await Button(self, 'CreateBtn').init(
-                    text='Create', slot=self.execute_create
+                    text='Create', events=Button.Events(on_click=self.execute_create)
                 ),
                 await Frame(self, 'SaveCancelFrame', False).init(
                     layout=await Layout.horizontal().init(
                         spacing=20,
                         items=[
                             await Button(self, 'SaveBtn').init(
-                                text='Save', slot=self.execute_save
+                                text='Save', events=Button.Events(on_click=self.execute_save)
                             ),
                             await Button(self, 'CancelBtn').init(
-                                text='Cancel', slot=self.execute_cancel
+                                text='Cancel', events=Button.Events(on_click=self.execute_cancel)
                             )
                         ]
                     )
@@ -172,12 +176,13 @@ class RightPagesItem(Frame):
     async def export_item(self):
         # Create a file dialog to select a directory
         dialog = QFileDialog()
-        dialog.setFileMode(QFileDialog.Directory)
-        dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        dialog.setFileMode(QFileDialog.FileMode.Directory)
+        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
         dialog.setWindowTitle('Choose a directory to export item data')
         # Run the file dialog and get the selected directory
         directory = None
-        if dialog.exec_() == QFileDialog.Accepted:
+        print(dialog.exec_(), type(dialog.exec_()))
+        if dialog.exec_() == QFileDialog.DialogCode.Accepted:
             directory = dialog.selectedFiles()[0]
         if directory:
             await API.export_item(directory)
@@ -363,13 +368,13 @@ class RightPagesItem(Frame):
         self.FieldScrollArea.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
         for field in API.item['fields']:
-            self.add_field(field)
+            await self.add_field(field)
         self.HintLbl2.setVisible(not len(API.item['fields']))
 
         self.AttachmentScrollArea.setVisible(True)
         self.AttachmentScrollArea.clear([self.HintLbl3])
         for attachment in API.item['attachments']:
-            self.add_attachment(attachment)
+            await self.add_attachment(attachment)
         self.HintLbl3.setVisible(not len(API.item['attachments']))
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesItem)

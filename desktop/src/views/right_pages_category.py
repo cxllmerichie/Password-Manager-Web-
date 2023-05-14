@@ -1,9 +1,9 @@
-from qcontext.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup
-from qcontext.widgets.custom import FavouriteButton, ImageButton, ErrorLabel
-from qcontext.qasyncio import asyncSlot
-from qcontext.misc import Icon
-from qcontext import CONTEXT
-from PyQt5.QtWidgets import QWidget, QFileDialog
+from aioqui.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup, Parent
+from aioqui.widgets.custom import FavouriteButton, ImageButton, ErrorLabel
+from aioqui.qasyncio import asyncSlot
+from aioqui.types import Icon
+from aioqui import CONTEXT
+from PySide6.QtWidgets import QFileDialog
 from typing import Any
 
 from ..misc import ICONS, API, PATHS, SIZES, COLORS
@@ -11,7 +11,7 @@ from .. import stylesheets
 
 
 class RightPagesCategory(Frame):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_category.css +
                                                                      stylesheets.components.favourite_button +
                                                                      stylesheets.components.image_button(COLORS.DARK))
@@ -24,20 +24,24 @@ class RightPagesCategory(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         await FavouriteButton(self).init(
-                            pre_slot=self.toggle_favourite, size=SIZES.CONTROL
+                            pre_slot=self.toggle_favourite, sizes=FavouriteButton.Sizes(fixed_size=SIZES.CONTROL)
                         ), Layout.Left,
                         await Button(self, 'EditBtn', False).init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), slot=self.execute_edit, size=SIZES.CONTROL
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), events=Button.Events(on_click=self.execute_edit),
+                            sizes=Button.Sizes(fixed_size=SIZES.CONTROL)
                         ),
                         await Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)), size=SIZES.CONTROL,
-                            slot=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                                message=f'Delete category\n\'{API.category["title"]}\'?',
-                                on_success=self.execute_delete
-                            )
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
+                            events=Button.Events(
+                                on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
+                                    message=f'Delete category\n\'{API.category["title"]}\'?',
+                                    on_success=self.execute_delete
+                                )
+                            ),
                         ),
                         await Button(self, 'CloseBtn').init(
-                            icon=ICONS.CROSS.adjusted(size=(30, 30)), slot=CONTEXT.RightPages.shrink, size=SIZES.CONTROL
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
+                            events=Button.Events(on_click=CONTEXT.RightPages.shrink)
                         ), Layout.Right
                     ]
                 ),
@@ -51,25 +55,25 @@ class RightPagesCategory(Frame):
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Label(self, 'HintLbl1', False).init(
-                    wrap=True, alignment=Layout.Center,
+                    wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
                     text='Hint: Create category like "Social Media" to store your Twitter, Facebook or Instagram personal data'
                 ),
                 Spacer(False, True),
                 await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, alignment=Layout.Center
+                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
                 ), Layout.Center,
                 await Button(self, 'CreateBtn').init(
-                    text='Create', slot=self.execute_create
+                    text='Create', events=Button.Events(on_click=self.execute_create)
                 ),
                 await Frame(self, 'SaveCancelFrame', False).init(
                     layout=await Layout.horizontal().init(
                         spacing=20,
                         items=[
                             await Button(self, 'SaveBtn').init(
-                                text='Save', slot=self.execute_save
+                                text='Save', events=Button.Events(on_click=self.execute_save)
                             ),
                             await Button(self, 'CancelBtn').init(
-                                text='Cancel', slot=self.execute_cancel
+                                text='Cancel', events=Button.Events(on_click=self.execute_cancel)
                             )
                         ]
                     )
@@ -77,10 +81,10 @@ class RightPagesCategory(Frame):
                 await Layout.horizontal().init(
                     items=[
                         await Button(self, 'ImportBtn', False).init(
-                            text='Import item', icon=ICONS.IMPORT, slot=self.import_item
+                            text='Import item', icon=ICONS.IMPORT, events=Button.Events(on_click=self.import_item)
                         ),
                         await Button(self, 'AddItemBtn', False).init(
-                            text='Add item', icon=ICONS.PLUS, slot=self.add_item
+                            text='Add item', icon=ICONS.PLUS, events=Button.Events(on_click=self.add_item)
                         )
                     ]
                 )

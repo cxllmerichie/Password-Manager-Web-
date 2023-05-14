@@ -8,6 +8,11 @@ API_HOST: str = '127.0.0.1'
 API_PORT: int = 8888
 API_CORS_ORIGINS: list[str] = ['localhost']
 
+LOG_CONFIG: dict[str, Any] = {
+    'version': 1,
+    'disable_existing_loggers': True,
+}
+
 
 class ORMNMap(ORM):
     @staticmethod

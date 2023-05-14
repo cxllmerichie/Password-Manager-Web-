@@ -4,10 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import const, routers
 
 
-# import os
-# import sys
-# sys.stdout = open(os.devnull, 'w')
-
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=const.API_CORS_ORIGINS)
 
