@@ -13,7 +13,6 @@ class CentralItem(Frame):
     async def init(self, item: dict[str, Any]) -> 'CentralItem':
         await super().init(
             events=Frame.Events(on_click=lambda: CONTEXT.RightPagesItem.show_item(item)),
-            sizes=Frame.Sizes(vpolicy=Frame.Expanding),
             layout=await Layout.horizontal(self, 'ItemLayout').init(
                 margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
                 items=[
@@ -23,12 +22,12 @@ class CentralItem(Frame):
                     await Layout.vertical().init(
                         items=[
                             await Label(self, 'ItemTitleLbl').init(
-                                text=item['title'], elide=Label.ElideLeft,
-                                sizes=Frame.Sizes(vpolicy=Label.Expanding)
+                                text=item['title'], elide=Label.ElideRight,
+                                sizes=Label.Sizes(hpolicy=Label.Expanding)
                             ),
                             await Label(self, 'ItemDescriptionLbl').init(
-                                text=item['description'], elide=Label.ElideLeft,
-                                sizes=Frame.Sizes(vpolicy=Label.Expanding)
+                                text=item['description'], elide=Label.ElideRight,
+                                sizes=Label.Sizes(hpolicy=Label.Expanding)
                             )
                         ]
                     )

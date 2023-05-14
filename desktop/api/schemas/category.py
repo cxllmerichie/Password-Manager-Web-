@@ -12,8 +12,8 @@ class CategoryBase(Schema):
     __tablename__ = 'category'
 
     icon: Optional[str | bytes] = Field(default=None)
-    title: str = Field(default=..., min_length=1, max_length=20)
-    description: Optional[str] = Field(default=None, max_length=50)
+    title: str = Field(default=..., min_length=1, max_length=50)
+    description: Optional[str] = Field(default=None, max_length=250)
     is_favourite: bool = Field(default=False)
 
     async def into_db(self) -> Schema:

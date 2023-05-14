@@ -1,5 +1,4 @@
 from aioqui.widgets import Window
-from aioqui.objects import EventedObj
 from aioqui import CONTEXT
 
 
@@ -16,9 +15,9 @@ class App(Window):
 
     async def init(
             self, *,
-            on_close: callable = None
+            on_close: callable
     ) -> 'App':
-        await super().init(events=EventedObj.Events(on_close=on_close))
+        self.on_close = on_close
 
         from .misc import SIZES
 
@@ -37,3 +36,7 @@ class App(Window):
             self.setStatusBar(statusbar)
             await statusbar.post_init()
         return self
+
+    def close(self) -> bool:
+        self.on_close()
+        return super().close()

@@ -10,16 +10,13 @@ class LabelExtended(Frame):
 
     async def init(
             self, *,
-            text: str = '', inner_alignment: Label.Alignment = Label.Left, wrap: bool = False, size: QSize = None,
-            icon: Icon = None, elided: bool = False, policy: tuple[Label.SizePolicy, Label.SizePolicy] = None,
-            margins: tuple[int, ...] = (0, 0, 0, 0), outer_alignment: Layout.Alignment = None
+            text: str = '', margins: tuple[int, ...] = (0, 0, 0, 0)
     ) -> 'LabelExtended':
         await super().init(layout=await Layout.horizontal().init(
-            margins=margins, alignment=outer_alignment,
+            margins=margins,
             items=[
                 label := await Label(self.parent(), self.__name).init(
-                    text=text, wrap=wrap, icon=icon, elide=Label.ElideLeft,
-                    sizes=Label.Sizes(alignment=inner_alignment, fixed_size=size, policy=policy)
+                    text=text
                 )
             ]
         ))

@@ -57,30 +57,26 @@ class CentralItems(Frame):
             items = API.items
         self.HintLbl1.setVisible(False)
         self.SearchBar.setVisible(not_empty := bool(len(items)))
-        if not_empty:
-            self.ItemsScrollArea.setVisible(False)
-            return self.NoCategoriesLbl.setVisible(True)
+        self.ItemsScrollArea.setVisible(not_empty)
+        self.NoCategoriesLbl.setVisible(not not_empty)
+        if not not_empty:
+            return
         letters = []
         self.ItemsScrollArea.clear()
         items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
         if any([item['is_favourite'] for item in items]):
-            self.ItemsScrollArea.addWidget(await Label(self, 'FavouriteLbl').init(
-                text='Favourite'
-            ))
+            self.ItemsScrollArea.addWidget(await Label(self, 'FavouriteLbl').init(text='Favourite'))
         for item in items:
             if not item['is_favourite'] and (letter := item['title'][0]) not in letters:
                 letters.append(letter)
-                self.ItemsScrollArea.addWidget(await Label(self, 'LetterLbl').init(
-                    text=letter
-                ))
+                self.ItemsScrollArea.addWidget(await Label(self, 'LetterLbl').init(text=letter))
             self.ItemsScrollArea.addWidget(await CentralItem(self).init(item))
         await self.SearchBar.init(
             events=SearchBar.Events(on_change=self.searchbar_textchanged), placeholder='Search',
-            completer=SearchBar.Completer(self.SearchBar, items=[item['title'] for item in items] + letters,
-                                          stylesheet=stylesheets.components.search)
+            completer=SearchBar.Completer(
+                self.SearchBar, items=[i['title'] for i in items] + letters, stylesheet=stylesheets.components.search
+            )
         )
-        self.NoCategoriesLbl.setVisible(False)
-        self.ItemsScrollArea.setVisible(True)
 
     @asyncSlot()
     async def show_all(self):

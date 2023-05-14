@@ -9,13 +9,13 @@ from api.const import API_HOST, API_PORT, LOG_CONFIG
 
 
 if __name__ == '__main__':
-    loguru.logger.disable('apidevttols')
-    loguru.logger.disable('qcontext')
-    loguru.logger.disable('__main__')
+    # loguru.logger.disable('apidevttols')
+    # loguru.logger.disable('aioqui')
+    # loguru.logger.disable('__main__')
 
     server = Server(config=Config(app, host=API_HOST, port=API_PORT, log_config=LOG_CONFIG))
     with server.run_in_thread():
-        async def on_close():
+        def on_close():
             server.stop()
             sys.exit(0)
 
