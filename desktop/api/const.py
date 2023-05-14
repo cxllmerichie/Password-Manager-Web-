@@ -107,6 +107,6 @@ CREATE TABLE IF NOT EXISTS "attachment" (
 
 CREATE TABLE IF NOT EXISTS "map" (
     "key" TEXT PRIMARY KEY,
-    "value" BLOB
+    "value" BLOB NOT NULL
 );
 '''

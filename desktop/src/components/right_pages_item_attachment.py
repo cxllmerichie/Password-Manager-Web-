@@ -1,10 +1,8 @@
 from aioqui.widgets import Button, LineInput, Layout, Frame, Popup, Parent
 from aioqui.qasyncio import asyncSlot
-from PySide6.QtGui import QDesktopServices
-from PySide6.QtCore import QUrl
+from aioqui.misc import explore_bytes
 from uuid import uuid4
 from typing import Any
-import tempfile
 
 from ..misc import ICONS, API
 from .. import stylesheets
@@ -79,10 +77,7 @@ class RightPagesItemAttachment(Frame):
     async def execute_show(self):
         idx = self.attachment['filename'].rfind('.')
         filename, extension = self.attachment['filename'][0:idx], self.attachment['filename'][idx:]
-        temp_file = tempfile.NamedTemporaryFile(prefix=filename, suffix=extension, delete=False)
-        temp_file.write(eval(self.attachment['content']))
-        temp_file.close()
-        QDesktopServices.openUrl(QUrl('file:///' + temp_file.name))
+        await explore_bytes(filename, extension, self.attachment['content'])
 
     @asyncSlot()
     async def execute_save(self):

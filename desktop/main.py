@@ -9,11 +9,12 @@ from api.const import API_HOST, API_PORT, LOG_CONFIG
 
 
 if __name__ == '__main__':
-    # loguru.logger.disable('apidevttols')
+    # loguru.logger.disable('apidevtools')
     # loguru.logger.disable('aioqui')
     # loguru.logger.disable('__main__')
 
-    server = Server(config=Config(app, host=API_HOST, port=API_PORT, log_config=LOG_CONFIG))
+    # server = Server(config=Config(app, host=API_HOST, port=API_PORT, log_config=LOG_CONFIG))
+    server = Server(config=Config(app, host=API_HOST, port=API_PORT))
     with server.run_in_thread():
         def on_close():
             server.stop()

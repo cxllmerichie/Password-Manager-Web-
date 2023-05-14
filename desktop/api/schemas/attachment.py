@@ -17,7 +17,8 @@ class AttachmentBase(Schema):
 
     async def into_db(self) -> Schema:
         self.id = str(self.id)
-        self.content, key = encryptor.encrypt(zlib.compress(self.content))
+        # `eval` used because on insert `content` is bytes, on update `content` is str
+        self.content, key = encryptor.encrypt(zlib.compress(eval(self.content)))
         await db.set(self.id, key)
         return self
 

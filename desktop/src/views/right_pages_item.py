@@ -1,9 +1,10 @@
 from aioqui.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup, Parent
 from aioqui.widgets.custom import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
+from aioqui.misc import select_file, select_dir, explore_dir
 from aioqui.qasyncio import asyncSlot
 from aioqui.types import Icon
 from aioqui import CONTEXT
-from PySide6.QtWidgets import QFrame, QFileDialog
+from PySide6.QtWidgets import QFrame
 from typing import Any
 import datetime
 
@@ -174,18 +175,8 @@ class RightPagesItem(Frame):
 
     @asyncSlot()
     async def export_item(self):
-        # Create a file dialog to select a directory
-        dialog = QFileDialog()
-        dialog.setFileMode(QFileDialog.FileMode.Directory)
-        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
-        dialog.setWindowTitle('Choose a directory to export item data')
-        # Run the file dialog and get the selected directory
-        directory = None
-        print(dialog.exec_(), type(dialog.exec_()))
-        if dialog.exec_() == QFileDialog.DialogCode.Accepted:
-            directory = dialog.selectedFiles()[0]
-        if directory:
-            await API.export_item(directory)
+        if directory := await select_dir(self, 'Select', '.'):
+            await explore_dir(await API.export_item(directory))
 
     @asyncSlot()
     async def add_field(self, field: dict[str, Any] = None):
@@ -197,8 +188,7 @@ class RightPagesItem(Frame):
     async def add_attachment(self, attachment: dict[str, Any] = None):
         creating = attachment is None
         if not attachment:
-            filepath, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Images (*.jpg);;Text files (*.txt)')
-            if filepath:
+            if filepath := await select_file(self, filters='Images (*.jpg);;Documents (*.txt)'):
                 attachment = await API.get_attachment_data(filepath)
         if attachment:
             self.HintLbl3.setVisible(False)

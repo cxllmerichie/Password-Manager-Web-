@@ -182,7 +182,7 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx] = response
         return response
 
-    async def export_item(self, directory: str) -> None:
+    async def export_item(self, directory: str) -> str:
         # create copy to manage dict keys later on
         item = deepcopy(self.item)
         # create sub dir in selected dir to save there all the data
@@ -209,6 +209,7 @@ class Api:
                 item[key] = str(value)
         with open(os.path.join(export_dir, 'item.json'), 'w') as file:
             json.dump(item, file, indent=4)
+        return export_dir
 
     async def import_item(self, filepath: str) -> dict[str, Any]:
         with open(filepath, 'r') as file:

@@ -1,9 +1,9 @@
 from aioqui.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup, Parent
 from aioqui.widgets.custom import FavouriteButton, ImageButton, ErrorLabel
+from aioqui.misc import select_file
 from aioqui.qasyncio import asyncSlot
 from aioqui.types import Icon
 from aioqui import CONTEXT
-from PySide6.QtWidgets import QFileDialog
 from typing import Any
 
 from ..misc import ICONS, API, PATHS, SIZES, COLORS
@@ -134,8 +134,7 @@ class RightPagesCategory(Frame):
 
     @asyncSlot()
     async def import_item(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, 'Choose a file to import', '', 'JSON Files (*.json)')
-        if filepath:
+        if filepath := await select_file(self, filters='JSON (*.json)'):
             imported_item = await API.import_item(filepath)
             if item_id := imported_item.get('id'):
                 await CONTEXT.LeftMenu.refresh_categories()
