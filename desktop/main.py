@@ -8,6 +8,20 @@ from api.app import app
 from api.const import API_HOST, API_PORT, LOG_CONFIG
 
 
+# def myconnect(self, func):
+#     if hasattr(func, "im_func"):
+#         if hasattr(func.im_func, "__compiled__"):
+#             myconnect._protected = getattr(myconnect, "_protected", set())
+#             myconnect._protected.add(func)
+#
+#     return orig_connect(self, func)
+#
+#
+# import PySide6.QtCore
+# orig_connect = PySide6.QtCore.SignalInstance.connect
+# PySide6.QtCore.SignalInstance.connect = myconnect
+
+
 if __name__ == '__main__':
     # loguru.logger.disable('apidevtools')
     # loguru.logger.disable('aioqui')

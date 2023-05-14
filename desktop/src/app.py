@@ -29,7 +29,7 @@ class App(Window):
             _ = await IntroPopup(self).init()
         else:
             from .views.central_widget import CentralWidget
-            from desktop.src.components.status_bar import StatusBar
+            from .components import StatusBar
 
             statusbar = await StatusBar(self).init()
             self.setCentralWidget(await CentralWidget(self).init())
