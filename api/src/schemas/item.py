@@ -16,8 +16,8 @@ class ItemBase(Schema):
     __noupdate__ = ['created_at']
 
     icon: Optional[str | bytes] = Field(default=None)
-    title: str = Field(default=..., min_length=1, max_length=20)
-    description: Optional[str] = Field(default=None, max_length=50)
+    title: str = Field(default=..., min_length=1, max_length=50)
+    description: Optional[str] = Field(default=None, max_length=250)
     expires_at: Optional[datetime] = Field(default=None)
     modified_at: datetime = Field(default=None)
     created_at: datetime = Field(default=None)

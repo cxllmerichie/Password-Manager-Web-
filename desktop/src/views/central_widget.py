@@ -32,5 +32,6 @@ class CentralWidget(StackedWidget):
         CONTEXT.LogoutBtn.setVisible(CONTEXT['token'] is not None)
         if self.currentWidget().objectName() == 'MainView':
             await CONTEXT.LeftMenu.refresh_categories()
+            await CONTEXT.CentralItems.refresh_items([])
             await CONTEXT.RightPagesCategory.show_create()
             CONTEXT.RightPages.shrink()

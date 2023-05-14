@@ -63,7 +63,7 @@ tables: str = '''
 CREATE TABLE IF NOT EXISTS "category" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    "icon" BYTEA NOT NULL,
+    "icon" BLOB NOT NULL,
     "title" TEXT NOT NULL UNIQUE,
     "description" TEXT DEFAULT NULL,
     "is_favourite" BOOLEAN DEFAULT FALSE
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS "category" (
 CREATE TABLE IF NOT EXISTS "item" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    "icon" BYTEA NOT NULL,
+    "icon" BLOB NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT DEFAULT NULL,
     "expires_at" TIMESTAMP DEFAULT NULL,
@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS "item" (
 CREATE TABLE IF NOT EXISTS "field" (
     "id" TEXT PRIMARY KEY,
 
-    "name" BYTEA NOT NULL,
-    "value" BYTEA NOT NULL,
+    "name" BLOB NOT NULL,
+    "value" BLOB NOT NULL,
 
     "item_id" INTEGER NOT NULL,
     CONSTRAINT fk_item FOREIGN KEY("item_id") REFERENCES "item" ("id")
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS "field" (
 CREATE TABLE IF NOT EXISTS "attachment" (
     "id" TEXT PRIMARY KEY,
 
-    "content" BYTEA NOT NULL,
+    "content" BLOB NOT NULL,
     "mime" TEXT NOT NULL,
     "filename" TEXT NOT NULL,
 
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS "attachment" (
 );
 
 CREATE TABLE IF NOT EXISTS "map" (
-    "key" TEXT,
-    "value" BYTEA
+    "key" TEXT PRIMARY KEY,
+    "value" BLOB
 );
 '''

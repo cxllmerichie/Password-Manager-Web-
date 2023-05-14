@@ -70,4 +70,7 @@ class StatusBar(CStatusBar):
             return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
         if CONTEXT.CentralWidget.currentWidget().objectName() == 'MainView':
             await CONTEXT.LeftMenu.refresh_categories()
+            await CONTEXT.CentralItems.refresh_items([])
+            await CONTEXT.RightPagesCategory.show_create()
+            CONTEXT.RightPages.shrink()
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

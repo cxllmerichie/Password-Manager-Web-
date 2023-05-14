@@ -17,18 +17,18 @@ async def get_attachments(item_id: int, schema: type = schemas.Attachment) -> li
 
 
 async def get_attachment(attachment_id: UUID, schema: type = schemas.Attachment) -> schemas.Attachment | None:
-    query, args = f'SELECT * FROM "attachment" WHERE "id" = $1;', (attachment_id, )
+    query, args = f'SELECT * FROM "attachment" WHERE "id" = $1;', (str(attachment_id), )
     db_attachment = await (await db.select(query, args, schema)).first()
     return db_attachment
 
 
 async def update_attachment(attachment_id: UUID, attachment: schemas.AttachmentCreate) -> schemas.Attachment:
     attachment.id = attachment_id
-    db_attachment = await (await db.update(attachment, dict(id=attachment_id), schemas.Attachment)).first()
+    db_attachment = await (await db.update(attachment, dict(id=str(attachment_id)), schemas.Attachment)).first()
     return db_attachment
 
 
 async def delete_attachment(attachment_id: UUID) -> schemas.Attachment:
-    db_attachment = await (await db.delete(dict(id=attachment_id), schemas.Attachment, 'attachment')).first()
+    db_attachment = await (await db.delete(dict(id=str(attachment_id)), schemas.Attachment, 'attachment')).first()
     await db.remove(db_attachment.id)
     return db_attachment
