@@ -68,34 +68,34 @@ class LeftMenu(SplitterWidgetExt, Widget):
 
     @asyncSlot()
     async def refresh_categories(self):
-        layout = self.CategoriesScrollArea.widget().layout()
-        layout.clear()
+        self.CategoriesScrollArea.clear()
         categories = await API.get_categories()
-        self.SearchBar.setVisible(bool(len(categories)))
         self.AllItemsBtn.AllItemsBtnTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
         self.FavItemsBtn.FavItemsBtnTotalLbl.setText(str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))
-        if not len(categories):
+        self.SearchBar.setVisible(not_empty := bool(len(categories)))
+        if not_empty:
             self.CategoriesScrollArea.setVisible(False)
             return self.NoCategoriesLbl.setVisible(True)
         letters = []
         categories = sorted(categories, key=lambda c: (not c['is_favourite'], c['title'], c['description']))
         if any([category['is_favourite'] for category in categories]):
-            layout.addWidget(await LabelExtended(self, 'FavouriteLbl').init(
+            self.CategoriesScrollArea.addWidget(await LabelExtended(self, 'FavouriteLbl').init(
                 text='Favourite', margins=SIZES.LeftMenuLettersMargin
             ))
         for category in categories:
             if not category['is_favourite'] and (letter := category['title'][0]) not in letters:
                 letters.append(letter)
-                layout.addWidget(await LabelExtended(self, 'LetterLbl').init(
+                self.CategoriesScrollArea.addWidget(await LabelExtended(self, 'LetterLbl').init(
                     text=letter, margins=SIZES.LeftMenuLettersMargin
                 ))
-            layout.addWidget(await MenuButton(self).init(
+            self.CategoriesScrollArea.addWidget(await MenuButton(self).init(
                 icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),
                 slot=lambda checked, _category=category: CONTEXT.RightPagesCategory.show_category(_category)
             ))
         await self.SearchBar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search', stylesheet=stylesheets.components.search,
-            items=[category['title'] for category in categories] + letters
+            events=SearchBar.Events(on_change=self.searchbar_textchanged), placeholder='Search',
+            completer=SearchBar.Completer(self.SearchBar, stylesheet=stylesheets.components.search,
+                                          items=[category['title'] for category in categories] + letters)
         )
         self.NoCategoriesLbl.setVisible(False)
         self.CategoriesScrollArea.setVisible(True)

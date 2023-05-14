@@ -56,30 +56,29 @@ class CentralItems(Frame):
         if items is None:
             items = API.items
         self.HintLbl1.setVisible(False)
-        if not len(items):
-            self.SearchBar.setVisible(False)
+        self.SearchBar.setVisible(not_empty := bool(len(items)))
+        if not_empty:
             self.ItemsScrollArea.setVisible(False)
             return self.NoCategoriesLbl.setVisible(True)
         letters = []
-        layout = self.ItemsScrollArea.widget().layout()
         self.ItemsScrollArea.clear()
         items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
         if any([item['is_favourite'] for item in items]):
-            layout.addWidget(await Label(self, 'FavouriteLbl').init(
+            self.ItemsScrollArea.addWidget(await Label(self, 'FavouriteLbl').init(
                 text='Favourite'
             ))
         for item in items:
             if not item['is_favourite'] and (letter := item['title'][0]) not in letters:
                 letters.append(letter)
-                layout.addWidget(await Label(self, 'LetterLbl').init(
+                self.ItemsScrollArea.addWidget(await Label(self, 'LetterLbl').init(
                     text=letter
                 ))
-            layout.addWidget(await CentralItem(self).init(item))
+            self.ItemsScrollArea.addWidget(await CentralItem(self).init(item))
         await self.SearchBar.init(
-            textchanged=self.searchbar_textchanged, placeholder='Search',
-            items=[item['title'] for item in items] + letters
+            events=SearchBar.Events(on_change=self.searchbar_textchanged), placeholder='Search',
+            completer=SearchBar.Completer(self.SearchBar, items=[item['title'] for item in items] + letters,
+                                          stylesheet=stylesheets.components.search)
         )
-        self.SearchBar.setVisible(True)
         self.NoCategoriesLbl.setVisible(False)
         self.ItemsScrollArea.setVisible(True)
 

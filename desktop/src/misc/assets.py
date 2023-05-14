@@ -59,7 +59,7 @@ class SIZES:
     AuthInputField = Size(300, 25)
     NoCategoriesLbl = QSize(150, 50)
     StatusBarLbl = Size(..., 20)
-    PanelNavigationBtn = QSize(30, 30)
+    PanelNavigationBtn = Size(30, 30)
     Panel = Size(..., 30)
     CATEGORY = Size(300, ...)
     ERROR = Size(300, 50)

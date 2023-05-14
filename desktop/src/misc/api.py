@@ -1,12 +1,11 @@
-from aioqui.misc.aiorequest import request
 from aioqui.misc.utils import serializable, find
+from aioqui.misc.aiorequest import request
 from aioqui.types import Icon
 from aioqui import CONTEXT
 from mimetypes import MimeTypes
 from datetime import datetime
 from copy import deepcopy
 from typing import Any
-from uuid import UUID
 import ujson as json
 import aiohttp
 import os
@@ -35,8 +34,8 @@ class Api:
     __categories: list[dict[str, Any]] = None
     __category: dict[str, Any] = None
     __item: dict[str, Any] = None
-    field_identifiers: list[UUID] = []
-    attachment_identifiers: list[UUID] = []
+    field_identifiers: list[str] = []
+    attachment_identifiers: list[str] = []
 
     # PROPERTIES
     @property
@@ -120,7 +119,7 @@ class Api:
             self.category = response
         return response
 
-    async def get_category(self, category_id: str) -> dict[str, Any]:
+    async def get_category(self, category_id: int) -> dict[str, Any]:
         response = await request('get', f'/categories/{category_id}/', headers=self.headers_auth)
         if category_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', category_id)
@@ -158,7 +157,7 @@ class Api:
             self.item = response
         return response
 
-    async def delete_item(self, item_id: str) -> dict[str, Any]:
+    async def delete_item(self, item_id: int) -> dict[str, Any]:
         response = await request('delete', f'/items/{item_id}/', headers=self.headers_auth)
         if item_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
@@ -236,7 +235,7 @@ class Api:
             self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
-    async def update_field(self, field_id: int, field: dict[str, Any]) -> dict[str, Any]:
+    async def update_field(self, field_id: str, field: dict[str, Any]) -> dict[str, Any]:
         response = await request('put', f'/fields/{field_id}/', headers=self.headers_auth, body=field)
         if field_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
