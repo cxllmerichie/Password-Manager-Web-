@@ -45,7 +45,7 @@ class CentralItems(Frame):
             visible = True
             if widget.__class__.__name__ == 'Label':
                 visible = widget.text()[0].lower() == text[0].lower() if len(text) else True
-            elif widget.__class__.__name__ in 'CP_Item':
+            elif widget.__class__.__name__ in 'CentralItem':
                 visible = text.lower() in widget.ItemTitleLbl.text().lower()
             widget.setVisible(visible)
         with suppress(AttributeError):

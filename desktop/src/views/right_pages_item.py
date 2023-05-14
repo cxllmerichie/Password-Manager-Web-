@@ -6,7 +6,7 @@ from aioqui.types import Icon
 from aioqui import CONTEXT
 from PySide6.QtWidgets import QFrame
 from typing import Any
-import datetime
+from datetime import datetime
 
 from ..misc import ICONS, API, PATHS, SIZES
 from ..components import RightPagesItemField, RightPagesItemAttachment
@@ -118,8 +118,7 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl2').init(
-                                        wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
-                                        text='Add new field with name "password" or "username" and it\'s value'
+                                        wrap=True, text='Add new field with name "password" or "username" and it\'s value'
                                     ), Layout.Center
                                 ]
                             ),
@@ -136,8 +135,7 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl3').init(
-                                        wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
-                                        text='Attach *.txt or *.jpg files to the item'
+                                        wrap=True, text='Attach *.txt or *.jpg files to the item'
                                     ), Layout.Center
                                 ]
                             ),
@@ -319,18 +317,18 @@ class RightPagesItem(Frame):
         self.ExportBtn.setVisible(True)
 
         self.CreatedFrame.setVisible(True)
-        if not isinstance(created_at := item['created_at'], datetime.datetime):
+        if not isinstance(created_at := item['created_at'], datetime):
             created_at = DateTimePicker.parse(item['created_at'])
         self.CreatedLbl.setText(created_at.strftime(DateTimePicker.default_format))
 
         if modified_at := item['modified_at']:
-            if not isinstance(modified_at, datetime.datetime):
+            if not isinstance(modified_at, datetime):
                 modified_at = DateTimePicker.parse(modified_at)
             self.ModifiedLbl.setText(modified_at.strftime(DateTimePicker.default_format))
         self.ModifiedFrame.setVisible(modified_at is not None)
 
         if expires_at := item['expires_at']:
-            if not isinstance(expires_at, datetime.datetime):
+            if not isinstance(expires_at, datetime):
                 expires_at = DateTimePicker.parse(expires_at)
             self.ExpiresLbl.setText(expires_at.strftime(DateTimePicker.default_format))
             self.ExpiresLbl.setVisible(True)

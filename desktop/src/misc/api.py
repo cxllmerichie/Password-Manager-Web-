@@ -1,9 +1,9 @@
 from aioqui.misc.utils import serializable, find
 from aioqui.misc.aiorequest import request
-from aioqui.types import Icon
-from aioqui import CONTEXT
 from mimetypes import MimeTypes
 from datetime import datetime
+from aioqui.types import Icon
+from aioqui import CONTEXT
 from copy import deepcopy
 from typing import Any
 import ujson as json
@@ -171,7 +171,7 @@ class Api:
         if item_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.item = self.categories[c_idx]['items'][i_idx] = response
+            self.item = self.__categories[c_idx]['items'][i_idx] = response
         return response
 
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
@@ -179,7 +179,9 @@ class Api:
         if item_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.item = self.categories[c_idx]['items'][i_idx] = response
+            print(self.categories[c_idx]['items'][i_idx]['is_favourite'])
+            self.item = self.__categories[c_idx]['items'][i_idx] = response
+            print(self.categories[c_idx]['items'][i_idx]['is_favourite'])
         return response
 
     async def export_item(self, directory: str) -> str:
@@ -215,9 +217,10 @@ class Api:
         with open(filepath, 'r') as file:
             item = json.load(file)
         item_pop_keys = ['created_at', 'modified_at', 'fields', 'attachments']
-        fields, attachments = item['fields'], item['attachments']
+        fields, attachments = item.get('fields', ()), item.get('attachments', ())
         for key in item_pop_keys:
-            item.pop(key)
+            if key in item.keys():
+                item.pop(key)
         created_item = await self.create_item(self.category['id'], await serializable(item))
         if item_id := created_item.get('id'):
             for field in fields:
