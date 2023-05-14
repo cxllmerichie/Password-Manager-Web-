@@ -1,6 +1,6 @@
-@echo off
+::@echo off
 
-set NAME=PasswordManager1.0.4
+set NAME=PasswordManager1.0.9
 set ROOT=C:\Projects\Python\PasswordManager\desktop
 set MAIN=%ROOT%\main.py
 set BUILD=%ROOT%\build
@@ -10,20 +10,27 @@ set VENV=%BUILD%\.venv
 set ASSETS=%ROOT%\.assets
 set ICON=%ASSETS%\icon.ico
 
-rmdir /s /q %VENV%
-python -m venv %VENV%
-%VENV%\Scripts\python.exe -m pip install --upgrade pip
-%VENV%\Scripts\python.exe -m pip install nuitka
-%VENV%\Scripts\python.exe -m pip install -r %REQUIREMENTS%
+::rmdir /s /q %VENV%
+::python -m venv %VENV%
+::%VENV%\Scripts\python.exe -m pip install --upgrade pip
+::%VENV%\Scripts\python.exe -m pip install nuitka
+::%VENV%\Scripts\python.exe -m pip install -r %REQUIREMENTS%
 %VENV%\Scripts\python.exe -m nuitka ^
-    --windows-icon-from-ico=%ICON% ^
-    --output-dir=%OUTDIR% ^
-    --nofollow-import-to=tkinter ^
-    --enable-plugin=pyside6 ^
-    --standalone ^
-    --follow-imports ^
-    --onefile ^
+--windows-icon-from-ico=%ICON% ^
+--output-dir=%OUTDIR% ^
+--nofollow-import-to=tkinter ^
+--enable-plugin=pyside6 ^
+--onefile ^
     %MAIN%
-xcopy %ASSETS% %OUTDIR%\.assets /e /s /t /i /h /k /c /o /y
+::    --follow-imports ^
+::    --warn-implicit-exceptions ^
+::    --warn-unusual-code ^
+::    --show-progress ^
+::    --show-modules ^
+::    --remove-output ^
+::    --standalone ^
+
+xcopy %ASSETS% %OUTDIR%\.assets /E/H/C/I
 
 pause
+
