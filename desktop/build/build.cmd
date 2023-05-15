@@ -1,6 +1,6 @@
 ::@echo off
 
-set NAME=PasswordManager1.0.9
+set NAME=nouvi-qfix-nostand-onef
 set ROOT=C:\Projects\Python\PasswordManager\desktop
 set MAIN=%ROOT%\main.py
 set BUILD=%ROOT%\build
@@ -20,7 +20,7 @@ set ICON=%ASSETS%\icon.ico
 --output-dir=%OUTDIR% ^
 --nofollow-import-to=tkinter ^
 --enable-plugin=pyside6 ^
---onefile ^
+--standalone ^
     %MAIN%
 ::    --follow-imports ^
 ::    --warn-implicit-exceptions ^
@@ -28,7 +28,7 @@ set ICON=%ASSETS%\icon.ico
 ::    --show-progress ^
 ::    --show-modules ^
 ::    --remove-output ^
-::    --standalone ^
+::    --onefile ^
 
 xcopy %ASSETS% %OUTDIR%\.assets /E/H/C/I
 

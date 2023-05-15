@@ -15,7 +15,7 @@ class App(Window):
 
     async def init(
             self, *,
-            on_close: callable
+            on_close: callable = lambda: None
     ) -> 'App':
         self.on_close = on_close
 
