@@ -46,7 +46,7 @@ class COLORS:
     RIGHT_MENU = 'rgba(23, 33, 43, 0.7)'
 
     TEXT_PRIMARY = 'white'
-    TEXT_SECONDARY = 'gray'
+    TEXT_SECONDARY = 'rgba(255, 255, 255, 0.7)'
     TEXT_ALERT = 'red'
 
 

@@ -56,7 +56,7 @@ class ORMNMap(ORM):
             return None
 
 
-db = ORMNMap(connector=SQLite(database='storage.sqlite'))
+db = ORMNMap(connector=SQLite(database='.local.db'))
 
 
 tables: str = '''

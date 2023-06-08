@@ -21,7 +21,7 @@ set ICON=%ASSETS%\icon.ico
 --nofollow-import-to=tkinter ^
 --enable-plugin=pyside6 ^
 --standalone ^
-    %MAIN%
+%MAIN%
 ::    --follow-imports ^
 ::    --warn-implicit-exceptions ^
 ::    --warn-unusual-code ^

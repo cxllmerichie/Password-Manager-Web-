@@ -20,10 +20,10 @@ if __name__ == '__main__':
             sys.exit(0)
 
         async def run_app():
-            # from qcontext import CONTEXT
-            #
-            # CONTEXT['storage'] = None
-            # CONTEXT['token'] = None
+            from aioqui import CONTEXT
+
+            CONTEXT['storage'] = None
+            CONTEXT['token'] = None
 
             (await App().init(
                 on_close=on_close

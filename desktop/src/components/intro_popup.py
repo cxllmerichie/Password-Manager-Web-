@@ -43,8 +43,8 @@ class IntroPopup(Widget):
                             Spacer(False, True),
                             await Label(self, 'HintLbl2').init(
                                 wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
-                                text='You will be able to change your choice any time in the left lower corner '
-                                     'of the app after pressing "Continue"'
+                                text='You will be able to change your choice any time after pressing "Continue" in the '
+                                     'bottom panel'
                             ),
                             await Button(self, 'ContinueBtn').init(
                                 text='Continue', events=Button.Events(on_click=self.execute_continue)
@@ -69,8 +69,8 @@ class IntroPopup(Widget):
     async def set_storage_local(self):
         self.LocalBtn.setStyleSheet(stylesheets.components.active_button)
         self.RemoteBtn.setStyleSheet(stylesheets.components.inactive_button)
-        self.HintLbl1.setText('Storing data locally gives you access to the data any time even without '
-                              'internet connection but erases in case of file corruption of deleting the storage. '
+        self.HintLbl1.setText('Storing data locally gives you access to it any time, also without internet connection. '
+                              'Data will be lost in case of storage corruption or uninstalling the application. '
                               'Also a little quicker.')
         CONTEXT['storage'] = API.Storage.LOCAL
 
@@ -83,8 +83,8 @@ class IntroPopup(Widget):
             )
         self.LocalBtn.setStyleSheet(stylesheets.components.inactive_button)
         self.RemoteBtn.setStyleSheet(stylesheets.components.active_button)
-        self.HintLbl1.setText('Storing data remotely gives you access to the data only with internet connection '
-                              'and in any device logging in using your personal account. Also a little slower.')
+        self.HintLbl1.setText('Storing data remotely gives you access to it only with internet connection.\n'
+                              'Using your personal account in any device gives you access to data. Also a little slower.')
         CONTEXT['storage'] = API.Storage.REMOTE
 
     def resizeEvent(self, event: QResizeEvent) -> None:

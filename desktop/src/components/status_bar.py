@@ -58,7 +58,7 @@ class StatusBar(CStatusBar):
 
     @asyncSlot()
     async def storage_selector_textchanged(self):
-        # if trying to switch to remote  but api is not active at the moment
+        # if trying to switch to remote, but api is not active at the moment
         if self.StorageSelector.currentText() == API.Storage.REMOTE and not await API.is_connected():
             await Popup(self.core).display(
                 buttons=[Popup.OK],
