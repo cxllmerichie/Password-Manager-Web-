@@ -1,5 +1,5 @@
 from aioqui.widgets import StackedWidget, Parent
-from aioqui.qasyncio import asyncSlot
+from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
 from .view_signin import SignIn
@@ -14,7 +14,7 @@ class CentralWidget(StackedWidget):
 
     async def init(self) -> 'CentralWidget':
         await super().init(
-            events=StackedWidget.Events(on_change=self.current_widget_changed),
+            on_change=self.current_widget_changed,
             items=[
                 await SignIn(self).init(),
                 await SignUp(self).init(),

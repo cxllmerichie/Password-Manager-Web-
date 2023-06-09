@@ -1,22 +1,25 @@
 from aioqui.widgets import Label, Layout, ScrollArea, Button, Widget, Parent
-from aioqui.widgets.custom import MenuButton, SearchBar
+from aioqui.widgets.custom import TotalButton, SearchBar
 from aioqui.widgets.extensions import SplitterWidgetExt
-from aioqui.qasyncio import asyncSlot
+from aioqui.asynq import asyncSlot
 from aioqui.types import Icon
+from aioqui.types.enums import SizePolicy
 from aioqui import CONTEXT
 from contextlib import suppress
 
 from ..misc import ICONS, SIZES, API
 from ..components import LabelExtended
-from .. import stylesheets
+from .. import qss
 
 
 class LeftMenu(SplitterWidgetExt, Widget):
     def __init__(self, parent: Parent):
-        Widget.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.left_menu.css +
-                                                                          stylesheets.components.scroll +
-                                                                          stylesheets.components.search)
-        SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax, SplitterWidgetExt.Horizontal)
+        Widget.__init__(self, parent, self.__class__.__name__, qss=(
+            qss.left_menu.css,
+            qss.components.scroll,
+            qss.components.search
+        ))
+        SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
 
     async def init(self) -> 'LeftMenu':
         self.setLayout(await Layout.vertical().init(
@@ -25,12 +28,12 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 await LabelExtended(self, 'LeftMenuItemsLabel').init(
                     text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
                 ), Layout.Center,
-                await MenuButton(self, 'AllItemsBtn').init(
-                    icon=ICONS.HOME, text='All items', slot=CONTEXT.CentralItems.show_all
+                await TotalButton(self, 'AllItemsBtn').init(
+                    icon=ICONS.HOME, text='All items', on_click=CONTEXT.CentralItems.show_all
                 ),
-                await MenuButton(self, 'FavItemsBtn').init(
+                await TotalButton(self, 'FavItemsBtn').init(
                     icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite',
-                    slot=CONTEXT.CentralItems.show_favourite
+                    on_click=CONTEXT.CentralItems.show_favourite
                 ),
                 await LabelExtended(self, 'LeftMenuCategoriesLabel').init(
                     text='Categories', margins=SIZES.LeftMenuTitlesMargin
@@ -38,14 +41,14 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 SearchBar(self, visible=False),
                 await Label(self, 'NoCategoriesLbl', False).init(
                     text='You don\'t have any categories yet', wrap=True,
-                    sizes=Label.Sizes(policy=(Layout.Expanding, Layout.Expanding), alignment=Layout.HCenter)
+                    policy=(Label.Expanding, Label.Expanding), alignment=Layout.HCenter
                 ), Layout.HCenter,
                 await ScrollArea(self, 'CategoriesScrollArea', False).init(
-                    hpolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical, alignment=Layout.Top, spacing=5,
-                    sizes=ScrollArea.Sizes(hpolicy=ScrollArea.Minimum)
+                    hspolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical, alignment=Layout.Top, spacing=5,
+                    hpolicy=SizePolicy.Minimum
                 ),
                 await Button(self, 'AddCategoryBtn').init(
-                    text='Category', icon=ICONS.PLUS, events=Button.Events(on_click=CONTEXT.RightPagesCategory.show_create)
+                    text='Category', icon=ICONS.PLUS, on_click=CONTEXT.RightPagesCategory.show_create
                 )
             ]
         ))
@@ -90,13 +93,13 @@ class LeftMenu(SplitterWidgetExt, Widget):
                 self.CategoriesScrollArea.addWidget(await LabelExtended(self, 'LetterLbl').init(
                     text=letter, margins=SIZES.LeftMenuLettersMargin
                 ))
-            self.CategoriesScrollArea.addWidget(await MenuButton(self).init(
+            self.CategoriesScrollArea.addWidget(await TotalButton(self).init(
                 icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),
-                slot=lambda checked=False, _category=category: CONTEXT.RightPagesCategory.show_category(_category)
+                on_click=lambda checked=False, _category=category: CONTEXT.RightPagesCategory.show_category(_category)
             ))
         await self.SearchBar.init(
-            events=SearchBar.Events(on_change=self.searchbar_textchanged), placeholder='Search',
+            on_change=self.searchbar_textchanged, placeholder='Search',
             completer=SearchBar.Completer(
-                self.SearchBar, stylesheet=stylesheets.components.search, items=[c['title'] for c in categories] + letters
+                self.SearchBar, qss=qss.components.search, items=[c['title'] for c in categories] + letters
             )
         )

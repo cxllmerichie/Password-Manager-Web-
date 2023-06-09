@@ -1,6 +1,4 @@
 from aioqui.widgets import Frame, Label, Layout, Parent
-from aioqui.types import Icon
-from PySide6.QtCore import QSize
 
 
 class LabelExtended(Frame):

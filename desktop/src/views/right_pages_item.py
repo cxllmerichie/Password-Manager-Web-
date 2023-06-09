@@ -1,7 +1,7 @@
-from aioqui.widgets import Button, LineInput, Layout, Label, TextInput, Frame, ScrollArea, Selector, Popup, Parent
-from aioqui.widgets.custom import FavouriteButton, ImageButton, DateTimePicker, ErrorLabel
-from aioqui.misc import select_file, select_dir, explore_dir
-from aioqui.qasyncio import asyncSlot
+from aioqui.widgets import Button, Input, Layout, Label, Frame, ScrollArea, Selector, Parent, DateTime
+from aioqui.widgets.custom import StateButton, ImageButton, DurationLabel, Popup
+from aioqui.misc.fileops import select_file, select_dir, explore_dir
+from aioqui.asynq import asyncSlot
 from aioqui.types import Icon
 from aioqui import CONTEXT
 from PySide6.QtWidgets import QFrame
@@ -10,16 +10,18 @@ from datetime import datetime
 
 from ..misc import ICONS, API, PATHS, SIZES
 from ..components import RightPagesItemField, RightPagesItemAttachment
-from .. import stylesheets
+from .. import qss
 
 
 class RightPagesItem(Frame):
     def __init__(self, parent: Parent):
-        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_item.css +
-                                                                     stylesheets.components.scroll +
-                                                                     stylesheets.components.image_button() +
-                                                                     stylesheets.components.favourite_button +
-                                                                     stylesheets.components.date_time_picker)
+        super().__init__(parent, self.__class__.__name__, qss=(
+            qss.right_pages_item.css,
+            qss.components.scroll,
+            qss.components.image_button(),
+            qss.components.favourite_button,
+            qss.components.date_time_picker
+        ))
 
     async def init(self) -> 'RightPagesItem':
         self.setLayout(await Layout.vertical().init(
@@ -28,32 +30,29 @@ class RightPagesItem(Frame):
                 await Layout.horizontal().init(
                     margins=(0, 0, 0, 20),
                     items=[
-                        await FavouriteButton(self).init(
-                            pre_slot=self.toggle_favourite, sizes=FavouriteButton.Sizes(fixed_size=SIZES.CONTROL)
+                        await StateButton(self, 'FavouriteButton').init(
+                            pre_slot=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn').init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), events=Button.Events(on_click=self.execute_edit),
-                            sizes=Button.Sizes(fixed_size=SIZES.CONTROL)
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), on_click=self.execute_edit, fix_size=SIZES.CONTROL
                         ),
                         await Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
-                            events=Button.Events(
-                                on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                                    message=f'Delete item\n\'{API.item["title"]}\'?',
-                                    on_success=self.execute_delete
-                                )
-                            )
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
+                            on_click=lambda: Popup(
+                                self.core, qss=qss.components.popup,
+                                message=f'Delete item\n\'{API.item["title"]}\'?', on_success=self.execute_delete
+                            ).display()
                         ),
                         await Button(self, 'CloseBtn').init(
-                            icon=ICONS.CROSS.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
-                            events=Button.Events(on_click=CONTEXT.RightPages.shrink)
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
+                            on_click=CONTEXT.RightPages.shrink
                         ), Layout.Right
                     ]
                 ),
                 await ImageButton(self).init(
                     icon=ICONS.ITEM, directory=PATHS.ICONS
                 ), Layout.TopCenter,
-                await LineInput(self, 'TitleInput').init(
+                await Input.line(self, 'TitleInput').init(
                     placeholder='title'
                 ), Layout.Top,
                 await Frame(self, 'CreatedFrame', False).init(
@@ -91,7 +90,7 @@ class RightPagesItem(Frame):
                                 alignment=Layout.Top, spacing=5,
                                 items=[
                                     await Selector(self, 'ExpiresSelector').init(
-                                        events=Selector.Events(on_change=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes')),
+                                        on_change=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
                                         items=[
                                             Selector.Item(text='No'),
                                             Selector.Item(text='Yes'),
@@ -100,15 +99,15 @@ class RightPagesItem(Frame):
                                     await Label(self, 'ExpiresLbl').init(
 
                                     ),
-                                    await DateTimePicker(self, visible=False).init(
-                                        spacing=5
+                                    await DateTime(self, 'DateTimePicker', False).init(
+
                                     )
                                 ]
                             )
                         ]
                     )
                 ),
-                await TextInput(self, 'DescriptionInput').init(
+                await Input.reach(self, 'DescriptionInput').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Frame(self, 'FieldFrame').init(
@@ -123,7 +122,7 @@ class RightPagesItem(Frame):
                                 ]
                             ),
                             await Button(self, 'AddFieldBtn').init(
-                                text='Add field', icon=ICONS.PLUS, events=Button.Events(on_click=self.add_field)
+                                text='Add field', icon=ICONS.PLUS, on_click=self.add_field
                             )
                         ]
                     )
@@ -140,29 +139,29 @@ class RightPagesItem(Frame):
                                 ]
                             ),
                             await Button(self, 'AddAttachmentBtn').init(
-                                text='Add document', icon=ICONS.PLUS, events=Button.Events(on_click=self.add_attachment)
+                                text='Add document', icon=ICONS.PLUS, on_click=self.add_attachment
                             )
                         ]
                     )
                 ),
-                await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
+                await DurationLabel(self, 'ErrorLbl').init(
+                    wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 await Button(self, 'ExportBtn', False).init(
-                    text='Export item', icon=ICONS.EXPORT, events=Button.Events(on_click=self.export_item)
+                    text='Export item', icon=ICONS.EXPORT, on_click=self.export_item
                 ),
                 await Button(self, 'CreateBtn').init(
-                    text='Create', events=Button.Events(on_click=self.execute_create)
+                    text='Create', on_click=self.execute_create
                 ),
                 await Frame(self, 'SaveCancelFrame', False).init(
                     layout=await Layout.horizontal().init(
                         spacing=20,
                         items=[
                             await Button(self, 'SaveBtn').init(
-                                text='Save', events=Button.Events(on_click=self.execute_save)
+                                text='Save', on_click=self.execute_save
                             ),
                             await Button(self, 'CancelBtn').init(
-                                text='Cancel', events=Button.Events(on_click=self.execute_cancel)
+                                text='Cancel', on_click=self.execute_cancel
                             )
                         ]
                     )
@@ -202,13 +201,13 @@ class RightPagesItem(Frame):
         self.ExpiresLbl.setVisible(False)
         self.ExpiresSelector.setVisible(True)
         if expires_at := API.item['expires_at']:
-            self.DateTimePicker.set_datetime(expires_at)
+            self.DateTimePicker.setDateTime(expires_at)
             self.DateTimePicker.setVisible(True)
             self.ExpiresSelector.setCurrentText('Yes')
         else:
             self.ExpiresSelector.setCurrentText('No')
             self.DateTimePicker.setVisible(False)
-            self.DateTimePicker.set_datetime(DateTimePicker.now)
+            self.DateTimePicker.setDateTime(datetime.now())
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
         self.DeleteBtn.setVisible(True)
@@ -226,7 +225,7 @@ class RightPagesItem(Frame):
     async def toggle_favourite(self) -> bool:
         if not API.item:
             return True
-        updated_category = await API.set_item_favourite(API.item['id'], self.FavouriteButton.is_favourite)
+        updated_category = await API.set_item_favourite(API.item['id'], self.FavouriteButton.state)
         if category_id := updated_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()
             await CONTEXT.CentralItems.refresh_items()
@@ -241,11 +240,11 @@ class RightPagesItem(Frame):
             return self.ErrorLbl.setText('Title can not be empty')
         expires_at = None
         if self.ExpiresSelector.currentText() == 'Yes':
-            expires_at = str(self.DateTimePicker.get_datetime(tz=True))
+            expires_at = str(self.DateTimePicker.dateTime())
         prev_icon = API.item['icon']
         updated_category = await API.update_item(API.item['id'], {
-            'icon': self.ImageButton.image_bytes_str, 'title': title, 'description': self.DescriptionInput.toPlainText(),
-            'is_favourite': self.FavouriteButton.is_favourite, 'expires_at': expires_at
+            'icon': self.ImageButton.bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
+            'is_favourite': self.FavouriteButton.state, 'expires_at': expires_at
         })
         if category_id := updated_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()
@@ -308,7 +307,7 @@ class RightPagesItem(Frame):
         self.HintLbl3.setVisible(True)
         self.CreateBtn.setVisible(True)
         self.FavouriteButton.setVisible(True)
-        self.FavouriteButton.unset_favourite()
+        self.FavouriteButton.state = False
 
     @asyncSlot()
     async def show_item(self, item: dict[str, Any]):
@@ -317,29 +316,24 @@ class RightPagesItem(Frame):
         self.ExportBtn.setVisible(True)
 
         self.CreatedFrame.setVisible(True)
-        if not isinstance(created_at := item['created_at'], datetime):
-            created_at = DateTimePicker.parse(item['created_at'])
-        self.CreatedLbl.setText(created_at.strftime(DateTimePicker.default_format))
+        if created_at := item['created_at']:
+            self.CreatedLbl.setText(created_at.strftime(DateTime.defstrf))
 
         if modified_at := item['modified_at']:
-            if not isinstance(modified_at, datetime):
-                modified_at = DateTimePicker.parse(modified_at)
-            self.ModifiedLbl.setText(modified_at.strftime(DateTimePicker.default_format))
+            self.ModifiedLbl.setText(modified_at.strftime(DateTime.defstrf))
         self.ModifiedFrame.setVisible(modified_at is not None)
 
         if expires_at := item['expires_at']:
-            if not isinstance(expires_at, datetime):
-                expires_at = DateTimePicker.parse(expires_at)
-            self.ExpiresLbl.setText(expires_at.strftime(DateTimePicker.default_format))
+            self.ExpiresLbl.setText(expires_at.strftime(DateTime.defstrf))
             self.ExpiresLbl.setVisible(True)
             self.ExpiresSelector.setVisible(False)
             self.DateTimePicker.setVisible(False)
-            self.DateTimePicker.set_datetime(expires_at)
+            self.DateTimePicker.setDateTime(expires_at)
         else:
             self.ExpiresSelector.setCurrentText('No')
         self.ExpiresFrame.setVisible(expires_at is not None)
 
-        self.FavouriteButton.set(API.item['is_favourite'])
+        self.FavouriteButton.state = API.item['is_favourite']
         self.TitleInput.setText(API.item['title'])
         self.TitleInput.setEnabled(False)
         self.ImageButton.setIcon(Icon(API.item['icon']).icon)
@@ -373,8 +367,8 @@ class RightPagesItem(Frame):
         if not len(title := self.TitleInput.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         created_item = await API.create_item(API.category['id'], {
-            'icon': self.ImageButton.image_bytes_str, 'description': self.DescriptionInput.toPlainText(),
-            'title': title, 'is_favourite': self.FavouriteButton.is_favourite
+            'icon': self.ImageButton.bytes, 'description': self.DescriptionInput.toPlainText(),
+            'title': title, 'is_favourite': self.FavouriteButton.state
         })
         if item_id := created_item.get('id'):
             for identifier in API.field_identifiers:

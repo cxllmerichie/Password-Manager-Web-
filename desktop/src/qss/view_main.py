@@ -5,11 +5,7 @@ css = f'''
     background-color: {COLORS.TRANSPARENT};
 }}
 
-#MainViewSplitter {{
-    background-color: {COLORS.TRANSPARENT};
-}}
-
-#MainViewSplitter::handle {{
+#MainView::handle {{
     background-color: {COLORS.Palette.LAYER_3};
 }}
 '''

@@ -1,29 +1,29 @@
-from aioqui.widgets import Button, Label, LineInput, Layout, Spacer, Frame, Widget, Parent
-from aioqui.widgets.custom import ErrorLabel
-from aioqui.qasyncio import asyncSlot
+from aioqui.widgets import Button, Label, Input, Layout, Spacer, Frame, Widget, Parent
+from aioqui.widgets.custom import DurationLabel
+from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 import email_validator
 
 from ..misc import ICONS, API
-from .. import stylesheets
+from .. import qss
 
 
 class SignUp(Widget):
     def __init__(self, parent: Parent):
-        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_signup.css)
+        super().__init__(parent, self.__class__.__name__, qss=qss.view_signup.css)
 
     async def init(self) -> 'SignUp':
         self.setLayout(await Layout.vertical().init(
             spacing=10, alignment=Layout.VCenter,
             items=[
                 await Button(self, 'AuthExitBtn').init(
-                    icon=ICONS.CROSS, events=Button.Events(on_click=self.core.close)
+                    icon=ICONS.CROSS, on_click=self.core.close
                 ), Layout.RightTop,
-                Spacer(False, True),
+                Spacer(Spacer.Minimum, Spacer.Expanding),
                 await Label(self, 'InfoLbl').init(
                     text='Registration'
                 ), Layout.HCenter,
-                Spacer(False, True),
+                Spacer(Spacer.Minimum, Spacer.Expanding),
                 await Frame(self, 'InputFrameEmail').init(
                     layout=await Layout.vertical(self).init(
                         margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
@@ -31,8 +31,8 @@ class SignUp(Widget):
                             await Label(self, 'InputLabelEmail').init(
                                 text='Email'
                             ),
-                            await LineInput(self, 'InputFieldEmail').init(
-                                placeholder='address@domain.tld', events=LineInput.Events(on_change=self.validate_email)
+                            await Input.line(self, 'InputFieldEmail').init(
+                                placeholder='address@domain.tld', on_change=self.validate_email
                             )
                         ]
                     )
@@ -44,8 +44,8 @@ class SignUp(Widget):
                             await Label(self, 'InputLabelPassword').init(
                                 text='Password'
                             ),
-                            await LineInput(self, 'InputFieldPassword').init(
-                                placeholder='password', hidden=True, events=LineInput.Events(on_change=self.validate_password)
+                            await Input.line(self, 'InputFieldPassword').init(
+                                placeholder='password', hidden=True, on_change=self.validate_password
                             )
                         ]
                     )
@@ -57,22 +57,22 @@ class SignUp(Widget):
                             await Label(self, 'InputLabelConfpass').init(
                                 text='Confirm password'
                             ),
-                            await LineInput(self, 'InputFieldConfpass').init(
-                                placeholder='password', hidden=True, events=LineInput.Events(on_change=self.validate_confpass)
+                            await Input.line(self, 'InputFieldConfpass').init(
+                                placeholder='password', hidden=True, on_change=self.validate_confpass
                             )
                         ]
                     )
                 ), Layout.HCenter,
-                await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
+                await DurationLabel(self, 'ErrorLbl').init(
+                    wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 await Button(self, 'AuthTextBtn').init(
-                    text='Already have an account?', events=LineInput.Events(on_click=lambda: CONTEXT.CentralWidget.setCurrentIndex(0))
+                    text='Already have an account?', on_click=lambda: CONTEXT.CentralWidget.setCurrentIndex(0)
                 ), Layout.HCenter,
                 await Button(self, 'AuthMainBtn').init(
-                    text='Create Account', events=LineInput.Events(on_click=self.sign_up)
+                    text='Create Account', on_click=self.sign_up
                 ), Layout.HCenter,
-                Spacer(False, True)
+                Spacer(Spacer.Minimum, Spacer.Expanding)
             ]
         ))
         return self

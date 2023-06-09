@@ -4,14 +4,13 @@ from aioqui.widgets.extensions import SplitterWidgetExt
 from .right_pages_category import RightPagesCategory
 from .right_pages_item import RightPagesItem
 from ..misc import SIZES
-from .. import stylesheets
+from .. import qss
 
 
 class RightPages(SplitterWidgetExt, StackedWidget):
     def __init__(self, parent: Parent):
-        StackedWidget.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.right_pages.css)
-        SplitterWidgetExt.__init__(self, expand_to=SIZES.RightMenuDefault.w, orientation=StackedWidget.Horizontal,
-                                   expand_max=SIZES.RightMenuMax.w, expand_min=SIZES.RightMenuMin.w,)
+        StackedWidget.__init__(self, parent, self.__class__.__name__, qss=qss.right_pages.css)
+        SplitterWidgetExt.__init__(self, expand_to=SIZES.RightMenuDefault.w, expand_max=SIZES.RightMenuMax.w, expand_min=SIZES.RightMenuMin.w)
 
     async def init(self) -> 'RightPages':
         await super().init(

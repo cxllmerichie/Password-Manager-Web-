@@ -1,6 +1,6 @@
 from aioqui.widgets import Window
 from aioqui import CONTEXT
-from aioqui.qasyncio import asyncSlot
+from aioqui.asynq import asyncSlot
 
 
 class App(Window):
@@ -9,17 +9,15 @@ class App(Window):
     # with main created thread in `main.py` creating more threads in `assets`
 
     def __init__(self):
-        from . import stylesheets
+        from . import qss
 
-        super().__init__(self.__class__.__name__, stylesheet=stylesheets.status_bar.css +
-                                                             stylesheets.app.css)
+        super().__init__(self.__class__.__name__, qss=(
+            qss.status_bar.css,
+            qss.app.css
+        ))
 
     async def init(self) -> 'App':
         from .misc import SIZES
-        from .misc.const import db, tables
-
-        assert await db.create_pool()
-        await db.execute(tables)
 
         self.resize(SIZES.App)
         self.setWindowFlag(Window.Frameless)
@@ -28,10 +26,14 @@ class App(Window):
 
             _ = await IntroPopup(self).init()
         else:
+            from .misc.const import db, tables
             from .views.central_widget import CentralWidget
-            from .components import StatusBar
+            from .components import StatusBar, Panel
 
+            assert await db.create_pool()
+            await db.execute(tables)
             statusbar = await StatusBar(self).init()
+            self.setPanel(await Panel(self).init())
             self.setCentralWidget(await CentralWidget(self).init())
             self.setStatusBar(statusbar)
             await statusbar.post_init()

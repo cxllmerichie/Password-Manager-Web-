@@ -1,9 +1,10 @@
-from aioqui.widgets import Layout, Label, Selector, Frame, Button, Popup, StatusBar as CStatusBar
-from aioqui.qasyncio import asyncSlot
+from aioqui.widgets import Layout, Label, Selector, Frame, Button, StatusBar as CStatusBar
+from aioqui.widgets.custom import Popup
+from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
 from ..misc import API, ICONS
-from .. import stylesheets
+from .. import qss
 
 
 class StatusBar(CStatusBar):
@@ -12,17 +13,16 @@ class StatusBar(CStatusBar):
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
 
     async def init(self) -> 'StatusBar':
-        self.addWidget(await Frame(self, 'LeftFrame', stylesheet='border: none').init(
+        self.addWidget(await Frame(self, 'LeftFrame', qss='border: none').init(
             layout=await Layout.horizontal().init(
                 alignment=Layout.Left,
                 items=[
                     await Button(self, 'LogoutBtn').init(
-                        icon=ICONS.LOGOUT, text='Log out', events=Button.Events(
-                            on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                                message=f'Do you want to log out?',
-                                on_success=self.log_out
-                            )
-                        )
+                        icon=ICONS.LOGOUT, text='Log out', on_click=Popup(
+                            self.core, qss=qss.components.popup,
+                            message=f'Do you want to log out?',
+                            on_success=self.log_out
+                        ).display
                     )
                 ]
             )
@@ -35,7 +35,7 @@ class StatusBar(CStatusBar):
                         text='Storage type:'
                     ), Layout.Right,
                     await Selector(self, 'StorageSelector').init(
-                        events=Selector.Events(on_change=self.storage_selector_textchanged),
+                        on_change=self.storage_selector_textchanged,
                         items=[
                             Selector.Item(text=API.Storage.LOCAL),
                             Selector.Item(text=API.Storage.REMOTE),

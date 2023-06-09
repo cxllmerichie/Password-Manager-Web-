@@ -1,18 +1,19 @@
-from aioqui.widgets import Button, LineInput, Layout, Frame, Popup, Parent
-from aioqui.qasyncio import asyncSlot
-from aioqui.misc import explore_bytes
+from aioqui.widgets import Button, Input, Layout, Frame, Parent
+from aioqui.widgets.custom import Popup
+from aioqui.asynq import asyncSlot
+from aioqui.misc.fileops import explore_bytes
 from uuid import uuid4
 from typing import Any
 
 from ..misc import ICONS, API
-from .. import stylesheets
+from .. import qss
 
 
 class RightPagesItemAttachment(Frame):
     def __init__(self, parent: Parent, attachment: dict[str, Any], creating: bool):
         self.identifier = str(uuid4())
         name = f'Attachment{self.identifier}'
-        super().__init__(parent, name, stylesheet=stylesheets.right_pages_item_attachment.attachment(name))
+        super().__init__(parent, name, qss=qss.right_pages_item_attachment.attachment(name))
 
         self.creating = creating
         self.attachment = attachment
@@ -22,25 +23,24 @@ class RightPagesItemAttachment(Frame):
         self.setLayout(await Layout.horizontal().init(
             spacing=5,
             items=[
-                await LineInput(self, f'AttachmentFilenameInput').init(
-                    text=self.attachment['filename'], sizes=LineInput.Sizes(alignment=Layout.Center)
+                await Input.line(self, f'AttachmentFilenameInput').init(
+                    text=self.attachment['filename'], alignment=Layout.Center
                 ),
                 await Button(self, 'AttachmentShowBtn').init(
-                    icon=ICONS.EYE, events=Button.Events(on_click=self.execute_show)
+                    icon=ICONS.EYE, on_click=self.execute_show
                 ),
                 await Button(self, f'AttachmentEditBtn').init(
-                    icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), events=Button.Events(on_click=self.show_edit)
+                    icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), on_click=self.show_edit
                 ),
                 await Button(self, f'AttachmentSaveBtn').init(
-                    icon=ICONS.SAVE, events=Button.Events(on_click=self.execute_save)
+                    icon=ICONS.SAVE, on_click=self.execute_save
                 ),
                 await Button(self, f'AttachmentDeleteBtn').init(
-                    icon=ICONS.CROSS_CIRCLE, events=Button.Events(
-                        on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                            message=f'Delete attachment\n"{self.AttachmentFilenameInput.text()}"?',
-                            on_success=self.execute_delete
-                        )
-                    )
+                    icon=ICONS.CROSS_CIRCLE, on_click=Popup(
+                        self.core, qss=qss.components.popup,
+                        message=f'Delete attachment\n"{self.AttachmentFilenameInput.text()}"?',
+                        on_success=self.execute_delete
+                    ).display
                 ),
             ]
         ))

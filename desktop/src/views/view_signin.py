@@ -1,28 +1,28 @@
-from aioqui.widgets import Button, Label, LineInput, Frame, Layout, Spacer, Widget, Parent
-from aioqui.widgets.custom import ErrorLabel
-from aioqui.qasyncio import asyncSlot
+from aioqui.widgets import Button, Label, Input, Frame, Layout, Spacer, Widget, Parent
+from aioqui.widgets.custom import DurationLabel
+from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
 from ..misc import ICONS, API
-from .. import stylesheets
+from .. import qss
 
 
 class SignIn(Widget):
     def __init__(self, parent: Parent):
-        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.view_signin.css)
+        super().__init__(parent, self.__class__.__name__, qss=qss.view_signin.css)
 
     async def init(self) -> 'SignIn':
         self.setLayout(await Layout.vertical().init(
             spacing=10, alignment=Layout.VCenter,
             items=[
                 await Button(self, 'AuthExitBtn').init(
-                    icon=ICONS.CROSS, events=Button.Events(on_click=self.core.close)
+                    icon=ICONS.CROSS, on_click=self.core.close
                 ), Layout.RightTop,
-                Spacer(False, True),
+                Spacer(Spacer.Minimum, Spacer.Expanding),
                 await Label(self, 'InfoLbl').init(
                     text='Login'
                 ), Layout.HCenter,
-                Spacer(False, True),
+                Spacer(Spacer.Minimum, Spacer.Expanding),
                 await Frame(self, 'InputFrameEmail').init(
                     layout=await Layout.vertical(self).init(
                         margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
@@ -33,11 +33,11 @@ class SignIn(Widget):
                                         text='Email'
                                     ),
                                     await Button(self, 'InputLabelEmailEditBtn', False).init(
-                                        text='Edit', events=Button.Events(on_click=self.edit)
+                                        text='Edit', on_click=self.edit
                                     ), Layout.Right
                                 ]
                             ),
-                            await LineInput(self, 'InputFieldEmail').init(
+                            await Input.line(self, 'InputFieldEmail').init(
                                 placeholder='address@domain.tld'
                             )
                         ]
@@ -50,25 +50,25 @@ class SignIn(Widget):
                             await Label(self, 'InputLabelPassword').init(
                                 text='Password'
                             ),
-                            await LineInput(self, 'InputFieldPassword').init(
+                            await Input.line(self, 'InputFieldPassword').init(
                                 placeholder='password', hidden=True
                             )
                         ]
                     )
                 ), Layout.HCenter,
-                await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
+                await DurationLabel(self, 'ErrorLbl').init(
+                    wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 await Button(self, 'AuthTextBtn').init(
-                    text='Don\'t have an account?', events=Button.Events(on_click=lambda: CONTEXT.CentralWidget.setCurrentIndex(1))
+                    text='Don\'t have an account?', on_click=lambda: CONTEXT.CentralWidget.setCurrentIndex(1)
                 ), Layout.HCenter,
                 await Button(self, 'ContinueBtn').init(
-                    text='Continue', events=Button.Events(on_click=self.continue_log_in)
+                    text='Continue', on_click=self.continue_log_in
                 ), Layout.HCenter,
                 await Button(self, 'LogInBtn', False).init(
-                    text='Log In', events=Button.Events(on_click=self.log_in)
+                    text='Log In', on_click=self.log_in
                 ), Layout.HCenter,
-                Spacer(False, True)
+                Spacer(Spacer.Minimum, Spacer.Expanding)
             ]
         ))
         return self

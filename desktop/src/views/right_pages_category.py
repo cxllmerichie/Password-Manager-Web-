@@ -1,20 +1,22 @@
-from aioqui.widgets import Button, LineInput, Layout, Label, TextInput, Spacer, Frame, Popup, Parent
-from aioqui.widgets.custom import FavouriteButton, ImageButton, ErrorLabel
-from aioqui.misc import select_file
-from aioqui.qasyncio import asyncSlot
+from aioqui.widgets import Button, Input, Layout, Label, Spacer, Frame, Parent
+from aioqui.widgets.custom import StateButton, ImageButton, DurationLabel, Popup
+from aioqui.misc.fileops import select_file
+from aioqui.asynq import asyncSlot
 from aioqui.types import Icon
 from aioqui import CONTEXT
 from typing import Any
 
 from ..misc import ICONS, API, PATHS, SIZES, COLORS
-from .. import stylesheets
+from .. import qss
 
 
 class RightPagesCategory(Frame):
     def __init__(self, parent: Parent):
-        super().__init__(parent, self.__class__.__name__, stylesheet=stylesheets.right_pages_category.css +
-                                                                     stylesheets.components.favourite_button +
-                                                                     stylesheets.components.image_button(COLORS.DARK))
+        super().__init__(parent, self.__class__.__name__, qss=(
+            qss.right_pages_category.css,
+            qss.components.favourite_button,
+            qss.components.image_button(COLORS.DARK)
+        ))
 
     async def init(self) -> 'RightPagesCategory':
         self.setLayout(await Layout.vertical().init(
@@ -23,57 +25,54 @@ class RightPagesCategory(Frame):
                 await Layout.horizontal().init(
                     margins=(0, 0, 0, 20),
                     items=[
-                        await FavouriteButton(self).init(
-                            pre_slot=self.toggle_favourite, sizes=FavouriteButton.Sizes(fixed_size=SIZES.CONTROL)
+                        await StateButton(self, 'FavouriteButton').init(
+                            pre_slot=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn', False).init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), events=Button.Events(on_click=self.execute_edit),
-                            sizes=Button.Sizes(fixed_size=SIZES.CONTROL)
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), on_click=self.execute_edit, fix_size=SIZES.CONTROL
                         ),
                         await Button(self, 'DeleteBtn', False).init(
-                            icon=ICONS.TRASH.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
-                            events=Button.Events(
-                                on_click=lambda: Popup(self.core, stylesheet=stylesheets.components.popup).display(
-                                    message=f'Delete category\n\'{API.category["title"]}\'?',
-                                    on_success=self.execute_delete
-                                )
-                            ),
+                            icon=ICONS.TRASH.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
+                            on_click=lambda: Popup(
+                                self.core, qss=qss.components.popup, on_success=self.execute_delete,
+                                message=f'Delete category\n\'{API.category["title"]}\'?'
+                            ).display(),
                         ),
                         await Button(self, 'CloseBtn').init(
-                            icon=ICONS.CROSS.adjusted(size=(30, 30)), sizes=Button.Sizes(fixed_size=SIZES.CONTROL),
-                            events=Button.Events(on_click=CONTEXT.RightPages.shrink)
+                            icon=ICONS.CROSS.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
+                            on_click=CONTEXT.RightPages.shrink
                         ), Layout.Right
                     ]
                 ),
                 await ImageButton(self).init(
                     icon=ICONS.CATEGORY, directory=PATHS.ICONS
                 ), Layout.TopCenter,
-                await LineInput(self, 'TitleInput').init(
+                await Input.line(self, 'TitleInput').init(
                     placeholder='title'
                 ), Layout.Top,
-                await TextInput(self, 'DescriptionInput').init(
+                await Input.reach(self, 'DescriptionInput').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Label(self, 'HintLbl1', False).init(
-                    wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
+                    wrap=True, alignment=Layout.Center,
                     text='Hint: Create category like "Social Media" to store your Twitter, Facebook or Instagram personal data'
                 ),
-                Spacer(False, True),
-                await ErrorLabel(self, 'ErrorLbl').init(
-                    wrap=True, sizes=ErrorLabel.Sizes(alignment=Layout.Center)
+                Spacer(Spacer.Minimum, Spacer.Expanding),
+                await DurationLabel(self, 'ErrorLbl').init(
+                    wrap=True, alignment=Layout.Center
                 ), Layout.Center,
                 await Button(self, 'CreateBtn').init(
-                    text='Create', events=Button.Events(on_click=self.execute_create)
+                    text='Create', on_click=self.execute_create
                 ),
                 await Frame(self, 'SaveCancelFrame', False).init(
                     layout=await Layout.horizontal().init(
                         spacing=20,
                         items=[
                             await Button(self, 'SaveBtn').init(
-                                text='Save', events=Button.Events(on_click=self.execute_save)
+                                text='Save', on_click=self.execute_save
                             ),
                             await Button(self, 'CancelBtn').init(
-                                text='Cancel', events=Button.Events(on_click=self.execute_cancel)
+                                text='Cancel', on_click=self.execute_cancel
                             )
                         ]
                     )
@@ -81,10 +80,10 @@ class RightPagesCategory(Frame):
                 await Layout.horizontal().init(
                     items=[
                         await Button(self, 'ImportBtn', False).init(
-                            text='Import item', icon=ICONS.IMPORT, events=Button.Events(on_click=self.import_item)
+                            text='Import item', icon=ICONS.IMPORT, on_click=self.import_item
                         ),
                         await Button(self, 'AddItemBtn', False).init(
-                            text='Add item', icon=ICONS.PLUS, events=Button.Events(on_click=self.add_item)
+                            text='Add item', icon=ICONS.PLUS, on_click=self.add_item
                         )
                     ]
                 )
@@ -96,7 +95,7 @@ class RightPagesCategory(Frame):
     async def toggle_favourite(self):
         if not API.category:
             return True
-        updated_category = await API.set_category_favourite(API.category['id'], self.FavouriteButton.is_favourite)
+        updated_category = await API.set_category_favourite(API.category['id'], self.FavouriteButton.state)
         if category_id := updated_category.get('id'):
             self.ErrorLbl.setText('')
             await CONTEXT.LeftMenu.refresh_categories()
@@ -120,7 +119,7 @@ class RightPagesCategory(Frame):
         self.ImageButton.setIcon(ICONS.CATEGORY.icon)
         self.ImageButton.setDisabled(False)
         self.ImageButton.image_bytes = None
-        self.FavouriteButton.unset_favourite()
+        self.FavouriteButton.state = False
         self.TitleInput.setEnabled(True)
         self.TitleInput.setText('')
         self.DescriptionInput.setDisabled(False)
@@ -174,7 +173,7 @@ class RightPagesCategory(Frame):
         prev_icon = API.category['icon']
         updated_category = await API.update_category(API.category['id'], {
             'icon': self.ImageButton.image_bytes_str, 'title': title,
-            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
+            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.state
         })
         if category_id := updated_category.get('id'):
             CONTEXT.LeftMenu.refresh_categories()
@@ -202,7 +201,7 @@ class RightPagesCategory(Frame):
     @asyncSlot()
     async def show_category(self, category: dict[str, Any]):
         API.category = category
-        self.FavouriteButton.set(API.category['is_favourite'])
+        self.FavouriteButton.state = API.category['is_favourite']
         self.TitleInput.setEnabled(False)
         self.TitleInput.setText(API.category['title'])
         self.ImageButton.setIcon(Icon(API.category['icon']).icon)
@@ -230,7 +229,7 @@ class RightPagesCategory(Frame):
             return self.ErrorLbl.setText('Title can not be empty')
         created_category = await API.create_category({
             'icon': self.ImageButton.image_bytes_str, 'title': title,
-            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.is_favourite
+            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.state
         })
         if created_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()

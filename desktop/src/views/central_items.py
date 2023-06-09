@@ -1,19 +1,23 @@
 from aioqui.widgets import ScrollArea, Layout, Label, Frame, Parent
+from aioqui.widgets.extensions import SplitterWidgetExt
 from aioqui.widgets.custom import SearchBar
-from aioqui.qasyncio import asyncSlot
+from aioqui.asynq import asyncSlot
 from typing import Any
 from contextlib import suppress
 
 from ..misc import API
-from .. import stylesheets
+from .. import qss
 from ..components.central_item import CentralItem
 
 
-class CentralItems(Frame):
+class CentralItems(SplitterWidgetExt, Frame):
     def __init__(self, parent: Parent):
-        Frame.__init__(self, parent, self.__class__.__name__, stylesheet=stylesheets.central_items.css +
-                                                                         stylesheets.components.scroll +
-                                                                         stylesheets.components.search)
+        Frame.__init__(self, parent, self.__class__.__name__, qss=(
+            qss.central_items.css,
+            qss.components.scroll,
+            qss.components.search
+        ))
+        SplitterWidgetExt.__init__(self, ..., collapsible=False)
 
     async def init(self):
         await super().init(layout=await Layout.vertical().init(
@@ -21,15 +25,15 @@ class CentralItems(Frame):
             items=[
                 SearchBar(self, visible=False),
                 await ScrollArea(self, 'ItemsScrollArea', False).init(
-                    hpolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical,
+                    hspolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical,
                     alignment=Layout.TopCenter, spacing=10
                 ),
                 await Label(self, 'NoCategoriesLbl', False).init(
-                    wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
+                    wrap=True, alignment=Layout.Center,
                     text='This category does not have items yet'
                 ), Layout.Center,
                 await Label(self, 'HintLbl1').init(
-                    wrap=True, sizes=Label.Sizes(alignment=Layout.Center),
+                    wrap=True, alignment=Layout.Center,
                     text='Select some category in the left menu to see it\'s items',
                 ), Layout.Center,
             ]
@@ -72,9 +76,9 @@ class CentralItems(Frame):
                 self.ItemsScrollArea.addWidget(await Label(self, 'LetterLbl').init(text=letter))
             self.ItemsScrollArea.addWidget(await CentralItem(self).init(item))
         await self.SearchBar.init(
-            events=SearchBar.Events(on_change=self.searchbar_textchanged), placeholder='Search',
+            on_change=self.searchbar_textchanged, placeholder='Search',
             completer=SearchBar.Completer(
-                self.SearchBar, items=[i['title'] for i in items] + letters, stylesheet=stylesheets.components.search
+                self.SearchBar, items=[i['title'] for i in items] + letters, qss=qss.components.search
             )
         )
 
