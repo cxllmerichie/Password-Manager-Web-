@@ -42,7 +42,7 @@ async def _(category_id: int, category: schemas.CategoryCreate,
     return db_category
 
 
-@router.put('/categories/{category_id}/favourite/', name='Set item favourite by id', response_model=schemas.Category)
+@router.put('/categories/{category_id}/favourite/', name='Set category favourite by id', response_model=schemas.Category)
 async def _(category_id: int, is_favourite: bool,
             user: schemas.User = Depends(crud.get_current_user)):
     db_category = await (await db.update(dict(is_favourite=is_favourite), dict(id=category_id), schemas.Category, 'category', rel_depth=2)).first()

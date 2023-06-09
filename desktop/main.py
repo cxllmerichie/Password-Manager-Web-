@@ -1,32 +1,25 @@
-from aioqui.misc.server import Server, Config
-from aioqui.qasyncio import AsyncApp
-import loguru
-import sys
+from apidevtools.logman import LoggerManager
+from aioqui import qasyncio
 
-from src import App
-from api.app import app
-from api.const import API_HOST, API_PORT, LOG_CONFIG
+from src.app import App
+
+
+async def amain():
+    from aioqui import CONTEXT
+    from src.misc.const import db, tables
+
+    # CONTEXT['storage'] = None
+    # CONTEXT['token'] = None
+
+    assert await db.create_pool()
+    await db.execute(tables)
+    app = await App().init()
+    app.show()
 
 
 if __name__ == '__main__':
-    loguru.logger.disable('apidevtools')
-    loguru.logger.disable('aioqui')
-    loguru.logger.disable('__main__')
+    LoggerManager.disable('apidevtools')
+    LoggerManager.disable('aioqui')
+    LoggerManager.disable('__main__')
 
-    server = Server(config=Config(app, host=API_HOST, port=API_PORT, log_config=LOG_CONFIG))
-    with server.run_in_thread():
-        def on_close():
-            server.stop()
-            sys.exit(0)
-
-        async def run_app():
-            from aioqui import CONTEXT
-
-            CONTEXT['storage'] = None
-            CONTEXT['token'] = None
-
-            (await App().init(
-                on_close=on_close
-            )).show()
-
-        AsyncApp.run(run_app)
+    qasyncio.run(amain)

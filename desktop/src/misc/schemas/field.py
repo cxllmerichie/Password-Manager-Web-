@@ -24,6 +24,11 @@ class FieldBase(Schema):
         if key := await db.get(self.id):
             self.name = encryptor.decrypt(self.name, key, convert=True)
             self.value = encryptor.decrypt(self.value, key, convert=True)
+
+        self.id = str(self.id)
+        self.name = str(self.name)
+        self.value = str(self.value)
+
         return self
 
 

@@ -1,5 +1,6 @@
 from aioqui.widgets import Window
 from aioqui import CONTEXT
+from aioqui.qasyncio import asyncSlot
 
 
 class App(Window):
@@ -13,12 +14,7 @@ class App(Window):
         super().__init__(self.__class__.__name__, stylesheet=stylesheets.status_bar.css +
                                                              stylesheets.app.css)
 
-    async def init(
-            self, *,
-            on_close: callable = lambda: None
-    ) -> 'App':
-        self.on_close = on_close
-
+    async def init(self) -> 'App':
         from .misc import SIZES
 
         self.resize(SIZES.App)
@@ -37,6 +33,9 @@ class App(Window):
             await statusbar.post_init()
         return self
 
-    def close(self) -> bool:
-        self.on_close()
+    @asyncSlot()
+    async def close(self) -> bool:
+        from .misc.const import db
+
+        assert await db.close_pool()
         return super().close()

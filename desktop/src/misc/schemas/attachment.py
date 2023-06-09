@@ -26,6 +26,10 @@ class AttachmentBase(Schema):
         if key := await db.get(self.id):
             compressed = encryptor.decrypt(self.content, key, convert=True)
             self.content = str(zlib.decompress(compressed))
+
+        self.id = str(self.id)
+        self.content = str(self.content)
+
         return self
 
 

@@ -18,9 +18,9 @@ class ItemBase(Schema):
     icon: Optional[str | bytes] = Field(default=None)
     title: str = Field(default=..., min_length=1, max_length=50)
     description: Optional[str] = Field(default=None, max_length=250)
-    expires_at: Optional[datetime] = Field(default=None)
-    modified_at: datetime = Field(default=None)
-    created_at: datetime = Field(default=None)
+    expires_at: Optional[datetime] | str = Field(default=None)
+    modified_at: datetime | str = Field(default=None)
+    created_at: datetime | str = Field(default=None)
     is_favourite: bool = Field(default=False)
 
     async def into_db(self) -> Schema:
@@ -41,6 +41,12 @@ class ItemBase(Schema):
     async def from_db(self) -> Schema:
         # self.icon = str(zlib.decompress(self.icon))
         self.icon = str(self.icon)
+
+        self.icon = str(self.icon)
+        # self.expires_at = str(self.expires_at)
+        # self.modified_at = str(self.modified_at)
+        # self.created_at = str(self.created_at)
+
         return self
 
 

@@ -1,17 +1,8 @@
-from apidevtools.simpleorm import ORM
 from apidevtools.simpleorm.connectors.sqlite import SQLite
-import ast
+from apidevtools.simpleorm import ORM
 from typing import Any
-
-
-API_HOST: str = '127.0.0.1'
-API_PORT: int = 8888
-API_CORS_ORIGINS: list[str] = ['localhost']
-
-LOG_CONFIG: dict[str, Any] = {
-    'version': 1,
-    'disable_existing_loggers': True,
-}
+from asyncio import AbstractEventLoop, get_event_loop
+import ast
 
 
 class ORMNMap(ORM):
@@ -56,7 +47,13 @@ class ORMNMap(ORM):
             return None
 
 
-db = ORMNMap(connector=SQLite(database='.local.db'))
+db = ORMNMap(
+    connector=SQLite(
+        database='.db'
+    )
+)
+
+LOOP: AbstractEventLoop = get_event_loop()
 
 
 tables: str = '''
