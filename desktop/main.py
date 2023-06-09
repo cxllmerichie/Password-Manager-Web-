@@ -6,13 +6,10 @@ from src.app import App
 
 async def amain():
     from aioqui import CONTEXT
-    from src.misc.const import db, tables
 
     # CONTEXT['storage'] = None
     # CONTEXT['token'] = None
 
-    assert await db.create_pool()
-    await db.execute(tables)
     app = await App().init()
     app.show()
 

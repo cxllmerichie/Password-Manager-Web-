@@ -16,6 +16,10 @@ class App(Window):
 
     async def init(self) -> 'App':
         from .misc import SIZES
+        from .misc.const import db, tables
+
+        assert await db.create_pool()
+        await db.execute(tables)
 
         self.resize(SIZES.App)
         self.setWindowFlag(Window.Frameless)
