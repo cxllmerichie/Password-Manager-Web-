@@ -1,4 +1,4 @@
-from aioqui.widgets import Label, Layout, ScrollArea, Button, Widget, Parent
+from aioqui.widgets import Label, Layout, ScrollArea, Button, Frame, Parent
 from aioqui.widgets.custom import TotalButton, SearchBar
 from aioqui.widgets.extensions import SplitterWidgetExt
 from aioqui.asynq import asyncSlot
@@ -12,12 +12,10 @@ from ..components import LabelExtended
 from .. import qss
 
 
-class LeftMenu(SplitterWidgetExt, Widget):
+class LeftMenu(SplitterWidgetExt, Frame):
     def __init__(self, parent: Parent):
-        Widget.__init__(self, parent, self.__class__.__name__, qss=(
-            qss.left_menu.css,
-            qss.components.scroll,
-            qss.components.search
+        Frame.__init__(self, parent, self.__class__.__name__, qss=(
+            qss.left_menu.css, qss.components.scroll, qss.components.search
         ))
         SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
 

@@ -9,17 +9,17 @@ from ..misc import ICONS, API
 from .. import qss
 
 
-class RightPagesItemAttachment(Frame):
+class ItemAttachment(Frame):
     def __init__(self, parent: Parent, attachment: dict[str, Any], creating: bool):
         self.identifier = str(uuid4())
         name = f'Attachment{self.identifier}'
-        super().__init__(parent, name, qss=qss.right_pages_item_attachment.attachment(name))
+        super().__init__(parent, name, qss=qss.item_attachment.attachment(name))
 
         self.creating = creating
         self.attachment = attachment
         API.attachment_identifiers.append(self.identifier)
 
-    async def init(self) -> 'RightPagesItemAttachment':
+    async def init(self) -> 'ItemAttachment':
         self.setLayout(await Layout.horizontal().init(
             spacing=5,
             items=[

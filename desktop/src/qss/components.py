@@ -78,55 +78,7 @@ QListView::item:hover {{
 }}
 '''
 
-date_time_picker = f'''
-#ExpiresSelector QAbstractItemView,
-#DateTimePickerDaySelector QAbstractItemView,
-#DateTimePickerMonthSelector QAbstractItemView,
-#DateTimePickerYearSelector QAbstractItemView,
-#DateTimePickerHourSelector QAbstractItemView,
-#DateTimePickerMinuteSelector QAbstractItemView,
-#DateTimePickerSecondSelector QAbstractItemView {{
-    border: none;
-    color: white;
-    background-color: {COLORS.PANEL};
-}}
-
-#DateTimePickerDaySelector,
-#DateTimePickerMonthSelector,
-#DateTimePickerYearSelector,
-#DateTimePickerHourSelector,
-#DateTimePickerMinuteSelector,
-#DateTimePickerSecondSelector,
-#ExpiresSelector {{
-    border: none;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-    background-color: {COLORS.TRANSPARENT};
-}}
-
-#DateTimePickerDaySelector,
-#DateTimePickerMonthSelector,
-#DateTimePickerYearSelector,
-#DateTimePickerHourSelector,
-#DateTimePickerMinuteSelector {{
-    min-width: 25px;
-}}
-
-#DateTimePickerYearSelector,
-#DateTimePickerSecondSelector {{
-    min-width: 45px;
-}}
-
-#DateTimePickerDateLbl,
-#DateTimePickerTimeLbl {{
-    font-size: 12px;
-    color: white;
-    font-weight: bold;
-}}
-'''
-
-fullscreen_popup = f'''
+intro_popup = f'''
 #FullscreenPopup {{
     background-color: {COLORS.HOVER};
 }}

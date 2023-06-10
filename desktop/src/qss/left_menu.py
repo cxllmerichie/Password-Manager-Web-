@@ -22,13 +22,13 @@ css = f'''
 
 #AllItemsBtnIconBtn,
 #FavItemsBtnIconBtn,
-#MenuButtonIconBtn {{
+#TotalButtonIconBtn {{
     background-color: {COLORS.TRANSPARENT};
 }}
 
 #AllItemsBtnTextLbl,
 #FavItemsBtnTextLbl,
-#MenuButtonTextLbl {{
+#TotalButtonTextLbl {{
     background-color: {COLORS.TRANSPARENT};
     font-size: 20px;
     color: {COLORS.TEXT_PRIMARY};
@@ -36,7 +36,7 @@ css = f'''
 
 #AllItemsBtnTotalLbl,
 #FavItemsBtnTotalLbl,
-#MenuButtonTotalLbl {{
+#TotalButtonTotalLbl {{
     background-color: {COLORS.TRANSPARENT};
     font-size: 14px;
     color: {COLORS.TEXT_PRIMARY};
@@ -46,7 +46,7 @@ css = f'''
     max-height: 18px;
 }}
 
-#MenuButton {{
+#TotalButton {{
     background-color: {COLORS.DARK};
     min-height: 40px;
     color: {COLORS.TEXT_PRIMARY};
@@ -65,7 +65,7 @@ css = f'''
 
 #AllItemsBtn:hover,
 #FavItemsBtn:hover,
-#MenuButton:hover {{
+#TotalButton:hover {{
     background-color: {COLORS.HOVER};
 }}
 

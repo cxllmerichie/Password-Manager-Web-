@@ -9,16 +9,16 @@ from ..misc import ICONS, API
 from .. import qss
 
 
-class RightPagesItemField(Frame):
+class ItemField(Frame):
     def __init__(self, parent: Parent, field: dict[str, Any]):
         self.identifier = str(uuid4())
         name = f'Field{self.identifier}'
-        super().__init__(parent, name, qss=qss.right_pages_item_field.field(name))
+        super().__init__(parent, name, qss=qss.item_field.field(name))
 
         self.field = field
         API.field_identifiers.append(self.identifier)
 
-    async def init(self) -> 'RightPagesItemField':
+    async def init(self) -> 'ItemField':
         self.setLayout(await Layout.horizontal().init(
             spacing=5,
             items=[

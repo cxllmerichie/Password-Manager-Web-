@@ -13,7 +13,7 @@ class CentralItem(Frame):
     async def init(self, item: dict[str, Any]) -> 'CentralItem':
         await super().init(
             on_click=lambda: CONTEXT.RightPagesItem.show_item(item),
-            layout=await Layout.horizontal(self, 'ItemLayout').init(
+            layout=await Layout.horizontal(self).init(
                 margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
                 items=[
                     await Label(self, 'ItemIconLbl').init(

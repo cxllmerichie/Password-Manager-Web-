@@ -11,16 +11,12 @@ class App(Window):
     def __init__(self):
         from . import qss
 
-        super().__init__(self.__class__.__name__, qss=(
-            qss.status_bar.css,
-            qss.app.css
-        ))
+        super().__init__(self.__class__.__name__, qss=(qss.status_bar.css, qss.app.css))
 
     async def init(self) -> 'App':
         from .misc import SIZES
 
         self.resize(SIZES.App)
-        self.setWindowFlag(Window.Frameless)
         if not CONTEXT['storage']:
             from .components import IntroPopup
 

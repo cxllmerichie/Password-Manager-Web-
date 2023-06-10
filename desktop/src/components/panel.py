@@ -1,8 +1,9 @@
-from PySide6.QtCore import Qt
 from aioqui.widgets import Button, Label, Layout, Frame, Panel as CPanel, Spacer, Parent
+from PySide6.QtCore import Qt
 from aioqui import CONTEXT
 from PySide6.QtGui import QMouseEvent
 from contextlib import suppress
+
 
 from ..misc import ICONS, SIZES
 from .. import qss
@@ -53,7 +54,7 @@ class Panel(CPanel):
         self.core.setProperty('position', event.globalPos())
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if event.buttons() & Qt.LeftButton:
+        if event.buttons() is Qt.LeftButton:
             with suppress(Exception):  # when moving core through panel clicking on panel child ui item
                 delta = event.globalPos() - self.core.property('position')
                 self.core.move(self.core.x() + delta.x(), self.core.y() + delta.y())

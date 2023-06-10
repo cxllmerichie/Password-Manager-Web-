@@ -9,7 +9,7 @@ from typing import Any
 from datetime import datetime
 
 from ..misc import ICONS, API, PATHS, SIZES
-from ..components import RightPagesItemField, RightPagesItemAttachment
+from ..components import ItemField, ItemAttachment
 from .. import qss
 
 
@@ -19,8 +19,7 @@ class RightPagesItem(Frame):
             qss.right_pages_item.css,
             qss.components.scroll,
             qss.components.image_button(),
-            qss.components.favourite_button,
-            qss.components.date_time_picker
+            qss.components.favourite_button
         ))
 
     async def init(self) -> 'RightPagesItem':
@@ -90,7 +89,7 @@ class RightPagesItem(Frame):
                                 alignment=Layout.Top, spacing=5,
                                 items=[
                                     await Selector(self, 'ExpiresSelector').init(
-                                        on_change=lambda: self.DateTimePicker.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
+                                        on_change=lambda: self.DateTime.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
                                         items=[
                                             Selector.Item(text='No'),
                                             Selector.Item(text='Yes'),
@@ -99,7 +98,7 @@ class RightPagesItem(Frame):
                                     await Label(self, 'ExpiresLbl').init(
 
                                     ),
-                                    await DateTime(self, 'DateTimePicker', False).init(
+                                    await DateTime(self, 'DateTime', False).init(
 
                                     )
                                 ]
@@ -179,7 +178,7 @@ class RightPagesItem(Frame):
     async def add_field(self, field: dict[str, Any] = None):
         self.HintLbl2.setVisible(False)
         layout = self.FieldScrollArea.widget().layout()
-        layout.addWidget(await RightPagesItemField(self, field).init())
+        layout.addWidget(await ItemField(self, field).init())
 
     @asyncSlot()
     async def add_attachment(self, attachment: dict[str, Any] = None):
@@ -190,7 +189,7 @@ class RightPagesItem(Frame):
         if attachment:
             self.HintLbl3.setVisible(False)
             layout = self.AttachmentScrollArea.widget().layout()
-            layout.addWidget(await RightPagesItemAttachment(self, attachment, creating).init())
+            layout.addWidget(await ItemAttachment(self, attachment, creating).init())
 
     @asyncSlot()
     async def execute_edit(self):
@@ -201,13 +200,13 @@ class RightPagesItem(Frame):
         self.ExpiresLbl.setVisible(False)
         self.ExpiresSelector.setVisible(True)
         if expires_at := API.item['expires_at']:
-            self.DateTimePicker.setDateTime(expires_at)
-            self.DateTimePicker.setVisible(True)
+            self.DateTime.setDateTime(expires_at)
+            self.DateTime.setVisible(True)
             self.ExpiresSelector.setCurrentText('Yes')
         else:
             self.ExpiresSelector.setCurrentText('No')
-            self.DateTimePicker.setVisible(False)
-            self.DateTimePicker.setDateTime(datetime.now())
+            self.DateTime.setVisible(False)
+            self.DateTime.setDateTime(datetime.now())
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
         self.DeleteBtn.setVisible(True)
@@ -240,7 +239,7 @@ class RightPagesItem(Frame):
             return self.ErrorLbl.setText('Title can not be empty')
         expires_at = None
         if self.ExpiresSelector.currentText() == 'Yes':
-            expires_at = str(self.DateTimePicker.dateTime())
+            expires_at = str(self.DateTime.dateTime())
         prev_icon = API.item['icon']
         updated_category = await API.update_item(API.item['id'], {
             'icon': self.ImageButton.bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
@@ -260,10 +259,10 @@ class RightPagesItem(Frame):
     async def execute_cancel(self):
         self.ExportBtn.setVisible(True)
         self.ModifiedFrame.setVisible(bool(API.item and API.item['modified_at']))
-        if API.item and API.item['expires_at']:
-            self.ExpiresFrame.setVisible(True)
+        if expires := (API.item and API.item['expires_at']):
             self.ExpiresSelector.setVisible(False)
-            self.DateTimePicker.setVisible(False)
+            self.DateTime.setVisible(False)
+        self.ExpiresFrame.setVisible(bool(expires))
 
         self.CreatedFrame.setVisible(True)
         self.ErrorLbl.setText('')
@@ -317,18 +316,18 @@ class RightPagesItem(Frame):
 
         self.CreatedFrame.setVisible(True)
         if created_at := item['created_at']:
-            self.CreatedLbl.setText(created_at.strftime(DateTime.defstrf))
+            self.CreatedLbl.setText(created_at.strftime(DateTime.format))
 
         if modified_at := item['modified_at']:
-            self.ModifiedLbl.setText(modified_at.strftime(DateTime.defstrf))
+            self.ModifiedLbl.setText(modified_at.strftime(DateTime.format))
         self.ModifiedFrame.setVisible(modified_at is not None)
 
         if expires_at := item['expires_at']:
-            self.ExpiresLbl.setText(expires_at.strftime(DateTime.defstrf))
+            self.ExpiresLbl.setText(expires_at.strftime(DateTime.format))
             self.ExpiresLbl.setVisible(True)
             self.ExpiresSelector.setVisible(False)
-            self.DateTimePicker.setVisible(False)
-            self.DateTimePicker.setDateTime(expires_at)
+            self.DateTime.setVisible(False)
+            self.DateTime.setDateTime(expires_at)
         else:
             self.ExpiresSelector.setCurrentText('No')
         self.ExpiresFrame.setVisible(expires_at is not None)

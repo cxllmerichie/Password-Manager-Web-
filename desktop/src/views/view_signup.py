@@ -8,7 +8,7 @@ from ..misc import ICONS, API
 from .. import qss
 
 
-class SignUp(Widget):
+class SignUp(Frame):
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=qss.view_signup.css)
 

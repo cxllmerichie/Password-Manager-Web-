@@ -1,4 +1,4 @@
-from aioqui.widgets import Widget, Label, Layout, Spacer, Button, Frame, Parent
+from aioqui.widgets import Label, Layout, Spacer, Button, Frame, Parent
 from aioqui.widgets.custom import Popup
 from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
@@ -8,9 +8,9 @@ from .. import qss
 from ..misc import ICONS, API
 
 
-class IntroPopup(Widget):
+class IntroPopup(Frame):
     def __init__(self, parent: Parent):
-        super().__init__(parent, self.__class__.__name__, qss=qss.components.fullscreen_popup)
+        super().__init__(parent, self.__class__.__name__, qss=qss.components.intro_popup)
 
     async def init(self) -> 'IntroPopup':
         self.setLayout(await Layout.vertical().init(
@@ -23,11 +23,11 @@ class IntroPopup(Widget):
                     layout=await Layout.vertical().init(
                         alignment=Layout.Center, spacing=10,
                         items=[
-                            Spacer(Spacer.Minimum, Spacer.Expanding),
+                            Spacer(hpolicy=Spacer.Expanding),
                             await Label(self, 'StorageLbl').init(
                                 text='How do you want to store your data?', alignment=Layout.Center
                             ),
-                            Spacer(Spacer.Minimum, Spacer.Expanding),
+                            Spacer(hpolicy=Spacer.Expanding),
                             await Layout.horizontal().init(
                                 items=[
                                     LocalBtn := await Button(self, 'StorageBtn').init(
@@ -41,7 +41,7 @@ class IntroPopup(Widget):
                             await Label(self, 'HintLbl1').init(
                                 wrap=True, alignment=Layout.Center
                             ),
-                            Spacer(Spacer.Minimum, Spacer.Expanding),
+                            Spacer(hpolicy=Spacer.Expanding),
                             await Label(self, 'HintLbl2').init(
                                 wrap=True, alignment=Layout.Center,
                                 text='You will be able to change your choice any time after pressing "Continue" in the '
@@ -50,7 +50,7 @@ class IntroPopup(Widget):
                             await Button(self, 'ContinueBtn').init(
                                 text='Continue', on_click=self.execute_continue
                             ),
-                            Spacer(Spacer.Minimum, Spacer.Expanding),
+                            Spacer(hpolicy=Spacer.Expanding),
                         ]
                     )
                 )

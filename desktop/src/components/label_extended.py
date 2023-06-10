@@ -3,7 +3,7 @@ from aioqui.widgets import Frame, Label, Layout, Parent
 
 class LabelExtended(Frame):
     def __init__(self, parent: Parent, name: str, visible: bool = True):
-        Frame.__init__(self, parent, f'{name}Frame', visible)
+        super().__init__(parent, f'{name}Frame', visible)
         self.__name = name
 
     async def init(

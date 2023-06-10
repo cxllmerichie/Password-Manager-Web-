@@ -1,8 +1,8 @@
 from aioqui.widgets import StackedWidget, Parent
 from aioqui.widgets.extensions import SplitterWidgetExt
 
-from .right_pages_category import RightPagesCategory
-from .right_pages_item import RightPagesItem
+from .rp_category import RightPagesCategory
+from .rp_item import RightPagesItem
 from ..misc import SIZES
 from .. import qss
 
