@@ -4,7 +4,6 @@ from aioqui import CONTEXT
 from PySide6.QtGui import QMouseEvent
 from contextlib import suppress
 
-
 from ..misc import ICONS, SIZES
 from .. import qss
 
@@ -24,7 +23,7 @@ class Panel(PanelBase):
                 await Label(self, 'TitleLbl').init(
                     text='Password Manager'
                 ), Layout.Left,
-                await Label(self, 'TitleLbl').init(
+                await Label(self, 'TitleImg').init(
                     icon=ICONS.APP
                 ), Layout.Left,
                 Spacer(Spacer.Expanding, Spacer.Expanding),

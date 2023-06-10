@@ -12,7 +12,7 @@ class IntroPopup(Frame):
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=qss.components.intro_popup)
 
-    async def init(self) -> 'IntroPopup':
+    async def display(self):
         self.setLayout(await Layout.vertical().init(
             spacing=10,
             items=[
@@ -59,7 +59,6 @@ class IntroPopup(Frame):
         self.LocalBtn = LocalBtn
         self.RemoteBtn = RemoteBtn
         await self.set_storage_local()
-        return self
 
     @asyncSlot()
     async def execute_continue(self):

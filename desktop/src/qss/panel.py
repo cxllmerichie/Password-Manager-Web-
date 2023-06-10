@@ -32,9 +32,14 @@ css: str = f'''
     background-color: {COLORS.RED};
 }}
 
+#TitleImg,
 #TitleLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
     font-weight: bold;
+}}
+
+#TitleLbl {{
+    padding-left: 5px;
 }}
 '''

@@ -87,7 +87,7 @@ css: str = f'''
 }}
 
 #TitleInp,
-#DescrInp {{
+#DescInp {{
     border: none;
     background-color: {COLORS.LIGHT};
     color: {COLORS.TEXT_PRIMARY};

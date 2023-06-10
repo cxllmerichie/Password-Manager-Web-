@@ -3,7 +3,7 @@ from aioqui.widgets.custom import DurationLabel
 from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
-from ..misc import ICONS, API
+from ..misc import API
 from .. import qss
 
 

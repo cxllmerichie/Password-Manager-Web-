@@ -35,7 +35,6 @@ class StatusBar(StatusBarBase):
                         text='Storage type:'
                     ), Layout.Right,
                     await Selector(self, 'StorageSelector').init(
-                        on_change=self.storage_selector_textchanged,
                         items=[
                             Selector.Item(text=Storage.LOCAL),
                             Selector.Item(text=Storage.REMOTE),
@@ -47,22 +46,21 @@ class StatusBar(StatusBarBase):
         self.addWidget(await Frame(self, 'RightFrame').init(
 
         ), 3)
+        # order matters, since `currentText` is initial, and we do not want to trigger `textChanged`
+        self.StorageSelector.setCurrentText(CONTEXT['storage'])
+        self.StorageSelector = await self.StorageSelector.init(on_change=self.storage_selector_textchanged)
         return self
 
     def log_out(self):
         CONTEXT['token'] = None
         self.StorageSelector.setCurrentText(Storage.REMOTE)
 
-    async def post_init(self):
-        self.StorageSelector.setCurrentText(CONTEXT['storage'])
-
     @asyncSlot()
     async def storage_selector_textchanged(self):
         # if trying to switch to remote, but api is not active at the moment
         if self.StorageSelector.currentText() == Storage.REMOTE and not await API.is_connected():
             await Popup(self.core).display(
-                buttons=[Popup.OK],
-                message='Remote storage is not available at the moment'
+                message='Remote storage is not available at the moment', buttons=[Popup.OK],
             )
             return self.StorageSelector.setCurrentText(Storage.LOCAL)
         CONTEXT['storage'] = self.StorageSelector.currentText()
