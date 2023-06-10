@@ -23,7 +23,7 @@ class Attachment(Frame):
         self.setLayout(await Layout.horizontal().init(
             spacing=5,
             items=[
-                await Input.line(self, f'FilenameInput').init(
+                await Input.line(self, f'FilenameInp').init(
                     text=self.attachment['filename'], alignment=Layout.Center
                 ),
                 await Button(self, 'ShowBtn').init(
@@ -38,7 +38,7 @@ class Attachment(Frame):
                 await Button(self, f'DeleteBtn').init(
                     icon=ICONS.CROSS_CIRCLE, on_click=Popup(
                         self.core, qss=qss.components.popup,
-                        message=f'Delete attachment\n"{self.FilenameInput.text()}"?',
+                        message=f'Delete attachment\n"{self.FilenameInp.text()}"?',
                         on_success=self.execute_delete
                     ).display
                 ),
@@ -50,22 +50,22 @@ class Attachment(Frame):
     @asyncSlot()
     async def show_attachment(self):
         if not self.creating and API.item:  # add ui attachment to existing item
-            self.FilenameInput.setText(self.attachment['filename'])
-            self.FilenameInput.setDisabled(True)
+            self.FilenameInp.setText(self.attachment['filename'])
+            self.FilenameInp.setDisabled(True)
             self.DeleteBtn.setVisible(False)
             self.SaveBtn.setVisible(False)
             self.EditBtn.setVisible(True)
             self.ShowBtn.setVisible(True)
             # self.AttachmentDownloadBtn.setVisible(True)
         elif API.item:  # creating attachment for existing item
-            self.FilenameInput.setDisabled(False)
+            self.FilenameInp.setDisabled(False)
             self.DeleteBtn.setVisible(True)
             self.SaveBtn.setVisible(True)
             self.EditBtn.setVisible(False)
             self.ShowBtn.setVisible(False)
             # self.AttachmentDownloadBtn.setVisible(False)
         else:  # creating attachment while creating item
-            self.FilenameInput.setDisabled(False)
+            self.FilenameInp.setDisabled(False)
             self.DeleteBtn.setVisible(True)
             self.EditBtn.setVisible(False)
             self.SaveBtn.setVisible(False)
@@ -82,7 +82,7 @@ class Attachment(Frame):
     @asyncSlot()
     async def execute_save(self):
         if not self.creating:
-            self.attachment['filename'] = self.FilenameInput.text()
+            self.attachment['filename'] = self.FilenameInp.text()
             response = await API.update_attachment(self.attachment['id'], self.attachment)
         else:
             response = await API.add_attachment(API.item['id'], self.attachment)
@@ -121,4 +121,4 @@ class Attachment(Frame):
         self.EditBtn.setVisible(False)
         self.ShowBtn.setVisible(False)
         # self.AttachmentDownloadBtn.setVisible(False)
-        self.FilenameInput.setDisabled(False)
+        self.FilenameInp.setDisabled(False)

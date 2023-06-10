@@ -1,8 +1,5 @@
 from aioqui.widgets import Button, Label, Layout, Frame, Panel as PanelBase, Spacer, Parent
-from PySide6.QtCore import Qt
 from aioqui import CONTEXT
-from PySide6.QtGui import QMouseEvent
-from contextlib import suppress
 
 from ..misc import ICONS, SIZES
 from .. import qss
@@ -14,7 +11,6 @@ class Panel(PanelBase):
 
     async def init(self) -> 'Panel':
         self.setLayout(await Layout.horizontal().init(
-            spacing=10,
             items=[
                 await Button(self, 'ToggleMenuBtn').init(
                     icon=ICONS.MENU,
@@ -37,7 +33,7 @@ class Panel(PanelBase):
                             ),
                             await Button(self, 'RestoreBtn').init(
                                 icon=ICONS.RESTORE, fix_size=SIZES.PanelNavigationBtn,
-                                on_click=lambda: self.core.showNormal() if self.core.isMaximized() else self.core.showMaximized()
+                                on_click=self.core.showToggle
                             ),
                             await Button(self, 'CloseBtn').init(
                                 icon=ICONS.CROSS, fix_size=SIZES.PanelNavigationBtn, on_click=self.core.close
@@ -48,13 +44,3 @@ class Panel(PanelBase):
             ]
         ))
         return self
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        self.core.setProperty('position', event.globalPos())
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if event.buttons() is Qt.LeftButton:
-            with suppress(Exception):  # when moving core through panel clicking on panel child ui item
-                delta = event.globalPos() - self.core.property('position')
-                self.core.move(self.core.x() + delta.x(), self.core.y() + delta.y())
-                self.core.setProperty('position', event.globalPos())

@@ -13,8 +13,8 @@ from .. import qss
 class RightPagesCategory(Frame):
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=(
-            qss.right_pages_category.css,
-            qss.components.image_button(COLORS.DARK)
+            qss.rp_category.css,
+            qss.components.image_button(COLORS.DARK),
         ))
 
     async def init(self) -> 'RightPagesCategory':
@@ -25,7 +25,7 @@ class RightPagesCategory(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         await StateButton(self, 'FavBtn').init(
-                            pre_slot=self.toggle_favourite, fix_size=SIZES.CONTROL
+                            event=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn', False).init(
                             icon=ICONS.EDIT.adjusted(size=(30, 30)), on_click=self.execute_edit, fix_size=SIZES.CONTROL
@@ -33,7 +33,7 @@ class RightPagesCategory(Frame):
                         await Button(self, 'DeleteBtn', False).init(
                             icon=ICONS.TRASH.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
                             on_click=lambda: Popup(
-                                self.core, qss=qss.components.popup, on_success=self.execute_delete,
+                                self.core, on_success=self.execute_delete,
                                 message=f'Delete category\n\'{API.category["title"]}\'?'
                             ).display(),
                         ),
@@ -91,10 +91,10 @@ class RightPagesCategory(Frame):
         return self
 
     @asyncSlot()
-    async def toggle_favourite(self):
+    async def toggle_favourite(self) -> bool:
         if not API.category:
             return True
-        updated_category = await API.set_category_favourite(API.category['id'], self.FavBtn.state)
+        updated_category = await API.set_category_favourite(API.category['id'], not self.FavBtn.state)
         if category_id := updated_category.get('id'):
             self.ErrorLbl.setText('')
             await CONTEXT.LeftMenu.refresh_categories()
@@ -171,7 +171,7 @@ class RightPagesCategory(Frame):
             return self.ErrorLbl.setText('Title can not be empty')
         prev_icon = API.category['icon']
         updated_category = await API.update_category(API.category['id'], {
-            'icon': self.ImageBtn.image_bytes_str, 'title': title,
+            'icon': self.ImageBtn.bytes, 'title': title,
             'description': self.DescInp.toPlainText(), 'is_favourite': self.FavBtn.state
         })
         if category_id := updated_category.get('id'):
@@ -227,7 +227,7 @@ class RightPagesCategory(Frame):
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
         created_category = await API.create_category({
-            'icon': self.ImageBtn.image_bytes_str, 'title': title,
+            'icon': self.ImageBtn.bytes, 'title': title,
             'description': self.DescInp.toPlainText(), 'is_favourite': self.FavBtn.state
         })
         if created_category.get('id'):

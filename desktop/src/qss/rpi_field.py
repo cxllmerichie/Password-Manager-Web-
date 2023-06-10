@@ -14,11 +14,29 @@ def field(name: str) -> str:
     #SaveBtn,
     #EditBtn {{
         border: none;
+        max-width: 20px;
+        min-width: 20px;
+        max-height: 20px;
+        min-height: 20px;
         border-radius: 9px;
     }}
     
-    #NameInput,
-    #ValueInput {{
+    #DeleteBtn {{
+        background-color: {COLORS.RED_HOVER};
+    }}
+    
+    #DeleteBtn:hover {{
+        background-color: {COLORS.RED};
+    }}
+    
+    #CopyBtn:hover,
+    #HideBtn:hover,
+    #EditBtn:hover {{
+        background-color: {COLORS.HOVER};
+    }}
+    
+    #NameInp,
+    #ValueInp {{
         color: {COLORS.TEXT_PRIMARY};
         border: none;
         min-height: 30px;
@@ -26,12 +44,12 @@ def field(name: str) -> str:
         font-size: 16px;
     }}
     
-    #NameInput {{
+    #NameInp {{
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
     }}
     
-    #ValueInput {{
+    #ValueInp {{
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
     }}

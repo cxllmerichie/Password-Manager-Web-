@@ -8,14 +8,6 @@ css: str = f'''
     max-height: {SIZES.Panel.h}px;
 }}
 
-#ToggleMenuBtn {{
-    background-color: {COLORS.TRANSPARENT};
-}}
-
-#ToggleMenuBtn:hover {{
-    background-color: {COLORS.LIGHT};
-}}
-
 #MinimizeBtn,
 #RestoreBtn,
 #CloseBtn {{
@@ -23,9 +15,14 @@ css: str = f'''
     background-color: {COLORS.TRANSPARENT};
 }}
 
+#ToggleMenuBtn {{
+    background-color: {COLORS.TRANSPARENT};
+}}
+
+#ToggleMenuBtn:hover,
 #MinimizeBtn:hover,
 #RestoreBtn:hover {{
-    background-color: {COLORS.LIGHT};
+    background-color: {COLORS.HOVER};
 }}
 
 #CloseBtn:hover {{

@@ -11,7 +11,11 @@ class App(Window):
     def __init__(self):
         from . import qss
 
-        super().__init__(self.__class__.__name__, qss=(qss.status_bar.css, qss.app.css))
+        super().__init__(self.__class__.__name__, qss=(
+            qss.status_bar.css,
+            qss.app.css,
+            qss.components.popup,  # non-obvious css, since all popups parent is `popup_layout_widget.core` == `self`
+        ))
 
     async def init(self) -> 'App':
         from .misc import SIZES

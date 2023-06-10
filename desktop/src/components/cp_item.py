@@ -26,7 +26,7 @@ class CentralItem(Frame):
                             ),
                             await Label(self, 'DescriptionLbl').init(
                                 text=item['description'], elide=Label.ElideRight, hpolicy=Label.Expanding
-                            )
+                            ),
                         ]
                     )
                 ]

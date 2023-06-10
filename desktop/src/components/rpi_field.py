@@ -22,14 +22,14 @@ class Field(Frame):
         self.setLayout(await Layout.horizontal().init(
             spacing=5,
             items=[
-                await Input.line(self, f'NameInput').init(
+                await Input.line(self, f'NameInp').init(
                     placeholder='name', alignment=Layout.Right
                 ),
-                await Input.line(self, f'ValueInput').init(
+                await Input.line(self, f'ValueInp').init(
                     placeholder='value'
                 ),
                 await StateButton(self, 'HideBtn').init(
-                    icon_true=ICONS.EYE, icon_false=ICONS.EYE_OFF, pre_slot=self.hide_value
+                    icon_true=ICONS.EYE, icon_false=ICONS.EYE_OFF, event=self.hide_value
                 ),
                 await Button(self, 'CopyBtn').init(
                     icon=ICONS.COPY, on_click=self.clipboard
@@ -41,11 +41,11 @@ class Field(Frame):
                     icon=ICONS.SAVE, on_click=self.execute_save
                 ),
                 await Button(self, f'DeleteBtn').init(
-                    icon=ICONS.CROSS_CIRCLE, on_click=Popup(
+                    icon=ICONS.CROSS_CIRCLE, on_click=lambda: Popup(
                         self.core, qss=qss.components.popup,
-                        message=f'Delete attachment\n"{self.NameInput.text()}"?',
+                        message=f'Delete attachment\n"{self.NameInp.text()}"?',
                         on_success=self.execute_delete
-                    ).display
+                    ).display()
                 )
             ]
         ))
@@ -58,11 +58,11 @@ class Field(Frame):
             self.HideBtn.setVisible(True)
             self.CopyBtn.setVisible(True)
             self.DeleteBtn.setVisible(False)
-            self.NameInput.setText(self.field['name'])
-            self.NameInput.setDisabled(True)
-            self.ValueInput.setText(self.field['value'])
-            self.ValueInput.hide_echo()
-            self.ValueInput.setDisabled(True)
+            self.NameInp.setText(self.field['name'])
+            self.NameInp.setDisabled(True)
+            self.ValueInp.setText(self.field['value'])
+            self.ValueInp.hide_echo()
+            self.ValueInp.setDisabled(True)
             self.SaveBtn.setVisible(False)
             self.EditBtn.setVisible(True)
         elif API.item:  # creating field for existing item
@@ -80,16 +80,16 @@ class Field(Frame):
 
     @asyncSlot()
     async def hide_value(self):
-        self.ValueInput.toggle_echo()
+        self.ValueInp.toggle_echo()
         return True
 
     @asyncSlot()
     async def clipboard(self):
-        QApplication.clipboard().setText(self.ValueInput.text())
+        QApplication.clipboard().setText(self.ValueInp.text())
 
     @asyncSlot()
     async def execute_save(self):
-        field = {'name': self.NameInput.text(), 'value': self.ValueInput.text()}
+        field = {'name': self.NameInp.text(), 'value': self.ValueInp.text()}
         if self.field:
             response = await API.update_field(self.field['id'], field)
         else:
@@ -128,6 +128,6 @@ class Field(Frame):
         self.SaveBtn.setVisible(True)
         self.DeleteBtn.setVisible(True)
         self.EditBtn.setVisible(False)
-        self.NameInput.setDisabled(False)
-        self.ValueInput.setDisabled(False)
-        self.ValueInput.show_echo()
+        self.NameInp.setDisabled(False)
+        self.ValueInp.setDisabled(False)
+        self.ValueInp.show_echo()

@@ -1,3 +1,5 @@
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QKeyEvent
 from aioqui.widgets import Button, Label, Input, Frame, Layout, Spacer, Parent
 from aioqui.widgets.custom import DurationLabel
 from aioqui.asynq import asyncSlot
@@ -30,7 +32,7 @@ class SignIn(Frame):
                                         text='Email'
                                     ),
                                     await Button(self, 'EditBtn', False).init(
-                                        text='Edit', on_click=self.edit
+                                        text='Edit', on_click=self.execute_edit
                                     ), Layout.Right
                                 ]
                             ),
@@ -70,8 +72,16 @@ class SignIn(Frame):
         ))
         return self
 
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
+            if self.ContinueBtn.isVisible():
+                self.ContinueBtn.click()
+            elif self.LogInBtn.isVisible():
+                self.LogInBtn.click()
+        super().keyPressEvent(event)
+
     @asyncSlot()
-    async def edit(self):
+    async def execute_edit(self):
         self.PasswordFrm.setVisible(False)
         self.EditBtn.setVisible(False)
         self.EmailInp.setEnabled(True)
@@ -101,3 +111,6 @@ class SignIn(Frame):
         if not (token := current_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
+        self.EmailInp.setText('')
+        self.PasswordInp.setText('')
+        await self.execute_edit()

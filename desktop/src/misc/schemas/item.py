@@ -32,7 +32,7 @@ class ItemBase(Schema):
                 await db.set(text, icon)
             self.icon = icon
         else:
-            self.icon = imgproc.crop(eval(self.icon)).bytes
+            self.icon = imgproc.crop(self.icon).bytes
         # self.icon = zlib.compress(self.icon)
         if not self.created_at:
             self.created_at = now_tz_naive()

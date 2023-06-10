@@ -1,10 +1,12 @@
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QKeyEvent
 from aioqui.widgets import Button, Label, Input, Layout, Spacer, Frame, Parent
 from aioqui.widgets.custom import DurationLabel
 from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 import email_validator
 
-from ..misc import ICONS, API
+from ..misc import API
 from .. import qss
 
 
@@ -16,11 +18,11 @@ class SignUp(Frame):
         self.setLayout(await Layout.vertical().init(
             spacing=10, alignment=Layout.VCenter,
             items=[
-                Spacer(Spacer.Minimum, Spacer.Expanding),
+                Spacer(hpolicy=Spacer.Expanding),
                 await Label(self, 'InfoLbl').init(
                     text='Registration'
                 ), Layout.HCenter,
-                Spacer(Spacer.Minimum, Spacer.Expanding),
+                Spacer(hpolicy=Spacer.Expanding),
                 await Frame(self, 'EmailFrm').init(
                     layout=await Layout.vertical(self).init(
                         margins=(5, 5, 5, 5), spacing=5, alignment=Layout.Center,
@@ -69,10 +71,15 @@ class SignUp(Frame):
                 await Button(self, 'MainBtn').init(
                     text='Create Account', on_click=self.sign_up
                 ), Layout.HCenter,
-                Spacer(Spacer.Minimum, Spacer.Expanding)
+                Spacer(hpolicy=Spacer.Expanding)
             ]
         ))
         return self
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
+            self.MainBtn.click()
+        super().keyPressEvent(event)
 
     @asyncSlot()
     async def validate_email(self):
@@ -113,4 +120,7 @@ class SignUp(Frame):
         })
         if not (token := created_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
+        self.EmailInp.setText('')
+        self.PasswordInp.setText('')
+        self.ConfpassInp.setText('')
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

@@ -16,7 +16,7 @@ from .. import qss
 class RightPagesItem(Frame):
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=(
-            qss.right_pages_item.css,
+            qss.rp_item.css,
             qss.components.scroll,
             qss.components.image_button()
         ))
@@ -29,7 +29,7 @@ class RightPagesItem(Frame):
                     margins=(0, 0, 0, 20),
                     items=[
                         await StateButton(self, 'FavBtn').init(
-                            pre_slot=self.toggle_favourite, fix_size=SIZES.CONTROL
+                            event=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn').init(
                             icon=ICONS.EDIT.adjusted(size=(30, 30)), on_click=self.execute_edit, fix_size=SIZES.CONTROL
@@ -223,7 +223,7 @@ class RightPagesItem(Frame):
     async def toggle_favourite(self) -> bool:
         if not API.item:
             return True
-        updated_category = await API.set_item_favourite(API.item['id'], self.FavBtn.state)
+        updated_category = await API.set_item_favourite(API.item['id'], not self.FavBtn.state)
         if category_id := updated_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()
             await CONTEXT.CentralItems.refresh_items()
@@ -337,7 +337,7 @@ class RightPagesItem(Frame):
         self.ImageBtn.setIcon(Icon(API.item['icon']).icon)
         self.ImageBtn.setDisabled(True)
         self.DescInp.setText(API.item['description'])
-        self.DescInp.setVisible(API.item['description'] is not None)
+        self.DescInp.setVisible(bool(API.item['description']))
         self.DescInp.setDisabled(True)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
@@ -372,7 +372,7 @@ class RightPagesItem(Frame):
             for identifier in API.field_identifiers:
                 field = self.findChild(QFrame, f'Field{identifier}')
                 await API.add_field(item_id, {
-                    'name': field.FieldNameInput.text(), 'value': field.FieldValueInput.text()
+                    'name': field.NameInp.text(), 'value': field.ValueInp.text()
                 })
             await CONTEXT.LeftMenu.refresh_categories()
             await CONTEXT.CentralItems.refresh_items()

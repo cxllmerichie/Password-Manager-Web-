@@ -13,7 +13,7 @@ from ..components.cp_item import CentralItem
 class CentralItems(SplitterWidgetExt, Frame):
     def __init__(self, parent: Parent):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
-            qss.central_items.css,
+            qss.menu_central.css,
             qss.components.scroll,
             qss.components.search
         ))

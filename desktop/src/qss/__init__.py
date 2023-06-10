@@ -1,4 +1,4 @@
 from . import (
-    app, right_pages_category, central_items, components, right_pages_item, left_menu, panel, right_pages,
-    view_signin, view_signup, status_bar, item_field, central_item, view_main, item_attachment
+    app, rp_category, menu_central, components, rp_item, menu_left, panel, menu_right_pages,
+    view_signin, view_signup, status_bar, rpi_field, central_item, view_main, rpi_attachment
 )

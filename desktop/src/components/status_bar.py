@@ -54,6 +54,7 @@ class StatusBar(StatusBarBase):
     def log_out(self):
         CONTEXT['token'] = None
         self.StorageSelector.setCurrentText(Storage.REMOTE)
+        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
 
     @asyncSlot()
     async def storage_selector_textchanged(self):

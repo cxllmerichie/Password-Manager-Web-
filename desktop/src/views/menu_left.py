@@ -15,7 +15,9 @@ from .. import qss
 class LeftMenu(SplitterWidgetExt, Frame):
     def __init__(self, parent: Parent):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
-            qss.left_menu.css, qss.components.scroll, qss.components.search
+            qss.menu_left.css,
+            qss.components.scroll,
+            qss.components.search
         ))
         SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
 

@@ -30,6 +30,7 @@ class CentralWidget(StackedWidget):
     @asyncSlot()
     async def current_widget_changed(self):
         CONTEXT.LogoutBtn.setVisible(CONTEXT['token'] is not None)
+
         is_main = self.currentWidget().objectName() == 'MainView'
         CONTEXT.Panel.ToggleMenuBtn.setVisible(is_main)
         if is_main:
