@@ -5,7 +5,7 @@ from aioqui import CONTEXT
 from .view_signin import SignIn
 from .view_signup import SignUp
 from .view_main import MainView
-from ..misc import API
+from ..misc import Storage
 
 
 class CentralWidget(StackedWidget):
@@ -21,7 +21,7 @@ class CentralWidget(StackedWidget):
                 await MainView(self).init()
             ]
         )
-        if CONTEXT['storage'] == API.Storage.LOCAL or CONTEXT['token']:
+        if CONTEXT['storage'] == Storage.LOCAL or CONTEXT['token']:
             self.setCurrentWidget(CONTEXT.MainView)
         else:
             self.setCurrentWidget(CONTEXT.SignIn)

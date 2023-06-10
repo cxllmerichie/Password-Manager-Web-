@@ -16,15 +16,15 @@ class CentralItem(Frame):
             layout=await Layout.horizontal(self).init(
                 margins=(10, 10, 10, 10), alignment=Layout.Left, spacing=20,
                 items=[
-                    await Label(self, 'ItemIconLbl').init(
+                    await Label(self, 'IconLbl').init(
                         icon=Icon(item['icon'], (50, 50))
                     ), Layout.Left,
                     await Layout.vertical().init(
                         items=[
-                            await Label(self, 'ItemTitleLbl').init(
+                            await Label(self, 'TitleLbl').init(
                                 text=item['title'], elide=Label.ElideRight, hpolicy=Label.Expanding
                             ),
-                            await Label(self, 'ItemDescriptionLbl').init(
+                            await Label(self, 'DescriptionLbl').init(
                                 text=item['description'], elide=Label.ElideRight, hpolicy=Label.Expanding
                             )
                         ]

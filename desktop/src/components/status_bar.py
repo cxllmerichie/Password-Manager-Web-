@@ -1,13 +1,13 @@
-from aioqui.widgets import Layout, Label, Selector, Frame, Button, StatusBar as CStatusBar
+from aioqui.widgets import Layout, Label, Selector, Frame, Button, StatusBar as StatusBarBase
 from aioqui.widgets.custom import Popup
 from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
-from ..misc import API, ICONS
+from ..misc import API, ICONS, Storage
 from .. import qss
 
 
-class StatusBar(CStatusBar):
+class StatusBar(StatusBarBase):
     def __init__(self, parent):
         super().__init__(parent, self.__class__.__name__)
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
@@ -37,8 +37,8 @@ class StatusBar(CStatusBar):
                     await Selector(self, 'StorageSelector').init(
                         on_change=self.storage_selector_textchanged,
                         items=[
-                            Selector.Item(text=API.Storage.LOCAL),
-                            Selector.Item(text=API.Storage.REMOTE),
+                            Selector.Item(text=Storage.LOCAL),
+                            Selector.Item(text=Storage.REMOTE),
                         ]
                     ), Layout.Left,
                 ]
@@ -51,7 +51,7 @@ class StatusBar(CStatusBar):
 
     def log_out(self):
         CONTEXT['token'] = None
-        self.StorageSelector.setCurrentText(API.Storage.REMOTE)
+        self.StorageSelector.setCurrentText(Storage.REMOTE)
 
     async def post_init(self):
         self.StorageSelector.setCurrentText(CONTEXT['storage'])
@@ -59,14 +59,14 @@ class StatusBar(CStatusBar):
     @asyncSlot()
     async def storage_selector_textchanged(self):
         # if trying to switch to remote, but api is not active at the moment
-        if self.StorageSelector.currentText() == API.Storage.REMOTE and not await API.is_connected():
+        if self.StorageSelector.currentText() == Storage.REMOTE and not await API.is_connected():
             await Popup(self.core).display(
                 buttons=[Popup.OK],
                 message='Remote storage is not available at the moment'
             )
-            return self.StorageSelector.setCurrentText(API.Storage.LOCAL)
+            return self.StorageSelector.setCurrentText(Storage.LOCAL)
         CONTEXT['storage'] = self.StorageSelector.currentText()
-        if CONTEXT['storage'] == API.Storage.REMOTE and not CONTEXT['token']:
+        if CONTEXT['storage'] == Storage.REMOTE and not CONTEXT['token']:
             return CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
         if CONTEXT.CentralWidget.currentWidget().objectName() == 'MainView':
             await CONTEXT.LeftMenu.refresh_categories()

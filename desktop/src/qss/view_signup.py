@@ -6,18 +6,18 @@ css = f'''
     background-color: {COLORS.SIGNUP};
 }}
 
-#InputLabelEmail,
-#InputLabelPassword,
-#InputLabelConfpass {{
+#EmailLbl,
+#PasswordLbl,
+#ConfpassLbl {{
     font-size: 20px;
     font-weight: bold;
     height: {SIZES.AuthInputLabel.h}px;
     color: white;
 }}
 
-#InputFieldEmail,
-#InputFieldPassword,
-#InputFieldConfpass {{
+#EmailInp,
+#PasswordInp,
+#ConfpassInp {{
     font-size: 16px;
     height: {SIZES.AuthInputField.h}px;
     min-width: {SIZES.AuthInputField.w}px;
@@ -28,14 +28,14 @@ css = f'''
     padding: 5px;
 }}
 
-#InputFrameEmail,
-#InputFramePassword,
-#InputFrameConfpass {{
+#EmailFrm,
+#PasswordFrm,
+#ConfpassFrm {{
     border-radius: 10px;
     background-color: {COLORS.DARK};
 }}
 
-#AuthMainBtn {{
+#MainBtn {{
     min-width: {SIZES.AuthMainBtn.w}px;
     height: {SIZES.AuthMainBtn.h}px;
     font-size: 20px;
@@ -44,11 +44,11 @@ css = f'''
     color: white;
 }}
 
-#AuthMainBtn:hover {{
+#MainBtn:hover {{
     background-color: {COLORS.RED_HOVER};
 }}
 
-#AuthTextBtn {{
+#TextBtn {{
     height: {SIZES.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
@@ -56,17 +56,8 @@ css = f'''
     min-width: {SIZES.AuthInputField.w}px;
 }}
 
-#AuthTextBtn:hover {{
+#TextBtn:hover {{
     font-weight: bold;
-}}
-
-#AuthExitBtn {{
-    background-color: {COLORS.TRANSPARENT};
-    border: none;    
-}}
-
-#AuthExitBtn:hover {{
-    background-color: {COLORS.RED_HOVER};
 }}
 
 #ErrorLbl {{

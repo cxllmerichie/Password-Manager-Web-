@@ -7,7 +7,7 @@ from contextlib import suppress
 
 from ..misc import API
 from .. import qss
-from ..components.central_item import CentralItem
+from ..components.cp_item import CentralItem
 
 
 class CentralItems(SplitterWidgetExt, Frame):
@@ -17,14 +17,14 @@ class CentralItems(SplitterWidgetExt, Frame):
             qss.components.scroll,
             qss.components.search
         ))
-        SplitterWidgetExt.__init__(self, ..., collapsible=False)
+        SplitterWidgetExt.__init__(self, collapsible=False)
 
     async def init(self):
         await super().init(layout=await Layout.vertical().init(
             spacing=20, margins=(30, 10, 30, 10),
             items=[
                 SearchBar(self, visible=False),
-                await ScrollArea(self, 'ItemsScrollArea', False).init(
+                await ScrollArea(self, 'ScrollArea', False).init(
                     hspolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical,
                     alignment=Layout.TopCenter, spacing=10
                 ),
@@ -42,7 +42,7 @@ class CentralItems(SplitterWidgetExt, Frame):
 
     @asyncSlot()
     async def searchbar_textchanged(self):
-        layout = self.ItemsScrollArea.widget().layout()
+        layout = self.ScrollArea.widget().layout()
         text = self.SearchBar.text()
         for i in range(layout.count()):
             widget = layout.itemAt(i).widget()
@@ -61,24 +61,24 @@ class CentralItems(SplitterWidgetExt, Frame):
             items = API.items
         self.HintLbl1.setVisible(False)
         self.SearchBar.setVisible(not_empty := bool(len(items)))
-        self.ItemsScrollArea.setVisible(not_empty)
+        self.ScrollArea.setVisible(not_empty)
         self.NoCategoriesLbl.setVisible(not not_empty)
         if not not_empty:
             return
         letters = []
-        self.ItemsScrollArea.clear()
+        self.ScrollArea.clear()
         items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
         if any([item['is_favourite'] for item in items]):
-            self.ItemsScrollArea.addWidget(await Label(self, 'FavouriteLbl').init(text='Favourite'))
+            self.ScrollArea.addWidget(await Label(self, 'FavouriteLbl').init(text='Favourite'))
         for item in items:
             if not item['is_favourite'] and (letter := item['title'][0]) not in letters:
                 letters.append(letter)
-                self.ItemsScrollArea.addWidget(await Label(self, 'LetterLbl').init(text=letter))
-            self.ItemsScrollArea.addWidget(await CentralItem(self).init(item))
+                self.ScrollArea.addWidget(await Label(self, 'LetterLbl').init(text=letter))
+            self.ScrollArea.addWidget(await CentralItem(self).init(item))
         await self.SearchBar.init(
             on_change=self.searchbar_textchanged, placeholder='Search',
             completer=SearchBar.Completer(
-                self.SearchBar, items=[i['title'] for i in items] + letters, qss=qss.components.search
+                self.SearchBar, items=[i['title'] for i in items], qss=qss.components.search
             )
         )
 

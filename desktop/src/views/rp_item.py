@@ -9,7 +9,7 @@ from typing import Any
 from datetime import datetime
 
 from ..misc import ICONS, API, PATHS, SIZES
-from ..components import ItemField, ItemAttachment
+from ..components import Field, Attachment
 from .. import qss
 
 
@@ -18,8 +18,7 @@ class RightPagesItem(Frame):
         super().__init__(parent, self.__class__.__name__, qss=(
             qss.right_pages_item.css,
             qss.components.scroll,
-            qss.components.image_button(),
-            qss.components.favourite_button
+            qss.components.image_button()
         ))
 
     async def init(self) -> 'RightPagesItem':
@@ -29,7 +28,7 @@ class RightPagesItem(Frame):
                 await Layout.horizontal().init(
                     margins=(0, 0, 0, 20),
                     items=[
-                        await StateButton(self, 'FavouriteButton').init(
+                        await StateButton(self, 'FavBtn').init(
                             pre_slot=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn').init(
@@ -48,10 +47,10 @@ class RightPagesItem(Frame):
                         ), Layout.Right
                     ]
                 ),
-                await ImageButton(self).init(
+                await ImageButton(self, 'ImageBtn').init(
                     icon=ICONS.ITEM, directory=PATHS.ICONS
                 ), Layout.TopCenter,
-                await Input.line(self, 'TitleInput').init(
+                await Input.line(self, 'TitleInp').init(
                     placeholder='title'
                 ), Layout.Top,
                 await Frame(self, 'CreatedFrame', False).init(
@@ -106,7 +105,7 @@ class RightPagesItem(Frame):
                         ]
                     )
                 ),
-                await Input.reach(self, 'DescriptionInput').init(
+                await Input.reach(self, 'DescInp').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Frame(self, 'FieldFrame').init(
@@ -178,7 +177,7 @@ class RightPagesItem(Frame):
     async def add_field(self, field: dict[str, Any] = None):
         self.HintLbl2.setVisible(False)
         layout = self.FieldScrollArea.widget().layout()
-        layout.addWidget(await ItemField(self, field).init())
+        layout.addWidget(await Field(self, field).init())
 
     @asyncSlot()
     async def add_attachment(self, attachment: dict[str, Any] = None):
@@ -189,7 +188,7 @@ class RightPagesItem(Frame):
         if attachment:
             self.HintLbl3.setVisible(False)
             layout = self.AttachmentScrollArea.widget().layout()
-            layout.addWidget(await ItemAttachment(self, attachment, creating).init())
+            layout.addWidget(await Attachment(self, attachment, creating).init())
 
     @asyncSlot()
     async def execute_edit(self):
@@ -211,10 +210,10 @@ class RightPagesItem(Frame):
         self.EditBtn.setVisible(False)
         self.DeleteBtn.setVisible(True)
         self.SaveCancelFrame.setVisible(True)
-        self.TitleInput.setDisabled(False)
-        self.DescriptionInput.setDisabled(False)
-        self.DescriptionInput.setVisible(True)
-        self.ImageButton.setDisabled(False)
+        self.TitleInp.setDisabled(False)
+        self.DescInp.setDisabled(False)
+        self.DescInp.setVisible(True)
+        self.ImageBtn.setDisabled(False)
         self.AddFieldBtn.setVisible(False)
         self.AddAttachmentBtn.setVisible(False)
         self.FieldScrollArea.setVisible(False)
@@ -224,7 +223,7 @@ class RightPagesItem(Frame):
     async def toggle_favourite(self) -> bool:
         if not API.item:
             return True
-        updated_category = await API.set_item_favourite(API.item['id'], self.FavouriteButton.state)
+        updated_category = await API.set_item_favourite(API.item['id'], self.FavBtn.state)
         if category_id := updated_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()
             await CONTEXT.CentralItems.refresh_items()
@@ -234,7 +233,7 @@ class RightPagesItem(Frame):
 
     @asyncSlot()
     async def execute_save(self):
-        title = self.TitleInput.text()
+        title = self.TitleInp.text()
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
         expires_at = None
@@ -242,8 +241,8 @@ class RightPagesItem(Frame):
             expires_at = str(self.DateTime.dateTime())
         prev_icon = API.item['icon']
         updated_category = await API.update_item(API.item['id'], {
-            'icon': self.ImageButton.bytes, 'title': title, 'description': self.DescriptionInput.toPlainText(),
-            'is_favourite': self.FavouriteButton.state, 'expires_at': expires_at
+            'icon': self.ImageBtn.bytes, 'title': title, 'description': self.DescInp.toPlainText(),
+            'is_favourite': self.FavBtn.state, 'expires_at': expires_at
         })
         if category_id := updated_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()
@@ -269,12 +268,12 @@ class RightPagesItem(Frame):
         self.EditBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
-        self.TitleInput.setDisabled(True)
-        self.DescriptionInput.setDisabled(True)
-        self.DescriptionInput.setVisible(bool(API.item and API.item['description']))
+        self.TitleInp.setDisabled(True)
+        self.DescInp.setDisabled(True)
+        self.DescInp.setVisible(bool(API.item and API.item['description']))
         if API.item:
-            self.ImageButton.setIcon(Icon(API.item['icon']).icon)
-        self.ImageButton.setDisabled(True)
+            self.ImageBtn.setIcon(Icon(API.item['icon']).icon)
+        self.ImageBtn.setDisabled(True)
         self.AddFieldBtn.setVisible(True)
         self.FieldScrollArea.setVisible(True)
         self.AddAttachmentBtn.setVisible(True)
@@ -291,22 +290,22 @@ class RightPagesItem(Frame):
         self.ModifiedFrame.setVisible(False)
         self.ExpiresFrame.setVisible(True)
         self.DeleteBtn.setVisible(False)
-        self.ImageButton.setIcon(ICONS.ITEM.icon)
-        self.ImageButton.image_bytes = None
-        self.ImageButton.setEnabled(True)
+        self.ImageBtn.setIcon(ICONS.ITEM.icon)
+        self.ImageBtn.image_bytes = None
+        self.ImageBtn.setEnabled(True)
         self.EditBtn.setVisible(False)
-        self.TitleInput.setEnabled(True)
-        self.TitleInput.setText('')
-        self.DescriptionInput.setEnabled(True)
-        self.DescriptionInput.setText('')
-        self.DescriptionInput.setVisible(True)
+        self.TitleInp.setEnabled(True)
+        self.TitleInp.setText('')
+        self.DescInp.setEnabled(True)
+        self.DescInp.setText('')
+        self.DescInp.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
         self.HintLbl2.setVisible(True)
         self.AttachmentScrollArea.clear([self.HintLbl3])
         self.HintLbl3.setVisible(True)
         self.CreateBtn.setVisible(True)
-        self.FavouriteButton.setVisible(True)
-        self.FavouriteButton.state = False
+        self.FavBtn.setVisible(True)
+        self.FavBtn.state = False
 
     @asyncSlot()
     async def show_item(self, item: dict[str, Any]):
@@ -332,14 +331,14 @@ class RightPagesItem(Frame):
             self.ExpiresSelector.setCurrentText('No')
         self.ExpiresFrame.setVisible(expires_at is not None)
 
-        self.FavouriteButton.state = API.item['is_favourite']
-        self.TitleInput.setText(API.item['title'])
-        self.TitleInput.setEnabled(False)
-        self.ImageButton.setIcon(Icon(API.item['icon']).icon)
-        self.ImageButton.setDisabled(True)
-        self.DescriptionInput.setText(API.item['description'])
-        self.DescriptionInput.setVisible(API.item['description'] is not None)
-        self.DescriptionInput.setDisabled(True)
+        self.FavBtn.state = API.item['is_favourite']
+        self.TitleInp.setText(API.item['title'])
+        self.TitleInp.setEnabled(False)
+        self.ImageBtn.setIcon(Icon(API.item['icon']).icon)
+        self.ImageBtn.setDisabled(True)
+        self.DescInp.setText(API.item['description'])
+        self.DescInp.setVisible(API.item['description'] is not None)
+        self.DescInp.setDisabled(True)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
         self.DeleteBtn.setVisible(False)
@@ -363,11 +362,11 @@ class RightPagesItem(Frame):
 
     @asyncSlot()
     async def execute_create(self):
-        if not len(title := self.TitleInput.text()):
+        if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         created_item = await API.create_item(API.category['id'], {
-            'icon': self.ImageButton.bytes, 'description': self.DescriptionInput.toPlainText(),
-            'title': title, 'is_favourite': self.FavouriteButton.state
+            'icon': self.ImageBtn.bytes, 'description': self.DescInp.toPlainText(),
+            'title': title, 'is_favourite': self.FavBtn.state
         })
         if item_id := created_item.get('id'):
             for identifier in API.field_identifiers:

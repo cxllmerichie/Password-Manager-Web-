@@ -40,7 +40,7 @@ QScrollBar::sub-page:vertical {{
 
 def image_button(color=COLORS.LIGHT):
     return f'''
-        #ImageButton {{
+        #ImageBtn {{
             background-color: {color};
             min-width: 120px;
             min-height: 120px;
@@ -49,12 +49,6 @@ def image_button(color=COLORS.LIGHT):
         }}
         '''
 
-
-favourite_button = f'''
-#FavouriteButton {{
-    background-color: {COLORS.TRANSPARENT};
-}}
-'''
 
 search = f'''
 #SearchBar {{
@@ -79,7 +73,7 @@ QListView::item:hover {{
 '''
 
 intro_popup = f'''
-#FullscreenPopup {{
+#IntroPopupFrame {{
     background-color: {COLORS.HOVER};
 }}
 

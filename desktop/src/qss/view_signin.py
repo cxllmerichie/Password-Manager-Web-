@@ -6,16 +6,16 @@ css = f'''
     background-color: {COLORS.SIGNIN};
 }}
 
-#InputLabelEmail,
-#InputLabelPassword {{
+#EmailLbl,
+#PasswordLbl {{
     font-size: 20px;
     font-weight: bold;
     height: {SIZES.AuthInputLabel.h}px;
     color: white;
 }}
 
-#InputFieldEmail,
-#InputFieldPassword {{
+#EmailInp,
+#PasswordInp {{
     font-size: 16px;
     height: {SIZES.AuthInputField.h}px;
     min-width: {SIZES.AuthInputField.w}px;
@@ -26,8 +26,8 @@ css = f'''
     color: white;
 }}
 
-#InputFrameEmail,
-#InputFramePassword {{
+#EmailFrm,
+#PasswordFrm {{
     border-radius: 10px;
     background-color: {COLORS.DARK};
 }}
@@ -47,7 +47,7 @@ css = f'''
     background-color: {COLORS.RED_HOVER};
 }}
 
-#AuthTextBtn {{
+#TextBtn {{
     height: {SIZES.AuthTextBtn.h}px;
     color: white;
     font-size: 14px;
@@ -55,17 +55,8 @@ css = f'''
     min-width: {SIZES.AuthInputField.w}px;
 }}
 
-#AuthTextBtn:hover {{
+#TextBtn:hover {{
     font-weight: bold;
-}}
-
-#AuthExitBtn {{
-    background-color: {COLORS.TRANSPARENT};
-    border: none;    
-}}
-
-#AuthExitBtn:hover {{
-    background-color: {COLORS.RED_HOVER};
 }}
 
 #ErrorLbl {{
@@ -74,13 +65,13 @@ css = f'''
     min-width: {SIZES.ERROR.w}px;
     min-height: {SIZES.ERROR.h}px;}}
 
-#InputLabelEmailEditBtn {{
+#EditBtn {{
     background-color: rgba(255, 255, 255, 0.1);
     font-size: 16px;
     color: white;
 }}
 
-#InputLabelEmailEditBtn:hover {{
+#EditBtn:hover {{
     background-color: rgba(255, 255, 255, 0.2);
 }}
 

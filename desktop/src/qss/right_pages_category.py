@@ -47,8 +47,8 @@ css: str = f'''
     background-color: {COLORS.GREEN_HOVER};
 }}
 
-#TitleInput,
-#DescriptionInput {{
+#TitleInp,
+#DescInp {{
     border: none;
     background-color: {COLORS.DARK};
     min-width: {SIZES.CATEGORY.w}px;
@@ -58,27 +58,27 @@ css: str = f'''
     border-radius: 5px;
 }} 
 
-#DescriptionInput {{
+#DescInp {{
     max-height: 600px;
 }}
 
 #DeleteBtn,
 #EditBtn,
-#FavouriteBtn,
+#FavBtn,
 #CloseBtn {{
     background-color: {COLORS.TRANSPARENT};
 }}
 
 #DeleteBtn,
 #EditBtn,
-#FavouriteBtn,
+#FavBtn,
 #CloseBtn {{
     border-radius: {SIZES.CONTROL.w // 2 - 1};
     background-color: {COLORS.TRANSPARENT};
 }}
 
 #EditBtn:hover,
-#FavouriteBtn:hover {{
+#FavBtn:hover {{
     background-color: {COLORS.HOVER};
 }}
 

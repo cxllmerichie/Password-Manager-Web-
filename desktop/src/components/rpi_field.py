@@ -9,7 +9,7 @@ from ..misc import ICONS, API
 from .. import qss
 
 
-class ItemField(Frame):
+class Field(Frame):
     def __init__(self, parent: Parent, field: dict[str, Any]):
         self.identifier = str(uuid4())
         name = f'Field{self.identifier}'
@@ -18,32 +18,32 @@ class ItemField(Frame):
         self.field = field
         API.field_identifiers.append(self.identifier)
 
-    async def init(self) -> 'ItemField':
+    async def init(self) -> 'Field':
         self.setLayout(await Layout.horizontal().init(
             spacing=5,
             items=[
-                await Input.line(self, f'FieldNameInput').init(
+                await Input.line(self, f'NameInput').init(
                     placeholder='name', alignment=Layout.Right
                 ),
-                await Input.line(self, f'FieldValueInput').init(
+                await Input.line(self, f'ValueInput').init(
                     placeholder='value'
                 ),
-                await StateButton(self, 'FieldHideBtn').init(
+                await StateButton(self, 'HideBtn').init(
                     icon_true=ICONS.EYE, icon_false=ICONS.EYE_OFF, pre_slot=self.hide_value
                 ),
-                await Button(self, 'FieldCopyBtn').init(
+                await Button(self, 'CopyBtn').init(
                     icon=ICONS.COPY, on_click=self.clipboard
                 ),
-                await Button(self, f'FieldEditBtn').init(
+                await Button(self, f'EditBtn').init(
                     icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), on_click=self.show_edit
                 ),
-                await Button(self, f'FieldSaveBtn').init(
+                await Button(self, f'SaveBtn').init(
                     icon=ICONS.SAVE, on_click=self.execute_save
                 ),
-                await Button(self, f'FieldDeleteBtn').init(
+                await Button(self, f'DeleteBtn').init(
                     icon=ICONS.CROSS_CIRCLE, on_click=Popup(
                         self.core, qss=qss.components.popup,
-                        message=f'Delete attachment\n"{self.FieldNameInput.text()}"?',
+                        message=f'Delete attachment\n"{self.NameInput.text()}"?',
                         on_success=self.execute_delete
                     ).display
                 )
@@ -55,41 +55,41 @@ class ItemField(Frame):
     @asyncSlot()
     async def show_field(self):
         if self.field and API.item:  # add field to existing item
-            self.FieldHideBtn.setVisible(True)
-            self.FieldCopyBtn.setVisible(True)
-            self.FieldDeleteBtn.setVisible(False)
-            self.FieldNameInput.setText(self.field['name'])
-            self.FieldNameInput.setDisabled(True)
-            self.FieldValueInput.setText(self.field['value'])
-            self.FieldValueInput.hide_echo()
-            self.FieldValueInput.setDisabled(True)
-            self.FieldSaveBtn.setVisible(False)
-            self.FieldEditBtn.setVisible(True)
+            self.HideBtn.setVisible(True)
+            self.CopyBtn.setVisible(True)
+            self.DeleteBtn.setVisible(False)
+            self.NameInput.setText(self.field['name'])
+            self.NameInput.setDisabled(True)
+            self.ValueInput.setText(self.field['value'])
+            self.ValueInput.hide_echo()
+            self.ValueInput.setDisabled(True)
+            self.SaveBtn.setVisible(False)
+            self.EditBtn.setVisible(True)
         elif API.item:  # creating field for existing item
-            self.FieldDeleteBtn.setVisible(True)
-            self.FieldSaveBtn.setVisible(True)
-            self.FieldEditBtn.setVisible(False)
-            self.FieldCopyBtn.setVisible(False)
-            self.FieldHideBtn.setVisible(False)
+            self.DeleteBtn.setVisible(True)
+            self.SaveBtn.setVisible(True)
+            self.EditBtn.setVisible(False)
+            self.CopyBtn.setVisible(False)
+            self.HideBtn.setVisible(False)
         else:  # creating field while creating item
-            self.FieldEditBtn.setVisible(False)
-            self.FieldSaveBtn.setVisible(True)
-            self.FieldCopyBtn.setVisible(False)
-            self.FieldHideBtn.setVisible(False)
-            self.FieldSaveBtn.setVisible(False)
+            self.EditBtn.setVisible(False)
+            self.SaveBtn.setVisible(True)
+            self.CopyBtn.setVisible(False)
+            self.HideBtn.setVisible(False)
+            self.SaveBtn.setVisible(False)
 
     @asyncSlot()
     async def hide_value(self):
-        self.FieldValueInput.toggle_echo()
+        self.ValueInput.toggle_echo()
         return True
 
     @asyncSlot()
     async def clipboard(self):
-        QApplication.clipboard().setText(self.FieldValueInput.text())
+        QApplication.clipboard().setText(self.ValueInput.text())
 
     @asyncSlot()
     async def execute_save(self):
-        field = {'name': self.FieldNameInput.text(), 'value': self.FieldValueInput.text()}
+        field = {'name': self.NameInput.text(), 'value': self.ValueInput.text()}
         if self.field:
             response = await API.update_field(self.field['id'], field)
         else:
@@ -123,11 +123,11 @@ class ItemField(Frame):
 
     @asyncSlot()
     async def show_edit(self):
-        self.FieldCopyBtn.setVisible(False)
-        self.FieldHideBtn.setVisible(False)
-        self.FieldSaveBtn.setVisible(True)
-        self.FieldDeleteBtn.setVisible(True)
-        self.FieldEditBtn.setVisible(False)
-        self.FieldNameInput.setDisabled(False)
-        self.FieldValueInput.setDisabled(False)
-        self.FieldValueInput.show_echo()
+        self.CopyBtn.setVisible(False)
+        self.HideBtn.setVisible(False)
+        self.SaveBtn.setVisible(True)
+        self.DeleteBtn.setVisible(True)
+        self.EditBtn.setVisible(False)
+        self.NameInput.setDisabled(False)
+        self.ValueInput.setDisabled(False)
+        self.ValueInput.show_echo()

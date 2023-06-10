@@ -13,12 +13,12 @@ css = f'''
     background-color: {COLORS.HOVER};
 }}
 
-#ItemTitleLbl {{
+#TitleLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 22px;
 }}
 
-#ItemDescriptionLbl {{
+#DescriptionLbl {{
     color: {COLORS.TEXT_SECONDARY};
     font-size: 18px;
 }}

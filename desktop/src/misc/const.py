@@ -1,7 +1,6 @@
 from apidevtools.simpleorm.connectors.sqlite import SQLite
 from apidevtools.simpleorm import ORM
 from typing import Any
-from asyncio import AbstractEventLoop, get_event_loop
 import ast
 
 
@@ -52,8 +51,6 @@ db = ORMNMap(
         database='.db'
     )
 )
-
-LOOP: AbstractEventLoop = get_event_loop()
 
 
 tables: str = '''

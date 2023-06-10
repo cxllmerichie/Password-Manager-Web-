@@ -8,16 +8,16 @@ def attachment(name: str) -> str:
         border-radius: 5px;
     }}
     
-    #AttachmentDownloadBtn,
-    #AttachmentShowBtn,
-    #AttachmentDeleteBtn,
-    #AttachmentSaveBtn,
-    #AttachmentEditBtn {{
+    #DownloadBtn,
+    #ShowBtn,
+    #DeleteBtn,
+    #SaveBtn,
+    #EditBtn {{
         border: none;
         border-radius: 9px;
     }}
     
-    #AttachmentFilenameInput {{
+    #FilenameInput {{
         color: {COLORS.TEXT_PRIMARY};
         border: none;
         min-height: 30px;

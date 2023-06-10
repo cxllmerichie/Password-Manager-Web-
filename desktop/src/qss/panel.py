@@ -2,51 +2,37 @@ from ..misc import SIZES, COLORS
 
 
 css: str = f'''
-#ProfileButton {{
-    min-width: 200px;
-    border: none;
-    border-radius: 5px;
-}}
-
-#ProfileButtonText {{
-    font-size: 16px;
-}}
-
-#ProfileButton:hover {{
-    background-color: {COLORS.HOVER};
-}}
-
 #Panel {{
     background-color: {COLORS.PANEL};
     min-height: {SIZES.Panel.h}px;
     max-height: {SIZES.Panel.h}px;
 }}
 
-#ToggleLeftMenuBtn {{
+#ToggleMenuBtn {{
     background-color: {COLORS.TRANSPARENT};
 }}
 
-#ToggleLeftMenuBtn:hover {{
+#ToggleMenuBtn:hover {{
     background-color: {COLORS.LIGHT};
 }}
 
-#PanelMinimizeBtn,
-#PanelRestoreBtn,
-#PanelCloseBtn {{
+#MinimizeBtn,
+#RestoreBtn,
+#CloseBtn {{
     border: none;
     background-color: {COLORS.TRANSPARENT};
 }}
 
-#PanelMinimizeBtn:hover,
-#PanelRestoreBtn:hover {{
+#MinimizeBtn:hover,
+#RestoreBtn:hover {{
     background-color: {COLORS.LIGHT};
 }}
 
-#PanelCloseBtn:hover {{
+#CloseBtn:hover {{
     background-color: {COLORS.RED};
 }}
 
-#PanelTitleLbl {{
+#TitleLbl {{
     color: {COLORS.TEXT_PRIMARY};
     font-size: 16px;
     font-weight: bold;

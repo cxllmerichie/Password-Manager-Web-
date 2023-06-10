@@ -1,9 +1,9 @@
 from aioqui.widgets import Splitter, Parent
 from aioqui import CONTEXT
 
-from .left_menu import LeftMenu
-from .right_pages import RightPages
-from .central_items import CentralItems
+from .menu_left import LeftMenu
+from .menu_right_pages import RightPages
+from .menu_central import CentralItems
 from .. import qss
 
 

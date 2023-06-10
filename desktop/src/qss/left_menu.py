@@ -13,8 +13,8 @@ css = f'''
     background-color: {COLORS.LEFT_MENU};
 }}
 
-#LeftMenuItemsLabel,
-#LeftMenuCategoriesLabel {{
+#ItemsLbl,
+#CategoriesLbl {{
     font-size: 20px;
     color: {COLORS.TEXT_PRIMARY};
     font-weight: bold;
@@ -76,12 +76,12 @@ css = f'''
     max-width: 100px;
 }}
 
-#CategoriesScrollArea {{
+#ScrollArea {{
     background-color: {COLORS.TRANSPARENT};
     border: none;
 }}
 
-#CategoriesScrollAreaWidget {{
+#ScrollAreaWidget {{
     background-color: {COLORS.TRANSPARENT};
     border: none;
 }}

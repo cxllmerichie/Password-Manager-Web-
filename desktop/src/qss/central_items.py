@@ -14,12 +14,12 @@ css = f'''
     font-style: italic;
 }}
 
-#ItemsScrollArea {{
+#ScrollArea {{
     background-color: {COLORS.TRANSPARENT};
     border: none;
 }}
 
-#ItemsScrollAreaWidget {{
+#ScrollAreaWidget {{
     background-color: {COLORS.TRANSPARENT};
 }}
 

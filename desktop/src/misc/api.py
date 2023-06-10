@@ -1,50 +1,24 @@
 from aioqui.misc.aiorequest import request
-from aioqui.misc.utils import find
-from typing import Any, Iterable
+from .utils import find, serializable
 from mimetypes import MimeTypes
 from datetime import datetime
 from aioqui.types import Icon
 from aioqui import CONTEXT
 from copy import deepcopy
+from typing import Any
 from uuid import UUID
 import ujson as json
 import aiohttp
 import os
 
 from .assets import EXTENSIONS, PATHS
+from .utils import accept_h, auth_h, accept_content_h, login_h, Storage
 from . import crud
 
 
-async def serializable(dictionary: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
-    def validate(value: Any):
-        if isinstance(value, bool):
-            return True
-        elif value is None:
-            return False
-        elif isinstance(value, str):
-            return len(value)
-
-    return {key: value for key, value in dictionary.items() if validate(value) or key in exceptions}
-
-
 class Api:
-    class Storage:
-        LOCAL = 'local'
-        REMOTE = 'remote'
-        HYBRID = 'hybrid'
-
-    @staticmethod
-    def local():
-        return CONTEXT['storage'] == Api.Storage.LOCAL
-
-    @staticmethod
-    def remote():
-        return CONTEXT['storage'] == Api.Storage.REMOTE
-
     def __init__(self):
-        request.baseurl = self.URL
-
-    URL: str = 'https://pmapi.cxllmerichie.com/'
+        request.baseurl = 'https://pmapi.cxllmerichie.com'
 
     __categories: list[dict[str, Any]] = None
     __category: dict[str, Any] = None
@@ -86,54 +60,37 @@ class Api:
     def items(self) -> list[dict[str, Any]]:
         return self.category['items']
 
-    # GENERAL
-    @property
-    def headers_auth(self) -> dict[str, Any]:
-        return self.headers_accept_json | {'Authorization': f"Bearer {CONTEXT['token']}"}
-
-    @property
-    def headers_accept_json(self) -> dict[str, Any]:
-        return {'accept': 'application/json'}
-
-    @property
-    def headers_content_json(self) -> dict[str, Any]:
-        return {'Content-Type': 'application/json'}
-
-    @property
-    def headers_login(self) -> dict[str, Any]:
-        return self.headers_accept_json | {'Content-Type': 'application/x-www-form-urlencoded'}
-
     # AUTH
     async def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
         params = dict(username=auth_data['email'], password=auth_data['password'],
                       grant_type='', scope='', client_id='', client_secret='')
-        response = await request.post('/auth/token/', headers=self.headers_login, data=params)
+        response = await request.post('/auth/token/', headers=login_h(), data=params)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
 
     async def check_email(self, email: str) -> bool:
-        return await request.get(f'/auth/{email}/', headers=self.headers_accept_json)
+        return await request.get(f'/auth/{email}/', headers=accept_h())
 
     # USER
     async def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
-        response = await request.post('/users/', headers=self.headers_accept_json | self.headers_content_json, body=user)
+        response = await request.post('/users/', headers=accept_content_h(), body=user)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
 
     # CATEGORIES
     async def get_categories(self) -> list[dict[str, Any]]:
-        if self.remote():
-            response = await request.get('/categories/', headers=self.headers_auth, pythonize=True)
+        if Storage.remote():
+            response = await request.get('/categories/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.get_categories()
         self.__categories = response
         return response
 
     async def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.post('/categories/', headers=self.headers_auth, body=await serializable(category), pythonize=True)
+        if Storage.remote():
+            response = await request.post('/categories/', headers=auth_h(), body=await serializable(category), pythonize=True)
         else:
             response = await crud.create_category(category)
         if category_id := response.get('id'):
@@ -142,8 +99,8 @@ class Api:
         return response
 
     async def get_category(self, category_id: int) -> dict[str, Any]:
-        if self.remote():
-            response = await request.get(f'/categories/{category_id}/', headers=self.headers_auth, pythonize=True)
+        if Storage.remote():
+            response = await request.get(f'/categories/{category_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.get_category(category_id)
         if category_id := response.get('id'):
@@ -152,8 +109,8 @@ class Api:
         return response
 
     async def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
-        if self.remote():
-            response = await request.put(f'/categories/{category_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite), pythonize=True)
+        if Storage.remote():
+            response = await request.put(f'/categories/{category_id}/favourite/', headers=auth_h(), params=dict(is_favourite=is_favourite), pythonize=True)
         else:
             response = await crud.set_category_favourite(category_id, is_favourite)
         if category_id := response.get('id'):
@@ -162,8 +119,8 @@ class Api:
         return response
 
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.put(f'/categories/{category_id}/', headers=self.headers_auth, body=await serializable(category), pythonize=True)
+        if Storage.remote():
+            response = await request.put(f'/categories/{category_id}/', headers=auth_h(), body=await serializable(category), pythonize=True)
         else:
             response = await crud.update_category(category_id, category)
         if category_id := response.get('id'):
@@ -172,8 +129,8 @@ class Api:
         return response
 
     async def delete_category(self, category_id: int) -> dict[str, Any]:
-        if self.remote():
-            response = await request.delete(f'/categories/{category_id}/', headers=self.headers_auth, pythonize=True)
+        if Storage.remote():
+            response = await request.delete(f'/categories/{category_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_category(category_id)
         if category_id := response.get('id'):
@@ -184,8 +141,8 @@ class Api:
 
     # ITEMS
     async def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.post(f'/categories/{category_id}/items/', headers=self.headers_auth, body=await serializable(item), pythonize=True)
+        if Storage.remote():
+            response = await request.post(f'/categories/{category_id}/items/', headers=auth_h(), body=await serializable(item), pythonize=True)
         else:
             response = await crud.create_item(category_id, item)
         if item_id := response.get('id'):
@@ -195,8 +152,8 @@ class Api:
         return response
 
     async def delete_item(self, item_id: int) -> dict[str, Any]:
-        if self.remote():
-            response = await request.delete(f'/items/{item_id}/', headers=self.headers_auth, pythonize=True)
+        if Storage.remote():
+            response = await request.delete(f'/items/{item_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_item(item_id)
         if item_id := response.get('id'):
@@ -207,8 +164,8 @@ class Api:
         return response
 
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.put(f'/items/{item_id}/', headers=self.headers_auth, body=await serializable(item, ['expires_at']), pythonize=True)
+        if Storage.remote():
+            response = await request.put(f'/items/{item_id}/', headers=auth_h(), body=await serializable(item, ['expires_at']), pythonize=True)
         else:
             response = await crud.update_item(item_id, item)
         if item_id := response.get('id'):
@@ -218,8 +175,8 @@ class Api:
         return response
 
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
-        if self.remote():
-            response = await request.put(f'/items/{item_id}/favourite/', headers=self.headers_auth, params=dict(is_favourite=is_favourite), pythonize=True)
+        if Storage.remote():
+            response = await request.put(f'/items/{item_id}/favourite/', headers=auth_h(), params=dict(is_favourite=is_favourite), pythonize=True)
         else:
             response = await crud.set_item_favourite(item_id, is_favourite)
         if item_id := response.get('id'):
@@ -275,8 +232,8 @@ class Api:
 
     # FIELDS
     async def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.post(f'/items/{item_id}/fields/', headers=self.headers_auth, body=field, pythonize=True)
+        if Storage.remote():
+            response = await request.post(f'/items/{item_id}/fields/', headers=auth_h(), body=field, pythonize=True)
         else:
             response = await crud.create_field(item_id, field)
         if field_id := response.get('id'):
@@ -287,8 +244,8 @@ class Api:
         return response
 
     async def update_field(self, field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.put(f'/fields/{field_id}/', headers=self.headers_auth, body=field, pythonize=True)
+        if Storage.remote():
+            response = await request.put(f'/fields/{field_id}/', headers=auth_h(), body=field, pythonize=True)
         else:
             response = await crud.update_field(field_id, field)
         if field_id := response.get('id'):
@@ -300,8 +257,8 @@ class Api:
         return response
 
     async def delete_field(self, field_id: UUID) -> dict[str, Any]:
-        if self.remote():
-            response = await request.delete(f'/fields/{field_id}/', headers=self.headers_auth, pythonize=True)
+        if Storage.remote():
+            response = await request.delete(f'/fields/{field_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_field(field_id)
         if field_id := response.get('id'):
@@ -313,8 +270,8 @@ class Api:
 
     # ATTACHMENT
     async def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.post(f'/items/{item_id}/attachments/', headers=self.headers_auth, body=attachment, pythonize=True)
+        if Storage.remote():
+            response = await request.post(f'/items/{item_id}/attachments/', headers=auth_h(), body=attachment, pythonize=True)
         else:
             response = await crud.create_attachment(item_id, attachment)
         if attachment_id := response.get('id'):
@@ -325,8 +282,8 @@ class Api:
         return response
 
     async def update_attachment(self, attachment_id: UUID, attachment: dict[str, Any]) -> dict[str, Any]:
-        if self.remote():
-            response = await request.put(f'/attachments/{attachment_id}/', headers=self.headers_auth, body=attachment, pythonize=True)
+        if Storage.remote():
+            response = await request.put(f'/attachments/{attachment_id}/', headers=auth_h(), body=attachment, pythonize=True)
         else:
             response = await crud.update_attachment(attachment_id, attachment)
         if attachment_id := response.get('id'):
@@ -338,8 +295,8 @@ class Api:
         return response
 
     async def delete_attachment(self, attachment_id: UUID) -> dict[str, Any]:
-        if self.remote():
-            response = await request.delete(f'/attachments/{attachment_id}/', headers=self.headers_auth, pythonize=True)
+        if Storage.remote():
+            response = await request.delete(f'/attachments/{attachment_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_attachment(attachment_id)
         if attachment_id := response.get('id'):
@@ -366,7 +323,7 @@ class Api:
     # UTILS
     async def is_connected(self) -> bool:
         async with aiohttp.ClientSession() as session:
-            async with session.get(f'{self.URL}/docs') as response:
+            async with session.get(f'{request.baseurl}/docs') as response:
                 return response.status == 200
 
     async def save_icon(self, icon: bytes | str) -> None:

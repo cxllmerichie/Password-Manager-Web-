@@ -1,5 +1,5 @@
-from aioqui.widgets import Button, Input, Layout, Label, Spacer, Frame, Parent
 from aioqui.widgets.custom import StateButton, ImageButton, DurationLabel, Popup
+from aioqui.widgets import Button, Input, Layout, Label, Spacer, Frame, Parent
 from aioqui.misc.fileops import select_file
 from aioqui.asynq import asyncSlot
 from aioqui.types import Icon
@@ -14,7 +14,6 @@ class RightPagesCategory(Frame):
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=(
             qss.right_pages_category.css,
-            qss.components.favourite_button,
             qss.components.image_button(COLORS.DARK)
         ))
 
@@ -25,7 +24,7 @@ class RightPagesCategory(Frame):
                 await Layout.horizontal().init(
                     margins=(0, 0, 0, 20),
                     items=[
-                        await StateButton(self, 'FavouriteButton').init(
+                        await StateButton(self, 'FavBtn').init(
                             pre_slot=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn', False).init(
@@ -44,13 +43,13 @@ class RightPagesCategory(Frame):
                         ), Layout.Right
                     ]
                 ),
-                await ImageButton(self).init(
+                await ImageButton(self, 'ImageBtn').init(
                     icon=ICONS.CATEGORY, directory=PATHS.ICONS
                 ), Layout.TopCenter,
-                await Input.line(self, 'TitleInput').init(
+                await Input.line(self, 'TitleInp').init(
                     placeholder='title'
                 ), Layout.Top,
-                await Input.reach(self, 'DescriptionInput').init(
+                await Input.reach(self, 'DescInp').init(
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Label(self, 'HintLbl1', False).init(
@@ -95,7 +94,7 @@ class RightPagesCategory(Frame):
     async def toggle_favourite(self):
         if not API.category:
             return True
-        updated_category = await API.set_category_favourite(API.category['id'], self.FavouriteButton.state)
+        updated_category = await API.set_category_favourite(API.category['id'], self.FavBtn.state)
         if category_id := updated_category.get('id'):
             self.ErrorLbl.setText('')
             await CONTEXT.LeftMenu.refresh_categories()
@@ -116,15 +115,15 @@ class RightPagesCategory(Frame):
         self.EditBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(False)
-        self.ImageButton.setIcon(ICONS.CATEGORY.icon)
-        self.ImageButton.setDisabled(False)
-        self.ImageButton.image_bytes = None
-        self.FavouriteButton.state = False
-        self.TitleInput.setEnabled(True)
-        self.TitleInput.setText('')
-        self.DescriptionInput.setDisabled(False)
-        self.DescriptionInput.setText('')
-        self.DescriptionInput.setVisible(True)
+        self.ImageBtn.setIcon(ICONS.CATEGORY.icon)
+        self.ImageBtn.setDisabled(False)
+        self.ImageBtn.image_bytes = None
+        self.FavBtn.state = False
+        self.TitleInp.setEnabled(True)
+        self.TitleInp.setText('')
+        self.DescInp.setDisabled(False)
+        self.DescInp.setText('')
+        self.DescInp.setVisible(True)
         self.ImportBtn.setVisible(False)
 
         await CONTEXT.CentralItems.refresh_items([])
@@ -144,8 +143,8 @@ class RightPagesCategory(Frame):
     async def execute_delete(self):
         deleted_category = await API.delete_category(API.category['id'])
         if category_id := deleted_category.get('id'):
-            self.TitleInput.setText('')
-            self.DescriptionInput.setText('')
+            self.TitleInp.setText('')
+            self.DescInp.setText('')
             self.DeleteBtn.setVisible(False)
 
             await CONTEXT.LeftMenu.refresh_categories()
@@ -159,21 +158,21 @@ class RightPagesCategory(Frame):
         self.CreateBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(True)
         self.AddItemBtn.setVisible(False)
-        self.ImageButton.setDisabled(False)
+        self.ImageBtn.setDisabled(False)
         self.EditBtn.setVisible(False)
-        self.TitleInput.setEnabled(True)
-        self.DescriptionInput.setDisabled(False)
-        self.DescriptionInput.setVisible(True)
+        self.TitleInp.setEnabled(True)
+        self.DescInp.setDisabled(False)
+        self.DescInp.setVisible(True)
         self.DeleteBtn.setVisible(True)
 
     @asyncSlot()
     async def execute_save(self):
-        if not len(title := self.TitleInput.text()):
+        if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         prev_icon = API.category['icon']
         updated_category = await API.update_category(API.category['id'], {
-            'icon': self.ImageButton.image_bytes_str, 'title': title,
-            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.state
+            'icon': self.ImageBtn.image_bytes_str, 'title': title,
+            'description': self.DescInp.toPlainText(), 'is_favourite': self.FavBtn.state
         })
         if category_id := updated_category.get('id'):
             CONTEXT.LeftMenu.refresh_categories()
@@ -188,11 +187,11 @@ class RightPagesCategory(Frame):
     @asyncSlot()
     async def execute_cancel(self):
         self.ErrorLbl.setText('')
-        self.TitleInput.setEnabled(False)
-        self.ImageButton.setIcon(Icon(API.category['icon']).icon)
-        self.ImageButton.setDisabled(True)
-        self.DescriptionInput.setDisabled(True)
-        self.DescriptionInput.setVisible(API.category['description'] is not None)
+        self.TitleInp.setEnabled(False)
+        self.ImageBtn.setIcon(Icon(API.category['icon']).icon)
+        self.ImageBtn.setDisabled(True)
+        self.DescInp.setDisabled(True)
+        self.DescInp.setVisible(API.category['description'] is not None)
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(True)
         self.DeleteBtn.setVisible(False)
@@ -201,14 +200,14 @@ class RightPagesCategory(Frame):
     @asyncSlot()
     async def show_category(self, category: dict[str, Any]):
         API.category = category
-        self.FavouriteButton.state = API.category['is_favourite']
-        self.TitleInput.setEnabled(False)
-        self.TitleInput.setText(API.category['title'])
-        self.ImageButton.setIcon(Icon(API.category['icon']).icon)
-        self.ImageButton.setDisabled(True)
-        self.DescriptionInput.setText(API.category['description'])
-        self.DescriptionInput.setDisabled(True)
-        self.DescriptionInput.setVisible(API.category['description'] is not None)
+        self.FavBtn.state = API.category['is_favourite']
+        self.TitleInp.setEnabled(False)
+        self.TitleInp.setText(API.category['title'])
+        self.ImageBtn.setIcon(Icon(API.category['icon']).icon)
+        self.ImageBtn.setDisabled(True)
+        self.DescInp.setText(API.category['description'])
+        self.DescInp.setDisabled(True)
+        self.DescInp.setVisible(API.category['description'] is not None)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
         self.AddItemBtn.setVisible(True)
@@ -224,12 +223,12 @@ class RightPagesCategory(Frame):
 
     @asyncSlot()
     async def execute_create(self):
-        title = self.TitleInput.text()
+        title = self.TitleInp.text()
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
         created_category = await API.create_category({
-            'icon': self.ImageButton.image_bytes_str, 'title': title,
-            'description': self.DescriptionInput.toPlainText(), 'is_favourite': self.FavouriteButton.state
+            'icon': self.ImageBtn.image_bytes_str, 'title': title,
+            'description': self.DescInp.toPlainText(), 'is_favourite': self.FavBtn.state
         })
         if created_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()

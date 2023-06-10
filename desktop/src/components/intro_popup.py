@@ -5,7 +5,7 @@ from aioqui import CONTEXT
 from PySide6.QtGui import QResizeEvent
 
 from .. import qss
-from ..misc import ICONS, API
+from ..misc import ICONS, API, Storage
 
 
 class IntroPopup(Frame):
@@ -19,7 +19,7 @@ class IntroPopup(Frame):
                 await Button(self, 'AuthExitBtn').init(
                     icon=ICONS.CROSS, on_click=self.core.close
                 ), Layout.RightTop,
-                await Frame(self, 'FullscreenFrame').init(
+                await Frame(self, 'IntroPopupFrame').init(
                     layout=await Layout.vertical().init(
                         alignment=Layout.Center, spacing=10,
                         items=[
@@ -73,7 +73,7 @@ class IntroPopup(Frame):
         self.HintLbl1.setText('Storing data locally gives you access to it any time, also without internet connection. '
                               'Data will be lost in case of storage corruption or uninstalling the application. '
                               'Also a little quicker.')
-        CONTEXT['storage'] = API.Storage.LOCAL
+        CONTEXT['storage'] = Storage.LOCAL
 
     @asyncSlot()
     async def set_storage_remote(self):
@@ -86,7 +86,7 @@ class IntroPopup(Frame):
         self.RemoteBtn.setStyleSheet(qss.components.active_button)
         self.HintLbl1.setText('Storing data remotely gives you access to it only with internet connection.\n'
                               'Using your personal account in any device gives you access to data. Also a little slower.')
-        CONTEXT['storage'] = API.Storage.REMOTE
+        CONTEXT['storage'] = Storage.REMOTE
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resize(self.parent().size())

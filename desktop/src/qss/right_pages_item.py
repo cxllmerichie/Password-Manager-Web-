@@ -86,8 +86,8 @@ css: str = f'''
     font-weight: bold;
 }}
 
-#TitleInput,
-#DescriptionInput {{
+#TitleInp,
+#DescrInp {{
     border: none;
     background-color: {COLORS.LIGHT};
     color: {COLORS.TEXT_PRIMARY};
@@ -98,14 +98,14 @@ css: str = f'''
 
 #DeleteBtn,
 #EditBtn,
-#FavouriteBtn,
+#FavBtn,
 #CloseBtn {{
     border-radius: {SIZES.CONTROL.w // 2 - 1};
     background-color: {COLORS.TRANSPARENT};
 }}
 
 #EditBtn:hover,
-#FavouriteBtn:hover {{
+#FavBtn:hover {{
     background-color: {COLORS.HOVER};
 }}
 
@@ -219,5 +219,4 @@ QCalendarWidget QAbstractItemView:enabled {{ /* days in this months */
 QCalendarWidget QAbstractItemView:disabled {{ /* days in other months */
     color: rgb(64, 64, 64); 
 }}
-
 '''

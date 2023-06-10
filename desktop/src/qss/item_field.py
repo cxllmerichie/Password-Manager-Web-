@@ -8,17 +8,17 @@ def field(name: str) -> str:
         border-radius: 5px;
     }}
             
-    #FieldCopyBtn,
-    #FieldHideBtn,
-    #FieldDeleteBtn,
-    #FieldSaveBtn,
-    #FieldEditBtn {{
+    #CopyBtn,
+    #HideBtn,
+    #DeleteBtn,
+    #SaveBtn,
+    #EditBtn {{
         border: none;
         border-radius: 9px;
     }}
     
-    #FieldNameInput,
-    #FieldValueInput {{
+    #NameInput,
+    #ValueInput {{
         color: {COLORS.TEXT_PRIMARY};
         border: none;
         min-height: 30px;
@@ -26,12 +26,12 @@ def field(name: str) -> str:
         font-size: 16px;
     }}
     
-    #FieldNameInput {{
+    #NameInput {{
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
     }}
     
-    #FieldValueInput {{
+    #ValueInput {{
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
     }}

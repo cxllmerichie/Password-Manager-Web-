@@ -1,4 +1,4 @@
-from aioqui.widgets import Button, Label, Layout, Frame, Panel as CPanel, Spacer, Parent
+from aioqui.widgets import Button, Label, Layout, Frame, Panel as PanelBase, Spacer, Parent
 from PySide6.QtCore import Qt
 from aioqui import CONTEXT
 from PySide6.QtGui import QMouseEvent
@@ -9,22 +9,22 @@ from ..misc import ICONS, SIZES
 from .. import qss
 
 
-class Panel(CPanel):
+class Panel(PanelBase):
     def __init__(self, parent: Parent):
-        CPanel.__init__(self, parent, self.__class__.__name__, qss=qss.panel.css)
+        PanelBase.__init__(self, parent, self.__class__.__name__, qss=qss.panel.css)
 
     async def init(self) -> 'Panel':
         self.setLayout(await Layout.horizontal().init(
             spacing=10,
             items=[
-                await Button(self, 'ToggleLeftMenuBtn').init(
+                await Button(self, 'ToggleMenuBtn').init(
                     icon=ICONS.MENU,
                     on_click=lambda: CONTEXT.LeftMenu.toggle()  # lambda used since `LeftMenu` does not exist yet
                 ), Layout.Left,
-                await Label(self, 'PanelTitleLbl').init(
+                await Label(self, 'TitleLbl').init(
                     text='Password Manager'
                 ), Layout.Left,
-                await Label(self, 'PanelTitleLbl').init(
+                await Label(self, 'TitleLbl').init(
                     icon=ICONS.APP
                 ), Layout.Left,
                 Spacer(Spacer.Expanding, Spacer.Expanding),
@@ -32,15 +32,15 @@ class Panel(CPanel):
                     layout=await Layout.horizontal().init(
                         alignment=Layout.Right,
                         items=[
-                            await Button(self, 'PanelMinimizeBtn').init(
+                            await Button(self, 'MinimizeBtn').init(
                                 icon=ICONS.MINIMIZE, fix_size=SIZES.PanelNavigationBtn,
                                 on_click=self.core.showMinimized
                             ),
-                            await Button(self, 'PanelRestoreBtn').init(
+                            await Button(self, 'RestoreBtn').init(
                                 icon=ICONS.RESTORE, fix_size=SIZES.PanelNavigationBtn,
                                 on_click=lambda: self.core.showNormal() if self.core.isMaximized() else self.core.showMaximized()
                             ),
-                            await Button(self, 'PanelCloseBtn').init(
+                            await Button(self, 'CloseBtn').init(
                                 icon=ICONS.CROSS, fix_size=SIZES.PanelNavigationBtn, on_click=self.core.close
                             )
                         ]
