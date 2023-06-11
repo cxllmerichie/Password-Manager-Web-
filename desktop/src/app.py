@@ -4,7 +4,7 @@ from aioqui.asynq import asyncSlot
 
 
 class App(Window):
-    # all imports must be placed only in the class, otherwise `Process finished with exit code -1073740791 (0xC0000409)`
+    # all imports must be placed only in the class, otherwise `-1073740791 (0xC0000409)`
     # issue: while running (init load) it sees the import and usage from Qt in `assets`, and Qt itself conflicts
     # with main created thread in `main.py` creating more threads in `assets`
 
@@ -43,4 +43,6 @@ class App(Window):
         from .misc.const import db
 
         assert await db.close_pool()
-        return super().close()
+        import sys
+        super().close()
+        sys.exit(0)

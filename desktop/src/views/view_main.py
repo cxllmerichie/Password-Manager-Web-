@@ -20,5 +20,6 @@ class MainView(Splitter):
             ]
         )
         await CONTEXT.RightPagesCategory.show_create()
+        CONTEXT.RightPages.shrink()
         CONTEXT.LeftMenu.expand()
         return self

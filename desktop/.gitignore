@@ -3,5 +3,6 @@ __pycache__/
 .venv/
 
 build/Releases/
+build/v*/
 *.db
 .assets/icons/*.jpg
