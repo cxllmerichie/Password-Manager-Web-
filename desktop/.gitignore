@@ -6,3 +6,4 @@ build/Releases/
 *.db
 *.sqlite
 *.sqlite-journal
+.assets/icons/*.jpg

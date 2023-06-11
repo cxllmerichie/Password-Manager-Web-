@@ -1,10 +1,10 @@
 from aioqui.widgets import Label, Layout, ScrollArea, Button, Frame, Parent
 from aioqui.widgets.custom import TotalButton, SearchBar
 from aioqui.widgets.extensions import SplitterWidgetExt
-from aioqui.asynq import asyncSlot
 from aioqui.types import Icon, SizePolicy
-from aioqui import CONTEXT
+from aioqui.asynq import asyncSlot
 from contextlib import suppress
+from aioqui import CONTEXT
 
 from ..misc import ICONS, SIZES, API
 from ..components import LabelExtended
@@ -31,7 +31,7 @@ class LeftMenu(SplitterWidgetExt, Frame):
                     icon=ICONS.HOME, text='All items', on_click=lambda: CONTEXT.CentralItems.show_all()
                 ),
                 await TotalButton(self, 'FavItemsBtn').init(
-                    icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite',
+                    icon=Icon(ICONS.STAR_FILL.icon, ICONS.HOME.size), text='Favourite',
                     on_click=lambda: CONTEXT.CentralItems.show_favourite()
                 ),
                 await LabelExtended(self, 'CategoriesLbl').init(

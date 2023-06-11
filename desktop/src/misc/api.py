@@ -1,5 +1,5 @@
 from aioqui.misc.aiorequest import request
-from .utils import find, serializable
+from .utils import find, prepare
 from mimetypes import MimeTypes
 from datetime import datetime
 from aioqui.types import Icon
@@ -46,8 +46,8 @@ class Api:
     @property
     def category(self):
         if not self.__category and self.item:
-            for index, item in enumerate(self.categories):
-                if item.get('id') == self.item['category_id']:
+            for index, category in enumerate(self.categories):
+                if category.get('id') == self.item['category_id']:
                     self.__category = self.categories[index]
                     break
         return self.__category
@@ -90,7 +90,7 @@ class Api:
 
     async def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.post('/categories/', headers=auth_h(), body=await serializable(category), pythonize=True)
+            response = await request.post('/categories/', headers=auth_h(), body=await prepare(category), pythonize=True)
         else:
             response = await crud.create_category(category)
         if category_id := response.get('id'):
@@ -120,7 +120,7 @@ class Api:
 
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.put(f'/categories/{category_id}/', headers=auth_h(), body=await serializable(category), pythonize=True)
+            response = await request.put(f'/categories/{category_id}/', headers=auth_h(), body=await prepare(category), pythonize=True)
         else:
             response = await crud.update_category(category_id, category)
         if category_id := response.get('id'):
@@ -142,7 +142,7 @@ class Api:
     # ITEMS
     async def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.post(f'/categories/{category_id}/items/', headers=auth_h(), body=await serializable(item), pythonize=True)
+            response = await request.post(f'/categories/{category_id}/items/', headers=auth_h(), body=await prepare(item), pythonize=True)
         else:
             response = await crud.create_item(category_id, item)
         if item_id := response.get('id'):
@@ -165,13 +165,13 @@ class Api:
 
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.put(f'/items/{item_id}/', headers=auth_h(), body=await serializable(item, ['expires_at']), pythonize=True)
+            response = await request.put(f'/items/{item_id}/', headers=auth_h(), body=await prepare(item, ['expires_at']), pythonize=True)
         else:
             response = await crud.update_item(item_id, item)
         if item_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.item = self.__categories[c_idx]['items'][i_idx] = response
+            self.category['items'][i_idx] = self.item = self.__categories[c_idx]['items'][i_idx] = response
         return response
 
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
@@ -182,7 +182,7 @@ class Api:
         if item_id := response.get('id'):
             c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
             i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.item = self.__categories[c_idx]['items'][i_idx] = response
+            self.category['items'][i_idx] = self.item = self.__categories[c_idx]['items'][i_idx] = response
         return response
 
     async def export_item(self, directory: str) -> str:
@@ -222,7 +222,7 @@ class Api:
         for key in item_pop_keys:
             if key in item.keys():
                 item.pop(key)
-        created_item = await self.create_item(self.category['id'], await serializable(item))
+        created_item = await self.create_item(self.category['id'], await prepare(item))
         if item_id := created_item.get('id'):
             for field in fields:
                 await self.add_field(item_id, field)

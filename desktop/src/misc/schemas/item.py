@@ -40,13 +40,6 @@ class ItemBase(Schema):
 
     async def from_db(self) -> Schema:
         # self.icon = str(zlib.decompress(self.icon))
-        self.icon = str(self.icon)
-
-        self.icon = str(self.icon)
-        # self.expires_at = str(self.expires_at)
-        # self.modified_at = str(self.modified_at)
-        # self.created_at = str(self.created_at)
-
         return self
 
 

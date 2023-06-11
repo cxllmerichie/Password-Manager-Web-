@@ -1,4 +1,4 @@
-from aioqui.widgets.custom import StateButton, ImageButton, DurationLabel, Popup
+from aioqui.widgets.custom import StateButton, DurationLabel, Popup
 from aioqui.widgets import Button, Input, Layout, Label, Spacer, Frame, Parent
 from aioqui.misc.fileops import select_file
 from aioqui.asynq import asyncSlot
@@ -6,6 +6,7 @@ from aioqui.types import Icon
 from aioqui import CONTEXT
 from typing import Any
 
+from ..components import ImageButton
 from ..misc import ICONS, API, PATHS, SIZES, COLORS
 from .. import qss
 

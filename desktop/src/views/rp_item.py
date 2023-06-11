@@ -1,5 +1,5 @@
 from aioqui.widgets import Button, Input, Layout, Label, Frame, ScrollArea, Selector, Parent, DateTime
-from aioqui.widgets.custom import StateButton, ImageButton, DurationLabel, Popup
+from aioqui.widgets.custom import StateButton, DurationLabel, Popup
 from aioqui.misc.fileops import select_file, select_dir, explore_dir
 from aioqui.asynq import asyncSlot
 from aioqui.types import Icon
@@ -9,7 +9,7 @@ from typing import Any
 from datetime import datetime
 
 from ..misc import ICONS, API, PATHS, SIZES
-from ..components import Field, Attachment
+from ..components import Field, Attachment, ImageButton
 from .. import qss
 
 

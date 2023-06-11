@@ -1,23 +1,10 @@
 from apidevtools.simpleorm.connectors.sqlite import SQLite
+from apidevtools.utils import evaluate
 from apidevtools.simpleorm import ORM
 from typing import Any
-import ast
 
 
 class ORMNMap(ORM):
-    @staticmethod
-    def evaluate(value: bytes, convert: bool = True) -> Any:
-        if not convert:
-            return value
-        try:
-            return ast.literal_eval(value.decode())
-        except ValueError:
-            return ast.literal_eval(f'\'{value.decode()}\'')
-        except SyntaxError:
-            return value.decode()
-        except AttributeError:
-            return None
-
     async def set(self, key: Any, value: Any) -> Any:
         try:
             if exists := await self.get(key):
@@ -32,7 +19,7 @@ class ORMNMap(ORM):
     async def get(self, key: Any, convert: bool = False) -> bytes | None:
         try:
             if mapping := await (await self.select(f'SELECT "value" FROM "map" WHERE "key" = "{str(key)}";')).first():
-                return self.evaluate(mapping['value'], convert)
+                return evaluate(mapping['value'], convert)
         except Exception as error:
             self.logger.error(error)
             return None
@@ -40,7 +27,7 @@ class ORMNMap(ORM):
     async def remove(self, key: Any, convert: bool = False) -> bytes | None:
         try:
             if mapping := await (await self.delete(dict(key=key), tablename='map')).first():
-                return self.evaluate(mapping['value'], convert)
+                return evaluate(mapping['value'], convert)
         except Exception as error:
             self.logger.error(error)
             return None

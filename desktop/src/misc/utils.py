@@ -13,7 +13,7 @@ async def find(
     return None, None
 
 
-async def serializable(data: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
+async def prepare(data: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
     final = {}
     for key, value in data.items():
         if key in exceptions:

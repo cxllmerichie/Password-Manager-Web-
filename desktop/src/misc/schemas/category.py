@@ -31,7 +31,6 @@ class CategoryBase(Schema):
 
     async def from_db(self) -> Schema:
         # self.icon = str(zlib.decompress(self.icon))
-        self.icon = str(self.icon)
         return self
 
 
