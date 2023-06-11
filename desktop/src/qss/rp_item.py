@@ -105,12 +105,12 @@ css: str = f'''
 }}
 
 #EditBtn:hover,
-#FavBtn:hover {{
+#FavBtn:hover,
+#CloseBtn:hover {{
     background-color: {COLORS.HOVER};
 }}
 
-#DeleteBtn:hover,
-#CloseBtn:hover {{
+#DeleteBtn:hover {{
     background-color: {COLORS.RED_HOVER};
 }}
 
@@ -163,7 +163,7 @@ css: str = f'''
     background-color: {COLORS.TRANSPARENT};
     padding: 0px;
     border: none;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
 }}
 

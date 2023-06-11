@@ -78,12 +78,12 @@ css: str = f'''
 }}
 
 #EditBtn:hover,
-#FavBtn:hover {{
+#FavBtn:hover,
+#CloseBtn:hover {{
     background-color: {COLORS.HOVER};
 }}
 
-#DeleteBtn:hover,
-#CloseBtn:hover {{
+#DeleteBtn:hover {{
     background-color: {COLORS.RED_HOVER};
 }}
 

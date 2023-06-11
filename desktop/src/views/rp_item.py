@@ -32,13 +32,13 @@ class RightPagesItem(Frame):
                             event=self.toggle_favourite, fix_size=SIZES.CONTROL
                         ), Layout.Left,
                         await Button(self, 'EditBtn').init(
-                            icon=ICONS.EDIT.adjusted(size=(30, 30)), on_click=self.execute_edit, fix_size=SIZES.CONTROL
+                            icon=ICONS.EDIT.adjusted(size=(30, 30)), on_click=self.show_edit, fix_size=SIZES.CONTROL
                         ),
                         await Button(self, 'DeleteBtn', False).init(
                             icon=ICONS.TRASH.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
                             on_click=lambda: Popup(
-                                self.core, qss=qss.components.popup,
-                                message=f'Delete item\n\'{API.item["title"]}\'?', on_success=self.execute_delete
+                                self.core, qss=qss.components.popup, on_success=self.execute_delete,
+                                message=f'Delete item\n\'{API.item["title"]}\'?'
                             ).display()
                         ),
                         await Button(self, 'CloseBtn').init(
@@ -59,9 +59,7 @@ class RightPagesItem(Frame):
                             await Label(self, 'CreatedHintLbl').init(
                                 text='Created:'
                             ),
-                            await Label(self, 'CreatedLbl').init(
-
-                            )
+                            await Label(self, 'CreatedLbl').init()
                         ]
                     )
                 ),
@@ -71,9 +69,7 @@ class RightPagesItem(Frame):
                             await Label(self, 'ModifiedHintLbl').init(
                                 text='Modified:'
                             ),
-                            await Label(self, 'ModifiedLbl').init(
-
-                            )
+                            await Label(self, 'ModifiedLbl').init()
                         ]
                     )
                 ),
@@ -85,21 +81,16 @@ class RightPagesItem(Frame):
                                 text='Expires:'
                             ), Layout.Top,
                             await Layout.vertical().init(
-                                alignment=Layout.Top, spacing=5,
+                                alignment=Layout.Top,
                                 items=[
                                     await Selector(self, 'ExpiresSelector').init(
-                                        on_change=lambda: self.DateTime.setVisible(self.ExpiresSelector.currentText() == 'Yes'),
+                                        on_change=self.expires_textchanged,
                                         items=[
                                             Selector.Item(text='No'),
                                             Selector.Item(text='Yes'),
                                         ]
                                     ),
-                                    await Label(self, 'ExpiresLbl').init(
-
-                                    ),
-                                    await DateTime(self, 'DateTime', False).init(
-
-                                    )
+                                    await DateTime(self, 'DateTime', False).init(),
                                 ]
                             )
                         ]
@@ -176,8 +167,7 @@ class RightPagesItem(Frame):
     @asyncSlot()
     async def add_field(self, field: dict[str, Any] = None):
         self.HintLbl2.setVisible(False)
-        layout = self.FieldScrollArea.widget().layout()
-        layout.addWidget(await Field(self, field).init())
+        self.FieldScrollArea.widget().layout().addWidget(await Field(self, field).init())
 
     @asyncSlot()
     async def add_attachment(self, attachment: dict[str, Any] = None):
@@ -187,24 +177,28 @@ class RightPagesItem(Frame):
                 attachment = await API.get_attachment_data(filepath)
         if attachment:
             self.HintLbl3.setVisible(False)
-            layout = self.AttachmentScrollArea.widget().layout()
-            layout.addWidget(await Attachment(self, attachment, creating).init())
+            self.AttachmentScrollArea.widget().layout().addWidget(await Attachment(self, attachment, creating).init())
 
     @asyncSlot()
-    async def execute_edit(self):
+    async def expires_textchanged(self):
+        yes = self.ExpiresSelector.currentText() == 'Yes'
+        self.DateTime.setVisible(yes)
+        # editable when selector visible (on edit)
+        self.DateTime.setReadOnly(not self.ExpiresSelector.isVisible())
+
+    @asyncSlot()
+    async def show_edit(self):
         self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
         self.ModifiedFrame.setVisible(False)
         self.ExpiresFrame.setVisible(True)
-        self.ExpiresLbl.setVisible(False)
         self.ExpiresSelector.setVisible(True)
         if expires_at := API.item['expires_at']:
-            self.DateTime.setDateTime(expires_at)
-            self.DateTime.setVisible(True)
+            self.ExpiresSelector.setCurrentText('No')  # workaround
             self.ExpiresSelector.setCurrentText('Yes')
+            self.DateTime.setDateTime(expires_at)
         else:
             self.ExpiresSelector.setCurrentText('No')
-            self.DateTime.setVisible(False)
             self.DateTime.setDateTime(datetime.now())
         self.CreateBtn.setVisible(False)
         self.EditBtn.setVisible(False)
@@ -241,7 +235,7 @@ class RightPagesItem(Frame):
             expires_at = str(self.DateTime.dateTime())
         prev_icon = API.item['icon']
         updated_category = await API.update_item(API.item['id'], {
-            'icon': self.ImageBtn.bytes, 'title': title, 'description': self.DescInp.toPlainText(),
+            'icon': self.ImageBtn.bytes, 'title': title, 'description': self.DescInp.text(),
             'is_favourite': self.FavBtn.state, 'expires_at': expires_at
         })
         if category_id := updated_category.get('id'):
@@ -260,7 +254,9 @@ class RightPagesItem(Frame):
         self.ModifiedFrame.setVisible(bool(API.item and API.item['modified_at']))
         if expires := (API.item and API.item['expires_at']):
             self.ExpiresSelector.setVisible(False)
-            self.DateTime.setVisible(False)
+            self.DateTime.setVisible(True)
+            self.DateTime.setDateTime(API.item['expires_at'])
+            self.DateTime.setReadOnly(True)
         self.ExpiresFrame.setVisible(bool(expires))
 
         self.CreatedFrame.setVisible(True)
@@ -322,10 +318,8 @@ class RightPagesItem(Frame):
         self.ModifiedFrame.setVisible(modified_at is not None)
 
         if expires_at := item['expires_at']:
-            self.ExpiresLbl.setText(expires_at.strftime(DateTime.format))
-            self.ExpiresLbl.setVisible(True)
+            self.ExpiresSelector.setCurrentText('Yes')
             self.ExpiresSelector.setVisible(False)
-            self.DateTime.setVisible(False)
             self.DateTime.setDateTime(expires_at)
         else:
             self.ExpiresSelector.setCurrentText('No')
@@ -365,7 +359,7 @@ class RightPagesItem(Frame):
         if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         created_item = await API.create_item(API.category['id'], {
-            'icon': self.ImageBtn.bytes, 'description': self.DescInp.toPlainText(),
+            'icon': self.ImageBtn.bytes, 'description': self.DescInp.text(),
             'title': title, 'is_favourite': self.FavBtn.state
         })
         if item_id := created_item.get('id'):

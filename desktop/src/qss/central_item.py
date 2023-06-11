@@ -6,6 +6,7 @@ css = f'''
     background-color: {COLORS.LIGHT};
     border-radius: 10px;
     min-height: 75px;
+    max-height: 75px;
     max-width: 400px;
 }}
 

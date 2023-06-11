@@ -13,7 +13,7 @@ class Field(Frame):
     def __init__(self, parent: Parent, field: dict[str, Any]):
         self.identifier = str(uuid4())
         name = f'Field{self.identifier}'
-        super().__init__(parent, name, qss=qss.item_field.field(name))
+        super().__init__(parent, name, qss=qss.rpi_field.field(name))
 
         self.field = field
         API.field_identifiers.append(self.identifier)

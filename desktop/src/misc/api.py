@@ -329,4 +329,4 @@ class Api:
     async def save_icon(self, icon: bytes | str) -> None:
         filename = f"{datetime.now().strftime('%d.%m.%Y %H-%M-%S')}.{EXTENSIONS.ICON}"
         with open(os.path.join(PATHS.ICONS, filename), 'wb') as file:
-            file.write(eval(icon))
+            file.write(icon)

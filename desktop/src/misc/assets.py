@@ -63,13 +63,18 @@ class SIZES:
     Panel = Size(..., 30)
     CATEGORY = Size(300, ...)
     ERROR = Size(300, 50)
-    RightMenuMin = Size(400, ...)
-    RightMenuMax = Size(800, ...)
-    RightMenuDefault = Size(400, ...)
+
+    RightMenuMin = 400
+    RightMenuMax = 800
+    RightMenuFix = 400
+
     MenuBtnIcon = Size(30, 30)
     RightMenuImage = Size(80, 80)
+
+    LeftMenuFix = 300
     LeftMenuMin = 250
     LeftMenuMax = 400
+
     LeftMenuLettersMargin = 18, 0, 0, 0
     LeftMenuTitlesMargin = 0, 20, 0, 10
     CentralPagesLettersMargin = 18, 0, 0, 0

@@ -4,7 +4,6 @@ from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
 from ..misc import API, ICONS, Storage
-from .. import qss
 
 
 class StatusBar(StatusBarBase):
@@ -13,16 +12,18 @@ class StatusBar(StatusBarBase):
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
 
     async def init(self) -> 'StatusBar':
+        self.layout().itemAt(0).layout().setParent(None)  # removes base child (QVBox)
+        # self.layout().setContentsMargins(0, 0, 0, 0)  # does not remove extra margins
+        # self.layout().setSpacing(0)  # does not remove extra margins
+
         self.addWidget(await Frame(self, 'LeftFrame', qss='border: none').init(
             layout=await Layout.horizontal().init(
                 alignment=Layout.Left,
                 items=[
                     await Button(self, 'LogoutBtn').init(
-                        icon=ICONS.LOGOUT, text='Log out', on_click=Popup(
-                            self.core, qss=qss.components.popup,
-                            message=f'Do you want to log out?',
-                            on_success=self.log_out
-                        ).display
+                        icon=ICONS.LOGOUT, on_click=lambda: Popup(
+                            self.core, message=f'Do you want to log out?', on_success=self.log_out
+                        ).display()
                     )
                 ]
             )

@@ -2,8 +2,7 @@ from aioqui.widgets import Label, Layout, ScrollArea, Button, Frame, Parent
 from aioqui.widgets.custom import TotalButton, SearchBar
 from aioqui.widgets.extensions import SplitterWidgetExt
 from aioqui.asynq import asyncSlot
-from aioqui.types import Icon
-from aioqui.types.enums import SizePolicy
+from aioqui.types import Icon, SizePolicy
 from aioqui import CONTEXT
 from contextlib import suppress
 
@@ -19,7 +18,7 @@ class LeftMenu(SplitterWidgetExt, Frame):
             qss.components.scroll,
             qss.components.search
         ))
-        SplitterWidgetExt.__init__(self, 300, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
+        SplitterWidgetExt.__init__(self, SIZES.LeftMenuFix, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
 
     async def init(self) -> 'LeftMenu':
         self.setLayout(await Layout.vertical().init(
@@ -29,11 +28,11 @@ class LeftMenu(SplitterWidgetExt, Frame):
                     text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
                 ), Layout.Center,
                 await TotalButton(self, 'AllItemsBtn').init(
-                    icon=ICONS.HOME, text='All items', on_click=CONTEXT.CentralItems.show_all
+                    icon=ICONS.HOME, text='All items', on_click=lambda: CONTEXT.CentralItems.show_all()
                 ),
                 await TotalButton(self, 'FavItemsBtn').init(
                     icon=Icon(ICONS.STAR.icon, ICONS.HOME.size), text='Favourite',
-                    on_click=CONTEXT.CentralItems.show_favourite
+                    on_click=lambda: CONTEXT.CentralItems.show_favourite()
                 ),
                 await LabelExtended(self, 'CategoriesLbl').init(
                     text='Categories', margins=SIZES.LeftMenuTitlesMargin
@@ -48,7 +47,7 @@ class LeftMenu(SplitterWidgetExt, Frame):
                     hpolicy=SizePolicy.Minimum
                 ),
                 await Button(self, 'AddCategoryBtn').init(
-                    text='Category', icon=ICONS.PLUS, on_click=CONTEXT.RightPagesCategory.show_create
+                    text='Category', icon=ICONS.PLUS, on_click=lambda: CONTEXT.RightPagesCategory.show_create()
                 )
             ]
         ))

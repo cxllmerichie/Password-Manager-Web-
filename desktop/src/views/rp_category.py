@@ -172,7 +172,7 @@ class RightPagesCategory(Frame):
         prev_icon = API.category['icon']
         updated_category = await API.update_category(API.category['id'], {
             'icon': self.ImageBtn.bytes, 'title': title,
-            'description': self.DescInp.toPlainText(), 'is_favourite': self.FavBtn.state
+            'description': self.DescInp.text(), 'is_favourite': self.FavBtn.state
         })
         if category_id := updated_category.get('id'):
             CONTEXT.LeftMenu.refresh_categories()
@@ -228,7 +228,7 @@ class RightPagesCategory(Frame):
             return self.ErrorLbl.setText('Title can not be empty')
         created_category = await API.create_category({
             'icon': self.ImageBtn.bytes, 'title': title,
-            'description': self.DescInp.toPlainText(), 'is_favourite': self.FavBtn.state
+            'description': self.DescInp.text(), 'is_favourite': self.FavBtn.state
         })
         if created_category.get('id'):
             await CONTEXT.LeftMenu.refresh_categories()

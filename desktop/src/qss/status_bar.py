@@ -37,7 +37,6 @@ QStatusBar::item {{
     font-size: 14px;
     color: white;
     min-height: 20px;
-    min-width: 85px;
 }}
 
 #LogoutBtn:hover {{

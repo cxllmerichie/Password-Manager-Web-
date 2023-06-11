@@ -9,8 +9,8 @@ from .. import qss
 
 class RightPages(SplitterWidgetExt, StackedWidget):
     def __init__(self, parent: Parent):
-        StackedWidget.__init__(self, parent, self.__class__.__name__, qss=qss.menu_right_pages.css)
-        SplitterWidgetExt.__init__(self, SIZES.RightMenuDefault.w, SIZES.RightMenuMin.w, SIZES.RightMenuMax.w)
+        StackedWidget.__init__(self, parent, self.__class__.__name__, qss=qss.menu_right.css)
+        SplitterWidgetExt.__init__(self, SIZES.RightMenuFix, SIZES.RightMenuMin, SIZES.RightMenuMax)
 
     async def init(self) -> 'RightPages':
         await super().init(

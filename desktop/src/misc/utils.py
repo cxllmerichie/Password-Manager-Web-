@@ -13,16 +13,18 @@ async def find(
     return None, None
 
 
-async def serializable(dictionary: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
-    def validate(value: Any):
-        if isinstance(value, bool):
-            return True
-        elif value is None:
-            return False
-        elif isinstance(value, str):
-            return len(value)
-
-    return {key: value for key, value in dictionary.items() if validate(value) or key in exceptions}
+async def serializable(data: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
+    final = {}
+    for key, value in data.items():
+        if key in exceptions:
+            final[key] = value
+            continue
+        if isinstance(value, str) and not len(value):
+            continue
+        elif isinstance(value, bytes) and value == b'':
+            continue
+        final[key] = value
+    return final
 
 
 def auth_h() -> dict[str, Any]:

@@ -13,7 +13,7 @@ class Attachment(Frame):
     def __init__(self, parent: Parent, attachment: dict[str, Any], creating: bool):
         self.identifier = str(uuid4())
         name = f'Attachment{self.identifier}'
-        super().__init__(parent, name, qss=qss.item_attachment.attachment(name))
+        super().__init__(parent, name, qss=qss.rpi_attachment.attachment(name))
 
         self.creating = creating
         self.attachment = attachment
