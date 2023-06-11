@@ -2,8 +2,8 @@ from aioqui.widgets import ScrollArea, Layout, Label, Frame, Parent
 from aioqui.widgets.extensions import SplitterWidgetExt
 from aioqui.widgets.custom import SearchBar
 from aioqui.asynq import asyncSlot
-from typing import Any
 from contextlib import suppress
+from typing import Any
 
 from ..misc import API
 from .. import qss
