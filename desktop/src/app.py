@@ -39,10 +39,8 @@ class App(Window):
         return self
 
     @asyncSlot()
-    async def close(self) -> bool:
+    async def close(self):
         from .misc.const import db
 
         assert await db.close_pool()
-        import sys
-        super().close()
-        sys.exit(0)
+        return super().close()

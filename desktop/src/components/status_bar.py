@@ -61,9 +61,7 @@ class StatusBar(StatusBarBase):
     async def storage_selector_textchanged(self):
         # if trying to switch to remote, but api is not active at the moment
         if self.StorageSelector.currentText() == Storage.REMOTE and not await API.is_connected():
-            await Popup(self.core).display(
-                message='Remote storage is not available at the moment', buttons=[Popup.OK],
-            )
+            await Popup(self.core, message='Remote storage is not available at the moment', buttons=[Popup.OK]).display()
             return self.StorageSelector.setCurrentText(Storage.LOCAL)
         CONTEXT['storage'] = self.StorageSelector.currentText()
         if CONTEXT['storage'] == Storage.REMOTE and not CONTEXT['token']:

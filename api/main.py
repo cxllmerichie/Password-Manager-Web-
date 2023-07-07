@@ -11,4 +11,4 @@ if __name__ == '__main__':
 
         uvloop.install()
         loop = 'uvloop'
-    uvicorn.run(app=app, host=const.API_HOST, port=const.API_PORT, loop=loop)
+    uvicorn.run(app=app, host=const.API_HOST, port=const.API_PORT, loop=loop, log_config='config.ini')
