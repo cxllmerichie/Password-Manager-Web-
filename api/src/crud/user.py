@@ -10,15 +10,15 @@ async def create_user(user: schemas.UserCreate) -> schemas.User:
     return db_user
 
 
-async def get_user(user_id: int = None, email: str = None, schema: type = schemas.User) -> schemas.User | None:
+async def get_user(user_id: int = None, email: str = None, schema: type = schemas.User, depth: int = 0) -> schemas.User | None:
     field, value = ('email', email.lower()) if email else ('id', user_id)
     query, args = f'SELECT * FROM "user" WHERE "{field}" = $1;', (value, )
-    db_user = await (await db.select(query, args, schema, rel_depth=3)).first()
+    db_user = await (await db.select(query, args, schema, rel_depth=depth)).first()
     return db_user
 
 
-async def update_user(user_id: int, user: schemas.UserUpdate) -> schemas.User:
-    db_user = await (await db.update(user, dict(id=user_id), schemas.User, rel_depth=3)).first()
+async def update_user(user_id: int, user: schemas.UserUpdate, depth: int = 0) -> schemas.User:
+    db_user = await (await db.update(user, dict(id=user_id), schemas.User, rel_depth=depth)).first()
     return db_user
 
 

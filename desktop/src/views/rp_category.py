@@ -118,7 +118,7 @@ class RightPagesCategory(Frame):
         self.AddItemBtn.setVisible(False)
         self.ImageBtn.setIcon(ICONS.CATEGORY.icon)
         self.ImageBtn.setDisabled(False)
-        self.ImageBtn.image_bytes = None
+        self.ImageBtn.default = True
         self.FavBtn.state = False
         self.TitleInp.setEnabled(True)
         self.TitleInp.setText('')

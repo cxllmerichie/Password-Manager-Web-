@@ -20,45 +20,8 @@ class Api:
     def __init__(self):
         request.baseurl = 'https://pmapi.cxllmerichie.com'
 
-    __categories: list[dict[str, Any]] = None
-    __category: dict[str, Any] = None
-    __item: dict[str, Any] = None
-    field_identifiers: list[str] = []
-    attachment_identifiers: list[str] = []
-
-    # PROPERTIES
-    @property
-    def categories(self) -> list[dict[str, Any]]:
-        return self.__categories
-
-    @categories.setter
-    def categories(self, categories: list[dict[str, Any]]):
-        self.__categories = categories
-
-    @property
-    def item(self) -> dict[str, Any]:
-        return self.__item
-
-    @item.setter
-    def item(self, item: dict[str, Any]):
-        self.__item = item
-
-    @property
-    def category(self):
-        if not self.__category and self.item:
-            for index, category in enumerate(self.categories):
-                if category.get('id') == self.item['category_id']:
-                    self.__category = self.categories[index]
-                    break
-        return self.__category
-
-    @category.setter
-    def category(self, category: dict[str | Any]):
-        self.__category = category
-
-    @property
-    def items(self) -> list[dict[str, Any]]:
-        return self.category['items']
+    fields: list[str] = []
+    attachments: list[str] = []
 
     # AUTH
     async def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
@@ -93,9 +56,6 @@ class Api:
             response = await request.post('/categories/', headers=auth_h(), body=await prepare(category), pythonize=True)
         else:
             response = await crud.create_category(category)
-        if category_id := response.get('id'):
-            self.__categories.append(response)
-            self.category = response
         return response
 
     async def get_category(self, category_id: int) -> dict[str, Any]:
@@ -103,9 +63,6 @@ class Api:
             response = await request.get(f'/categories/{category_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.get_category(category_id)
-        if category_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', category_id)
-            self.category = self.categories[c_idx] = response
         return response
 
     async def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
@@ -113,9 +70,6 @@ class Api:
             response = await request.put(f'/categories/{category_id}/favourite/', headers=auth_h(), params=dict(is_favourite=is_favourite), pythonize=True)
         else:
             response = await crud.set_category_favourite(category_id, is_favourite)
-        if category_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', category_id)
-            self.category = self.categories[c_idx] = response
         return response
 
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
@@ -123,9 +77,6 @@ class Api:
             response = await request.put(f'/categories/{category_id}/', headers=auth_h(), body=await prepare(category), pythonize=True)
         else:
             response = await crud.update_category(category_id, category)
-        if category_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', category_id)
-            self.category = self.categories[c_idx] = response
         return response
 
     async def delete_category(self, category_id: int) -> dict[str, Any]:
@@ -133,10 +84,6 @@ class Api:
             response = await request.delete(f'/categories/{category_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_category(category_id)
-        if category_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', category_id)
-            self.categories.pop(c_idx)
-            self.category = self.item = None
         return response
 
     # ITEMS
@@ -145,10 +92,6 @@ class Api:
             response = await request.post(f'/categories/{category_id}/items/', headers=auth_h(), body=await prepare(item), pythonize=True)
         else:
             response = await crud.create_item(category_id, item)
-        if item_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.category['id'])
-            self.categories[c_idx]['items'].append(response)
-            self.item = response
         return response
 
     async def delete_item(self, item_id: int) -> dict[str, Any]:
@@ -156,11 +99,6 @@ class Api:
             response = await request.delete(f'/items/{item_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_item(item_id)
-        if item_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.categories[c_idx]['items'].pop(i_idx)
-            self.item = None
         return response
 
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
@@ -168,10 +106,6 @@ class Api:
             response = await request.put(f'/items/{item_id}/', headers=auth_h(), body=await prepare(item, ['expires_at']), pythonize=True)
         else:
             response = await crud.update_item(item_id, item)
-        if item_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.category['items'][i_idx] = self.item = self.__categories[c_idx]['items'][i_idx] = response
         return response
 
     async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
@@ -179,10 +113,6 @@ class Api:
             response = await request.put(f'/items/{item_id}/favourite/', headers=auth_h(), params=dict(is_favourite=is_favourite), pythonize=True)
         else:
             response = await crud.set_item_favourite(item_id, is_favourite)
-        if item_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.category['items'][i_idx] = self.item = self.__categories[c_idx]['items'][i_idx] = response
         return response
 
     async def export_item(self, directory: str) -> str:
@@ -236,11 +166,6 @@ class Api:
             response = await request.post(f'/items/{item_id}/fields/', headers=auth_h(), body=field, pythonize=True)
         else:
             response = await crud.create_field(item_id, field)
-        if field_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.items, 'id', item_id)
-            self.categories[c_idx]['items'][i_idx]['fields'].append(response)
-            self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
     async def update_field(self, field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
@@ -248,12 +173,6 @@ class Api:
             response = await request.put(f'/fields/{field_id}/', headers=auth_h(), body=field, pythonize=True)
         else:
             response = await crud.update_field(field_id, field)
-        if field_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.items, 'id', response['item_id'])
-            f_idx, _ = await find(self.items[i_idx]['fields'], 'id', field_id)
-            self.categories[c_idx]['items'][i_idx]['fields'][f_idx] = response
-            self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
     async def delete_field(self, field_id: UUID) -> dict[str, Any]:
@@ -261,11 +180,6 @@ class Api:
             response = await request.delete(f'/fields/{field_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_field(field_id)
-        if field_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.items, 'id', response['item_id'])
-            self.categories[c_idx]['items'][i_idx]['fields'].remove(response)
-            self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
     # ATTACHMENT
@@ -274,11 +188,6 @@ class Api:
             response = await request.post(f'/items/{item_id}/attachments/', headers=auth_h(), body=attachment, pythonize=True)
         else:
             response = await crud.create_attachment(item_id, attachment)
-        if attachment_id := response.get('id'):
-            c_idx, _ = await find(self.categories, 'id', self.item['category_id'])
-            i_idx, _ = await find(self.categories[c_idx]['items'], 'id', item_id)
-            self.categories[c_idx]['items'][i_idx]['attachments'].append(response)
-            self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
     async def update_attachment(self, attachment_id: UUID, attachment: dict[str, Any]) -> dict[str, Any]:
@@ -286,12 +195,6 @@ class Api:
             response = await request.put(f'/attachments/{attachment_id}/', headers=auth_h(), body=attachment, pythonize=True)
         else:
             response = await crud.update_attachment(attachment_id, attachment)
-        if attachment_id := response.get('id'):
-            i_idx, _ = await find(self.items, 'id', response['item_id'])
-            c_idx, _ = await find(self.categories, 'id', self.items[i_idx]['category_id'])
-            a_idx, _ = await find(self.items[i_idx]['attachments'], 'id', attachment_id)
-            self.categories[c_idx]['items'][i_idx]['attachments'][a_idx] = response
-            self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
     async def delete_attachment(self, attachment_id: UUID) -> dict[str, Any]:
@@ -299,11 +202,6 @@ class Api:
             response = await request.delete(f'/attachments/{attachment_id}/', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_attachment(attachment_id)
-        if attachment_id := response.get('id'):
-            i_idx, _ = await find(self.items, 'id', response['item_id'])
-            c_idx, _ = await find(self.categories, 'id', self.items[i_idx]['category_id'])
-            self.categories[c_idx]['items'][i_idx]['attachments'].remove(response)
-            self.item = self.categories[c_idx]['items'][i_idx]
         return response
 
     async def download_attachment(self, filepath: str, attachment: dict[str, Any]):

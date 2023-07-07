@@ -278,8 +278,8 @@ class RightPagesItem(Frame):
     @asyncSlot()
     async def show_create(self):
         API.item = None
-        API.field_identifiers.clear()
-        API.attachment_identifiers.clear()
+        API.fields.clear()
+        API.attachments.clear()
 
         self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
@@ -287,7 +287,7 @@ class RightPagesItem(Frame):
         self.ExpiresFrame.setVisible(True)
         self.DeleteBtn.setVisible(False)
         self.ImageBtn.setIcon(ICONS.ITEM.icon)
-        self.ImageBtn.image_bytes = None
+        self.ImageBtn.default = True
         self.ImageBtn.setEnabled(True)
         self.EditBtn.setVisible(False)
         self.TitleInp.setEnabled(True)
@@ -363,7 +363,7 @@ class RightPagesItem(Frame):
             'title': title, 'is_favourite': self.FavBtn.state
         })
         if item_id := created_item.get('id'):
-            for identifier in API.field_identifiers:
+            for identifier in API.fields:
                 field = self.findChild(QFrame, f'Field{identifier}')
                 await API.add_field(item_id, {
                     'name': field.NameInp.text(), 'value': field.ValueInp.text()

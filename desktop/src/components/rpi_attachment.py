@@ -17,7 +17,7 @@ class Attachment(Frame):
 
         self.creating = creating
         self.attachment = attachment
-        API.attachment_identifiers.append(self.identifier)
+        API.attachments.append(self.identifier)
 
     async def init(self) -> 'Attachment':
         self.setLayout(await Layout.horizontal().init(
@@ -100,8 +100,8 @@ class Attachment(Frame):
     @asyncSlot()
     async def execute_delete(self):
         def delete_ui_attachment():
-            if self.identifier in API.attachment_identifiers:
-                API.attachment_identifiers.remove(self.identifier)
+            if self.identifier in API.attachments:
+                API.attachments.remove(self.identifier)
             self.setVisible(False)
             self.deleteLater()
         if not self.creating:

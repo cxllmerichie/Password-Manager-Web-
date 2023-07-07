@@ -16,7 +16,7 @@ class Field(Frame):
         super().__init__(parent, name, qss=qss.rpi_field.field(name))
 
         self.field = field
-        API.field_identifiers.append(self.identifier)
+        API.fields.append(self.identifier)
 
     async def init(self) -> 'Field':
         self.setLayout(await Layout.horizontal().init(
@@ -107,8 +107,8 @@ class Field(Frame):
     @asyncSlot()
     async def execute_delete(self):
         def delete_ui_field():
-            if self.identifier in API.field_identifiers:
-                API.field_identifiers.remove(self.identifier)
+            if self.identifier in API.fields:
+                API.fields.remove(self.identifier)
             self.setVisible(False)
             self.deleteLater()
         if self.field:
