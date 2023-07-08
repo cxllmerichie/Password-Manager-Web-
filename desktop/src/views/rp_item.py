@@ -109,7 +109,7 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl2').init(
-                                        wrap=True, text='Add new field with name "password" or "username" and it\'s value',
+                                        wrap=True, text='Hint: Add new field with name "password" or "username" and it\'s value',
                                         alignment=Label.Center
                                     ), Layout.Center
                                 ]
@@ -127,7 +127,7 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl3').init(
-                                        text='Attach documents (*.txt, *.jpg) to the item', wrap=True,
+                                        text='Hint: Attach documents (*.txt, *.jpg) to the item', wrap=True,
                                         alignment=Label.Center
                                     ), Layout.Center
                                 ]

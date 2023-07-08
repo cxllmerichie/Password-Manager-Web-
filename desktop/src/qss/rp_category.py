@@ -87,8 +87,9 @@ css: str = f'''
     background-color: {COLORS.RED_HOVER};
 }}
 
-#HintLbl1 {{
-    color: {COLORS.TEXT_PRIMARY};
+#HintLbl1,
+#HintLbl2 {{
+    color: {COLORS.TEXT_SECONDARY};
     font-size: 16px;
     font-style: italic;
 }}

@@ -60,6 +60,10 @@ class RightPagesCategory(Frame):
                     wrap=True, alignment=Layout.Center,
                     text='Hint: Create category like "Social Media" to store your Twitter, Facebook or Instagram personal data'
                 ),
+                await Label(self, 'HintLbl2', False).init(
+                    wrap=True, alignment=Layout.Center,
+                    text='Hint: Add some items to the category to experience all functionality'
+                ),
                 Spacer(Spacer.Minimum, Spacer.Expanding),
                 await DurationLabel(self, 'ErrorLbl').init(
                     wrap=True, alignment=Layout.Center
@@ -117,6 +121,7 @@ class RightPagesCategory(Frame):
     async def show_create(self):
         self.category = None
         self.HintLbl1.setVisible(True)
+        self.HintLbl2.setVisible(False)
         self.CreateBtn.setVisible(True)
         self.EditBtn.setVisible(False)
         self.SaveCancelFrame.setVisible(False)
@@ -226,7 +231,8 @@ class RightPagesCategory(Frame):
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
-        await CONTEXT.CentralItems.refresh_items(await api.get_items(category['id']))
+        await CONTEXT.CentralItems.refresh_items(items := await api.get_items(category['id']))
+        self.HintLbl2.setVisible(not bool(len(items)))
 
     @asyncSlot()
     async def execute_create(self):
