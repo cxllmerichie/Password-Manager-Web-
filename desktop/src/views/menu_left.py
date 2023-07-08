@@ -16,13 +16,13 @@ class LeftMenu(SplitterWidgetExt, Frame):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
             qss.menu_left.css,
             qss.components.scroll.replace('REPLACE', '25'),
-            qss.components.search.replace('REPLACE', cqss.gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.DARK, c2=COLORS.TRANSPARENT))
+            qss.components.search.replace('REPLACE', COLORS.DARK)
         ))
         SplitterWidgetExt.__init__(self, SIZES.LeftMenuFix, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
 
     async def init(self) -> 'LeftMenu':
         self.setLayout(await Layout.vertical().init(
-            spacing=5, margins=(0, 10, 0, 10), alignment=Layout.Top,
+            spacing=5, margins=(0, 10, 5, 10), alignment=Layout.Top,
             items=[
                 await LabelExtended(self, 'ItemsLbl').init(
                     text='Items', margins=(0, 0, 0, SIZES.LeftMenuTitlesMargin[3])
