@@ -20,13 +20,14 @@ class CentralItem(Frame):
                         icon=Icon(item['icon'], (50, 50))
                     ), Layout.Left,
                     await Layout.vertical().init(
+                        alignment=Layout.VCenter,
                         items=[
                             await Label(self, 'TitleLbl').init(
                                 text=item['title'], elide=Label.ElideRight, hpolicy=Label.Expanding
-                            ),
+                            ), Layout.Bottom,
                             await Label(self, 'DescriptionLbl').init(
                                 text=item['description'], elide=Label.ElideRight, hpolicy=Label.Expanding
-                            ),
+                            ), Layout.Top,
                         ]
                     )
                 ]

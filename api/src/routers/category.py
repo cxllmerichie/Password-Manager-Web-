@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from apidevtools.utils import LIMIT
 
 from .. import crud, schemas
-from ..const import db
 
 
 router = APIRouter(tags=['Category'])

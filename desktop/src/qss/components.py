@@ -56,19 +56,21 @@ search = f'''
     font-size: 18px;
     padding: 5px;
     color: {COLORS.TEXT_PRIMARY};
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
 }}
 
 #SearchBarPopup {{
-    background-color: {COLORS.Palette.LAYER_1};
+    background-color: {COLORS.Palette.LAYER_2};
     border: none;
     font-size: 20px;
     font-weight: bold;
-    color: {COLORS.TEXT_PRIMARY};
+    color: {COLORS.TEXT_SECONDARY};
 }}
 
 QListView::item:hover {{
-    background-color: {COLORS.Palette.LAYER_6};
+    background-color: {COLORS.TRANSPARENT};
+    color: {COLORS.TEXT_PRIMARY};
 }}
 '''
 

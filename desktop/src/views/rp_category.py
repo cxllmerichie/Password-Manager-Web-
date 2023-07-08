@@ -57,11 +57,11 @@ class RightPagesCategory(Frame):
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Label(self, 'HintLbl1', False).init(
-                    wrap=True, alignment=Layout.Center,
+                    wrap=True, alignment=Layout.Center, vpolicy=Label.Expanding,
                     text='Hint: Create category like "Social Media" to store your Twitter, Facebook or Instagram personal data'
                 ),
                 await Label(self, 'HintLbl2', False).init(
-                    wrap=True, alignment=Layout.Center,
+                    wrap=True, alignment=Layout.Center, vpolicy=Label.Expanding,
                     text='Hint: Add some items to the category to experience all functionality'
                 ),
                 Spacer(Spacer.Minimum, Spacer.Expanding),

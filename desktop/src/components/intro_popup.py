@@ -5,7 +5,7 @@ from aioqui import CONTEXT
 from PySide6.QtGui import QResizeEvent
 
 from .. import qss
-from ..misc import ICONS, api, Storage
+from ..misc import api, Storage
 
 
 class IntroPopup(Frame):
@@ -14,13 +14,12 @@ class IntroPopup(Frame):
 
     async def init(self) -> 'IntroPopup':
         self.setLayout(await Layout.vertical().init(
-            alignment=Layout.Center, spacing=10,
+            spacing=10, margins=(50, 50, 50, 100), alignment=Layout.VCenter,
             items=[
-                Spacer(hpolicy=Spacer.Expanding),
                 await Label(self, 'StorageLbl').init(
                     text='How do you want to store your data?', alignment=Layout.Center
                 ),
-                Spacer(hpolicy=Spacer.Expanding),
+                Spacer(vpolicy=Spacer.Expanding),
                 await Layout.horizontal().init(
                     items=[
                         LocalBtn := await Button(self, 'StorageBtn').init(
@@ -34,16 +33,14 @@ class IntroPopup(Frame):
                 await Label(self, 'HintLbl1').init(
                     wrap=True, alignment=Layout.Center
                 ),
-                Spacer(hpolicy=Spacer.Expanding),
+                Spacer(vpolicy=Spacer.Expanding),
                 await Label(self, 'HintLbl2').init(
                     wrap=True, alignment=Layout.Center,
-                    text='You will be able to change your choice any time after pressing "Continue" in the '
-                         'bottom panel'
+                    text='You will be able to change your choice any time after pressing "Continue" in the bottom panel'
                 ),
                 await Button(self, 'ContinueBtn').init(
                     text='Continue', on_click=self.execute_continue
                 ),
-                Spacer(hpolicy=Spacer.Expanding),
             ]
         ))
         self.LocalBtn = LocalBtn
@@ -54,13 +51,12 @@ class IntroPopup(Frame):
     @asyncSlot()
     async def execute_continue(self):
         await self.core.init()
-        self.deleteLater()
 
     @asyncSlot()
     async def set_storage_local(self):
         self.LocalBtn.setStyleSheet(qss.components.active_button)
         self.RemoteBtn.setStyleSheet(qss.components.inactive_button)
-        self.HintLbl1.setText('Storing data locally gives you access to it any time, also without internet connection. '
+        self.HintLbl1.setText('Storing data locally gives you access to it without internet connection. '
                               'Data will be lost in case of storage corruption or uninstalling the application. '
                               'Also a little quicker.')
         CONTEXT['storage'] = Storage.LOCAL

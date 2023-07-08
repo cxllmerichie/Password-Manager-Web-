@@ -16,8 +16,8 @@ from .utils import accept_h, auth_h, accept_content_h, login_h, Storage
 from . import crud
 
 
-# request.baseurl = 'https://pmapi.cxllmerichie.com'
-request.baseurl = 'http://127.0.0.1:8888'
+request.baseurl = 'https://pmapi.cxllmerichie.com'
+# request.baseurl = 'http://127.0.0.1:8888'
 
 fields: list[str] = []
 attachments: list[str] = []
@@ -45,7 +45,7 @@ async def create_user(user: dict[str, Any]) -> dict[str, Any]:
 
 async def get_categories() -> list[dict[str, Any]]:
     if Storage.is_remote():
-        response = await request.get('/categories/', headers=auth_h(), pythonize=True)
+        response = await request.get('/categories', headers=auth_h(), pythonize=True)
     else:
         response = await crud.get_categories()
     return response

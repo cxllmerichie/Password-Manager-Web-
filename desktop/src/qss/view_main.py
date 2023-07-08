@@ -6,6 +6,6 @@ css = f'''
 }}
 
 #MainView::handle {{
-    background-color: {COLORS.Palette.LAYER_3};
+    background-color: {COLORS.Palette.LAYER_2};
 }}
 '''

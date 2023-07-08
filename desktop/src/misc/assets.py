@@ -14,20 +14,17 @@ class EXTENSIONS:
 
 
 class PALETTE:
-    LAYER_1 = '#0E1621'
-    LAYER_2 = '#17212B'
-    LAYER_3 = '#242F3D'
-    LAYER_4 = ''
-    LAYER_5 = '#023535'
-    LAYER_6 = '#008F8C'
-    LAYER_7 = '#3E546A'
+    # LAYER_2 = '#17212B'
+    LAYER_2 = '#0E1621'
+    LAYER_3 = '#023535'
+    LAYER_4 = '#008F8C'
 
 
 class COLORS:
     Palette = PALETTE
     TRANSPARENT = 'transparent'
-    LIGHT = PALETTE.LAYER_6
-    DARK = PALETTE.LAYER_5
+    LIGHT = PALETTE.LAYER_4
+    DARK = PALETTE.LAYER_3
     RED = 'rgba(182, 0, 40, 1)'
     RED_HOVER = 'rgba(182, 0, 40, 0.5)'
     INPUT = 'rgba(27, 29, 40, 0.5)'
@@ -35,13 +32,13 @@ class COLORS:
     GREEN_HOVER = 'rgba(0, 255, 0, 0.5)'
     HOVER = 'rgba(255, 255, 255, 0.1)'
     BUTTON = 'rgba(255, 255, 255, 0.2)'
-    SEARCH = PALETTE.LAYER_3
+    SEARCH = PALETTE.LAYER_2
 
-    SIGNIN = PALETTE.LAYER_1
-    SIGNUP = PALETTE.LAYER_1
+    SIGNIN = PALETTE.LAYER_2
+    SIGNUP = PALETTE.LAYER_2
 
-    PANEL = PALETTE.LAYER_3
-    STATUS = PALETTE.LAYER_3
+    PANEL = PALETTE.LAYER_2
+    STATUS = PALETTE.LAYER_2
     LEFT_MENU = 'rgba(23, 33, 43, 0.7)'
     RIGHT_MENU = 'rgba(23, 33, 43, 0.7)'
 
@@ -52,7 +49,7 @@ class COLORS:
 
 class SIZES:
     CONTROL = Size(40, 40)
-    App = QSize(1000, 600)
+    App = QSize(800, 600)
     AuthTextBtn = Size(..., 20)
     AuthMainBtn = Size(200, 30)
     AuthInputLabel = Size(..., 25)
