@@ -1,16 +1,5 @@
-from typing import Any, Optional, Iterable
+from typing import Any, Iterable
 from aioqui import CONTEXT
-
-
-async def find(
-        where: list[dict[str, Any]],
-        key: Any,
-        value: Any
-) -> tuple[Optional[int], Optional[dict[str, Any]]]:
-    for index, item in enumerate(where):
-        if item.get(key) == value:
-            return index, item
-    return None, None
 
 
 async def prepare(data: dict[str, Any], exceptions: Iterable[str] = ()) -> dict[str, Any]:
@@ -43,19 +32,18 @@ def login_h() -> dict[str, Any]:
     return accept_h() | {'Content-Type': 'application/x-www-form-urlencoded'}
 
 
-def accept_content_h():
+def accept_content_h() -> dict[str, Any]:
     return accept_h() | content_h()
 
 
 class Storage:
     LOCAL = 'local'
     REMOTE = 'remote'
-    HYBRID = 'hybrid'
 
     @staticmethod
-    def local():
+    def is_local():
         return CONTEXT['storage'] == Storage.LOCAL
 
     @staticmethod
-    def remote():
+    def is_remote():
         return CONTEXT['storage'] == Storage.REMOTE

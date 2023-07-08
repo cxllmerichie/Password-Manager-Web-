@@ -26,14 +26,14 @@ app.add_middleware(
 )
 
 
-# @app.middleware('http')
-# async def _(request: Request, call_next: Callable):
-#     try:
-#         response: Response = await call_next(request)
-#         const.LOGGER.info(f'{response.status_code}\t{request.method} {request.url.path}')
-#         return response
-#     except Exception as error:
-#         const.LOGGER.error(f'During {request.method} {request.url.path} got {error}')
+@app.middleware('http')
+async def _(request: Request, call_next: Callable):
+    try:
+        response: Response = await call_next(request)
+        const.LOGGER.info(f'{response.status_code}\t{request.method} {request.url.path}')
+        return response
+    except Exception as error:
+        const.LOGGER.error(f'During {request.method} {request.url.path} got {error}')
 
 
 app.include_router(routers.auth_router)

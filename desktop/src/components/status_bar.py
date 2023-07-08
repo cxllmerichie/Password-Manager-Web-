@@ -3,7 +3,7 @@ from aioqui.widgets.custom import Popup
 from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
-from ..misc import API, ICONS, Storage
+from ..misc import api, ICONS, Storage
 
 
 class StatusBar(StatusBarBase):
@@ -15,7 +15,7 @@ class StatusBar(StatusBarBase):
         # self.layout().itemAt(0).layout().setParent(None)  # removes base child (QVBox)
         # self.layout().setContentsMargins(0, 0, 0, 0)  # does not remove extra margins
         # self.layout().setSpacing(0)  # does not remove extra margins
-        self.addWidget(await Frame(self, 'LeftFrame', qss='border: none').init(
+        self.addWidget(await Frame(self, 'LeftFrame', 'border: none').init(
             layout=await Layout.horizontal().init(
                 alignment=Layout.Left,
                 items=[
@@ -44,7 +44,10 @@ class StatusBar(StatusBarBase):
                 ]
             )
         ), 3)
-        self.addWidget(await Frame(self, 'RightFrame').init(), 3)
+        self.addWidget(await Frame(self, 'RightFrame').init(
+
+        ), 3)
+        await self.storage_selector_textchanged()
         return self
 
     def log_out(self):
@@ -53,8 +56,10 @@ class StatusBar(StatusBarBase):
 
     @asyncSlot()
     async def storage_selector_textchanged(self):
-        self.LogoutBtn.setVisible(bool(self.StorageSelector.currentText() == Storage.REMOTE and CONTEXT['token']))
-        if self.StorageSelector.currentText() == Storage.REMOTE and not await API.is_connected():
+        is_visible = bool(self.StorageSelector.currentText() == Storage.REMOTE and CONTEXT['token'])
+        self.LeftFrame.setVisible(is_visible)
+        self.RightFrame.setVisible(is_visible)
+        if self.StorageSelector.currentText() == Storage.REMOTE and not await api.is_connected():
             await Popup(self.core, message='Remote storage is not available at the moment', buttons=[Popup.OK]).display()
             return self.StorageSelector.setCurrentText(Storage.LOCAL)
         CONTEXT['storage'] = self.StorageSelector.currentText()

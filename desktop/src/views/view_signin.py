@@ -5,7 +5,7 @@ from aioqui.widgets.custom import DurationLabel
 from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 
-from ..misc import API
+from ..misc import api
 from .. import qss
 
 
@@ -93,7 +93,7 @@ class SignIn(Frame):
         email = self.EmailInp.text()
         if not len(email):
             return self.ErrorLbl.setText('Email can not be empty')
-        if not await API.check_email(email):
+        if not await api.check_email(email):
             return self.ErrorLbl.setText(f'Email is not registered')
         self.PasswordFrm.setVisible(True)
         self.EditBtn.setVisible(True)
@@ -107,7 +107,7 @@ class SignIn(Frame):
         password = self.PasswordInp.text()
         if not len(password):
             return self.ErrorLbl.setText('Password can not be empty')
-        current_user = await API.login({'email': email, 'password': password})
+        current_user = await api.login({'email': email, 'password': password})
         if not (token := current_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)

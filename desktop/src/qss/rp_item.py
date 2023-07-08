@@ -41,7 +41,7 @@ css: str = f'''
 
 #HintLbl3,
 #HintLbl2 {{
-    color: {COLORS.TEXT_PRIMARY};
+    color: {COLORS.TEXT_SECONDARY};
     font-size: 16px;
     font-style: italic;
 }}

@@ -8,7 +8,7 @@ from typing import Any
 from copy import deepcopy
 
 from ..components import ImageButton
-from ..misc import ICONS, API, PATHS, SIZES, COLORS
+from ..misc import ICONS, api, PATHS, SIZES, COLORS
 from .. import qss
 
 
@@ -100,7 +100,7 @@ class RightPagesCategory(Frame):
             return True
         to_update = deepcopy(self.category)
         to_update['is_favourite'] = not self.FavBtn.state
-        updated_category = await API.update_category(self.category['id'], to_update)
+        updated_category = await api.update_category(self.category['id'], to_update)
         if category_id := updated_category.get('id'):
             self.ErrorLbl.setText('')
             await CONTEXT.LeftMenu.refresh_categories()
@@ -139,7 +139,7 @@ class RightPagesCategory(Frame):
     @asyncSlot()
     async def import_item(self):
         if filepath := await select_file(self, filters='JSON (*.json)'):
-            imported_item = await API.import_item(filepath)
+            imported_item = await api.import_item(self.category['id'], filepath)
             if item_id := imported_item.get('id'):
                 await CONTEXT.LeftMenu.refresh_categories()
                 await CONTEXT.CentralItems.refresh_items()
@@ -147,7 +147,7 @@ class RightPagesCategory(Frame):
 
     @asyncSlot()
     async def execute_delete(self):
-        deleted_category = await API.delete_category(self.category['id'])
+        deleted_category = await api.delete_category(self.category['id'])
         if category_id := deleted_category.get('id'):
             self.TitleInp.setText('')
             self.DescInp.setText('')
@@ -176,7 +176,7 @@ class RightPagesCategory(Frame):
         if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         prev_icon = self.category['icon']
-        updated_category = await API.update_category(self.category['id'], {
+        updated_category = await api.update_category(self.category['id'], {
             'icon': self.ImageBtn.bytes, 'title': title,
             'description': self.DescInp.text(), 'is_favourite': self.FavBtn.state
         })
@@ -187,7 +187,7 @@ class RightPagesCategory(Frame):
             await self.show_category(self.category)
 
             if prev_icon != (curr_icon := self.category['icon']):
-                await API.save_icon(curr_icon)
+                await api.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -226,14 +226,14 @@ class RightPagesCategory(Frame):
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesCategory)
         CONTEXT.RightPages.expand()
-        await CONTEXT.CentralItems.refresh_items(await API.get_items(category['id']))
+        await CONTEXT.CentralItems.refresh_items(await api.get_items(category['id']))
 
     @asyncSlot()
     async def execute_create(self):
         title = self.TitleInp.text()
         if not len(title):
             return self.ErrorLbl.setText('Title can not be empty')
-        created_category = await API.create_category({
+        created_category = await api.create_category({
             'icon': self.ImageBtn.bytes, 'title': title,
             'description': self.DescInp.text(), 'is_favourite': self.FavBtn.state
         })

@@ -5,7 +5,7 @@ from aioqui import CONTEXT
 from PySide6.QtGui import QResizeEvent
 
 from .. import qss
-from ..misc import ICONS, API, Storage
+from ..misc import ICONS, api, Storage
 
 
 class IntroPopup(Frame):
@@ -67,7 +67,7 @@ class IntroPopup(Frame):
 
     @asyncSlot()
     async def set_storage_remote(self):
-        if not await API.is_connected():
+        if not await api.is_connected():
             return await Popup(self.core).display(
                 buttons=[Popup.OK],
                 message='Remote storage is not available at the moment'

@@ -9,7 +9,7 @@ css = f'''
 
 #HintLbl1,
 #NoCategoriesLbl {{
-    color: {COLORS.TEXT_PRIMARY};
+    color: {COLORS.TEXT_SECONDARY};
     font-size: 20px;
     font-style: italic;
 }}

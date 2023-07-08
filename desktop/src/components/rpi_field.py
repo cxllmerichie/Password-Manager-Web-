@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication
 from uuid import uuid4
 from typing import Any
 
-from ..misc import ICONS, API
+from ..misc import ICONS, api
 from .. import qss
 
 
@@ -17,7 +17,7 @@ class Field(Frame):
         super().__init__(parent, name, qss=qss.rpi_field.field(name))
 
         self.field = field
-        API.fields.append(self.identifier)
+        api.fields.append(self.identifier)
 
     async def init(self) -> 'Field':
         self.setLayout(await Layout.horizontal().init(
@@ -97,9 +97,9 @@ class Field(Frame):
     async def execute_save(self):
         field = {'name': self.NameInp.text(), 'value': self.ValueInp.text()}
         if self.field:
-            response = await API.update_field(self.field['id'], field)
+            response = await api.update_field(self.field['id'], field)
         else:
-            response = await API.add_field(CONTEXT.RightPagesItem.item['id'], field)
+            response = await api.add_field(CONTEXT.RightPagesItem.item['id'], field)
         if response.get('id'):
             self.field = response
             await self.show_field()
@@ -113,12 +113,12 @@ class Field(Frame):
     @asyncSlot()
     async def execute_delete(self):
         def delete_ui_field():
-            if self.identifier in API.fields:
-                API.fields.remove(self.identifier)
+            if self.identifier in api.fields:
+                api.fields.remove(self.identifier)
             self.setVisible(False)
             self.deleteLater()
         if self.field:
-            deleted_field = await API.delete_field(self.field['id'])
+            deleted_field = await api.delete_field(self.field['id'])
             if field_id := deleted_field.get('id'):
                 delete_ui_field()
             else:

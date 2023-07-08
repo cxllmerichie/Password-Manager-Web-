@@ -6,7 +6,7 @@ from aioqui.asynq import asyncSlot
 from contextlib import suppress
 from aioqui import CONTEXT
 
-from ..misc import ICONS, SIZES, API
+from ..misc import ICONS, SIZES, api
 from ..components import LabelExtended
 from .. import qss
 
@@ -70,12 +70,12 @@ class LeftMenu(SplitterWidgetExt, Frame):
 
     @asyncSlot()
     async def refresh_categories(self):
-        categories = await API.get_categories()
+        categories = await api.get_categories()
         self.SearchBar.setVisible(not_empty := bool(len(categories)))
         self.ScrollArea.setVisible(not_empty)
         self.NoCategoriesLbl.setVisible(not not_empty)
         total, favourite = 0, 0
-        for items in (all_items := {c['id']: await API.get_items(c['id']) for c in categories}).values():
+        for items in (all_items := {c['id']: await api.get_items(c['id']) for c in categories}).values():
             total += len(items)
             for item in items:
                 favourite += int(item['is_favourite'])

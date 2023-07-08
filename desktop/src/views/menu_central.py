@@ -5,7 +5,7 @@ from aioqui.asynq import asyncSlot
 from contextlib import suppress
 from typing import Any
 
-from ..misc import API
+from ..misc import api
 from .. import qss
 from ..components.cp_item import CentralItem
 
@@ -56,9 +56,7 @@ class CentralItems(SplitterWidgetExt, Frame):
             self.FavouriteLbl.setVisible(not text)
 
     @asyncSlot()
-    async def refresh_items(self, items: list[dict[str, Any]] = None):
-        if items is None:
-            items = API.items
+    async def refresh_items(self, items: list[dict[str, Any]]):
         self.HintLbl1.setVisible(False)
         self.SearchBar.setVisible(not_empty := bool(len(items)))
         self.ScrollArea.setVisible(not_empty)
@@ -67,7 +65,6 @@ class CentralItems(SplitterWidgetExt, Frame):
             return
         letters = []
         self.ScrollArea.clear()
-        items = sorted(items, key=lambda i: (not i['is_favourite'], i['title'], i['description']))
         if any([item['is_favourite'] for item in items]):
             self.ScrollArea.addWidget(await Label(self, 'FavouriteLbl').init(text='Favourite'))
         for item in items:
@@ -85,13 +82,13 @@ class CentralItems(SplitterWidgetExt, Frame):
     @asyncSlot()
     async def show_all(self):
         items = []
-        for category in await API.get_categories():
-            items += await API.get_items(category['id'])
+        for category in await api.get_categories():
+            items += await api.get_items(category['id'])
         await self.refresh_items(items)
 
     @asyncSlot()
     async def show_favourite(self):
         items = []
-        for category in await API.get_categories():
-            items += list(filter(lambda x: x['is_favourite'], await API.get_items(category['id'])))
+        for category in await api.get_categories():
+            items += list(filter(lambda x: x['is_favourite'], await api.get_items(category['id'])))
         await self.refresh_items(items)

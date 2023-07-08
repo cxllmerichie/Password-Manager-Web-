@@ -6,7 +6,7 @@ from aioqui.asynq import asyncSlot
 from aioqui import CONTEXT
 import email_validator
 
-from ..misc import API
+from ..misc import api
 from .. import qss
 
 
@@ -115,7 +115,7 @@ class SignUp(Frame):
             return
         if not self.validate_confpass():
             return
-        created_user = await API.create_user({
+        created_user = await api.create_user({
             'email': self.EmailInp.text(), 'password': self.PasswordInp.text()
         })
         if not (token := created_user.get('access_token')):

@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QFrame
 from typing import Any
 from datetime import datetime
 
-from ..misc import ICONS, API, PATHS, SIZES
+from ..misc import ICONS, api, PATHS, SIZES
 from ..components import Field, Attachment, ImageButton
 from .. import qss
 
@@ -109,7 +109,8 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl2').init(
-                                        wrap=True, text='Add new field with name "password" or "username" and it\'s value'
+                                        wrap=True, text='Add new field with name "password" or "username" and it\'s value',
+                                        alignment=Label.Center
                                     ), Layout.Center
                                 ]
                             ),
@@ -126,7 +127,8 @@ class RightPagesItem(Frame):
                                 orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl3').init(
-                                        wrap=True, text='Attach *.txt or *.jpg files to the item'
+                                        text='Attach documents (*.txt, *.jpg) to the item', wrap=True,
+                                        alignment=Label.Center
                                     ), Layout.Center
                                 ]
                             ),
@@ -166,7 +168,7 @@ class RightPagesItem(Frame):
     async def export_item(self):
         if directory := await select_dir(self, 'Select', '.'):
             print(self.item)
-            await explore_dir(await API.export_item(self.item, directory))
+            await explore_dir(await api.export_item(self.item, directory))
             print(self.item)
 
     @asyncSlot()
@@ -179,7 +181,7 @@ class RightPagesItem(Frame):
         creating = attachment is None
         if not attachment:
             if filepath := await select_file(self, filters='Images (*.jpg);;Documents (*.txt)'):
-                attachment = await API.get_attachment_data(filepath)
+                attachment = await api.get_attachment_data(filepath)
         if attachment:
             self.HintLbl3.setVisible(False)
             self.AttachmentScrollArea.widget().layout().addWidget(await Attachment(self, attachment, creating).init())
@@ -224,11 +226,11 @@ class RightPagesItem(Frame):
             return True
         to_update = self.item
         self.item['is_favourite'] = not self.FavBtn.state
-        updated_item = await API.update_item(self.item['id'], to_update)
+        updated_item = await api.update_item(self.item['id'], to_update)
         if item_id := updated_item.get('id'):
             self.item = updated_item
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items(await API.get_items(self.item['category_id']))
+            await CONTEXT.CentralItems.refresh_items(await api.get_items(self.item['category_id']))
             return True
         self.ErrorLbl.setText('Internal error, please try again')
         return False
@@ -241,18 +243,18 @@ class RightPagesItem(Frame):
         if self.ExpiresSelector.currentText() == 'Yes':
             expires_at = str(self.DateTime.dateTime())
         prev_icon = self.item['icon']
-        updated_item = await API.update_item(self.item['id'], {
+        updated_item = await api.update_item(self.item['id'], {
             'icon': self.ImageBtn.bytes, 'title': title, 'description': self.DescInp.text(),
             'is_favourite': self.FavBtn.state, 'expires_at': expires_at
         })
         if item_id := updated_item.get('id'):
             self.item = updated_item
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items(await API.get_items(self.item['category_id']))
+            await CONTEXT.CentralItems.refresh_items(await api.get_items(self.item['category_id']))
             await self.execute_cancel()
             await self.show_item(self.item)
             if prev_icon != (curr_icon := self.item['icon']):
-                await API.save_icon(curr_icon)
+                await api.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
@@ -288,8 +290,8 @@ class RightPagesItem(Frame):
         self.item = None
         self.category_id = category_id
 
-        API.fields.clear()
-        API.attachments.clear()
+        api.fields.clear()
+        api.attachments.clear()
 
         self.ExportBtn.setVisible(False)
         self.CreatedFrame.setVisible(False)
@@ -351,13 +353,13 @@ class RightPagesItem(Frame):
 
         self.FieldScrollArea.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
-        for field in (fields := await API.get_fields(self.item['id'])):
+        for field in (fields := await api.get_fields(self.item['id'])):
             await self.add_field(field)
         self.HintLbl2.setVisible(not len(fields))
 
         self.AttachmentScrollArea.setVisible(True)
         self.AttachmentScrollArea.clear([self.HintLbl3])
-        for attachment in (attachments := await API.get_attachments(self.item['id'])):
+        for attachment in (attachments := await api.get_attachments(self.item['id'])):
             await self.add_attachment(attachment)
         self.HintLbl3.setVisible(not len(attachments))
 
@@ -368,30 +370,30 @@ class RightPagesItem(Frame):
     async def execute_create(self):
         if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
-        created_item = await API.create_item(self.category_id, {
+        created_item = await api.create_item(self.category_id, {
             'icon': self.ImageBtn.bytes, 'description': self.DescInp.text(),
             'title': title, 'is_favourite': self.FavBtn.state
         })
         if item_id := created_item.get('id'):
             self.item = created_item
-            for identifier in API.fields:
+            for identifier in api.fields:
                 field = self.findChild(QFrame, f'Field{identifier}')
-                await API.add_field(item_id, {
+                await api.add_field(item_id, {
                     'name': field.NameInp.text(), 'value': field.ValueInp.text()
                 })
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items(await API.get_items(self.item['category_id']))
+            await CONTEXT.CentralItems.refresh_items(await api.get_items(self.item['category_id']))
             await self.show_item(self.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @asyncSlot()
     async def execute_delete(self):
-        deleted_item = await API.delete_item(self.item['id'])
+        deleted_item = await api.delete_item(self.item['id'])
         if item_id := deleted_item.get('id'):
             self.item = None
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items(await API.get_items(deleted_item['category_id']))
+            await CONTEXT.CentralItems.refresh_items(await api.get_items(deleted_item['category_id']))
             await self.execute_cancel()
             await self.show_create()
         else:

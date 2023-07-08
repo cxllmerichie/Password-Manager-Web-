@@ -5,7 +5,7 @@ from aioqui.misc.fileops import explore_bytes
 from uuid import uuid4
 from typing import Any
 
-from ..misc import ICONS, API
+from ..misc import ICONS, api
 from .. import qss
 
 
@@ -17,7 +17,7 @@ class Attachment(Frame):
 
         self.creating = creating
         self.attachment = attachment
-        API.attachments.append(self.identifier)
+        api.attachments.append(self.identifier)
 
     async def init(self) -> 'Attachment':
         self.setLayout(await Layout.horizontal().init(
@@ -81,11 +81,11 @@ class Attachment(Frame):
 
     @asyncSlot()
     async def execute_save(self):
+        self.attachment['filename'] = self.FilenameInp.text()
         if not self.creating:
-            self.attachment['filename'] = self.FilenameInp.text()
-            response = await API.update_attachment(self.attachment['id'], self.attachment)
+            response = await api.update_attachment(self.attachment['id'], self.attachment)
         else:
-            response = await API.add_attachment(self.RightPagesItem.item['id'], self.attachment)
+            response = await api.add_attachment(self.RightPagesItem.item['id'], self.attachment)
         if response.get('id'):
             self.attachment = response
             self.creating = False
@@ -100,12 +100,12 @@ class Attachment(Frame):
     @asyncSlot()
     async def execute_delete(self):
         def delete_ui_attachment():
-            if self.identifier in API.attachments:
-                API.attachments.remove(self.identifier)
+            if self.identifier in api.attachments:
+                api.attachments.remove(self.identifier)
             self.setVisible(False)
             self.deleteLater()
         if not self.creating:
-            deleted_attachment = await API.delete_attachment(self.attachment['id'])
+            deleted_attachment = await api.delete_attachment(self.attachment['id'])
             if attachment_id := deleted_attachment.get('id'):
                 delete_ui_attachment()
             else:
