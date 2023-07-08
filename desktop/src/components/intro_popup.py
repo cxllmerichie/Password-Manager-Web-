@@ -12,53 +12,44 @@ class IntroPopup(Frame):
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=qss.components.intro_popup)
 
-    async def display(self):
+    async def init(self) -> 'IntroPopup':
         self.setLayout(await Layout.vertical().init(
-            spacing=10,
+            alignment=Layout.Center, spacing=10,
             items=[
-                await Button(self, 'AuthExitBtn').init(
-                    icon=ICONS.CROSS, on_click=self.core.close
-                ), Layout.RightTop,
-                await Frame(self, 'IntroPopupFrame').init(
-                    layout=await Layout.vertical().init(
-                        alignment=Layout.Center, spacing=10,
-                        items=[
-                            Spacer(hpolicy=Spacer.Expanding),
-                            await Label(self, 'StorageLbl').init(
-                                text='How do you want to store your data?', alignment=Layout.Center
-                            ),
-                            Spacer(hpolicy=Spacer.Expanding),
-                            await Layout.horizontal().init(
-                                items=[
-                                    LocalBtn := await Button(self, 'StorageBtn').init(
-                                        text='[LOCAL] On my computer', on_click=self.set_storage_local
-                                    ),
-                                    RemoteBtn := await Button(self, 'StorageBtn').init(
-                                        text='[REMOTE] On the server', on_click=self.set_storage_remote
-                                    )
-                                ]
-                            ),
-                            await Label(self, 'HintLbl1').init(
-                                wrap=True, alignment=Layout.Center
-                            ),
-                            Spacer(hpolicy=Spacer.Expanding),
-                            await Label(self, 'HintLbl2').init(
-                                wrap=True, alignment=Layout.Center,
-                                text='You will be able to change your choice any time after pressing "Continue" in the '
-                                     'bottom panel'
-                            ),
-                            await Button(self, 'ContinueBtn').init(
-                                text='Continue', on_click=self.execute_continue
-                            ),
-                            Spacer(hpolicy=Spacer.Expanding),
-                        ]
-                    )
-                )
+                Spacer(hpolicy=Spacer.Expanding),
+                await Label(self, 'StorageLbl').init(
+                    text='How do you want to store your data?', alignment=Layout.Center
+                ),
+                Spacer(hpolicy=Spacer.Expanding),
+                await Layout.horizontal().init(
+                    items=[
+                        LocalBtn := await Button(self, 'StorageBtn').init(
+                            text='[LOCAL] On my computer', on_click=self.set_storage_local
+                        ),
+                        RemoteBtn := await Button(self, 'StorageBtn').init(
+                            text='[REMOTE] On the server', on_click=self.set_storage_remote
+                        )
+                    ]
+                ),
+                await Label(self, 'HintLbl1').init(
+                    wrap=True, alignment=Layout.Center
+                ),
+                Spacer(hpolicy=Spacer.Expanding),
+                await Label(self, 'HintLbl2').init(
+                    wrap=True, alignment=Layout.Center,
+                    text='You will be able to change your choice any time after pressing "Continue" in the '
+                         'bottom panel'
+                ),
+                await Button(self, 'ContinueBtn').init(
+                    text='Continue', on_click=self.execute_continue
+                ),
+                Spacer(hpolicy=Spacer.Expanding),
             ]
         ))
         self.LocalBtn = LocalBtn
         self.RemoteBtn = RemoteBtn
         await self.set_storage_local()
+        return self
 
     @asyncSlot()
     async def execute_continue(self):

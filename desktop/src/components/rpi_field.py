@@ -1,6 +1,7 @@
 from aioqui.widgets import Button, Input, Layout, Frame, Parent
 from aioqui.widgets.custom import StateButton, Popup
 from aioqui.asynq import asyncSlot
+from aioqui import CONTEXT
 from PySide6.QtWidgets import QApplication
 from uuid import uuid4
 from typing import Any
@@ -37,6 +38,9 @@ class Field(Frame):
                 await Button(self, f'EditBtn').init(
                     icon=ICONS.EDIT.adjusted(size=ICONS.SAVE.size), on_click=self.show_edit
                 ),
+                await Button(self, f'Empty').init(
+                    fix_size=(ICONS.EDIT.size.width(), ICONS.EDIT.size.height())
+                ),
                 await Button(self, f'SaveBtn').init(
                     icon=ICONS.SAVE, on_click=self.execute_save
                 ),
@@ -54,7 +58,7 @@ class Field(Frame):
 
     @asyncSlot()
     async def show_field(self):
-        if self.field and API.item:  # add field to existing item
+        if self.field and CONTEXT.RightPagesItem.item:  # add field to existing item
             self.HideBtn.setVisible(True)
             self.CopyBtn.setVisible(True)
             self.DeleteBtn.setVisible(False)
@@ -64,19 +68,21 @@ class Field(Frame):
             self.ValueInp.hide_echo()
             self.ValueInp.setDisabled(True)
             self.SaveBtn.setVisible(False)
+            self.Empty.setVisible(False)
             self.EditBtn.setVisible(True)
-        elif API.item:  # creating field for existing item
+        elif CONTEXT.RightPagesItem.item:  # creating field for existing item
             self.DeleteBtn.setVisible(True)
             self.SaveBtn.setVisible(True)
+            self.Empty.setVisible(True)
             self.EditBtn.setVisible(False)
             self.CopyBtn.setVisible(False)
             self.HideBtn.setVisible(False)
         else:  # creating field while creating item
             self.EditBtn.setVisible(False)
-            self.SaveBtn.setVisible(True)
             self.CopyBtn.setVisible(False)
             self.HideBtn.setVisible(False)
             self.SaveBtn.setVisible(False)
+            self.Empty.setVisible(False)
 
     @asyncSlot()
     async def hide_value(self):
@@ -93,7 +99,7 @@ class Field(Frame):
         if self.field:
             response = await API.update_field(self.field['id'], field)
         else:
-            response = await API.add_field(API.item['id'], field)
+            response = await API.add_field(CONTEXT.RightPagesItem.item['id'], field)
         if response.get('id'):
             self.field = response
             await self.show_field()
@@ -126,6 +132,7 @@ class Field(Frame):
         self.CopyBtn.setVisible(False)
         self.HideBtn.setVisible(False)
         self.SaveBtn.setVisible(True)
+        self.Empty.setVisible(True)
         self.DeleteBtn.setVisible(True)
         self.EditBtn.setVisible(False)
         self.NameInp.setDisabled(False)

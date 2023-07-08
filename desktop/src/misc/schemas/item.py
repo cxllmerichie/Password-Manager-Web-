@@ -4,6 +4,7 @@ from datetime import datetime
 from apidevtools.media import imgproc
 from pydantic import Field
 from apidevtools.utils import now_tz_naive
+from contextlib import suppress
 import zlib
 
 from . import field
@@ -32,7 +33,8 @@ class ItemBase(Schema):
                 await db.set(text, icon)
             self.icon = icon
         else:
-            self.icon = imgproc.crop(self.icon).bytes
+            with suppress(Exception):
+                self.icon = imgproc.crop(self.icon).bytes
         # self.icon = zlib.compress(self.icon)
         if not self.created_at:
             self.created_at = now_tz_naive()

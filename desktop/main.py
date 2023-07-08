@@ -16,8 +16,8 @@ async def amain():
 
 
 if __name__ == '__main__':
-    LoggerManager.disable('apidevtools')
-    LoggerManager.disable('aioqui')
-    LoggerManager.disable('__main__')
+    # LoggerManager.disable('apidevtools')
+    # LoggerManager.disable('aioqui')
+    # LoggerManager.disable('__main__')
 
     asynq.run(amain)

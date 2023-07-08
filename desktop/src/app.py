@@ -19,21 +19,24 @@ class App(Window):
 
     async def init(self) -> 'App':
         from .misc import SIZES
+        from .components import Panel
 
         self.resize(SIZES.App)
+        if not hasattr(CONTEXT, 'Panel'):
+            self.setPanel(await Panel(self).init())
+
         if not CONTEXT['storage']:
             from .components import IntroPopup
 
-            await IntroPopup(self).display()
+            self.setCentralWidget(await IntroPopup(self).init())
+            CONTEXT.Panel.ToggleMenuBtn.setVisible(False)
         else:
             from .misc.const import db, tables
             from .views.central_widget import CentralWidget
-            from .components import StatusBar, Panel
+            from .components import StatusBar
 
             assert await db.create_pool()
             await db.execute(tables)
-
-            self.setPanel(await Panel(self).init())
             self.setCentralWidget(await CentralWidget(self).init())
             self.setStatusBar(await StatusBar(self).init())
         return self

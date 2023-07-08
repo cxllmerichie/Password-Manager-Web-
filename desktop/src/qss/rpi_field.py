@@ -7,7 +7,11 @@ def field(name: str) -> str:
         background-color: {COLORS.DARK};
         border-radius: 5px;
     }}
-            
+
+    #Empty {{
+        background-color: {COLORS.TRANSPARENT};
+    }}
+
     #CopyBtn,
     #HideBtn,
     #DeleteBtn,

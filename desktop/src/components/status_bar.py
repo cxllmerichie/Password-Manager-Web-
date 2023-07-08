@@ -12,10 +12,9 @@ class StatusBar(StatusBarBase):
         # styleSheet is set in the `app.py`, where the `StatusBar` is imported, otherwise does not work
 
     async def init(self) -> 'StatusBar':
-        self.layout().itemAt(0).layout().setParent(None)  # removes base child (QVBox)
+        # self.layout().itemAt(0).layout().setParent(None)  # removes base child (QVBox)
         # self.layout().setContentsMargins(0, 0, 0, 0)  # does not remove extra margins
         # self.layout().setSpacing(0)  # does not remove extra margins
-
         self.addWidget(await Frame(self, 'LeftFrame', qss='border: none').init(
             layout=await Layout.horizontal().init(
                 alignment=Layout.Left,
@@ -36,6 +35,7 @@ class StatusBar(StatusBarBase):
                         text='Storage type:'
                     ), Layout.Right,
                     await Selector(self, 'StorageSelector').init(
+                        on_change=self.storage_selector_textchanged, text=CONTEXT['storage'],
                         items=[
                             Selector.Item(text=Storage.LOCAL),
                             Selector.Item(text=Storage.REMOTE),
@@ -44,22 +44,16 @@ class StatusBar(StatusBarBase):
                 ]
             )
         ), 3)
-        self.addWidget(await Frame(self, 'RightFrame').init(
-
-        ), 3)
-        # order matters, since `currentText` is initial, and we do not want to trigger `textChanged`
-        self.StorageSelector.setCurrentText(CONTEXT['storage'])
-        self.StorageSelector = await self.StorageSelector.init(on_change=self.storage_selector_textchanged)
+        self.addWidget(await Frame(self, 'RightFrame').init(), 3)
         return self
 
     def log_out(self):
         CONTEXT['token'] = None
         self.StorageSelector.setCurrentText(Storage.REMOTE)
-        CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.SignIn)
 
     @asyncSlot()
     async def storage_selector_textchanged(self):
-        # if trying to switch to remote, but api is not active at the moment
+        self.LogoutBtn.setVisible(bool(self.StorageSelector.currentText() == Storage.REMOTE and CONTEXT['token']))
         if self.StorageSelector.currentText() == Storage.REMOTE and not await API.is_connected():
             await Popup(self.core, message='Remote storage is not available at the moment', buttons=[Popup.OK]).display()
             return self.StorageSelector.setCurrentText(Storage.LOCAL)

@@ -74,27 +74,30 @@ class LeftMenu(SplitterWidgetExt, Frame):
         self.SearchBar.setVisible(not_empty := bool(len(categories)))
         self.ScrollArea.setVisible(not_empty)
         self.NoCategoriesLbl.setVisible(not not_empty)
-        self.AllItemsBtn.AllItemsBtnTotalLbl.setText(str(sum([len(c['items']) for c in categories])))
-        self.FavItemsBtn.FavItemsBtnTotalLbl.setText(
-            str(sum([len([1 for i in c['items'] if i['is_favourite']]) for c in categories])))
+        total, favourite = 0, 0
+        for items in (all_items := {c['id']: await API.get_items(c['id']) for c in categories}).values():
+            total += len(items)
+            for item in items:
+                favourite += int(item['is_favourite'])
+        self.AllItemsBtn.AllItemsBtnTotalLbl.setText(str(total))
+        self.FavItemsBtn.FavItemsBtnTotalLbl.setText(str(favourite))
         self.ScrollArea.clear()
         if not not_empty:
             return
-        categories = sorted(categories, key=lambda c: (not c['is_favourite'], c['title'], c['description']))
         if any([category['is_favourite'] for category in categories]):
             self.ScrollArea.addWidget(await LabelExtended(self, 'FavouriteLbl').init(
                 text='Favourite', margins=SIZES.LeftMenuLettersMargin
             ))
         letters = []
-        for category in categories:
-            if not category['is_favourite'] and (letter := category['title'][0]) not in letters:
+        for c in categories:
+            if not c['is_favourite'] and (letter := c['title'][0]) not in letters:
                 letters.append(letter)
                 self.ScrollArea.addWidget(await LabelExtended(self, 'LetterLbl').init(
                     text=letter, margins=SIZES.LeftMenuLettersMargin
                 ))
             self.ScrollArea.addWidget(await TotalButton(self).init(
-                icon=Icon(category['icon'], SIZES.MenuBtnIcon), text=category['title'], total=len(category['items']),
-                on_click=lambda checked=False, _category=category: CONTEXT.RightPagesCategory.show_category(_category)
+                icon=Icon(c['icon'], SIZES.MenuBtnIcon), text=c['title'], total=len(all_items[c['id']]),
+                on_click=lambda checked=False, _category=c: CONTEXT.RightPagesCategory.show_category(_category)
             ))
         await self.SearchBar.init(
             on_change=self.searchbar_textchanged, placeholder='Search',

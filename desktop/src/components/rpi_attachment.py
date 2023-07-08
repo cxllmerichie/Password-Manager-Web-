@@ -49,7 +49,7 @@ class Attachment(Frame):
 
     @asyncSlot()
     async def show_attachment(self):
-        if not self.creating and API.item:  # add ui attachment to existing item
+        if not self.creating and self.RightPagesItem.item:  # add ui attachment to existing item
             self.FilenameInp.setText(self.attachment['filename'])
             self.FilenameInp.setDisabled(True)
             self.DeleteBtn.setVisible(False)
@@ -57,7 +57,7 @@ class Attachment(Frame):
             self.EditBtn.setVisible(True)
             self.ShowBtn.setVisible(True)
             # self.AttachmentDownloadBtn.setVisible(True)
-        elif API.item:  # creating attachment for existing item
+        elif self.RightPagesItem.item:  # creating attachment for existing item
             self.FilenameInp.setDisabled(False)
             self.DeleteBtn.setVisible(True)
             self.SaveBtn.setVisible(True)
@@ -85,7 +85,7 @@ class Attachment(Frame):
             self.attachment['filename'] = self.FilenameInp.text()
             response = await API.update_attachment(self.attachment['id'], self.attachment)
         else:
-            response = await API.add_attachment(API.item['id'], self.attachment)
+            response = await API.add_attachment(self.RightPagesItem.item['id'], self.attachment)
         if response.get('id'):
             self.attachment = response
             self.creating = False

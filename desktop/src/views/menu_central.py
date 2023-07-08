@@ -85,13 +85,13 @@ class CentralItems(SplitterWidgetExt, Frame):
     @asyncSlot()
     async def show_all(self):
         items = []
-        for category in API.categories:
-            items += category['items']
+        for category in await API.get_categories():
+            items += await API.get_items(category['id'])
         await self.refresh_items(items)
 
     @asyncSlot()
     async def show_favourite(self):
         items = []
-        for category in API.categories:
-            items += list(filter(lambda x: x['is_favourite'], category['items']))
+        for category in await API.get_categories():
+            items += list(filter(lambda x: x['is_favourite'], await API.get_items(category['id'])))
         await self.refresh_items(items)

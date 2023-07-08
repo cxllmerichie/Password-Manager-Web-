@@ -18,7 +18,8 @@ from . import crud
 
 class Api:
     def __init__(self):
-        request.baseurl = 'https://pmapi.cxllmerichie.com'
+        # request.baseurl = 'https://pmapi.cxllmerichie.com'
+        request.baseurl = 'http://127.0.0.1:8888'
 
     fields: list[str] = []
     attachments: list[str] = []
@@ -27,17 +28,17 @@ class Api:
     async def login(self, auth_data: dict[str, Any]) -> dict[str, Any]:
         params = dict(username=auth_data['email'], password=auth_data['password'],
                       grant_type='', scope='', client_id='', client_secret='')
-        response = await request.post('/auth/token/', headers=login_h(), data=params)
+        response = await request.post('/auth/token', headers=login_h(), data=params)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
 
     async def check_email(self, email: str) -> bool:
-        return await request.get(f'/auth/{email}/', headers=accept_h())
+        return await request.get(f'/auth/{email}', headers=accept_h())
 
     # USER
     async def create_user(self, user: dict[str, Any]) -> dict[str, Any]:
-        response = await request.post('/users/', headers=accept_content_h(), body=user)
+        response = await request.post('/user', headers=accept_content_h(), body=user)
         if token := response.get('access_token'):
             CONTEXT['token'] = token
         return response
@@ -53,35 +54,29 @@ class Api:
 
     async def create_category(self, category: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.post('/categories/', headers=auth_h(), body=await prepare(category), pythonize=True)
+            response = await request.post('/category', headers=auth_h(), body=await prepare(category), pythonize=True)
         else:
             response = await crud.create_category(category)
         return response
 
     async def get_category(self, category_id: int) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.get(f'/categories/{category_id}/', headers=auth_h(), pythonize=True)
+            response = await request.get(f'/category{category_id}', headers=auth_h(), pythonize=True)
         else:
             response = await crud.get_category(category_id)
         return response
 
-    async def set_category_favourite(self, category_id: int, is_favourite: bool) -> dict[str, Any]:
-        if Storage.remote():
-            response = await request.put(f'/categories/{category_id}/favourite/', headers=auth_h(), params=dict(is_favourite=is_favourite), pythonize=True)
-        else:
-            response = await crud.set_category_favourite(category_id, is_favourite)
-        return response
-
     async def update_category(self, category_id: int, category: dict[str, Any]) -> dict[str, Any]:
+        category_id = int(category_id)
         if Storage.remote():
-            response = await request.put(f'/categories/{category_id}/', headers=auth_h(), body=await prepare(category), pythonize=True)
+            response = await request.put(f'/category/{category_id}', headers=auth_h(), body=await prepare(category), pythonize=True)
         else:
             response = await crud.update_category(category_id, category)
         return response
 
     async def delete_category(self, category_id: int) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.delete(f'/categories/{category_id}/', headers=auth_h(), pythonize=True)
+            response = await request.delete(f'/category/{category_id}', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_category(category_id)
         return response
@@ -89,59 +84,59 @@ class Api:
     # ITEMS
     async def create_item(self, category_id: int, item: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.post(f'/categories/{category_id}/items/', headers=auth_h(), body=await prepare(item), pythonize=True)
+            response = await request.post(f'/category/{category_id}/item', headers=auth_h(), body=await prepare(item), pythonize=True)
         else:
             response = await crud.create_item(category_id, item)
         return response
 
+    async def get_items(self, category_id: int) -> list[dict[str, Any]]:
+        if Storage.remote():
+            response = await request.get(f'/category/{category_id}/items', headers=auth_h(), pythonize=True)
+        else:
+            response = await crud.get_items(category_id)
+        return response
+
     async def delete_item(self, item_id: int) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.delete(f'/items/{item_id}/', headers=auth_h(), pythonize=True)
+            response = await request.delete(f'/item/{item_id}', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_item(item_id)
         return response
 
     async def update_item(self, item_id: int, item: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.put(f'/items/{item_id}/', headers=auth_h(), body=await prepare(item, ['expires_at']), pythonize=True)
+            response = await request.put(f'/item/{item_id}', headers=auth_h(), body=await prepare(item, ['expires_at']), pythonize=True)
         else:
             response = await crud.update_item(item_id, item)
         return response
 
-    async def set_item_favourite(self, item_id: int, is_favourite: bool) -> dict[str, Any]:
-        if Storage.remote():
-            response = await request.put(f'/items/{item_id}/favourite/', headers=auth_h(), params=dict(is_favourite=is_favourite), pythonize=True)
-        else:
-            response = await crud.set_item_favourite(item_id, is_favourite)
-        return response
-
-    async def export_item(self, directory: str) -> str:
+    async def export_item(self, item: dict[str, Any], directory: str) -> str:
         # create copy to manage dict keys later on
-        item = deepcopy(self.item)
+        _item = deepcopy(item)
         # create sub dir in selected dir to save there all the data
-        export_dir = os.path.join(directory, item['title'])
+        export_dir = os.path.join(directory, _item['title'])
         attachments_dir = os.path.join(export_dir, 'attachments')
         os.makedirs(attachments_dir)
         # manage necessary keys to make human-readable *.json file
         item_pop_keys = ['icon', 'id', 'category_id']
         for key in item_pop_keys:
-            item.pop(key)
+            _item.pop(key)
         field_pop_keys = ['id', 'item_id']
-        for index in range(len(item['fields'])):
+        for index in range(len(_item['fields'])):
             for key in field_pop_keys:
-                item['fields'][index].pop(key)
+                _item['fields'][index].pop(key)
         attachment_pop_keys = ['id', 'item_id', 'content', 'mime', 'filename']
-        for index in range(len(item['attachments'])):
-            filepath = os.path.abspath(os.path.join(attachments_dir, item['attachments'][index]['filename']))
-            item['attachments'][index]['file'] = filepath
-            await self.download_attachment(filepath, item['attachments'][index])
+        for index in range(len(_item['attachments'])):
+            filepath = os.path.abspath(os.path.join(attachments_dir, _item['attachments'][index]['filename']))
+            _item['attachments'][index]['file'] = filepath
+            await self.download_attachment(filepath, _item['attachments'][index])
             for key in attachment_pop_keys:
-                item['attachments'][index].pop(key)
-        for key, value in item.items():
+                _item['attachments'][index].pop(key)
+        for key, value in _item.items():
             if isinstance(value, datetime):
-                item[key] = str(value)
+                _item[key] = str(value)
         with open(os.path.join(export_dir, 'item.json'), 'w') as file:
-            json.dump(item, file, indent=4)
+            json.dump(_item, file, indent=4)
         return export_dir
 
     async def import_item(self, filepath: str) -> dict[str, Any]:
@@ -163,21 +158,28 @@ class Api:
     # FIELDS
     async def add_field(self, item_id: int, field: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.post(f'/items/{item_id}/fields/', headers=auth_h(), body=field, pythonize=True)
+            response = await request.post(f'/item/{item_id}/field', headers=auth_h(), body=field, pythonize=True)
         else:
             response = await crud.create_field(item_id, field)
         return response
 
+    async def get_fields(self, item_id: int) -> list[dict[str, Any]]:
+        if Storage.remote():
+            response = await request.get(f'/item/{item_id}/fields', headers=auth_h(), pythonize=True)
+        else:
+            response = await crud.get_fields(item_id)
+        return response
+
     async def update_field(self, field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.put(f'/fields/{field_id}/', headers=auth_h(), body=field, pythonize=True)
+            response = await request.put(f'/field/{field_id}', headers=auth_h(), body=field, pythonize=True)
         else:
             response = await crud.update_field(field_id, field)
         return response
 
     async def delete_field(self, field_id: UUID) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.delete(f'/fields/{field_id}/', headers=auth_h(), pythonize=True)
+            response = await request.delete(f'/field/{field_id}', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_field(field_id)
         return response
@@ -185,21 +187,28 @@ class Api:
     # ATTACHMENT
     async def add_attachment(self, item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.post(f'/items/{item_id}/attachments/', headers=auth_h(), body=attachment, pythonize=True)
+            response = await request.post(f'/item/{item_id}/attachment', headers=auth_h(), body=attachment, pythonize=True)
         else:
             response = await crud.create_attachment(item_id, attachment)
         return response
 
+    async def get_attachments(self, item_id: int) -> list[dict[str, Any]]:
+        if Storage.remote():
+            response = await request.get(f'/item/{item_id}/attachments', headers=auth_h(), pythonize=True)
+        else:
+            response = await crud.get_attachments(item_id)
+        return response
+
     async def update_attachment(self, attachment_id: UUID, attachment: dict[str, Any]) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.put(f'/attachments/{attachment_id}/', headers=auth_h(), body=attachment, pythonize=True)
+            response = await request.put(f'/attachment/{attachment_id}', headers=auth_h(), body=attachment, pythonize=True)
         else:
             response = await crud.update_attachment(attachment_id, attachment)
         return response
 
     async def delete_attachment(self, attachment_id: UUID) -> dict[str, Any]:
         if Storage.remote():
-            response = await request.delete(f'/attachments/{attachment_id}/', headers=auth_h(), pythonize=True)
+            response = await request.delete(f'/attachment/{attachment_id}', headers=auth_h(), pythonize=True)
         else:
             response = await crud.delete_attachment(attachment_id)
         return response
@@ -220,9 +229,12 @@ class Api:
 
     # UTILS
     async def is_connected(self) -> bool:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f'{request.baseurl}/docs') as response:
-                return response.status == 200
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f'{request.baseurl}/docs') as response:
+                    return response.status == 200
+        except Exception:
+            return False
 
     async def save_icon(self, icon: bytes | str) -> None:
         filename = f"{datetime.now().strftime('%d.%m.%Y %H-%M-%S')}.{EXTENSIONS.ICON}"

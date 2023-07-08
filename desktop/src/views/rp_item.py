@@ -14,6 +14,9 @@ from .. import qss
 
 
 class RightPagesItem(Frame):
+    item: dict[str, Any] = None
+    category_id: int = None
+
     def __init__(self, parent: Parent):
         super().__init__(parent, self.__class__.__name__, qss=(
             qss.rp_item.css,
@@ -38,7 +41,7 @@ class RightPagesItem(Frame):
                             icon=ICONS.TRASH.adjusted(size=(30, 30)), fix_size=SIZES.CONTROL,
                             on_click=lambda: Popup(
                                 self.core, qss=qss.components.popup, on_success=self.execute_delete,
-                                message=f'Delete item\n\'{API.item["title"]}\'?'
+                                message=f'Delete item\n\'{self.item["title"]}\'?'
                             ).display()
                         ),
                         await Button(self, 'CloseBtn').init(
@@ -162,7 +165,9 @@ class RightPagesItem(Frame):
     @asyncSlot()
     async def export_item(self):
         if directory := await select_dir(self, 'Select', '.'):
-            await explore_dir(await API.export_item(directory))
+            print(self.item)
+            await explore_dir(await API.export_item(self.item, directory))
+            print(self.item)
 
     @asyncSlot()
     async def add_field(self, field: dict[str, Any] = None):
@@ -193,7 +198,7 @@ class RightPagesItem(Frame):
         self.ModifiedFrame.setVisible(False)
         self.ExpiresFrame.setVisible(True)
         self.ExpiresSelector.setVisible(True)
-        if expires_at := API.item['expires_at']:
+        if expires_at := self.item['expires_at']:
             self.ExpiresSelector.setCurrentText('No')  # workaround
             self.ExpiresSelector.setCurrentText('Yes')
             self.DateTime.setDateTime(expires_at)
@@ -215,35 +220,38 @@ class RightPagesItem(Frame):
 
     @asyncSlot()
     async def toggle_favourite(self) -> bool:
-        if not API.item:
+        if not self.item:
             return True
-        updated_category = await API.set_item_favourite(API.item['id'], not self.FavBtn.state)
-        if category_id := updated_category.get('id'):
+        to_update = self.item
+        self.item['is_favourite'] = not self.FavBtn.state
+        updated_item = await API.update_item(self.item['id'], to_update)
+        if item_id := updated_item.get('id'):
+            self.item = updated_item
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items()
+            await CONTEXT.CentralItems.refresh_items(await API.get_items(self.item['category_id']))
             return True
         self.ErrorLbl.setText('Internal error, please try again')
         return False
 
     @asyncSlot()
     async def execute_save(self):
-        title = self.TitleInp.text()
-        if not len(title):
+        if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
         expires_at = None
         if self.ExpiresSelector.currentText() == 'Yes':
             expires_at = str(self.DateTime.dateTime())
-        prev_icon = API.item['icon']
-        updated_category = await API.update_item(API.item['id'], {
+        prev_icon = self.item['icon']
+        updated_item = await API.update_item(self.item['id'], {
             'icon': self.ImageBtn.bytes, 'title': title, 'description': self.DescInp.text(),
             'is_favourite': self.FavBtn.state, 'expires_at': expires_at
         })
-        if category_id := updated_category.get('id'):
+        if item_id := updated_item.get('id'):
+            self.item = updated_item
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items()
+            await CONTEXT.CentralItems.refresh_items(await API.get_items(self.item['category_id']))
             await self.execute_cancel()
-            await self.show_item(API.item)
-            if prev_icon != (curr_icon := API.item['icon']):
+            await self.show_item(self.item)
+            if prev_icon != (curr_icon := self.item['icon']):
                 await API.save_icon(curr_icon)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
@@ -251,11 +259,11 @@ class RightPagesItem(Frame):
     @asyncSlot()
     async def execute_cancel(self):
         self.ExportBtn.setVisible(True)
-        self.ModifiedFrame.setVisible(bool(API.item and API.item['modified_at']))
-        if expires := (API.item and API.item['expires_at']):
+        self.ModifiedFrame.setVisible(bool(self.item and self.item['modified_at']))
+        if expires := (self.item and self.item['expires_at']):
             self.ExpiresSelector.setVisible(False)
             self.DateTime.setVisible(True)
-            self.DateTime.setDateTime(API.item['expires_at'])
+            self.DateTime.setDateTime(self.item['expires_at'])
             self.DateTime.setReadOnly(True)
         self.ExpiresFrame.setVisible(bool(expires))
 
@@ -266,9 +274,9 @@ class RightPagesItem(Frame):
         self.SaveCancelFrame.setVisible(False)
         self.TitleInp.setDisabled(True)
         self.DescInp.setDisabled(True)
-        self.DescInp.setVisible(bool(API.item and API.item['description']))
-        if API.item:
-            self.ImageBtn.setIcon(Icon(API.item['icon']).icon)
+        self.DescInp.setVisible(bool(self.item and self.item['description']))
+        if self.item:
+            self.ImageBtn.setIcon(Icon(self.item['icon']).icon)
         self.ImageBtn.setDisabled(True)
         self.AddFieldBtn.setVisible(True)
         self.FieldScrollArea.setVisible(True)
@@ -276,8 +284,10 @@ class RightPagesItem(Frame):
         self.AttachmentScrollArea.setVisible(True)
 
     @asyncSlot()
-    async def show_create(self):
-        API.item = None
+    async def show_create(self, category_id: int):
+        self.item = None
+        self.category_id = category_id
+
         API.fields.clear()
         API.attachments.clear()
 
@@ -305,7 +315,7 @@ class RightPagesItem(Frame):
 
     @asyncSlot()
     async def show_item(self, item: dict[str, Any]):
-        API.item = item
+        self.item = item
 
         self.ExportBtn.setVisible(True)
 
@@ -325,13 +335,13 @@ class RightPagesItem(Frame):
             self.ExpiresSelector.setCurrentText('No')
         self.ExpiresFrame.setVisible(expires_at is not None)
 
-        self.FavBtn.state = API.item['is_favourite']
-        self.TitleInp.setText(API.item['title'])
+        self.FavBtn.state = self.item['is_favourite']
+        self.TitleInp.setText(self.item['title'])
         self.TitleInp.setEnabled(False)
-        self.ImageBtn.setIcon(Icon(API.item['icon']).icon)
+        self.ImageBtn.setIcon(Icon(self.item['icon']).icon)
         self.ImageBtn.setDisabled(True)
-        self.DescInp.setText(API.item['description'])
-        self.DescInp.setVisible(bool(API.item['description']))
+        self.DescInp.setText(self.item['description'])
+        self.DescInp.setVisible(bool(self.item['description']))
         self.DescInp.setDisabled(True)
         self.ErrorLbl.setText('')
         self.SaveCancelFrame.setVisible(False)
@@ -341,15 +351,15 @@ class RightPagesItem(Frame):
 
         self.FieldScrollArea.setVisible(True)
         self.FieldScrollArea.clear([self.HintLbl2])
-        for field in API.item['fields']:
+        for field in (fields := await API.get_fields(self.item['id'])):
             await self.add_field(field)
-        self.HintLbl2.setVisible(not len(API.item['fields']))
+        self.HintLbl2.setVisible(not len(fields))
 
         self.AttachmentScrollArea.setVisible(True)
         self.AttachmentScrollArea.clear([self.HintLbl3])
-        for attachment in API.item['attachments']:
+        for attachment in (attachments := await API.get_attachments(self.item['id'])):
             await self.add_attachment(attachment)
-        self.HintLbl3.setVisible(not len(API.item['attachments']))
+        self.HintLbl3.setVisible(not len(attachments))
 
         CONTEXT.RightPages.setCurrentWidget(CONTEXT.RightPagesItem)
         CONTEXT.RightPages.expand()
@@ -358,28 +368,30 @@ class RightPagesItem(Frame):
     async def execute_create(self):
         if not len(title := self.TitleInp.text()):
             return self.ErrorLbl.setText('Title can not be empty')
-        created_item = await API.create_item(API.category['id'], {
+        created_item = await API.create_item(self.category_id, {
             'icon': self.ImageBtn.bytes, 'description': self.DescInp.text(),
             'title': title, 'is_favourite': self.FavBtn.state
         })
         if item_id := created_item.get('id'):
+            self.item = created_item
             for identifier in API.fields:
                 field = self.findChild(QFrame, f'Field{identifier}')
                 await API.add_field(item_id, {
                     'name': field.NameInp.text(), 'value': field.ValueInp.text()
                 })
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items()
-            await self.show_item(API.item)
+            await CONTEXT.CentralItems.refresh_items(await API.get_items(self.item['category_id']))
+            await self.show_item(self.item)
         else:
             self.ErrorLbl.setText('Internal error, please try again')
 
     @asyncSlot()
     async def execute_delete(self):
-        deleted_item = await API.delete_item(API.item['id'])
+        deleted_item = await API.delete_item(self.item['id'])
         if item_id := deleted_item.get('id'):
+            self.item = None
             await CONTEXT.LeftMenu.refresh_categories()
-            await CONTEXT.CentralItems.refresh_items()
+            await CONTEXT.CentralItems.refresh_items(await API.get_items(deleted_item['category_id']))
             await self.execute_cancel()
             await self.show_create()
         else:
