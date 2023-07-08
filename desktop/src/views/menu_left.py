@@ -15,7 +15,7 @@ class LeftMenu(SplitterWidgetExt, Frame):
     def __init__(self, parent: Parent):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
             qss.menu_left.css,
-            qss.components.scroll,
+            qss.components.scroll.replace('REPLACE', '25'),
             qss.components.search.replace('REPLACE', cqss.gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.DARK, c2=COLORS.TRANSPARENT))
         ))
         SplitterWidgetExt.__init__(self, SIZES.LeftMenuFix, SIZES.LeftMenuMin, SIZES.LeftMenuMax)

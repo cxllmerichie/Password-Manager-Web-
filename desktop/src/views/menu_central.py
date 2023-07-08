@@ -1,6 +1,6 @@
 from aioqui.widgets import ScrollArea, Layout, Label, Frame, Parent
 from aioqui.widgets.extensions import SplitterWidgetExt
-from aioqui.widgets.custom import SearchBar, qss as cqss
+from aioqui.widgets.custom import SearchBar
 from aioqui.asynq import asyncSlot
 from contextlib import suppress
 from typing import Any
@@ -14,16 +14,16 @@ class CentralItems(SplitterWidgetExt, Frame):
     def __init__(self, parent: Parent):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
             qss.menu_central.css,
-            qss.components.scroll,
-            qss.components.search.replace('REPLACE', cqss.gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.LIGHT, c2=COLORS.TRANSPARENT))
+            qss.components.scroll.replace('REPLACE', '30'),
+            qss.components.search.replace('REPLACE', COLORS.LIGHT)
         ))
         SplitterWidgetExt.__init__(self, collapsible=False)
 
     async def init(self):
         await super().init(layout=await Layout.vertical().init(
-            spacing=20, margins=(30, 10, 30, 10),
+            spacing=20, margins=(30, 10, 30, 0),
             items=[
-                SearchBar(self, visible=False),
+                SearchBar(self, visible=False), Layout.TopCenter,
                 await ScrollArea(self, 'ScrollArea', False).init(
                     hspolicy=ScrollArea.AlwaysOff, orientation=ScrollArea.Vertical,
                     alignment=Layout.TopCenter, spacing=10
@@ -73,7 +73,7 @@ class CentralItems(SplitterWidgetExt, Frame):
                 self.ScrollArea.addWidget(await Label(self, 'LetterLbl').init(text=letter))
             self.ScrollArea.addWidget(await CentralItem(self).init(item))
         await self.SearchBar.init(
-            on_change=self.searchbar_textchanged, placeholder='Search',
+            on_change=self.searchbar_textchanged, placeholder='Search', fix_width=500,
             completer=SearchBar.Completer(
                 self.SearchBar, items=[i['title'] for i in items], qss=qss.components.search
             )

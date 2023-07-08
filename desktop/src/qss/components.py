@@ -9,16 +9,16 @@ QScrollBar:vertical {{
     width: 7px;
     border: none;
     border-radius: 3px;
-    margin: 0px 0 1px 0;
+    margin: REPLACEpx 0px 1px 0px;
 }}
 
 QScrollBar::handle:vertical {{
-    background: {COLORS.RED};
+    background: {gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.TRANSPARENT, c2=COLORS.RED_HOVER)};
     border-radius: 3px;
 }}
 
 QScrollBar::handle:vertical:hover {{
-    background: {COLORS.RED_HOVER};
+    background: {gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.TRANSPARENT, c2=COLORS.RED)};
 }}
 
 QScrollBar::add-line:vertical {{

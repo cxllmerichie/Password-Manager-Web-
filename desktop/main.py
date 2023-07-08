@@ -5,12 +5,12 @@ from src.app import App
 
 
 async def amain():
-    from aioqui import CONTEXT
-
-    CONTEXT['storage'] = None
-    CONTEXT['token'] = None
-
-    CONTEXT.debug = True
+    # from aioqui import CONTEXT
+    #
+    # CONTEXT['storage'] = None
+    # CONTEXT['token'] = None
+    #
+    # CONTEXT.debug = True
     app = await App().init()
     app.show()
 

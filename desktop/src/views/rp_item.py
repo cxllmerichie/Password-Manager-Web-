@@ -103,6 +103,7 @@ class RightPagesItem(Frame):
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Frame(self, 'FieldFrame').init(
+                    vpolicy=Label.Expanding,
                     layout=await Layout.vertical().init(
                         items=[
                             await ScrollArea(self, 'FieldScrollArea').init(
