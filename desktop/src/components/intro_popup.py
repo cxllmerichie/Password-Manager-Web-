@@ -14,8 +14,9 @@ class IntroPopup(Frame):
 
     async def init(self) -> 'IntroPopup':
         self.setLayout(await Layout.vertical().init(
-            spacing=10, margins=(50, 50, 50, 100), alignment=Layout.VCenter,
+            spacing=10, margins=(100, 100, 100, 100), alignment=Layout.VCenter,
             items=[
+                Spacer(vpolicy=Spacer.Expanding),
                 await Label(self, 'StorageLbl').init(
                     text='How do you want to store your data?', alignment=Layout.Center
                 ),
@@ -41,6 +42,7 @@ class IntroPopup(Frame):
                 await Button(self, 'ContinueBtn').init(
                     text='Continue', on_click=self.execute_continue
                 ),
+                Spacer(vpolicy=Spacer.Expanding),
             ]
         ))
         self.LocalBtn = LocalBtn

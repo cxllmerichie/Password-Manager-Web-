@@ -22,7 +22,7 @@ class AttachmentBase(Schema):
 
     async def from_db(self) -> Schema:
         if key := await keys.get(self.id, convert=True):
-            self.content = str(zlib.decompress(encryptor.decrypt(self.content, key, convert=True)))
+            self.content = str(zlib.decompress(encryptor.decrypt(self.content, key, evaluate=True)))
         return self
 
 

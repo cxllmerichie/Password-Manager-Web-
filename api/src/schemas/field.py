@@ -21,8 +21,8 @@ class FieldBase(Schema):
 
     async def from_db(self) -> Schema:
         if key := await keys.get(self.id, convert=True):
-            self.name = encryptor.decrypt(self.name, key, convert=True)
-            self.value = encryptor.decrypt(self.value, key, convert=True)
+            self.name = encryptor.decrypt(self.name, key, evaluate=True)
+            self.value = encryptor.decrypt(self.value, key, evaluate=True)
         return self
 
 

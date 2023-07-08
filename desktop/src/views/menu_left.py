@@ -39,7 +39,7 @@ class LeftMenu(SplitterWidgetExt, Frame):
                 ), Layout.Center,
                 SearchBar(self, visible=False),
                 await Label(self, 'NoCategoriesLbl', False).init(
-                    text='You don\'t have any categories yet', wrap=True,
+                    text='You don\'t have any categories yet', wrap=True, min_width=SIZES.LeftMenuMin,
                     policy=(Label.Expanding, Label.Expanding), alignment=Layout.HCenter
                 ), Layout.HCenter,
                 await ScrollArea(self, 'ScrollArea', False).init(

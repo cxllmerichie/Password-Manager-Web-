@@ -103,11 +103,10 @@ class RightPagesItem(Frame):
                     placeholder='description (optional)'
                 ), Layout.Top,
                 await Frame(self, 'FieldFrame').init(
-                    vpolicy=Label.Expanding,
                     layout=await Layout.vertical().init(
                         items=[
                             await ScrollArea(self, 'FieldScrollArea').init(
-                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
+                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 5), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl2').init(
                                         wrap=True, text='Hint: Add new field with name "password" or "username" and it\'s value',
@@ -125,7 +124,7 @@ class RightPagesItem(Frame):
                     layout=await Layout.vertical().init(
                         items=[
                             await ScrollArea(self, 'AttachmentScrollArea').init(
-                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 0), spacing=10,
+                                orientation=Layout.Vertical, alignment=Layout.Top, margins=(5, 10, 5, 5), spacing=10,
                                 items=[
                                     await Label(self, 'HintLbl3').init(
                                         text='Hint: Attach documents (*.txt, *.jpg) to the item', wrap=True,
@@ -168,9 +167,7 @@ class RightPagesItem(Frame):
     @asyncSlot()
     async def export_item(self):
         if directory := await select_dir(self, 'Select', '.'):
-            print(self.item)
             await explore_dir(await api.export_item(self.item, directory))
-            print(self.item)
 
     @asyncSlot()
     async def add_field(self, field: dict[str, Any] = None):
@@ -382,6 +379,9 @@ class RightPagesItem(Frame):
                 await api.add_field(item_id, {
                     'name': field.NameInp.text(), 'value': field.ValueInp.text()
                 })
+            for identifier in api.attachments:
+                attachment = self.findChild(QFrame, f'Attachment{identifier}')
+                await api.add_attachment(item_id, attachment.attachment)
             await CONTEXT.LeftMenu.refresh_categories()
             await CONTEXT.CentralItems.refresh_items(await api.get_items(self.item['category_id']))
             await self.show_item(self.item)
@@ -396,6 +396,7 @@ class RightPagesItem(Frame):
             await CONTEXT.LeftMenu.refresh_categories()
             await CONTEXT.CentralItems.refresh_items(await api.get_items(deleted_item['category_id']))
             await self.execute_cancel()
+            # TODO: potential signature mismatch
             await self.show_create()
         else:
             self.ErrorLbl.setText('Internal error, please try again')
