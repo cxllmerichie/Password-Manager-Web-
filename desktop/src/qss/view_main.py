@@ -6,6 +6,6 @@ css = f'''
 }}
 
 #MainView::handle {{
-    background-color: {COLORS.Palette.LAYER_2};
+    background-color: rgba(0, 0, 0, 0);
 }}
 '''

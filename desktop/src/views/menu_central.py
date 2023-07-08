@@ -1,11 +1,11 @@
 from aioqui.widgets import ScrollArea, Layout, Label, Frame, Parent
 from aioqui.widgets.extensions import SplitterWidgetExt
-from aioqui.widgets.custom import SearchBar
+from aioqui.widgets.custom import SearchBar, qss as cqss
 from aioqui.asynq import asyncSlot
 from contextlib import suppress
 from typing import Any
 
-from ..misc import api
+from ..misc import api, COLORS
 from .. import qss
 from ..components.cp_item import CentralItem
 
@@ -15,7 +15,7 @@ class CentralItems(SplitterWidgetExt, Frame):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
             qss.menu_central.css,
             qss.components.scroll,
-            qss.components.search
+            qss.components.search.replace('REPLACE', cqss.gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.LIGHT, c2=COLORS.TRANSPARENT))
         ))
         SplitterWidgetExt.__init__(self, collapsible=False)
 

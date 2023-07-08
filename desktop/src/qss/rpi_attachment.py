@@ -4,7 +4,7 @@ from ..misc import COLORS
 def attachment(name: str) -> str:
     return f'''
     #{name} {{
-        background-color: {COLORS.DARK};
+        background-color: {COLORS.RIGHT_MENU};
         border-radius: 5px;
     }}
     

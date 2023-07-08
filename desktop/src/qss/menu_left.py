@@ -1,3 +1,5 @@
+from aioqui.widgets.custom.qss.colors import gradient
+
 from ..misc import COLORS
 
 
@@ -47,7 +49,7 @@ css = f'''
 }}
 
 #TotalButton {{
-    background-color: {COLORS.DARK};
+    background: {gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.DARK, c2=COLORS.TRANSPARENT)};
     min-height: 40px;
     color: {COLORS.TEXT_PRIMARY};
     height: 25px;
@@ -56,7 +58,7 @@ css = f'''
 
 #AllItemsBtn,
 #FavItemsBtn {{
-    background-color: {COLORS.LIGHT};
+    background-color: {gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.LIGHT, c2=COLORS.TRANSPARENT)};
     min-height: 40px;
     color: {COLORS.TEXT_PRIMARY};
     height: 25px;

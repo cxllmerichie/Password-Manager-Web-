@@ -1,3 +1,5 @@
+from aioqui.widgets.custom.qss.colors import gradient
+
 from ..misc import COLORS, SIZES
 
 
@@ -52,11 +54,11 @@ def image_button(color=COLORS.LIGHT):
 
 search = f'''
 #SearchBar {{
-    background-color: {COLORS.SEARCH};
+    background: {COLORS.TRANSPARENT};
     font-size: 18px;
     padding: 5px;
     color: {COLORS.TEXT_PRIMARY};
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid REPLACE;
     border-radius: 5px;
 }}
 
@@ -69,7 +71,7 @@ search = f'''
 }}
 
 QListView::item:hover {{
-    background-color: {COLORS.TRANSPARENT};
+    background-color: {COLORS.HOVER};
     color: {COLORS.TEXT_PRIMARY};
 }}
 '''

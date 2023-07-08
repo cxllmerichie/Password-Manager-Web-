@@ -1,12 +1,12 @@
 from aioqui.widgets import Label, Layout, ScrollArea, Button, Frame, Parent
-from aioqui.widgets.custom import TotalButton, SearchBar
+from aioqui.widgets.custom import TotalButton, SearchBar, qss as cqss
 from aioqui.widgets.extensions import SplitterWidgetExt
 from aioqui.types import Icon, SizePolicy
 from aioqui.asynq import asyncSlot
 from contextlib import suppress
 from aioqui import CONTEXT
 
-from ..misc import ICONS, SIZES, api
+from ..misc import ICONS, SIZES, api, COLORS
 from ..components import LabelExtended
 from .. import qss
 
@@ -16,7 +16,7 @@ class LeftMenu(SplitterWidgetExt, Frame):
         Frame.__init__(self, parent, self.__class__.__name__, qss=(
             qss.menu_left.css,
             qss.components.scroll,
-            qss.components.search
+            qss.components.search.replace('REPLACE', cqss.gradient(p1=(0, 1), p2=(1, 1), c1=COLORS.DARK, c2=COLORS.TRANSPARENT))
         ))
         SplitterWidgetExt.__init__(self, SIZES.LeftMenuFix, SIZES.LeftMenuMin, SIZES.LeftMenuMax)
 

@@ -15,9 +15,9 @@ class EXTENSIONS:
 
 class PALETTE:
     # LAYER_2 = '#17212B'
-    LAYER_2 = '#0E1621'
-    LAYER_3 = '#023535'
-    LAYER_4 = '#008F8C'
+    LAYER_2 = 'rgba(14 ,14, 14, 1)'
+    LAYER_3 = 'rgba(155, 24, 223, 1)'
+    LAYER_4 = 'rgba(88, 143, 242, 1)'
 
 
 class COLORS:
@@ -32,15 +32,14 @@ class COLORS:
     GREEN_HOVER = 'rgba(0, 255, 0, 0.5)'
     HOVER = 'rgba(255, 255, 255, 0.1)'
     BUTTON = 'rgba(255, 255, 255, 0.2)'
-    SEARCH = PALETTE.LAYER_2
+    SEARCH_ITEM = PALETTE.LAYER_4.replace('1)', '0.5)')
+    SEARCH_CATEGORY = PALETTE.LAYER_3.replace('1)', '0.5)')
 
     SIGNIN = PALETTE.LAYER_2
     SIGNUP = PALETTE.LAYER_2
 
-    PANEL = PALETTE.LAYER_2
-    STATUS = PALETTE.LAYER_2
-    LEFT_MENU = 'rgba(23, 33, 43, 0.7)'
-    RIGHT_MENU = 'rgba(23, 33, 43, 0.7)'
+    PANEL = STATUS = 'rgba(14, 14, 14, 1)'
+    LEFT_MENU = RIGHT_MENU = 'rgba(14, 14, 14, 0.5)'
 
     TEXT_PRIMARY = 'white'
     TEXT_SECONDARY = 'rgba(255, 255, 255, 0.7)'
