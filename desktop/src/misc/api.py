@@ -45,7 +45,7 @@ async def create_user(user: dict[str, Any]) -> dict[str, Any]:
 
 async def get_categories() -> list[dict[str, Any]]:
     if Storage.is_remote():
-        response = await request.get('/categories', headers=auth_h(), pythonize=True)
+        response = await request.get('/categories', headers=auth_h(), deserialize=True)
     else:
         response = await crud.get_categories()
     return response
@@ -53,7 +53,7 @@ async def get_categories() -> list[dict[str, Any]]:
 
 async def create_category(category: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.post('/category', headers=auth_h(), body=await prepare(category), pythonize=True)
+        response = await request.post('/category', headers=auth_h(), body=await prepare(category), deserialize=True)
     else:
         response = await crud.create_category(category)
     return response
@@ -61,7 +61,7 @@ async def create_category(category: dict[str, Any]) -> dict[str, Any]:
 
 async def get_category(category_id: int) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.get(f'/category{category_id}', headers=auth_h(), pythonize=True)
+        response = await request.get(f'/category{category_id}', headers=auth_h(), deserialize=True)
     else:
         response = await crud.get_category(category_id)
     return response
@@ -69,7 +69,7 @@ async def get_category(category_id: int) -> dict[str, Any]:
 
 async def update_category(category_id: int, category: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.put(f'/category/{category_id}', headers=auth_h(), body=await prepare(category), pythonize=True)
+        response = await request.put(f'/category/{category_id}', headers=auth_h(), body=await prepare(category), deserialize=True)
     else:
         response = await crud.update_category(category_id, category)
     return response
@@ -77,7 +77,7 @@ async def update_category(category_id: int, category: dict[str, Any]) -> dict[st
 
 async def delete_category(category_id: int) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.delete(f'/category/{category_id}', headers=auth_h(), pythonize=True)
+        response = await request.delete(f'/category/{category_id}', headers=auth_h(), deserialize=True)
     else:
         response = await crud.delete_category(category_id)
     return response
@@ -85,7 +85,7 @@ async def delete_category(category_id: int) -> dict[str, Any]:
 
 async def create_item(category_id: int, item: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.post(f'/category/{category_id}/item', headers=auth_h(), body=await prepare(item), pythonize=True)
+        response = await request.post(f'/category/{category_id}/item', headers=auth_h(), body=await prepare(item), deserialize=True)
     else:
         response = await crud.create_item(category_id, item)
     return response
@@ -93,7 +93,7 @@ async def create_item(category_id: int, item: dict[str, Any]) -> dict[str, Any]:
 
 async def get_items(category_id: int) -> list[dict[str, Any]]:
     if Storage.is_remote():
-        response = await request.get(f'/category/{category_id}/items', headers=auth_h(), pythonize=True)
+        response = await request.get(f'/category/{category_id}/items', headers=auth_h(), deserialize=True)
     else:
         response = await crud.get_items(category_id)
     return response
@@ -101,7 +101,7 @@ async def get_items(category_id: int) -> list[dict[str, Any]]:
 
 async def delete_item(item_id: int) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.delete(f'/item/{item_id}', headers=auth_h(), pythonize=True)
+        response = await request.delete(f'/item/{item_id}', headers=auth_h(), deserialize=True)
     else:
         response = await crud.delete_item(item_id)
     return response
@@ -109,7 +109,7 @@ async def delete_item(item_id: int) -> dict[str, Any]:
 
 async def update_item(item_id: int, item: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.put(f'/item/{item_id}', headers=auth_h(), body=await prepare(item, ['expires_at']), pythonize=True)
+        response = await request.put(f'/item/{item_id}', headers=auth_h(), body=await prepare(item, ['expires_at']), deserialize=True)
     else:
         response = await crud.update_item(item_id, item)
     return response
@@ -166,7 +166,7 @@ async def import_item(category_id: int, filepath: str) -> dict[str, Any]:
 
 async def add_field(item_id: int, field: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.post(f'/item/{item_id}/field', headers=auth_h(), body=field, pythonize=True)
+        response = await request.post(f'/item/{item_id}/field', headers=auth_h(), body=field, deserialize=True)
     else:
         response = await crud.create_field(item_id, field)
     return response
@@ -174,7 +174,7 @@ async def add_field(item_id: int, field: dict[str, Any]) -> dict[str, Any]:
 
 async def get_fields(item_id: int) -> list[dict[str, Any]]:
     if Storage.is_remote():
-        response = await request.get(f'/item/{item_id}/fields', headers=auth_h(), pythonize=True)
+        response = await request.get(f'/item/{item_id}/fields', headers=auth_h(), deserialize=True)
     else:
         response = await crud.get_fields(item_id)
     return response
@@ -182,7 +182,7 @@ async def get_fields(item_id: int) -> list[dict[str, Any]]:
 
 async def update_field(field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.put(f'/field/{field_id}', headers=auth_h(), body=field, pythonize=True)
+        response = await request.put(f'/field/{field_id}', headers=auth_h(), body=field, deserialize=True)
     else:
         response = await crud.update_field(field_id, field)
     return response
@@ -190,7 +190,7 @@ async def update_field(field_id: UUID, field: dict[str, Any]) -> dict[str, Any]:
 
 async def delete_field(field_id: UUID) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.delete(f'/field/{field_id}', headers=auth_h(), pythonize=True)
+        response = await request.delete(f'/field/{field_id}', headers=auth_h(), deserialize=True)
     else:
         response = await crud.delete_field(field_id)
     return response
@@ -198,7 +198,7 @@ async def delete_field(field_id: UUID) -> dict[str, Any]:
 
 async def add_attachment(item_id: int, attachment: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.post(f'/item/{item_id}/attachment', headers=auth_h(), body=attachment, pythonize=True)
+        response = await request.post(f'/item/{item_id}/attachment', headers=auth_h(), body=attachment, deserialize=True)
     else:
         response = await crud.create_attachment(item_id, attachment)
     return response
@@ -206,7 +206,7 @@ async def add_attachment(item_id: int, attachment: dict[str, Any]) -> dict[str, 
 
 async def get_attachments(item_id: int) -> list[dict[str, Any]]:
     if Storage.is_remote():
-        response = await request.get(f'/item/{item_id}/attachments', headers=auth_h(), pythonize=True)
+        response = await request.get(f'/item/{item_id}/attachments', headers=auth_h(), deserialize=True)
     else:
         response = await crud.get_attachments(item_id)
     return response
@@ -214,7 +214,7 @@ async def get_attachments(item_id: int) -> list[dict[str, Any]]:
 
 async def update_attachment(attachment_id: UUID, attachment: dict[str, Any]) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.put(f'/attachment/{attachment_id}', headers=auth_h(), body=attachment, pythonize=True)
+        response = await request.put(f'/attachment/{attachment_id}', headers=auth_h(), body=attachment, deserialize=True)
     else:
         response = await crud.update_attachment(attachment_id, attachment)
     return response
@@ -222,7 +222,7 @@ async def update_attachment(attachment_id: UUID, attachment: dict[str, Any]) -> 
 
 async def delete_attachment(attachment_id: UUID) -> dict[str, Any]:
     if Storage.is_remote():
-        response = await request.delete(f'/attachment/{attachment_id}', headers=auth_h(), pythonize=True)
+        response = await request.delete(f'/attachment/{attachment_id}', headers=auth_h(), deserialize=True)
     else:
         response = await crud.delete_attachment(attachment_id)
     return response
