@@ -107,7 +107,7 @@ class SignIn(Frame):
         password = self.PasswordInp.text()
         if not len(password):
             return self.ErrorLbl.setText('Password can not be empty')
-        current_user = await api.login({'email': email, 'password': password})
+        current_user = await api.login(dict(email=email, password=password))
         if not (token := current_user.get('access_token')):
             return self.ErrorLbl.setText('Internal error, please try again')
         CONTEXT.CentralWidget.setCurrentWidget(CONTEXT.MainView)
